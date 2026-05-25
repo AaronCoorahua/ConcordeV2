@@ -1,0 +1,95 @@
+{
+  "version": "1",
+  "generated_by": "concorde",
+  "tokens": {
+    "oklch(0.72 0.16 55)": {
+      "suggested_name": "--vmc-color-orange-600",
+      "first_seen": "Button/primary/default",
+      "components": ["Button"]
+    },
+    "oklch(0.85 0.12 55)": {
+      "suggested_name": "--vmc-color-orange-400",
+      "first_seen": "Button/primary/hover",
+      "components": ["Button"]
+    },
+    "oklch(0.62 0.18 45)": {
+      "suggested_name": "--vmc-color-orange-700",
+      "first_seen": "Button/primary/pressed",
+      "components": ["Button"]
+    },
+    "oklch(0.55 0.22 285)": {
+      "suggested_name": "--vmc-color-vault-500",
+      "first_seen": "Button/primary/default",
+      "components": ["Button"]
+    },
+    "oklch(0.72 0.18 285)": {
+      "suggested_name": "--vmc-color-vault-400",
+      "first_seen": "Button/primary/hover",
+      "components": ["Button"]
+    },
+    "oklch(0.48 0.22 285)": {
+      "suggested_name": "--vmc-color-vault-600",
+      "first_seen": "Button/primary/pressed",
+      "components": ["Button"]
+    },
+    "oklch(0.38 0.20 285)": {
+      "suggested_name": "--vmc-color-vault-700",
+      "first_seen": "Button/secondary/default",
+      "components": ["Button"]
+    },
+    "oklch(0.25 0.16 285)": {
+      "suggested_name": "--vmc-color-vault-900",
+      "first_seen": "Button/secondary/pressed",
+      "components": ["Button"]
+    },
+    "oklch(0.82 0.13 285)": {
+      "suggested_name": "--vmc-color-vault-300",
+      "first_seen": "Button/secondary/border",
+      "components": ["Button"]
+    },
+    "#e1e3e2": {
+      "suggested_name": "--vmc-color-background-disabled",
+      "first_seen": "Button/primary/disabled",
+      "components": ["Button"]
+    },
+    "#99a1af": {
+      "suggested_name": "--vmc-color-neutral-700",
+      "first_seen": "Button/primary/disabled",
+      "components": ["Button"]
+    }
+  },
+  "typography": {
+    "Plus Jakarta Sans / 15px / 600": {
+      "suggested_name": "--text-label-lg",
+      "first_seen": "Button/md",
+      "components": ["Button"]
+    },
+    "Plus Jakarta Sans / 14px / 600": {
+      "suggested_name": "--text-label-md",
+      "first_seen": "Button/sm",
+      "components": ["Button"]
+    }
+  },
+  "spacing": {
+    "56px": {
+      "suggested_name": "--space-button-px-md",
+      "first_seen": "Button/primary/paddingX",
+      "components": ["Button"]
+    },
+    "28px": {
+      "suggested_name": "--space-button-px-ghost",
+      "first_seen": "Button/ghost/paddingX",
+      "components": ["Button"]
+    },
+    "48px": {
+      "suggested_name": "--space-button-height-md",
+      "first_seen": "Button/md/height",
+      "components": ["Button"]
+    },
+    "40px": {
+      "suggested_name": "--space-button-height-sm",
+      "first_seen": "Button/sm/height",
+      "components": ["Button"]
+    }
+  }
+}

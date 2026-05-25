@@ -1,0 +1,13 @@
+{
+  "version": "1",
+  "preview_base_url": "https://voyager-ds.vercel.app",
+  "components": {
+    "Button": {
+      "preview_anchor": "/preview/components/pase1",
+      "variants": ["primary", "secondary", "ghost", "sm-guest", "sm-logged-in"],
+      "states": ["default", "hover", "pressed", "disabled", "focus-visible"],
+      "has_interactive_demo": true,
+      "figma_node_id": ""
+    }
+  }
+}

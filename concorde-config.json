@@ -1,0 +1,22 @@
+{
+  "version": "1",
+  "project": "concorde-test",
+  "stack": {
+    "framework": "nextjs",
+    "typescript": true,
+    "styling": "tailwind-v4",
+    "animation": "css-native"
+  },
+  "code_rules": {
+    "no_any": true,
+    "no_ternaries": false,
+    "no_anonymous_functions": false,
+    "no_hardcoded_hex": false,
+    "spacing_grid": 8,
+    "use_container_queries": false
+  },
+  "output_dir": "src/components",
+  "token_system": false,
+  "allowed_dependencies": ["react", "next"],
+  "typescript_strict": true
+}
