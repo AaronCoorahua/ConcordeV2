@@ -2,8 +2,9 @@
 
 /**
  * LikeButton — Generado por Concorde
- * Fuente: https://voyager-ds.vercel.app/preview/components/pase1
- * Generado: 2026-05-28
+ * Fuente: Figma VOYAGER Design System · node 1119:11379
+ * Preview: https://voyager-ds.vercel.app/preview/components/pase1
+ * Generado: 2026-05-28 (revisado con Figma)
  * EDITAR LIBREMENTE después de generar
  */
 
@@ -15,7 +16,7 @@ import type { JSX } from "react";
 export type LikeButtonSize = "sm" | "md" | "lg";
 
 export interface LikeButtonProps {
-  /** Tamaño del botón: sm=32px, md=44px, lg=60px */
+  /** Tamaño: sm=24px · md=32px · lg=40px */
   size?: LikeButtonSize;
   /** Estado activo controlado externamente */
   active?: boolean;
@@ -32,12 +33,12 @@ export interface LikeButtonProps {
   className?: string;
 }
 
-// ─── Tokens de tamaño ─────────────────────────────────────────────────────────
+// ─── Tokens de tamaño — fuente: Figma node 1119:11379 ─────────────────────────
 
-const SIZE_MAP: Record<LikeButtonSize, { btn: string; icon: number }> = {
-  sm: { btn: "32px", icon: 13 },
-  md: { btn: "44px", icon: 19 },
-  lg: { btn: "60px", icon: 27 },
+const SIZE_MAP: Record<LikeButtonSize, { btn: number; icon: number; border: string; padding: string }> = {
+  sm: { btn: 24, icon: 16, border: "2px",    padding: "2px" },
+  md: { btn: 32, icon: 14, border: "1.44px", padding: "1.44px" },
+  lg: { btn: 40, icon: 24, border: "2px",    padding: "2px" },
 };
 
 // ─── SVG heart path ───────────────────────────────────────────────────────────
@@ -66,136 +67,108 @@ const PLIKE_STYLES = `
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  border: 2px solid transparent;
+  border-radius: 9999px;
+  border-style: solid;
+  border-color: #e8ddff;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  padding: 0;
-  background-image:
-    linear-gradient(180deg, #ffffff 0%, #ffffff 100%),
-    linear-gradient(135deg,
-      var(--vmc-color-vault-200, oklch(0.87 0.09 285)) 0%,
-      #ffffff 40%,
-      var(--vmc-color-vault-300, oklch(0.80 0.12 285)) 75%,
-      var(--vmc-color-vault-200, oklch(0.87 0.09 285)) 100%
-    );
-  background-origin: padding-box, border-box;
-  background-clip: padding-box, border-box;
+  background: #ffffff;
   box-shadow: rgba(132, 96, 229, 0.14) 0px 2px 8px;
   transition:
     transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1),
     box-shadow 0.25s,
-    background-image 0.25s;
+    filter 0.25s,
+    background 0.2s;
   transform: translateZ(0);
 }
 
+/* Glass highlight overlay */
 .plike::before {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  background: linear-gradient(rgba(255, 255, 255, 0.55) 0%, transparent 50%);
+  border-radius: 9999px;
+  background: linear-gradient(
+    rgba(255, 255, 255, 0.55) 0%,
+    transparent 50%
+  );
   pointer-events: none;
   z-index: 1;
 }
 
-.plike::after {
-  content: "";
-  position: absolute;
-  inset: -5px;
-  border-radius: 50%;
-  background: radial-gradient(circle,
-    var(--vmc-color-vault-400, oklch(0.62 0.20 285)) 0%,
-    transparent 70%
-  );
-  filter: blur(10px);
-  opacity: 0;
-  z-index: -1;
-  transition: opacity 0.3s;
-}
-
+/* Hover */
 .plike:hover:not(.plike--disabled):not(.plike--skeleton) {
   transform: scale(1.08) translateY(-2px);
   box-shadow:
-    oklch(0.22 0.18 285 / 0.22) 0px 10px 18px,
-    oklch(0.22 0.18 285 / 0.12) 0px 3px 6px;
+    rgba(32, 0, 104, 0.22) 0px 10px 18px,
+    rgba(32, 0, 104, 0.12) 0px 3px 6px;
 }
 
+/* Press */
 .plike:active:not(.plike--disabled):not(.plike--skeleton) {
   transform: scale(0.92);
 }
 
+/* Focus ring */
 .plike:focus-visible {
-  outline: 2px solid var(--vmc-color-vault-400, oklch(0.62 0.20 285));
+  outline: 2px solid #8460e5;
   outline-offset: 3px;
 }
 
-/* Tamaños */
-.plike--sm { width: 32px; height: 32px; }
-.plike--md { width: 44px; height: 44px; }
-.plike--lg { width: 60px; height: 60px; }
+/* ── Sizes (Figma) ── */
+.plike--sm { width: 24px; height: 24px; border-width: 2px;    padding: 2px; }
+.plike--md { width: 32px; height: 32px; border-width: 1.44px; padding: 1.44px; }
+.plike--lg { width: 40px; height: 40px; border-width: 2px;    padding: 2px; }
 
-/* Estado activo / liked */
+/* ── Active / liked state ── */
 .plike--active {
-  background-image:
-    linear-gradient(135deg,
-      var(--vmc-color-vault-500, oklch(0.45 0.20 285)) 0%,
-      var(--vmc-color-vault-700, oklch(0.30 0.20 285)) 100%
-    ),
-    linear-gradient(135deg,
-      var(--vmc-color-orange-400, oklch(0.72 0.16 55)) 0%,
-      #ffffff 40%,
-      var(--vmc-color-vault-400, oklch(0.55 0.20 285)) 75%,
-      var(--vmc-color-vault-300, oklch(0.80 0.12 285)) 100%
-    );
-  background-origin: padding-box, border-box;
-  background-clip: padding-box, border-box;
-  box-shadow:
-    rgba(132, 96, 229, 0.35) 0px 3px 14px,
-    rgba(255, 255, 255, 0.22) 0px 1px 0px inset;
+  background: linear-gradient(135deg, #8460e5 0%, #3b1782 100%);
+  border-color: #fbc47d;
+  filter: drop-shadow(0px 3px 7px rgba(132, 96, 229, 0.35));
+  box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.22);
 }
 
 .plike--active::before {
-  background: linear-gradient(rgba(255, 255, 255, 0.18) 0%, transparent 50%);
+  background: linear-gradient(
+    rgba(255, 255, 255, 0.18) 0%,
+    transparent 50%
+  );
 }
 
-.plike--active::after { opacity: 0.35; }
-.plike--active:hover::after { opacity: 0.6; }
-
-/* Animación del corazón al activar */
+/* Heart pop animation on toggle-to-active */
 .plike--pop svg {
   animation: plike-heart-pop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) 1;
 }
 
-/* Disabled */
+/* ── Disabled ── */
 .plike--disabled {
   cursor: not-allowed;
-  box-shadow: none;
-  background-image: none;
-  background-color: oklch(0.88 0.004 220);
-  opacity: 0.7;
-  pointer-events: none;
-}
-.plike--disabled::after { display: none; }
-
-/* Skeleton */
-.plike--skeleton {
-  background-image: none;
-  background-color: var(--vmc-color-background-disabled, oklch(0.88 0.01 220));
+  background: var(--component-button-like-bg, #ffffff);
   border-color: transparent;
   box-shadow: none;
+  filter: drop-shadow(0px 8px 16px rgba(0, 0, 0, 0.10));
+  pointer-events: none;
+}
+.plike--disabled::before { display: none; }
+
+/* ── Skeleton ── */
+.plike--skeleton {
+  background: var(--color-background-disabled, #e1e3e2);
+  border-color: transparent;
+  box-shadow: none;
+  filter: none;
   cursor: default;
   pointer-events: none;
+  padding: 0;
   animation: plike-pulse 1.6s ease-in-out infinite;
 }
-.plike--skeleton::before,
-.plike--skeleton::after { display: none; }
+.plike--skeleton::before { display: none; }
 
-/* Reduced motion — siempre */
+/* ── Reduced motion — siempre ── */
 @media (prefers-reduced-motion: reduce) {
   .plike,
-  .plike::after { transition: none; }
+  .plike::before { transition: none; }
   .plike--pop svg { animation: none; }
   .plike--skeleton { animation: none; opacity: 0.55; }
 }
@@ -220,10 +193,10 @@ export default function LikeButton({
   const [internalActive, setInternalActive] = useState(defaultActive);
   const isActive = isControlled ? controlledActive : internalActive;
 
-  // Trigger animación heart-pop
+  // Trigger animación heart-pop al activar
   const [popping, setPopping] = useState(false);
 
-  // Inyectar estilos una vez
+  // Inyectar estilos una vez (SSR + CSR)
   if (typeof document !== "undefined" && !_stylesInjected) {
     if (!document.getElementById(STYLE_ID)) {
       const el = document.createElement("style");
@@ -245,23 +218,25 @@ export default function LikeButton({
     }
   }, [isActive, isControlled, disabled, skeleton, onChange]);
 
-  const { btn: btnSize, icon: iconSize } = SIZE_MAP[size];
+  const { btn: btnPx, icon: iconPx } = SIZE_MAP[size];
 
   const classes = [
     "plike",
     `plike--${size}`,
-    isActive     ? "plike--active"   : "",
-    disabled     ? "plike--disabled" : "",
-    skeleton     ? "plike--skeleton" : "",
-    popping      ? "plike--pop"      : "",
+    isActive  ? "plike--active"   : "",
+    disabled  ? "plike--disabled" : "",
+    skeleton  ? "plike--skeleton" : "",
+    popping   ? "plike--pop"      : "",
     className,
   ]
     .filter(Boolean)
     .join(" ");
 
-  // El SVG cambia fill/stroke según estado
-  const svgFill   = isActive ? "rgba(255, 255, 255, 0.92)" : "none";
-  const svgStroke = isActive ? "none" : "var(--vmc-color-vault-600, oklch(0.38 0.20 285))";
+  // SVG fill/stroke cambia según estado — fuente: Figma
+  const svgFill   = isActive   ? "rgba(255, 255, 255, 0.92)" : "none";
+  const svgStroke = disabled   ? "oklch(0.72 0.02 220)"
+                  : isActive   ? "none"
+                  : "var(--vmc-color-vault-600, oklch(0.38 0.20 285))";
 
   return (
     <>
@@ -277,12 +252,12 @@ export default function LikeButton({
         disabled={disabled}
         aria-label={ariaLabel}
         aria-pressed={isActive}
-        style={{ width: btnSize, height: btnSize }}
+        style={{ width: btnPx, height: btnPx }}
       >
         {!skeleton && (
           <svg
-            width={iconSize}
-            height={iconSize}
+            width={iconPx}
+            height={iconPx}
             viewBox="0 0 24 24"
             fill={svgFill}
             stroke={svgStroke}

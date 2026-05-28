@@ -145,31 +145,34 @@ const HTML_TREE = `<button
   <!-- ::after  — glow radial bajo el botón (z-index: -1) -->
 </button>`;
 
-const TOKENS_MIN = `/* Tokens mínimos — LikeButton */
-/* El componente incluye oklch() fallbacks. Úsalos en producción. */
+const TOKENS_MIN = `/* Tokens mínimos — LikeButton (Figma: node 1119:11379) */
 :root {
-  /* Borde gradiente default */
-  --vmc-color-vault-200: oklch(0.87 0.09 285);   /* lavender-light */
-  --vmc-color-vault-300: oklch(0.80 0.12 285);   /* lavender */
+  /* Border default state */
+  /* #e8ddff (sm/lg 2px, md 1.44px) — no token, usa hex literal */
 
-  /* Hover glow + focus ring */
-  --vmc-color-vault-400: oklch(0.62 0.20 285);   /* violet-mid */
+  /* Border active state */
+  /* #fbc47d — no token, usa hex literal */
 
-  /* Heart stroke (default) */
-  --vmc-color-vault-600: oklch(0.38 0.20 285);   /* violet-deep */
+  /* Active bg gradient */
+  /* linear-gradient(135deg, #8460e5 0%, #3b1782 100%) */
+  /* #8460e5 ≈ --vmc-color-vault-500 */
+  /* #3b1782 ≈ --vmc-color-vault-900 */
 
-  /* Active fill bg */
-  --vmc-color-vault-500: oklch(0.45 0.20 285);   /* violet */
-  --vmc-color-vault-700: oklch(0.30 0.20 285);   /* violet-darker */
+  /* Heart stroke (default/hover) */
+  --vmc-color-vault-600: oklch(0.38 0.20 285);   /* #5a35c2 — violet-deep */
 
-  /* Active border gradient */
-  --vmc-color-orange-400: oklch(0.72 0.16 55);   /* naranja brand */
+  /* Focus ring */
+  /* #8460e5 = var(--vmc-color-vault-500) */
 
-  /* Disabled / skeleton */
-  --vmc-color-background-disabled: oklch(0.88 0.01 220);
+  /* Disabled bg */
+  --component-button-like-bg: #ffffff;            /* blanco */
+
+  /* Skeleton bg */
+  --color-background-disabled: #e1e3e2;
 }`;
 
 // Archivos requeridos
+// NOTE: Tamaños según Figma node 1119:11379 (Figma manda)
 interface FileInfo { path: string; desc: string; required: boolean; }
 const FILES: FileInfo[] = [
   { path: "src/components/LikeButton/LikeButton.tsx", desc: "Componente principal — self-contained, cero deps", required: true },
@@ -189,24 +192,24 @@ const PROPS: PropRow[] = [
   { name: "className",    type: "string",              default_: '""',     desc: "Clase extra (no sobreescribe base)" },
 ];
 
-// Variantes / tamaños
-interface SizeRow { size: string; btnSize: string; iconSize: string; cssClass: string; }
+// Variantes / tamaños — fuente: Figma node 1119:11379
+interface SizeRow { size: string; btnSize: string; iconSize: string; border: string; cssClass: string; }
 const SIZES: SizeRow[] = [
-  { size: "sm",  btnSize: "32px", iconSize: "13px", cssClass: ".plike--sm" },
-  { size: "md",  btnSize: "44px", iconSize: "19px", cssClass: ".plike--md" },
-  { size: "lg",  btnSize: "60px", iconSize: "27px", cssClass: ".plike--lg" },
+  { size: "sm", btnSize: "24px", iconSize: "16px", border: "2px",    cssClass: ".plike--sm" },
+  { size: "md", btnSize: "32px", iconSize: "14px", border: "1.44px", cssClass: ".plike--md" },
+  { size: "lg", btnSize: "40px", iconSize: "24px", border: "2px",    cssClass: ".plike--lg" },
 ];
 
 // Estados
 interface StateRow { state: string; modifier: string; svgFill: string; svgStroke: string; effects: string; }
 const STATES: StateRow[] = [
-  { state: "default",  modifier: ".plike",           svgFill: "none",                      svgStroke: "vault-600",  effects: "fondo blanco, borde gradiente vault-200/300, sombra suave" },
-  { state: "hover",    modifier: ".plike:hover",      svgFill: "none",                      svgStroke: "vault-600",  effects: "scale(1.08) translateY(-2px), sombra deep vault" },
-  { state: "press",    modifier: ".plike:active",     svgFill: "none",                      svgStroke: "vault-600",  effects: "scale(0.92)" },
-  { state: "active",   modifier: ".plike--active",    svgFill: "rgba(255,255,255,0.92)",    svgStroke: "none",       effects: "fondo gradiente vault-500→700, borde orange, glow radial" },
-  { state: "disabled", modifier: ".plike--disabled",  svgFill: "none",                      svgStroke: "oklch(0.72 0.02 220)", effects: "bg gris, opacity 0.7, pointer-events none" },
-  { state: "skeleton", modifier: ".plike--skeleton",  svgFill: "—",                         svgStroke: "—",          effects: "bg gris, pulse animation, sin corazón" },
-  { state: "focus",    modifier: ".plike:focus-visible", svgFill: "none",                   svgStroke: "vault-600",  effects: "outline 2px vault-400, offset 3px" },
+  { state: "default",  modifier: ".plike",              svgFill: "none",                   svgStroke: "vault-600",           effects: "bg #fff, border #e8ddff 2px/1.44px, shadow suave" },
+  { state: "hover",    modifier: ".plike:hover",        svgFill: "none",                   svgStroke: "vault-600",           effects: "scale(1.08) translateY(-2px), shadow deep purple" },
+  { state: "press",    modifier: ".plike:active",       svgFill: "none",                   svgStroke: "vault-600",           effects: "scale(0.92)" },
+  { state: "active",   modifier: ".plike--active",      svgFill: "rgba(255,255,255,0.92)", svgStroke: "none",                effects: "bg grad #8460e5→#3b1782, border #fbc47d, drop-shadow + inset" },
+  { state: "disabled", modifier: ".plike--disabled",    svgFill: "none",                   svgStroke: "oklch(0.72 0.02 220)", effects: "bg #fff, border transparent, drop-shadow(0 8 16 rgba(0,0,0,0.1))" },
+  { state: "skeleton", modifier: ".plike--skeleton",    svgFill: "—",                      svgStroke: "—",                   effects: "bg #e1e3e2, sin borde, pulse animation, sin corazón" },
+  { state: "focus",    modifier: ".plike:focus-visible", svgFill: "none",                  svgStroke: "vault-600",           effects: "outline 2px #8460e5, offset 3px" },
 ];
 
 // Animaciones
@@ -377,7 +380,7 @@ export function LikeButtonHandoff(): JSX.Element {
             <table style={S.table}>
               <thead>
                 <tr>
-                  {["size", "Botón", "Ícono", "CSS class"].map(function renderTh(h) {
+                  {["size", "Botón", "Ícono", "Border-width", "CSS class"].map(function renderTh(h) {
                     return <th key={h} style={S.th}>{h}</th>;
                   })}
                 </tr>
@@ -389,6 +392,7 @@ export function LikeButtonHandoff(): JSX.Element {
                       <td style={{ ...S.td, fontWeight: 600 }}>{r.size}</td>
                       <td style={S.tdMono}>{r.btnSize}</td>
                       <td style={S.tdMono}>{r.iconSize}</td>
+                      <td style={S.tdMono}>{r.border}</td>
                       <td style={S.tdMono}>{r.cssClass}</td>
                     </tr>
                   );
