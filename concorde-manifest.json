@@ -9,5 +9,13 @@
       "has_interactive_demo": true,
       "figma_node_id": ""
     }
+    ,
+    "LikeButton": {
+      "preview_anchor": "/preview/components/pase1",
+      "variants": ["sm", "md", "lg"],
+      "states": ["default", "hover", "active", "disabled", "skeleton"],
+      "has_interactive_demo": true,
+      "figma_node_id": ""
+    }
   }
 }

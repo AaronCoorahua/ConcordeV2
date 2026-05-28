@@ -5,7 +5,7 @@
     "oklch(0.72 0.16 55)": {
       "suggested_name": "--vmc-color-orange-600",
       "first_seen": "Button/primary/default",
-      "components": ["Button"]
+      "components": ["Button", "LikeButton"]
     },
     "oklch(0.85 0.12 55)": {
       "suggested_name": "--vmc-color-orange-400",
@@ -20,12 +20,17 @@
     "oklch(0.55 0.22 285)": {
       "suggested_name": "--vmc-color-vault-500",
       "first_seen": "Button/primary/default",
-      "components": ["Button"]
+      "components": ["Button", "LikeButton"]
     },
     "oklch(0.72 0.18 285)": {
       "suggested_name": "--vmc-color-vault-400",
       "first_seen": "Button/primary/hover",
       "components": ["Button"]
+    },
+    "oklch(0.62 0.20 285)": {
+      "suggested_name": "--vmc-color-vault-400",
+      "first_seen": "LikeButton/hover-glow/focus",
+      "components": ["LikeButton"]
     },
     "oklch(0.48 0.22 285)": {
       "suggested_name": "--vmc-color-vault-600",
@@ -37,6 +42,31 @@
       "first_seen": "Button/secondary/default",
       "components": ["Button"]
     },
+    "oklch(0.38 0.20 285) [vault-600]": {
+      "suggested_name": "--vmc-color-vault-600",
+      "first_seen": "LikeButton/default/heart-stroke",
+      "components": ["LikeButton"]
+    },
+    "oklch(0.45 0.20 285)": {
+      "suggested_name": "--vmc-color-vault-500",
+      "first_seen": "LikeButton/active/bg-start",
+      "components": ["LikeButton"]
+    },
+    "oklch(0.30 0.20 285)": {
+      "suggested_name": "--vmc-color-vault-700",
+      "first_seen": "LikeButton/active/bg-end",
+      "components": ["LikeButton"]
+    },
+    "oklch(0.87 0.09 285)": {
+      "suggested_name": "--vmc-color-vault-200",
+      "first_seen": "LikeButton/default/border-gradient",
+      "components": ["LikeButton"]
+    },
+    "oklch(0.80 0.12 285)": {
+      "suggested_name": "--vmc-color-vault-300",
+      "first_seen": "LikeButton/default/border-gradient",
+      "components": ["LikeButton"]
+    },
     "oklch(0.25 0.16 285)": {
       "suggested_name": "--vmc-color-vault-900",
       "first_seen": "Button/secondary/pressed",
@@ -46,6 +76,21 @@
       "suggested_name": "--vmc-color-vault-300",
       "first_seen": "Button/secondary/border",
       "components": ["Button"]
+    },
+    "oklch(0.88 0.004 220)": {
+      "suggested_name": "--vmc-color-background-disabled",
+      "first_seen": "LikeButton/disabled/bg",
+      "components": ["LikeButton"]
+    },
+    "oklch(0.88 0.01 220)": {
+      "suggested_name": "--vmc-color-background-disabled",
+      "first_seen": "LikeButton/skeleton/bg",
+      "components": ["LikeButton"]
+    },
+    "oklch(0.72 0.02 220)": {
+      "suggested_name": "--vmc-color-neutral-400",
+      "first_seen": "LikeButton/disabled/heart-stroke",
+      "components": ["LikeButton"]
     },
     "#e1e3e2": {
       "suggested_name": "--vmc-color-background-disabled",
@@ -90,6 +135,21 @@
       "suggested_name": "--space-button-height-sm",
       "first_seen": "Button/sm/height",
       "components": ["Button"]
+    },
+    "32px": {
+      "suggested_name": "--space-likebutton-size-sm",
+      "first_seen": "LikeButton/sm/size",
+      "components": ["LikeButton"]
+    },
+    "44px": {
+      "suggested_name": "--space-likebutton-size-md",
+      "first_seen": "LikeButton/md/size",
+      "components": ["LikeButton"]
+    },
+    "60px": {
+      "suggested_name": "--space-likebutton-size-lg",
+      "first_seen": "LikeButton/lg/size",
+      "components": ["LikeButton"]
     }
   }
 }
