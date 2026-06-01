@@ -6,6 +6,7 @@ import Button from "@/src/components/Button/Button";
 import LikeButton from "@/src/components/LikeButton/LikeButton";
 import OfferType from "@/src/components/OfferType/OfferType";
 import OfferCard from "@/src/components/OfferCard/OfferCard";
+import OfferBadge from "@/src/components/OfferBadge/OfferBadge";
 
 // ── Registry ──────────────────────────────────────────────────────────────
 
@@ -83,6 +84,21 @@ const REGISTRY: ComponentEntry[] = [
       <div style={{ display: "flex", gap: 12, alignItems: "flex-start", justifyContent: "center" }}>
         <OfferCard variant="live"    name="Ford Bronco Sport" year="2024" price="US$ 28,500" />
         <OfferCard variant="proxima" name="Land Rover Def."   year="2023" price="US$ 9,999"  />
+      </div>
+    ),
+  },
+  {
+    id: "offerbadge",
+    name: "OfferBadge",
+    description: "Pill de estado de subasta. EN VIVO con dot pulsante y PRÓXIMA con clock parpadeante. Standalone, sin card.",
+    status: "done",
+    handoffPath: "/handoff/offerbadge",
+    variants: 2,
+    tags: ["Badge", "Status", "Animated"],
+    preview: (
+      <div style={{ display: "flex", gap: 10, alignItems: "center", justifyContent: "center" }}>
+        <OfferBadge variant="live" />
+        <OfferBadge variant="proxima" />
       </div>
     ),
   },
