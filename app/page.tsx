@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Button from "@/src/components/Button/Button";
 import LikeButton from "@/src/components/LikeButton/LikeButton";
 import OfferType from "@/src/components/OfferType/OfferType";
+import OfferCard from "@/src/components/OfferCard/OfferCard";
 
 // ── Registry ──────────────────────────────────────────────────────────────
 
@@ -67,6 +68,21 @@ const REGISTRY: ComponentEntry[] = [
       <div style={{ display: "flex", gap: 16, alignItems: "center", justifyContent: "center" }}>
         <OfferType variant="negotiable" />
         <OfferType variant="live" />
+      </div>
+    ),
+  },
+  {
+    id: "offercard",
+    name: "OfferCard",
+    description: "Card de subasta con imagen, badge animado (EN VIVO / PRÓXIMA), precio teal y like toggle. Self-contained.",
+    status: "done",
+    handoffPath: "/handoff/offercard",
+    variants: 2,
+    tags: ["Card", "Auction", "Animated"],
+    preview: (
+      <div style={{ display: "flex", gap: 12, alignItems: "flex-start", justifyContent: "center" }}>
+        <OfferCard variant="live"    name="Ford Bronco Sport" year="2024" price="US$ 28,500" />
+        <OfferCard variant="proxima" name="Land Rover Def."   year="2023" price="US$ 9,999"  />
       </div>
     ),
   },

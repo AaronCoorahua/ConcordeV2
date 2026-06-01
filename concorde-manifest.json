@@ -17,6 +17,13 @@
       "has_interactive_demo": true,
       "figma_node_id": ""
     },
+    "OfferCard": {
+      "preview_anchor": "/preview/components/pase1",
+      "variants": ["live", "proxima"],
+      "states": ["default", "hover"],
+      "has_interactive_demo": true,
+      "figma_node_id": ""
+    },
     "OfferType": {
       "preview_anchor": "/preview/components/pase1",
       "variants": ["negotiable", "live"],
