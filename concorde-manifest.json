@@ -16,6 +16,13 @@
       "states": ["default", "hover", "active", "disabled", "skeleton"],
       "has_interactive_demo": true,
       "figma_node_id": ""
+    },
+    "OfferType": {
+      "preview_anchor": "/preview/components/pase1",
+      "variants": ["negotiable", "live"],
+      "states": ["default", "hover", "focus"],
+      "has_interactive_demo": true,
+      "figma_node_id": ""
     }
   }
 }

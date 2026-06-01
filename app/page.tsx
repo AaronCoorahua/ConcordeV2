@@ -4,6 +4,7 @@ import type { JSX } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/src/components/Button/Button";
 import LikeButton from "@/src/components/LikeButton/LikeButton";
+import OfferType from "@/src/components/OfferType/OfferType";
 
 // ── Registry ──────────────────────────────────────────────────────────────
 
@@ -51,6 +52,21 @@ const REGISTRY: ComponentEntry[] = [
         <LikeButton size="md" />
         <LikeButton size="lg" />
         <LikeButton size="md" active={true} />
+      </div>
+    ),
+  },
+  {
+    id: "offertype",
+    name: "OfferType",
+    description: "Cards de categoría de oferta. Variantes NEGOCIABLE (teal) y EN VIVO (orange) con hover lift y pressed state.",
+    status: "done",
+    handoffPath: "/handoff/offertype",
+    variants: 2,
+    tags: ["Card", "Filter", "Interactive"],
+    preview: (
+      <div style={{ display: "flex", gap: 16, alignItems: "center", justifyContent: "center" }}>
+        <OfferType variant="negotiable" />
+        <OfferType variant="live" />
       </div>
     ),
   },
@@ -498,6 +514,32 @@ export default function ConcordePage(): JSX.Element {
               spec de tokens, estados interactivos y código listo para copiar a tu proyecto.{" "}
               Sin fricciones entre diseño y código.
             </p>
+            <a
+              href="https://voyager-ds.vercel.app/preview/components/pase1"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                marginTop: 20,
+                fontSize: 11,
+                fontFamily: "var(--font-mono-nums, monospace)",
+                fontWeight: 600,
+                color: "rgba(255,255,255,0.4)",
+                textDecoration: "none",
+                letterSpacing: "0.04em",
+                transition: "color 0.15s",
+              }}
+              onMouseEnter={function(e){ (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.75)"; }}
+              onMouseLeave={function(e){ (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.4)"; }}
+            >
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.2"/>
+                <path d="M4 6h4M7 4.5L8.5 6 7 7.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              voyager-ds.vercel.app · fuente de componentes
+            </a>
           </div>
           <div className="cp-stats">
             <div className="cp-stat">
