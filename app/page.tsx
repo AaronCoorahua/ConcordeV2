@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import Button from "@/src/components/Button/Button";
 import LikeButton from "@/src/components/LikeButton/LikeButton";
 import OfferType from "@/src/components/OfferType/OfferType";
-import OfferCard from "@/src/components/OfferCard/OfferCard";
-import OfferBadge from "@/src/components/OfferBadge/OfferBadge";
+import BadgeStatus from "@/src/components/BadgeStatus/BadgeStatus";
 
 // ── Registry ──────────────────────────────────────────────────────────────
 
@@ -73,32 +72,17 @@ const REGISTRY: ComponentEntry[] = [
     ),
   },
   {
-    id: "offercard",
-    name: "OfferCard",
-    description: "Card de subasta con imagen, badge animado (EN VIVO / PRÓXIMA), precio teal y like toggle. Self-contained.",
-    status: "done",
-    handoffPath: "/handoff/offercard",
-    variants: 2,
-    tags: ["Card", "Auction", "Animated"],
-    preview: (
-      <div style={{ display: "flex", gap: 12, alignItems: "flex-start", justifyContent: "center" }}>
-        <OfferCard variant="live"    name="Ford Bronco Sport" year="2024" price="US$ 28,500" />
-        <OfferCard variant="proxima" name="Land Rover Def."   year="2023" price="US$ 9,999"  />
-      </div>
-    ),
-  },
-  {
-    id: "offerbadge",
-    name: "OfferBadge",
+    id: "badgestatus",
+    name: "BadgeStatus",
     description: "Pill de estado de subasta. EN VIVO con dot pulsante y PRÓXIMA con clock parpadeante. Standalone, sin card.",
     status: "done",
-    handoffPath: "/handoff/offerbadge",
+    handoffPath: "/handoff/badgestatus",
     variants: 2,
     tags: ["Badge", "Status", "Animated"],
     preview: (
       <div style={{ display: "flex", gap: 10, alignItems: "center", justifyContent: "center" }}>
-        <OfferBadge variant="live" />
-        <OfferBadge variant="proxima" />
+        <BadgeStatus variant="live" />
+        <BadgeStatus variant="proxima" />
       </div>
     ),
   },

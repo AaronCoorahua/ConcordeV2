@@ -1,10 +1,9 @@
 "use client";
 
 /**
- * OfferBadge — Generado por Concorde
+ * BadgeStatus — Generado por Concorde
  * Fuente: https://voyager-ds.vercel.app/preview/components/pase1
  * Generado: 2026-05-28
- * EDITAR LIBREMENTE después de generar
  *
  * Pill badge de estado de subasta: EN VIVO (animated dot) · PRÓXIMA (blinking clock)
  */
@@ -13,10 +12,10 @@ import type { JSX } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type OfferBadgeVariant = "live" | "proxima";
+export type BadgeStatusVariant = "live" | "proxima";
 
-export interface OfferBadgeProps {
-  variant: OfferBadgeVariant;
+export interface BadgeStatusProps {
+  variant: BadgeStatusVariant;
   /** Override de label (default: "EN VIVO" / "PRÓXIMA") */
   label?: string;
   className?: string;
@@ -24,21 +23,21 @@ export interface OfferBadgeProps {
 
 // ─── Self-contained CSS ───────────────────────────────────────────────────────
 
-const STYLE_ID = "concorde-offerbadge-styles";
+const STYLE_ID = "concorde-badgestatus-styles";
 
-const OFFERBADGE_STYLES = `
-@keyframes offerbadge-live-ring {
+const BADGESTATUS_STYLES = `
+@keyframes badgestatus-live-ring {
   0%   { opacity: 1; transform: scale(0.8); }
   100% { opacity: 0; transform: scale(1.9); }
 }
 
-@keyframes offerbadge-clock-blink {
+@keyframes badgestatus-clock-blink {
   0%, 100% { opacity: 1; transform: scale(1); }
   50%       { opacity: 0.35; transform: scale(0.85); }
 }
 
 /* ── Base pill ── */
-.offerbadge {
+.badgestatus {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -58,7 +57,7 @@ const OFFERBADGE_STYLES = `
 }
 
 /* ── EN VIVO — orange gradient ── */
-.offerbadge--live {
+.badgestatus--live {
   background-image:
     linear-gradient(135deg,
       oklch(0.78 0.17 55) 0%,
@@ -79,7 +78,7 @@ const OFFERBADGE_STYLES = `
 }
 
 /* ── PRÓXIMA — vault purple gradient ── */
-.offerbadge--proxima {
+.badgestatus--proxima {
   background-image:
     linear-gradient(135deg,
       oklch(0.48 0.24 285) 0%,
@@ -100,28 +99,28 @@ const OFFERBADGE_STYLES = `
 }
 
 /* ── Pulsing dot (live) ── */
-.offerbadge-dot {
+.badgestatus-dot {
   width: 6px;
   height: 6px;
   border-radius: 9999px;
   background: oklch(1 0 0 / 0.92);
   flex-shrink: 0;
-  animation: offerbadge-live-ring 1.4s ease-out infinite;
+  animation: badgestatus-live-ring 1.4s ease-out infinite;
   position: relative;
 }
 
 /* ── Blinking clock (proxima) ── */
-.offerbadge-clock {
+.badgestatus-clock {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  animation: offerbadge-clock-blink 1.4s ease-in-out infinite;
+  animation: badgestatus-clock-blink 1.4s ease-in-out infinite;
 }
 
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
-  .offerbadge-dot   { animation: none; }
-  .offerbadge-clock { animation: none; }
+  .badgestatus-dot   { animation: none; }
+  .badgestatus-clock { animation: none; }
 }
 `;
 
@@ -150,21 +149,21 @@ function ClockIcon(): JSX.Element {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-const LABEL_DEFAULTS: Record<OfferBadgeVariant, string> = {
+const LABEL_DEFAULTS: Record<BadgeStatusVariant, string> = {
   live:    "EN VIVO",
   proxima: "PRÓXIMA",
 };
 
-export default function OfferBadge({
+export default function BadgeStatus({
   variant,
   label,
   className = "",
-}: OfferBadgeProps): JSX.Element {
+}: BadgeStatusProps): JSX.Element {
   if (typeof document !== "undefined" && !_stylesInjected) {
     if (!document.getElementById(STYLE_ID)) {
       const el = document.createElement("style");
       el.id = STYLE_ID;
-      el.textContent = OFFERBADGE_STYLES;
+      el.textContent = BADGESTATUS_STYLES;
       document.head.appendChild(el);
     }
     _stylesInjected = true;
@@ -173,8 +172,8 @@ export default function OfferBadge({
   const displayLabel = label ?? LABEL_DEFAULTS[variant];
 
   const classes = [
-    "offerbadge",
-    `offerbadge--${variant}`,
+    "badgestatus",
+    `badgestatus--${variant}`,
     className,
   ].filter(Boolean).join(" ");
 
@@ -183,7 +182,7 @@ export default function OfferBadge({
       <style
         id={`${STYLE_ID}-ssr`}
         suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: OFFERBADGE_STYLES }}
+        dangerouslySetInnerHTML={{ __html: BADGESTATUS_STYLES }}
       />
       <span
         className={classes}
@@ -191,9 +190,9 @@ export default function OfferBadge({
         aria-label={displayLabel}
       >
         {variant === "live" ? (
-          <span className="offerbadge-dot" aria-hidden="true" />
+          <span className="badgestatus-dot" aria-hidden="true" />
         ) : (
-          <span className="offerbadge-clock" aria-hidden="true">
+          <span className="badgestatus-clock" aria-hidden="true">
             <ClockIcon />
           </span>
         )}
