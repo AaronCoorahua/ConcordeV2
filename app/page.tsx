@@ -7,6 +7,8 @@ import LikeButton from "@/src/components/LikeButton/LikeButton";
 import OfferType from "@/src/components/OfferType/OfferType";
 import BadgeStatus from "@/src/components/BadgeStatus/BadgeStatus";
 import CategoryCard from "@/src/components/CategoryCard/CategoryCard";
+import OfferCard from "@/src/components/OfferCard/OfferCard";
+import BadgeStatus from "@/src/components/BadgeStatus/BadgeStatus";
 
 // ── Registry ──────────────────────────────────────────────────────────────
 
@@ -101,6 +103,21 @@ const REGISTRY: ComponentEntry[] = [
         <CategoryCard category="maquinaria" />
         <CategoryCard category="equipos-diversos" />
         <CategoryCard category="articulos-diversos" />
+      </div>
+    ),
+  },
+  {
+    id: "offercard",
+    name: "OfferCard",
+    description: "Card de subasta publicada. 4 variantes (live/negotiable/proxima/expired), pprice, like toggle, skeleton y badge slot.",
+    status: "done",
+    handoffPath: "/handoff/offercard",
+    variants: 4,
+    tags: ["Card", "Auction", "Animated"],
+    preview: (
+      <div style={{ display: "flex", gap: 10, alignItems: "flex-start", justifyContent: "center" }}>
+        <OfferCard variant="live"       name="Ford Bronco Sport" year="2024" price="US$ 9,999" badge={<BadgeStatus variant="live" />} />
+        <OfferCard variant="negotiable" name="Land Rover Def."   year="2023" />
       </div>
     ),
   },
