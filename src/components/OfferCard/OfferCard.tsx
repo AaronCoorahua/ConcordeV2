@@ -1,30 +1,28 @@
-"use client";
+﻿"use client";
 
 /**
- * OfferCard — Generado por Concorde
+ * OfferCard â€” Generado por Concorde
  * Fuente: https://voyager-ds.vercel.app/preview/components/button-primary
  * Generado: 2026-05-28
- * EDITAR LIBREMENTE después de generar
+ * EDITAR LIBREMENTE despuÃ©s de generar
  *
- * Variantes: live (orange bar, pprice+price+like) ·
- *            negotiable (teal bar, solo like) ·
- *            proxima (purple border, pprice+price+like) ·
- *            expired (gray border, desaturado)
+ * Variantes: live (orange bar, pprice+price+like) Â·
+ *            negotiable (teal bar, solo like)
  */
 
 import { useState, useCallback } from "react";
 import type { JSX } from "react";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-export type OfferCardVariant = "live" | "negotiable" | "proxima" | "expired";
+export type OfferCardVariant = "live" | "negotiable";
 
 export interface OfferCardProps {
-  /** Variante — determina barra inferior y fila de precio */
+  /** Variante â€” determina barra inferior y fila de precio */
   variant: OfferCardVariant;
-  /** Nombre del vehículo */
+  /** Nombre del vehÃ­culo */
   name: string;
-  /** Año */
+  /** AÃ±o */
   year: string | number;
   /**
    * Precio formateado ("US$ 9,999").
@@ -36,7 +34,7 @@ export interface OfferCardProps {
   imageSrc?: string;
   /** Alt text de imagen */
   imageAlt?: string;
-  /** Badge de estado (pill BadgeStatus) — renderizado en img-badge slot */
+  /** Badge de estado (pill BadgeStatus) â€” renderizado en img-badge slot */
   badge?: JSX.Element;
   /** Estado like controlado */
   liked?: boolean;
@@ -44,16 +42,12 @@ export interface OfferCardProps {
   onLikeChange?: (liked: boolean) => void;
   /** Click en la card */
   onClick?: () => void;
-  /** Estado deshabilitado */
-  disabled?: boolean;
-  /** Estado skeleton / loading */
-  skeleton?: boolean;
   /** Aria label */
   "aria-label"?: string;
   className?: string;
 }
 
-// ─── Self-contained CSS ───────────────────────────────────────────────────────
+// â”€â”€â”€ Self-contained CSS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const STYLE_ID = "concorde-offercard-styles";
 
@@ -70,9 +64,10 @@ const OFFERCARD_STYLES = `
   50%       { opacity: 0.5; }
 }
 
-/* ── Card base ── */
+/* â”€â”€ Card base â€” ancho y alto fijo, igual en ambas variantes â”€â”€ */
 .pcard {
   width: 170px;
+  height: 220px;
   background: oklch(1 0 0);
   border-radius: 8px;
   box-shadow:
@@ -93,7 +88,7 @@ const OFFERCARD_STYLES = `
   box-shadow: oklch(0.22 0.18 285 / 0.12) 0px 12px 20px;
 }
 
-/* ── Image ── */
+/* â”€â”€ Image â”€â”€ */
 .pcard__img {
   width: 100%;
   height: 112px;
@@ -121,7 +116,7 @@ const OFFERCARD_STYLES = `
   z-index: 2;
 }
 
-/* ── Body ── */
+/* â”€â”€ Body â”€â”€ */
 .pcard__body {
   display: flex;
   flex-direction: column;
@@ -159,7 +154,7 @@ const OFFERCARD_STYLES = `
   margin: 0;
 }
 
-/* Price row — pprice + price text + like */
+/* Price row â€” pprice + price text + like */
 .pcard__price-row {
   display: flex;
   align-items: center;
@@ -184,7 +179,7 @@ const OFFERCARD_STYLES = `
   white-space: nowrap;
 }
 
-/* Like row — solo like (negotiable) */
+/* Like row â€” solo like (negotiable) */
 .pcard__like-row {
   display: flex;
   align-items: center;
@@ -193,7 +188,7 @@ const OFFERCARD_STYLES = `
   flex-shrink: 0;
 }
 
-/* ── Variants — bottom bars ── */
+/* â”€â”€ Variants â€” bottom bars â”€â”€ */
 .pcard--live {
   position: relative;
 }
@@ -230,71 +225,8 @@ const OFFERCARD_STYLES = `
   border-radius: 0 0 var(--vmc-radius-sm, 4px) var(--vmc-radius-sm, 4px);
 }
 
-.pcard--proxima {
-  border-bottom: 6px solid oklch(0.42 0.22 285);
-}
 
-.pcard--expired {
-  border-bottom: 6px solid oklch(0.72 0.02 220);
-}
-.pcard--expired .pcard__name {
-  color: oklch(0.55 0.02 220);
-}
-.pcard--expired .pcard__year {
-  color: oklch(0.65 0.01 220);
-}
-.pcard--expired .pcard__img {
-  filter: grayscale(0.6) brightness(0.95);
-}
-
-/* ── Disabled ── */
-.pcard--disabled {
-  cursor: not-allowed;
-  opacity: 0.65;
-  pointer-events: none;
-}
-
-/* ── Skeleton ── */
-.pcard--skeleton {
-  cursor: default;
-  pointer-events: none;
-}
-.pcard--skeleton .pcard__img {
-  background: oklch(0.87 0.006 220);
-  animation: offercard-pulse 1.6s ease-in-out infinite;
-}
-.pcard--skeleton .pcard__name,
-.pcard--skeleton .pcard__year {
-  color: transparent;
-  position: relative;
-}
-.pcard--skeleton .pcard__name::after {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 0;
-  height: 13px;
-  width: 80%;
-  background: oklch(0.82 0.02 220);
-  border-radius: 4px;
-  animation: offercard-pulse 1.6s ease-in-out infinite;
-}
-.pcard--skeleton .pcard__year::after {
-  content: "";
-  position: absolute;
-  top: 2px;
-  left: 0;
-  height: 9px;
-  width: 44px;
-  background: oklch(0.82 0.02 220);
-  border-radius: 4px;
-  animation: offercard-pulse 1.6s ease-in-out infinite;
-}
-.pcard--skeleton .pcard__price-text {
-  color: transparent;
-}
-
-/* ── Teal price icon (pprice-sm, self-contained) ── */
+/* â”€â”€ Teal price icon (pprice-sm, self-contained) â”€â”€ */
 .pcard-pprice {
   width: 32px;
   height: 32px;
@@ -331,15 +263,8 @@ const OFFERCARD_STYLES = `
   pointer-events: none;
   z-index: 1;
 }
-.pcard--skeleton .pcard-pprice {
-  background-image: none;
-  background-color: oklch(0.85 0.008 220);
-  box-shadow: none;
-  animation: offercard-pulse 1.6s ease-in-out infinite;
-}
-.pcard--skeleton .pcard-pprice::before { display: none; }
 
-/* ── Mini like button (self-contained) ── */
+/* â”€â”€ Mini like button (self-contained) â”€â”€ */
 .pcard-like {
   display: inline-flex;
   align-items: center;
@@ -376,23 +301,11 @@ const OFFERCARD_STYLES = `
   outline: 2px solid oklch(0.62 0.20 285);
   outline-offset: 2px;
 }
-.pcard--skeleton .pcard-like {
-  background: oklch(0.88 0.004 220);
-  box-shadow: none;
-  pointer-events: none;
-  animation: offercard-pulse 1.6s ease-in-out infinite;
-}
-.pcard--skeleton .pcard-like svg { stroke: oklch(0.72 0.02 220); }
 
-/* ── Reduced motion ── */
+/* â”€â”€ Reduced motion â”€â”€ */
 @media (prefers-reduced-motion: reduce) {
   .pcard, .pcard-like { transition: none; }
   .pcard-like--pop svg { animation: none; }
-  .pcard--skeleton .pcard__img,
-  .pcard--skeleton .pcard__name::after,
-  .pcard--skeleton .pcard__year::after,
-  .pcard--skeleton .pcard-pprice,
-  .pcard--skeleton .pcard-like { animation: none; }
 }
 `;
 
@@ -401,16 +314,14 @@ const HEART_PATH  = "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5
 
 let _stylesInjected = false;
 
-// ─── Which variants show price row vs like row ────────────────────────────────
+// â”€â”€â”€ Which variants show price row vs like row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const SHOW_PRICE: Record<OfferCardVariant, boolean> = {
-  live:       true,
-  proxima:    true,
-  negotiable: false,  // only like, no pprice
-  expired:    false,
+  live:       true,   // pprice + price + like
+  negotiable: false,  // solo like
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function OfferCard({
   variant,
@@ -423,8 +334,6 @@ export default function OfferCard({
   liked: controlledLiked,
   onLikeChange,
   onClick,
-  disabled = false,
-  skeleton = false,
   "aria-label": ariaLabel,
   className = "",
 }: OfferCardProps): JSX.Element {
@@ -445,7 +354,6 @@ export default function OfferCard({
 
   const handleLike = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    if (disabled || skeleton) return;
     const next = !isLiked;
     if (!isControlled) setInternalLiked(next);
     onLikeChange?.(next);
@@ -461,8 +369,6 @@ export default function OfferCard({
   const cardClasses = [
     "pcard",
     `pcard--${variant}`,
-    disabled ? "pcard--disabled" : "",
-    skeleton  ? "pcard--skeleton"  : "",
     className,
   ].filter(Boolean).join(" ");
 
@@ -507,20 +413,20 @@ export default function OfferCard({
       />
       <article
         className={cardClasses}
-        onClick={disabled || skeleton ? undefined : onClick}
+        onClick={onClick}
         aria-label={ariaLabel ?? name}
         role={onClick ? "button" : undefined}
-        tabIndex={onClick && !disabled && !skeleton ? 0 : undefined}
+        tabIndex={onClick ? 0 : undefined}
         onKeyDown={function handleKey(e) {
-          if (onClick && !disabled && !skeleton && (e.key === "Enter" || e.key === " ")) onClick();
+          if (onClick && (e.key === "Enter" || e.key === " ")) onClick();
         }}
       >
         {/* Image */}
         <div className="pcard__img">
-          {imageSrc && !skeleton && (
+          {imageSrc && (
             <img src={imageSrc} alt={imageAlt ?? name} loading="lazy" />
           )}
-          {badge && !skeleton && (
+          {badge && (
             <div className="pcard__img-badge">{badge}</div>
           )}
         </div>
@@ -528,11 +434,11 @@ export default function OfferCard({
         {/* Body */}
         <div className="pcard__body">
           <div className="pcard__meta">
-            <h3 className="pcard__name">{skeleton ? " " : name}</h3>
-            <p className="pcard__year">{skeleton ? " " : String(year)}</p>
+            <h3 className="pcard__name">{skeleton ? "Â " : name}</h3>
+            <p className="pcard__year">{skeleton ? "Â " : String(year)}</p>
           </div>
 
-          {/* Price row — live / proxima / when price provided */}
+          {/* Price row â€” live / proxima / when price provided */}
           {showPriceRow && (
             <div className="pcard__price-row">
               <div className="pcard__price-left">
@@ -557,7 +463,7 @@ export default function OfferCard({
             </div>
           )}
 
-          {/* Like row — negotiable / expired (no price shown) */}
+          {/* Like row â€” negotiable / expired (no price shown) */}
           {showLikeRow && (
             <div className="pcard__like-row">
               {LikeBtn}
