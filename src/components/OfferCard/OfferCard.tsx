@@ -361,7 +361,7 @@ export default function OfferCard({
       setPopping(true);
       setTimeout(() => { setPopping(false); }, 420);
     }
-  }, [isLiked, isControlled, disabled, skeleton, onLikeChange]);
+  }, [isLiked, isControlled, onLikeChange]);
 
   const showPriceRow = SHOW_PRICE[variant] && (price != null);
   const showLikeRow  = !showPriceRow;
