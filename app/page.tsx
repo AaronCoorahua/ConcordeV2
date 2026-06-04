@@ -8,7 +8,6 @@ import OfferType from "@/src/components/OfferType/OfferType";
 import BadgeStatus from "@/src/components/BadgeStatus/BadgeStatus";
 import CategoryCard from "@/src/components/CategoryCard/CategoryCard";
 import OfferCard from "@/src/components/OfferCard/OfferCard";
-import BadgeStatus from "@/src/components/BadgeStatus/BadgeStatus";
 
 // ── Registry ──────────────────────────────────────────────────────────────
 
