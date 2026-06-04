@@ -6,6 +6,7 @@ import Button from "@/src/components/Button/Button";
 import LikeButton from "@/src/components/LikeButton/LikeButton";
 import OfferType from "@/src/components/OfferType/OfferType";
 import BadgeStatus from "@/src/components/BadgeStatus/BadgeStatus";
+import CategoryCard from "@/src/components/CategoryCard/CategoryCard";
 
 // ── Registry ──────────────────────────────────────────────────────────────
 
@@ -83,6 +84,23 @@ const REGISTRY: ComponentEntry[] = [
       <div style={{ display: "flex", gap: 10, alignItems: "center", justifyContent: "center" }}>
         <BadgeStatus variant="live" />
         <BadgeStatus variant="proxima" />
+      </div>
+    ),
+  },
+  {
+    id: "categorycard",
+    name: "CategoryCard",
+    description: "Card de categoría de subasta con ícono gradiente vault y label. Hover lift + pressed. 4 categorías built-in.",
+    status: "done",
+    handoffPath: "/handoff/categorycard",
+    variants: 4,
+    tags: ["Card", "Filter", "Icon"],
+    preview: (
+      <div style={{ display: "flex", gap: 8, alignItems: "flex-start", justifyContent: "center", flexWrap: "wrap" }}>
+        <CategoryCard category="vehicular" />
+        <CategoryCard category="maquinaria" />
+        <CategoryCard category="equipos-diversos" />
+        <CategoryCard category="articulos-diversos" />
       </div>
     ),
   },
