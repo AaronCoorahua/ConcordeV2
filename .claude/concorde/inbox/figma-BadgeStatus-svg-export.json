@@ -1,0 +1,25 @@
+{
+  "version": "1",
+  "source": "svg-export-manual",
+  "component": "BadgeStatus",
+  "tipos": "EnVivo (live) + Próxima (proxima) — pill 22px alto, radius full, backdrop-blur 6",
+  "nodes": {
+    "live": { "on": "1310:11895", "on-1 (pulse dim)": "1310:11904" },
+    "proxima": { "on": "1310:11797", "off (dim)": "1310:11799" }
+  },
+  "live": {
+    "bg": "135deg #FF9639 0% → #EF852E 40% → #BE3D00 100%",
+    "border": "1px gradiente #FFBC83 0% → white 0.45 40% → #DA6C1E 75% → #FFBC83 100%",
+    "shadow": "0 2px 10px rgba(239,133,46,0.45) + inset top white 0.14",
+    "dot": "6px blanco sólido (On) ↔ 4px 0.28 (On-1) → pulso scale/opacity",
+    "label": "EN VIVO"
+  },
+  "proxima": {
+    "bg": "135deg #8460E5 0% → #3B1782 100%",
+    "border": "1px gradiente #8776FF 0% → white 0.4 38% → #532BC7 68% → #8776FF 100%",
+    "shadow": "0 2px 10px rgba(32,0,104,0.5) [#200068] + inset top white 0.1",
+    "icon": "reloj blanco 0.9 (On sólido ↔ Off 0.28)",
+    "label": "PRÓXIMA"
+  },
+  "aplicado": "2026-06-11 — bg/borde/shadow por hex exacto; punto pulsa entre los frames On/On-1 (scale 1↔0.67, opacity 1↔0.28); borde a 1px; reloj parpadea a 0.28. Animación de Concorde conservada y afinada a los frames de Figma."
+}

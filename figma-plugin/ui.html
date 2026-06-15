@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: Inter, -apple-system, "Segoe UI", sans-serif;
+    background: #1a1a2e; color: #f8fafc; padding: 16px;
+    display: flex; flex-direction: column; gap: 12px; height: 100vh;
+  }
+  h1 { font-size: 15px; font-weight: 700; }
+  h1 span { background: linear-gradient(90deg, #ed8936, #8460e5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hint { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+  .row { display: flex; gap: 8px; align-items: center; }
+  label { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.6); }
+  input {
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.18); border-radius: 8px;
+    color: #fff; padding: 9px 12px; font-size: 13px; outline: none; flex: 1; font-family: monospace;
+  }
+  input:focus { border-color: #8460e5; }
+  button {
+    border: none; border-radius: 8px; padding: 11px 14px; font-size: 13px; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: opacity 0.15s;
+  }
+  button:hover { opacity: 0.88; }
+  .btn-send { background: linear-gradient(135deg, #ed8936, #8460e5); color: #fff; width: 100%; }
+  .btn-copy { background: rgba(255,255,255,0.12); color: #fff; width: 100%; border: 1px solid rgba(255,255,255,0.2); }
+  .btn-rerun { background: none; color: rgba(255,255,255,0.55); border: 1px dashed rgba(255,255,255,0.3); width: 100%; }
+  textarea {
+    flex: 1; min-height: 120px; background: #0b1020; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px; padding: 10px; font-family: monospace; font-size: 10px; resize: none; outline: none;
+  }
+  #status { font-size: 12px; font-weight: 600; min-height: 16px; }
+  .ok { color: #4ade80; } .err { color: #fca5a5; } .info { color: #93c5fd; }
+</style>
+</head>
+<body>
+  <h1>✦ <span>Concorde Exporter</span></h1>
+  <p class="hint">Selecciona el componente en el canvas (o varios frames si son estados: default, hover, pressed…). El JSON incluye medidas exactas, gradientes, tipografía y el SVG real de los íconos.</p>
+
+  <div class="row">
+    <label>Componente</label>
+    <input id="name" placeholder="Button, BadgeStatus…" />
+  </div>
+  <div class="row">
+    <label>Puerto</label>
+    <input id="port" value="3000" style="max-width:80px" />
+    <span class="hint">dev server de Concorde</span>
+  </div>
+
+  <button class="btn-send" id="send">🚀 Enviar a Concorde</button>
+  <button class="btn-copy" id="copy">📋 Copiar JSON</button>
+  <button class="btn-rerun" id="rerun">↻ Releer selección</button>
+
+  <div id="status"></div>
+  <textarea id="out" readonly placeholder="El JSON aparecerá aquí…"></textarea>
+
+<script>
+  let payload = null;
+  const $ = (id) => document.getElementById(id);
+  const status = (msg, cls) => { $("status").textContent = msg; $("status").className = cls || "info"; };
+
+  onmessage = (event) => {
+    const msg = event.data.pluginMessage;
+    if (!msg) return;
+    if (msg.type === "error") { status(msg.message, "err"); }
+    if (msg.type === "progress") { status(msg.message, "info"); }
+    if (msg.type === "result") {
+      payload = msg.payload;
+      const compact = JSON.stringify(payload);
+      $("out").value = JSON.stringify(payload, null, 2);
+      const kb = Math.round(compact.length / 1024);
+      status("✓ " + payload.nodes.length + " nodo(s) listos (" + kb + " KB)", "ok");
+      if (!$("name").value && payload.nodes.length) {
+        $("name").value = (payload.nodes[0].name || "").replace(/[^A-Za-z0-9]/g, "") || "Componente";
+      }
+    }
+  };
+
+  $("rerun").onclick = () => parent.postMessage({ pluginMessage: { type: "rerun" } }, "*");
+
+  $("copy").onclick = () => {
+    if (!payload) { status("Nada que copiar aún", "err"); return; }
+    $("out").select();
+    document.execCommand("copy");
+    status("✓ JSON copiado — pégaselo a Claude", "ok");
+    parent.postMessage({ pluginMessage: { type: "notify", message: "JSON copiado" } }, "*");
+  };
+
+  $("send").onclick = async () => {
+    if (!payload) { status("Nada que enviar aún", "err"); return; }
+    const name = $("name").value.trim() || "Componente";
+    const port = $("port").value.trim() || "3000";
+    status("Enviando a localhost:" + port + "…", "info");
+    try {
+      const res = await fetch("http://localhost:" + port + "/api/figma-import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name, ...payload }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        status("✓ Recibido por Concorde → " + data.file, "ok");
+        parent.postMessage({ pluginMessage: { type: "notify", message: "Enviado a Concorde ✓" } }, "*");
+      } else {
+        status("Concorde respondió error: " + (data.error || res.status), "err");
+      }
+    } catch (e) {
+      status("No se pudo conectar — ¿está corriendo npm run dev en Concorde? (" + e.message + ")", "err");
+    }
+  };
+</script>
+</body>
+</html>

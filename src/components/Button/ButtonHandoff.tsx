@@ -778,11 +778,20 @@ const IMPORT_B = `import { Button } from "@/src/components/Button";`;
 const USAGE = `// primary (md)
 <Button variant="primary">Participa</Button>
 
+// negotiable (md) — subastas en negociación
+<Button variant="negotiable">Negocia ahora</Button>
+
 // secondary (md)
 <Button variant="secondary">Ingresa</Button>
 
+// secondary-sm (compacto)
+<Button variant="secondary-sm">Agenda tu visita</Button>
+
 // ghost (md — usar sobre fondos oscuros/gradiente)
 <Button variant="ghost">Ver ofertas</Button>
+
+// outline (md) — registro
+<Button variant="outline">Regístrate</Button>
 
 // sm-guest — navbar, sin sesión
 <Button variant="sm-guest">Ingresa</Button>
@@ -852,8 +861,11 @@ const TOKENS_MIN = `/* Tokens mínimos — el componente incluye oklch fallbacks
 interface VariantRow { name: string; cssClass: string; height: string; note: string; }
 const VARIANTS: VariantRow[] = [
   { name: "primary",       cssClass: ".pvbtn",       height: "48px", note: "CTA principal — orange→purple gradient" },
+  { name: "negotiable",    cssClass: ".pneg",        height: "48px · min 200px", note: "CTA negociación — teal→purple, borde gradiente" },
   { name: "secondary",     cssClass: ".psec",        height: "48px", note: "CTA secundario — purple gradient" },
+  { name: "secondary-sm",  cssClass: ".psec-sm",     height: "40px", note: "Secundario compacto — 'Agenda tu visita'" },
   { name: "ghost",         cssClass: ".pghost",      height: "48px", note: "Sobre fondos oscuros/gradiente" },
+  { name: "outline",       cssClass: ".poutline",    height: "48px", note: "Borde gradiente naranja + glass — 'Regístrate'" },
   { name: "sm-guest",      cssClass: ".pvbtn-sm",    height: "40px", note: "Navbar · sin sesión · icono+texto" },
   { name: "sm-logged-in",  cssClass: ".pvbtn-auth-d", height: "40px", note: "Navbar · con sesión · icono+username" },
 ];
@@ -875,8 +887,13 @@ const COLOR_TOKENS: TokenRow[] = [
   { zone: "Gradient stop B (hover)",    token: "var(--vmc-color-vault-400, oklch(0.72 0.18 285))" },
   { zone: "Gradient stop A (pressed)",  token: "var(--vmc-color-orange-700, oklch(0.62 0.18 45))" },
   { zone: "Gradient stop B (pressed)",  token: "var(--vmc-color-vault-600, oklch(0.48 0.22 285))" },
+  { zone: "Negotiable stop A (teal)",   token: "var(--vmc-color-teal-500, #00aeb1)" },
+  { zone: "Negotiable stop B",          token: "var(--vmc-color-vault-500, #8460e5)" },
+  { zone: "Negotiable borde gradiente", token: "#ffffff → #4ddcdc 25% → #6445df 75% → #ffffff" },
   { zone: "Secondary stop A (default)", token: "var(--vmc-color-vault-500, oklch(0.55 0.22 285))" },
   { zone: "Secondary stop B (default)", token: "var(--vmc-color-vault-700, oklch(0.38 0.20 285))" },
+  { zone: "Outline texto/relleno",      token: "var(--vmc-color-orange-600, #ed8936)" },
+  { zone: "Outline borde gradiente",    token: "#ffffff → #fbc47d 25% → #ae8eff 75% → #ffffff" },
   { zone: "Ghost border",               token: "rgba(255,255,255,0.75)" },
   { zone: "Text color",                 token: "var(--vmc-color-base-white, #ffffff)" },
   { zone: "Disabled bg",               token: "var(--vmc-color-background-disabled, #e1e3e2)" },
@@ -885,7 +902,9 @@ const COLOR_TOKENS: TokenRow[] = [
 ];
 
 const QA: string[] = [
-  "Renderiza correcto en todos los variantes (primary, secondary, ghost, sm-guest, sm-logged-in)",
+  "Renderiza correcto en los 8 variantes (primary, negotiable, secondary, secondary-sm, ghost, outline, sm-guest, sm-logged-in)",
+  "negotiable: borde gradiente teal→vault visible, min-width 200px, glow teal",
+  "outline: borde gradiente naranja (1px) + glass interno, texto #ed8936",
   "Hover: transform translateY(-2px) scale(1.02) visible, gradient cambia de ángulo",
   "Active/pressed: scale(0.97) translateY(1px), inset shadow",
   "Focus ring visible al navegar con Tab — double ring white + vault-500",
@@ -900,8 +919,9 @@ const QA: string[] = [
 
 // ── Main ─────────────────────────────────────────────────────────────────
 
-export function ButtonHandoff(): JSX.Element {
+export function ButtonHandoff({ sourceCode }: { sourceCode?: string } = {}): JSX.Element {
   const [open, setOpen] = useState(true);
+  const buttonTsx = sourceCode ?? BUTTON_TSX;
 
   function handleToggle(): void {
     setOpen(function prev(p) { return !p; });
@@ -987,7 +1007,7 @@ export function ButtonHandoff(): JSX.Element {
                 <span style={S.fileName}>Button.tsx</span>
                 <span style={S.fileDesc}>Componente principal · self-contained · zero deps · incluye todos los estilos</span>
               </div>
-              <CodeBlock id="file-button-tsx" code={BUTTON_TSX} />
+              <CodeBlock id="file-button-tsx" code={buttonTsx} />
             </div>
 
             {/* index.ts — OPCIONAL */}

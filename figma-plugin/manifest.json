@@ -1,0 +1,13 @@
+{
+  "name": "Concorde Exporter",
+  "id": "concorde-exporter-dev",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["http://localhost:3000", "http://localhost:3001"],
+    "reasoning": "Envía el JSON del componente seleccionado al dev server local de Concorde."
+  }
+}

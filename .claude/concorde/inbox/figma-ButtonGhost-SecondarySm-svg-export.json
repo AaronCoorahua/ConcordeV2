@@ -1,0 +1,47 @@
+{
+  "version": "1",
+  "source": "svg-export-manual",
+  "component": "Button",
+  "exportedBy": "designer (Export SVG por estado desde Figma)",
+  "variants": {
+    "ghost-md (Ver Ofertas relacionadas)": {
+      "nodes": { "default": "1143:1709", "hover": "1143:1885", "pressed": "1143:1909" },
+      "dimensions": { "width": 215, "height": 48, "note": "frame fijo; texto casi al borde → padding ≈ 12px" },
+      "states": {
+        "default": {
+          "fill": "transparente (white 0.01)",
+          "border": "2px solid rgba(255,255,255,0.75)",
+          "boxShadow": "ring blanco 0.15 (dilate 1) + inset top white 0.2 dy1",
+          "textColor": "#FFFFFF"
+        },
+        "hover": {
+          "fill": "135deg #FFFFFF → #FFF0E2",
+          "border": "2px solid #FFFFFF",
+          "boxShadow": "0 6px 20px rgba(0,0,0,0.2) + inset top white 0.5",
+          "textColor": "#ED8936"
+        },
+        "pressed": {
+          "fill": "#D46E20 → #B73700",
+          "border": "2px solid #D46E20",
+          "boxShadow": "inset 0 2px 5px rgba(0,0,0,0.22)",
+          "textColor": "#E1E3E2"
+        }
+      },
+      "verdict": "Concorde .pghost YA coincidía en los 3 estados — solo se ajustó padding 28→12px"
+    },
+    "secondary-sm (Agenda tu visita)": {
+      "nodes": { "default": "1442:10976", "hover": "1464:19933", "pressed": "1464:20511" },
+      "dimensions": { "width": 160, "height": 40, "note": "fijo; icon circle 32x32 a 4px del borde, gap 4, pad-right 12" },
+      "icon": "calendario 24x24 stroke 1.5 round (rect 12x11 r2 en (6,7) + línea y=11 + postes x=9/x=15 de y5.5 a y8.5) en círculo 32x32 rgba(255,255,255,0.2)",
+      "border": "2px GRADIENTE 135deg: #CFBAFF 0% → #FFFFFF 35% → #AE8EFF 65% → #CFBAFF 100% (constante en estados)",
+      "innerHighlight": "white 0.16 → transparent 55%",
+      "typography": "Plus Jakarta Sans 14px/600 (Small)",
+      "states": {
+        "default": { "fill": "#8460E5 → #3B1782", "boxShadow": "0 2px 8px rgba(132,96,229,0.3) + inset top white 0.22", "textColor": "#FFFFFF" },
+        "hover": { "fill": "#AE8EFF → #5A35C2 (dirección invertida)", "boxShadow": "0 4px 10px rgba(132,96,229,0.25) + 0 8px 24px rgba(132,96,229,0.4) + inset white 0.2", "textColor": "#FFFFFF" },
+        "pressed": { "fill": "#3B1782 → #22005C", "boxShadow": "0 1px 3px rgba(0,0,0,0.14) + inset 0 2px 5px rgba(0,0,0,0.28)", "textColor": "#E1E3E2", "iconStroke": "#E1E3E2" }
+      },
+      "disabled": "no exportado — se infiere el patrón estándar (#e1e3e2 bg, #99a1af texto)"
+    }
+  }
+}

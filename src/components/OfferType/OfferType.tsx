@@ -126,86 +126,66 @@ const POFTYPE_STYLES = `
   transition: color 0.22s;
 }
 
-/* ── NEGOTIABLE variant ── */
+/* ── NEGOTIABLE — sync EXACTO SVG (1159:5710 / 5740 / 5928) ──
+   header teal horizontal · footer #FFFAFC · CTA #009699 · ring teal */
 .poftype--negotiable {
   box-shadow:
-    oklch(0.78 0.14 195 / 0.4) 0px 0px 0px 1.5px,
-    oklch(0 0 0 / 0.1) 0px 4px 14px,
-    oklch(0 0 0 / 0.06) 0px 1px 4px;
+    rgba(0, 210, 211, 0.4) 0px 0px 0px 1.5px,
+    rgba(0, 0, 0, 0.1) 0px 4px 14px,
+    rgba(0, 0, 0, 0.06) 0px 1px 4px;
 }
 
 .poftype--negotiable .poftype-top {
-  background: linear-gradient(180deg,
-    oklch(0.84 0.13 195) 0%,
-    var(--vmc-color-negotiable, oklch(0.78 0.14 195)) 100%
-  );
+  background: linear-gradient(90deg, #00edee 0%, #00d2d3 50%, #009597 100%);
 }
 
 .poftype--negotiable .poftype-bottom {
-  background: color-mix(in oklch,
-    oklch(1 0 0) 95%,
-    var(--vmc-color-negotiable, oklch(0.78 0.14 195))
-  );
+  background: #fffafc;
 }
 
 .poftype--negotiable .poftype-cta {
-  color: oklch(0.58 0.17 195);
+  color: #009699;
 }
 
 .poftype--negotiable:hover {
   box-shadow:
-    oklch(0.78 0.14 195 / 0.55) 0px 0px 0px 1.5px,
-    oklch(0.22 0.18 285 / 0.11) 0px 10px 18px,
-    oklch(0.22 0.18 285 / 0.08) 0px 3px 7px,
-    oklch(0.22 0.18 285 / 0.05) 0px 1px 2px;
+    rgba(0, 210, 211, 0.55) 0px 0px 0px 1.5px,
+    rgba(32, 0, 104, 0.11) 0px 10px 18px,
+    rgba(32, 0, 104, 0.08) 0px 3px 7px,
+    rgba(32, 0, 104, 0.05) 0px 1px 2px;
 }
 
-.poftype--negotiable.poftype--focus .poftype-top {
-  background: linear-gradient(
-    oklch(0.65 0.17 195) 0%,
-    oklch(0.55 0.16 195) 100%
-  );
+/* Pressed: header teal oscuro (SVG 1159:5928) */
+.poftype--negotiable:active .poftype-top {
+  background: linear-gradient(180deg, #00adaf 0%, #008c8e 100%);
 }
 
-/* ── LIVE / EN VIVO variant ── */
+/* ── LIVE / EN VIVO — sync EXACTO SVG (1159:5690 / 5884 / 1177:5972) ──
+   header naranja diagonal · footer #FFF8FA · CTA #BE3E00 · ring naranja */
 .poftype--live {
   box-shadow:
-    oklch(0.72 0.16 55 / 0.4) 0px 0px 0px 1.5px,
-    oklch(0 0 0 / 0.1) 0px 4px 14px,
-    oklch(0 0 0 / 0.06) 0px 1px 4px;
+    rgba(239, 133, 46, 0.4) 0px 0px 0px 1.5px,
+    rgba(0, 0, 0, 0.1) 0px 4px 14px,
+    rgba(0, 0, 0, 0.06) 0px 1px 4px;
 }
 
 .poftype--live .poftype-top {
-  background: linear-gradient(180deg,
-    oklch(0.78 0.17 55) 0%,
-    var(--vmc-color-live, oklch(0.72 0.16 55)) 100%
-  );
+  background: linear-gradient(120deg, #ff9639 0%, #ef852e 50%, #be3d00 100%);
 }
 
 .poftype--live .poftype-bottom {
-  background: color-mix(in oklch,
-    oklch(1 0 0) 95%,
-    var(--vmc-color-live, oklch(0.72 0.16 55))
-  );
+  background: #fff8fa;
 }
 
 .poftype--live .poftype-cta {
-  color: oklch(0.54 0.18 45);
+  color: #be3e00;
 }
 
-.poftype--live:hover {
-  box-shadow:
-    oklch(0.72 0.16 55 / 0.55) 0px 0px 0px 1.5px,
-    oklch(0.22 0.18 285 / 0.11) 0px 10px 18px,
-    oklch(0.22 0.18 285 / 0.08) 0px 3px 7px,
-    oklch(0.22 0.18 285 / 0.05) 0px 1px 2px;
-}
+/* Live hover: el SVG mantiene el ring naranja 0.4 (sin drops extra); el lift lo da el transform */
 
-.poftype--live.poftype--focus .poftype-top {
-  background: linear-gradient(
-    oklch(0.58 0.19 48) 0%,
-    oklch(0.5 0.17 44) 100%
-  );
+/* Pressed: header naranja oscuro (SVG 1177:5972) */
+.poftype--live:active .poftype-top {
+  background: linear-gradient(180deg, #ce4900 0%, #ac3500 100%);
 }
 
 /* ── Hover (shared) ── */

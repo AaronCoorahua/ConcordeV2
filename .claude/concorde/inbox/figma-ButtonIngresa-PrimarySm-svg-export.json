@@ -1,0 +1,21 @@
+{
+  "version": "1",
+  "source": "svg-export-manual",
+  "component": "Button",
+  "variant": "sm-guest (Primary/Small — 'Ingresa' con ícono)",
+  "nodes": { "default": "1159:4466", "hover": "1159:4598", "pressed": "1159:4834" },
+  "spec": {
+    "dimensions": "116×40 fijo",
+    "gradient": {
+      "default": "#ED8936 0% → #ED8936 40% → #8460E5 100%",
+      "hover": "#FBC47D 0% → #FBC47D 40% → #AE8EFF 100%",
+      "pressed": "#D46E20 0% → #D46E20 40% → #5A35C2 100%"
+    },
+    "border": "GRADIENTE 135deg #FFFFFF 0% → #FBC47D 25% → #AE8EFF 75% → #FFFFFF 100% (no blanco sólido)",
+    "iconCircle": "32×32, fill white 0.2 (translúcido — NO oscuro)",
+    "icon": "user RELLENO, path exacto cabeza+cuerpo (24px en círculo 32px). fill currentColor → pressed #E1E3E2",
+    "textColor": "default/hover #FFFFFF · pressed #E1E3E2"
+  },
+  "aplicado": "2026-06-11 — ícono reemplazado por path EXACTO de Figma; borde a gradiente; círculo a blanco 0.2 (corrige el oscuro que puse por la imagen rasterizada); min-width 116. Animación Concorde intacta.",
+  "correccion": "El círculo del ícono NO era oscuro — el SVG confirma white 0.2. La imagen PNG 2x me había engañado."
+}

@@ -1,0 +1,33 @@
+{
+  "version": "1",
+  "source": "svg-export-manual",
+  "component": "Button",
+  "variants": "Primary md · Secondary md · Outline md (Size=Medium)",
+  "nodes": {
+    "primary": { "default": "1130:1778", "hover": "1133:1726", "pressed": "1133:1730", "disabled": "1133:1758" },
+    "secondary": { "default": "1133:2294", "pressed": "1133:2395", "disabled": "1133:2406" },
+    "outline": { "default": "1932:10613", "hover": "1934:10627", "pressed": "1935:10631" }
+  },
+  "primary": {
+    "size": "200×48, radius 24",
+    "bg": "135deg #ED8936 0% → #ED8936 40% → #8460E5 100%",
+    "border": "GRADIENTE 2px 135deg #FFFFFF → #FBC47D 25% → #AE8EFF 75% → #FFFFFF",
+    "hover": "bg #FBC47D → #AE8EFF; glow #ED8936 0.4 + #8460E5 0.35",
+    "pressed": "bg #D46E20 → #5A35C2; texto #D1D5DC; sombra inset",
+    "disabled": "#E1E3E2 / texto #99A1AF"
+  },
+  "secondary": {
+    "bg": "#8460E5 → #3B1782",
+    "border": "GRADIENTE lila #CFBAFF → white 35% → #AE8EFF 65% → #CFBAFF",
+    "pressed": "bg #3B1782 → #22005C; texto #D1D5DC",
+    "disabled": "#E1E3E2 / #99A1AF"
+  },
+  "outline": {
+    "bg": "transparente (glass white 0.1)",
+    "border": "GRADIENTE naranja #FF9639 → #EF852E 50% → #BE3D00; texto #ED8936",
+    "hover": "bg white → #FFF0E2; borde naranja",
+    "pressed": "bg #D46E20 → #B73700; borde #B25614 → #93420A; texto white",
+    "disabled": "transparente / borde naranja 0.3 / texto naranja 0.4"
+  },
+  "aplicado": "2026-06-12 — Primary/Secondary bordes sólidos → GRADIENTE; Outline borde sólido → gradiente naranja; stops a hex EXACTO; pressed text #D1D5DC (antes #E1E3E2). Interacción Concorde (gradientes animados @property, hover lift, focus ring) intacta."
+}

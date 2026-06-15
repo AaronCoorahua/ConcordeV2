@@ -1,0 +1,35 @@
+{
+  "version": "1",
+  "source": "svg-export-manual",
+  "component": "OfferType",
+  "states": "default / hover / pressed (variantes Live + Negotiable)",
+  "nodes": {
+    "live": { "default": "1159:5690", "hover": "1159:5884", "pressed": "1177:5972" },
+    "negotiable": { "default": "1159:5710", "hover": "1159:5740", "pressed": "1159:5928" }
+  },
+  "card": {
+    "size": "110×92, radius 8",
+    "header": "60px alto + label blanco bold",
+    "divider": "3px gradiente transparent→black 0.08 bajo el header",
+    "footer": "32px, bg claro + 'VER TODAS' en color de variante",
+    "glassOverlay": "white 0.07 → transparent 60% (default) · sube a 0.26 en hover"
+  },
+  "live": {
+    "header": "120deg #FF9639 0% → #EF852E 50% → #BE3D00 100%",
+    "footerBg": "#FFF8FA",
+    "ctaColor": "#BE3E00",
+    "ring": "#EF852E 0.4 (0 0 0 1.5px)",
+    "pressed": "header 180deg #CE4900 → #AC3500, opacity 0.58, scale 0.97",
+    "hover": "MISMO ring 0.4 en el SVG (sin elevación extra); solo sheen 0.26 + zoom/transform"
+  },
+  "negotiable": {
+    "header": "90deg #00EDEE 0% → #00D2D3 50% → #009597 100% (horizontal)",
+    "footerBg": "#FFFAFC",
+    "ctaColor": "#009699",
+    "ring": "#00D2D3 0.4",
+    "pressed": "header 180deg #00ADAF → #008C8E, opacity 0.58, scale 0.97",
+    "hover": "ring teal sube a 0.55 + drops elevación #200068 (0.05/0.08/0.11)"
+  },
+  "aplicado": "2026-06-11 — headers/footers/CTA/rings/pressed exactos por hex; transform hover/press y reduced-motion intactos (interacción Concorde).",
+  "nota": "Asimetría real en Figma: negotiable eleva sombra en hover, live no (mantiene ring 0.4). Respetado tal cual; confirmar con diseño si live también debe elevar."
+}

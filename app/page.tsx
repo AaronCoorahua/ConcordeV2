@@ -8,6 +8,13 @@ import OfferType from "@/src/components/OfferType/OfferType";
 import BadgeStatus from "@/src/components/BadgeStatus/BadgeStatus";
 import CategoryCard from "@/src/components/CategoryCard/CategoryCard";
 import OfferCard from "@/src/components/OfferCard/OfferCard";
+import PriceIcon from "@/src/components/PriceIcon/PriceIcon";
+import ProfileButton from "@/src/components/ProfileButton/ProfileButton";
+import CardTitle from "@/src/components/CardTitle/CardTitle";
+import AuctionStatus from "@/src/components/AuctionStatus/AuctionStatus";
+import ImageViewer from "@/src/components/ImageViewer/ImageViewer";
+import Filmstrip from "@/src/components/Filmstrip/Filmstrip";
+import DetailCard from "@/src/components/DetailCard/DetailCard";
 
 // ── Registry ──────────────────────────────────────────────────────────────
 
@@ -28,16 +35,16 @@ const REGISTRY: ComponentEntry[] = [
   {
     id: "button",
     name: "Button",
-    description: "CTAs principales con gradiente animado orange → purple. Variantes de navbar con y sin sesión activa.",
+    description: "CTAs con gradiente animado. 6 variantes (primary, negotiable, secondary, secondary-sm, ghost, outline) sincronizadas con Figma + 2 de navbar.",
     status: "done",
     handoffPath: "/handoff/button",
-    variants: 5,
+    variants: 8,
     tags: ["CTA", "Nav", "Interactive"],
     preview: (
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", justifyContent: "center" }}>
         <Button variant="primary">Participa</Button>
-        <Button variant="secondary">Ingresa</Button>
-        <Button variant="ghost">Ver más</Button>
+        <Button variant="negotiable">Negocia</Button>
+        <Button variant="outline">Regístrate</Button>
       </div>
     ),
   },
@@ -117,6 +124,107 @@ const REGISTRY: ComponentEntry[] = [
       <div style={{ display: "flex", gap: 10, alignItems: "flex-start", justifyContent: "center" }}>
         <OfferCard variant="live"       name="Ford Bronco Sport" year="2024" price="US$ 9,999" badge={<BadgeStatus variant="live" />} />
         <OfferCard variant="negotiable" name="Land Rover Def."   year="2023" />
+      </div>
+    ),
+  },
+  {
+    id: "priceicon",
+    name: "PriceIcon",
+    description: "Gema de subasta (diamante + medallón con $). 2 tamaños (sm/md) y 3 estados (default gradiente, expirada gris, skeleton). Ícono estático.",
+    status: "done",
+    handoffPath: "/handoff/priceicon",
+    variants: 6,
+    tags: ["Icon", "Auction", "Price"],
+    preview: (
+      <div style={{ display: "flex", gap: 18, alignItems: "center", justifyContent: "center" }}>
+        <PriceIcon size="md" state="default" />
+        <PriceIcon size="sm" state="default" />
+        <PriceIcon size="md" state="expirada" />
+        <PriceIcon size="md" state="skeleton" />
+      </div>
+    ),
+  },
+  {
+    id: "profilebutton",
+    name: "ProfileButton",
+    description: "Botón 'Ir al Perfil': label morado + círculo con chevron. Default outline naranja → hover círculo relleno + lift → pressed gris.",
+    status: "done",
+    handoffPath: "/handoff/profilebutton",
+    variants: 3,
+    tags: ["Nav", "Button", "Interactive"],
+    preview: (
+      <div style={{ display: "flex", gap: 16, alignItems: "center", justifyContent: "center" }}>
+        <ProfileButton />
+      </div>
+    ),
+  },
+  {
+    id: "cardtitle",
+    name: "CardTitle",
+    description: "Título de sección con subtítulo y brackets naranjas de esquina (┌ ┘). Estático, ideal para encabezar listados (ej. dealer + nº de ofertas).",
+    status: "done",
+    handoffPath: "/handoff/cardtitle",
+    variants: 1,
+    tags: ["Title", "Header", "Label"],
+    preview: (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "#fff", borderRadius: 8, padding: "8px 4px" }}>
+        <CardTitle />
+      </div>
+    ),
+  },
+  {
+    id: "auctionstatus",
+    name: "AuctionStatus",
+    description: "Barra de cabecera de subasta: botón volver (‹) + título + subtítulo sobre gradiente. Variantes live (naranja) y negotiable (teal).",
+    status: "done",
+    handoffPath: "/handoff/auctionstatus",
+    variants: 2,
+    tags: ["Header", "Auction", "Bar"],
+    preview: (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", transform: "scale(0.62)" }}>
+        <AuctionStatus />
+      </div>
+    ),
+  },
+  {
+    id: "imageviewer",
+    name: "ImageViewer",
+    description: "Visor de imagen 443×362 con controles glass: ampliar, flechas ‹ ›, y contador (1/11). Backdrop-blur sobre negro 50%.",
+    status: "done",
+    handoffPath: "/handoff/imageviewer",
+    variants: 1,
+    tags: ["Media", "Gallery", "Auction"],
+    preview: (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", transform: "scale(0.5)", transformOrigin: "center" }}>
+        <ImageViewer imageSrc="/demo/bronco.jpg" current={1} total={11} />
+      </div>
+    ),
+  },
+  {
+    id: "filmstrip",
+    name: "Filmstrip",
+    description: "Tira de miniaturas con la seleccionada en borde gradiente de 3px. Variantes live (naranja/lila) y negotiable (teal/lila).",
+    status: "done",
+    handoffPath: "/handoff/filmstrip",
+    variants: 2,
+    tags: ["Media", "Gallery", "Thumbnails"],
+    preview: (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", transform: "scale(0.7)", transformOrigin: "center" }}>
+        <Filmstrip images={["/demo/bronco.jpg", "/demo/bronco.jpg", "/demo/bronco.jpg", "/demo/bronco.jpg"]} selectedIndex={0} />
+      </div>
+    ),
+  },
+  {
+    id: "detailcard",
+    name: "DetailCard",
+    description: "Tarjeta de detalle de oferta: header oscuro (fecha/hora + LikeButton + 3 stats) y cuerpo con botón Participa + Precio Base con gema. Compone LikeButton + PriceIcon.",
+    status: "done",
+    handoffPath: "/handoff/detailcard",
+    variants: 2,
+    tags: ["Card", "Auction", "Detail"],
+    preview: (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", transform: "scale(0.62)", transformOrigin: "center" }}>
+        <DetailCard variant="live" />
       </div>
     ),
   },
@@ -547,7 +655,22 @@ export default function ConcordePage(): JSX.Element {
             <div className="cp-topbar-sep" />
             <span className="cp-topbar-ds">Voyager DS</span>
           </div>
-          <span className="cp-topbar-badge">BETA</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <a
+              href="/sync"
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                fontFamily: "var(--font-mono-nums, monospace)",
+                color: "#64748b",
+                textDecoration: "none",
+                letterSpacing: "0.02em",
+              }}
+            >
+              Figma Sync →
+            </a>
+            <span className="cp-topbar-badge">BETA</span>
+          </div>
         </header>
 
         {/* Hero */}

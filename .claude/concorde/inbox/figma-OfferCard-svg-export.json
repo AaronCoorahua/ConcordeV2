@@ -1,0 +1,27 @@
+{
+  "version": "1",
+  "source": "svg-export-manual",
+  "component": "OfferCard",
+  "card": "170×232, radius 8, blanco, sombra negra suave",
+  "estados": {
+    "live (EN VIVO)": "1369:12123 — badge naranja + dot, footer naranja, fila precio (gema)",
+    "proxima (PRÓXIMA)": "1369:12119 — badge morado + reloj, footer naranja, fila precio (gema)",
+    "negotiable": "1369:12124 — sin badge, footer teal, solo like"
+  },
+  "chrome": {
+    "shadow": "0 0 16px 4px rgba(0,0,0,0.07) (feMorphology dilate 4 + blur 8)",
+    "title": "#4C1EBC (era gris oklch)",
+    "subtitle/year": "#191C1C",
+    "priceText": "#4C1EBC",
+    "footerLive": "linear-gradient(90deg, #FF9639 0%, #EF852E 50%, #BE3D00 100%) — 8px",
+    "footerNegotiable": "linear-gradient(90deg, #00EDEE 0%, #00D2D3 50%, #009597 100%) — 8px"
+  },
+  "priceGem": {
+    "desc": "diamante de subasta (antes era círculo teal con $)",
+    "diamond": "fill 135deg #00A7A8 → #86A4E4 40% → #4C1EBC 75% → #300089; stroke #73DFDF → white 0.9 → #452AA2 0.6",
+    "medallion": "círculo 20px #00ABAD → #86A4E4 40% → #4C1EBC 75% → #31008A, borde #44D6D6/#E4EEFF/#567CD3/#3D0D9E, glass white 0.45, $ blanco 0.92"
+  },
+  "heart": "círculo blanco, borde lila #E8DDFF, stroke corazón #5A35C2; active bg #8460E5→#3B1782 + borde #FBC47D",
+  "aplicado": "2026-06-11 — chrome (sombra/título/subtítulo/precio/footers) a hex exacto; círculo+$ reemplazado por el diamante de subasta (paths exactos de Figma). Hover lift + heart-pop = interacción Concorde, intacta.",
+  "PENDIENTE_CONFIRMAR": "Título asignado a #4C1EBC (morado) y subtítulo a #191C1C según líneas top/bottom del SVG. Si nombre va oscuro y año morado, es swap de 2 colores."
+}

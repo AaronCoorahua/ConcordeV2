@@ -1,0 +1,42 @@
+{
+  "version": "1",
+  "source": "svg-export-manual",
+  "component": "LikeButton",
+  "states": "hover / active / disabled / skeleton (sm/md/lg)",
+  "nodes": {
+    "active": { "sm": "1126:11427", "md": "1119:11380", "lg": "1119:11378" },
+    "hover": { "sm": "1201:2397", "md": "1201:2392", "lg": "1209:3197" },
+    "disabled": { "sm": "1136:11510", "md": "1187:2340", "lg": "1136:11525" },
+    "skeleton": { "sm": "1136:11540", "md": "(32px)", "lg": "1136:11530" }
+  },
+  "spec": {
+    "active": {
+      "bg": "135deg #8460E5 0% → #3B1782 100%",
+      "border": "GRADIENTE 135deg #FBC47D 0% → #fff 40% → #AE8EFF 75% → #CFBAFF 100% (NO sólido)",
+      "heart": "blanco fill 0.92, SIN stroke",
+      "radialGlow": "#AE8EFF opacity 0.35, centro→transparente 70%, blur (aura morada)",
+      "glass": "white 0.18 → transparent 50%",
+      "shadow": "0 3px ~14px rgba(132,96,229,0.35) + inset top white 0.22"
+    },
+    "hover": {
+      "bg": "blanco",
+      "border": "GRADIENTE 135deg #E8DEFF 0% → #fff 40% → #CFBAFF 75% → #E8DEFF 100% (más claro que default)",
+      "heart": "blanco fill + stroke #5A35C2 (sm 1 / md 1.2 / lg 1.4)",
+      "glass": "white 0.55 → transparent 50% (TODOS los tamaños suben a 0.55)",
+      "shadow": "0 3px 6px rgba(32,0,104,0.12) + 0 10px 18px rgba(32,0,104,0.22)  [#200068]",
+      "lift": "interacción Concorde (scale + translateY) — intacta"
+    },
+    "disabled": {
+      "bg": "blanco sólido",
+      "border": "NINGUNO (sin gradiente)",
+      "heart": "outline gris #E1E3E2, sin fill (sm/md 1.2 · lg 1.4)",
+      "shadow": "0 8px 16px rgba(0,0,0,0.10)"
+    },
+    "skeleton": {
+      "bg": "#E1E3E2 sólido",
+      "border": "ninguno", "heart": "oculto", "shadow": "ninguno",
+      "pulse": "animación Concorde (loading) — se mantiene"
+    }
+  },
+  "aplicado": "2026-06-11 — active borde gradiente + glow radial; disabled stroke #E1E3E2; hover glass 0.55 todos los tamaños; heart z-index sobre overlays. Interacción (lift/heart-pop/pulse/reduced-motion) intacta."
+}

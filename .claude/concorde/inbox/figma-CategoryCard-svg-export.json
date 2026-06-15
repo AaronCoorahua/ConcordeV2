@@ -1,0 +1,17 @@
+{
+  "version": "1",
+  "source": "svg-export-manual",
+  "component": "CategoryCard",
+  "card": "92×95, radius 8, blanco→#F4F5F9, borde gradiente lila, sombra morada",
+  "nodes": { "vehicular(car)": "1230:3327", "maquinaria(grúa)": "1230:3616", "equipos(medidor)": "1807:15166", "articulos(monitor)": "1807:15183" },
+  "chrome": {
+    "bg": "linear-gradient(160deg, #FFFFFF 0%, #F4F5F9 100%)",
+    "glassOverlay": "white 0.55 → transparent 50%",
+    "border": "1px gradiente 135deg #9C96F8 0% → white 0.65 38% → #7364DE 70% → #9C96F8 100%",
+    "shadow": "0 1px 3px rgba(32,0,104,0.05) + 0 2px 10px rgba(32,0,104,0.08) [#200068]",
+    "label": "#3B1782",
+    "icon": "RELLENO gradiente #653DE9 0% → #300089 55% → #0F003B 100% (car usa #5F3ED8/#340091/#140046)"
+  },
+  "aplicado": "2026-06-11 — chrome (bg/borde/sombra/glass/label) a hex exacto; 4 íconos reemplazados por paths RELLENOS exactos de Figma (antes eran line-icons oklch). Hover/active = interacción Concorde, intacta.",
+  "PENDIENTE_CONFIRMAR": "Mapeo ícono→categoría es mi mejor lectura de los paths vectorizados: car→vehicular, grúa→maquinaria, medidor→equipos-diversos, monitor→articulos-diversos. Si alguno va en otra categoría, es swap de 1 línea en ICON_MAP."
+}

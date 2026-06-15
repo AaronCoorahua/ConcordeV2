@@ -1,0 +1,1526 @@
+{
+  "version": "1",
+  "source": "figma-rest",
+  "file_key": "7bjDwC20BX1AFrv9Q8BOIb",
+  "query": {
+    "node": "1133-1714"
+  },
+  "count": 24,
+  "variantsMatrix": {
+    "Primary / Medium": {
+      "Default": "1130:1778",
+      "Hover": "1133:1726",
+      "Pressed": "1133:1730",
+      "Disabled": "1133:1758"
+    },
+    "Negotiable / Medium": {
+      "Default": "1807:14907",
+      "Hover": "1807:14943",
+      "Pressed": "1807:14957"
+    },
+    "Primary / Small": {
+      "Default": "1159:4466",
+      "Hover": "1159:4598",
+      "Pressed": "1159:4834"
+    },
+    "Secondary / Medium": {
+      "Disabled": "1133:2406",
+      "Default": "1133:2294",
+      "Hover": "1133:2345",
+      "Pressed": "1133:2395"
+    },
+    "Secondary / Small": {
+      "Default": "1442:10976",
+      "Hover": "1464:19933",
+      "Pressed": "1464:20511"
+    },
+    "Ghost / Medium": {
+      "Default": "1143:1709",
+      "Hover": "1143:1885",
+      "Pressed": "1143:1909",
+      "Disabled": "1153:2443"
+    },
+    "Outline / Medium": {
+      "Default": "1932:10613",
+      "Hover": "1934:10627",
+      "Pressed": "1935:10631"
+    }
+  },
+  "extracted": [
+    {
+      "nodeId": "1130:1778",
+      "name": "Variant=Primary, Size=Medium, State=Default",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Primary",
+        "Size": "Medium",
+        "State": "Default"
+      },
+      "dimensions": {
+        "width": 200,
+        "height": 48
+      },
+      "layout": {
+        "mode": "HORIZONTAL",
+        "gap": 10,
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#ed8936"
+            }
+          },
+          {
+            "position": 0.4000000059604645,
+            "color": {
+              "hex": "#ed8936"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#8460e5"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Participa",
+        "color": {
+          "hex": "#ffffff"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1807:14907",
+      "name": "Variant=Negotiable, Size=Medium, State=Default",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Negotiable",
+        "Size": "Medium",
+        "State": "Default"
+      },
+      "dimensions": {
+        "width": 200,
+        "height": 48
+      },
+      "layout": {
+        "mode": "VERTICAL",
+        "gap": 10,
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#00aeb1"
+            }
+          },
+          {
+            "position": 0.4000000059604645,
+            "color": {
+              "hex": "#00aeb1"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#8460e5"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Negocia ahora",
+        "color": {
+          "hex": "#ffffff"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1159:4466",
+      "name": "Variant=Primary, Size=Small, State=Default",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Primary",
+        "Size": "Small",
+        "State": "Default"
+      },
+      "dimensions": {
+        "width": 116,
+        "height": 40
+      },
+      "layout": {
+        "mode": "HORIZONTAL",
+        "gap": 10,
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#ed8936"
+            }
+          },
+          {
+            "position": 0.4000000059604645,
+            "color": {
+              "hex": "#ed8936"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#8460e5"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 14,
+        "weight": 600,
+        "lineHeightPx": 16,
+        "letterSpacing": 0,
+        "sample": "Ingresa",
+        "color": {
+          "hex": "#ffffff"
+        }
+      },
+      "icons": [
+        {
+          "id": "1181:2822",
+          "name": "PillsIcon",
+          "type": "INSTANCE"
+        },
+        {
+          "id": "1159:4513",
+          "name": "Gradient",
+          "type": "VECTOR"
+        }
+      ],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1159:4598",
+      "name": "Variant=Primary, Size=Small, State=Hover",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Primary",
+        "Size": "Small",
+        "State": "Hover"
+      },
+      "dimensions": {
+        "width": 116,
+        "height": 40
+      },
+      "layout": {
+        "mode": "VERTICAL",
+        "gap": 10,
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#fbc47d"
+            }
+          },
+          {
+            "position": 0.4000000059604645,
+            "color": {
+              "hex": "#fbc47d"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#ae8eff"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 14,
+        "weight": 600,
+        "lineHeightPx": 16,
+        "letterSpacing": 0,
+        "sample": "Ingresa",
+        "color": {
+          "hex": "#ffffff"
+        }
+      },
+      "icons": [
+        {
+          "id": "1181:2835",
+          "name": "PillsIcon",
+          "type": "INSTANCE"
+        }
+      ],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1159:4834",
+      "name": "Variant=Primary, Size=Small, State=Pressed",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Primary",
+        "Size": "Small",
+        "State": "Pressed"
+      },
+      "dimensions": {
+        "width": 116,
+        "height": 40
+      },
+      "layout": {
+        "mode": "VERTICAL",
+        "gap": 10
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#d46e20"
+            }
+          },
+          {
+            "position": 0.4000000059604645,
+            "color": {
+              "hex": "#d46e20"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#5a35c2"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 14,
+        "weight": 600,
+        "lineHeightPx": 16,
+        "letterSpacing": 0,
+        "sample": "Ingresa",
+        "color": {
+          "hex": "#e1e3e2"
+        }
+      },
+      "icons": [
+        {
+          "id": "1182:8429",
+          "name": "PillsIcon",
+          "type": "INSTANCE"
+        }
+      ],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        },
+        {
+          "name": "Gradient+Blur",
+          "type": "RECTANGLE"
+        },
+        {
+          "name": "Gradient",
+          "type": "RECTANGLE"
+        },
+        {
+          "name": "PillsIcon",
+          "type": "INSTANCE"
+        },
+        {
+          "name": "Ingresa",
+          "type": "TEXT"
+        }
+      ]
+    },
+    {
+      "nodeId": "1133:1726",
+      "name": "Variant=Primary, Size=Medium, State=Hover",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Primary",
+        "Size": "Medium",
+        "State": "Hover"
+      },
+      "dimensions": {
+        "width": 200,
+        "height": 48
+      },
+      "layout": {
+        "mode": "VERTICAL",
+        "gap": 10,
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#fbc47d"
+            }
+          },
+          {
+            "position": 0.4000000059604645,
+            "color": {
+              "hex": "#fbc47d"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#ae8eff"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Participa",
+        "color": {
+          "hex": "#ffffff"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Container",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1807:14943",
+      "name": "Variant=Negotiable, Size=Medium, State=Hover",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Negotiable",
+        "Size": "Medium",
+        "State": "Hover"
+      },
+      "dimensions": {
+        "width": 200,
+        "height": 48
+      },
+      "layout": {
+        "mode": "VERTICAL",
+        "gap": 10,
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#00cccc"
+            }
+          },
+          {
+            "position": 0.4000000059604645,
+            "color": {
+              "hex": "#00cccc"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#ae8eff"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Negocia ahora",
+        "color": {
+          "hex": "#ffffff"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1133:1730",
+      "name": "Variant=Primary, Size=Medium, State=Pressed",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Primary",
+        "Size": "Medium",
+        "State": "Pressed"
+      },
+      "dimensions": {
+        "width": 200,
+        "height": 48
+      },
+      "layout": {
+        "mode": "VERTICAL",
+        "gap": 10,
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#d46e20"
+            }
+          },
+          {
+            "position": 0.4000000059604645,
+            "color": {
+              "hex": "#d46e20"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#5a35c2"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Participa",
+        "color": {
+          "hex": "#d1d5dc"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Container",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1807:14957",
+      "name": "Variant=Negotiable, Size=Medium, State=Pressed",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Negotiable",
+        "Size": "Medium",
+        "State": "Pressed"
+      },
+      "dimensions": {
+        "width": 200,
+        "height": 48
+      },
+      "layout": {
+        "mode": "VERTICAL",
+        "gap": 10,
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#009095"
+            }
+          },
+          {
+            "position": 0.4000000059604645,
+            "color": {
+              "hex": "#009095"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#5a35c2"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Negocia ahora",
+        "color": {
+          "hex": "#d1d5dc"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button:css-transform",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1133:1758",
+      "name": "Variant=Primary, Size=Medium, State=Disabled",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Primary",
+        "Size": "Medium",
+        "State": "Disabled"
+      },
+      "dimensions": {
+        "width": 200,
+        "height": 48
+      },
+      "layout": {
+        "mode": "HORIZONTAL",
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "solid",
+        "color": {
+          "hex": "#e1e3e2"
+        },
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Participa",
+        "color": {
+          "hex": "#99a1af"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1133:2406",
+      "name": "Variant=Secondary, Size=Medium, State=Disabled",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Secondary",
+        "Size": "Medium",
+        "State": "Disabled"
+      },
+      "dimensions": {
+        "width": 186,
+        "height": 48
+      },
+      "layout": {
+        "mode": "VERTICAL",
+        "gap": 10
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "solid",
+        "color": {
+          "hex": "#e1e3e2"
+        },
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Ingresa",
+        "color": {
+          "hex": "#99a1af"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1133:2294",
+      "name": "Variant=Secondary, Size=Medium, State=Default",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Secondary",
+        "Size": "Medium",
+        "State": "Default"
+      },
+      "dimensions": {
+        "width": 186,
+        "height": 48
+      },
+      "layout": {
+        "mode": "HORIZONTAL",
+        "gap": 10,
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#8460e5"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#3b1782"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Ingresa",
+        "color": {
+          "hex": "#ffffff"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1442:10976",
+      "name": "Variant=Secondary, Size=Small, State=Default",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Secondary",
+        "Size": "Small",
+        "State": "Default"
+      },
+      "dimensions": {
+        "width": 160,
+        "height": 40
+      },
+      "layout": {
+        "mode": "VERTICAL",
+        "gap": 10,
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#8460e5"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#3b1782"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 14,
+        "weight": 600,
+        "lineHeightPx": 16,
+        "letterSpacing": 0,
+        "sample": "Agenda tu visita",
+        "color": {
+          "hex": "#ffffff"
+        }
+      },
+      "icons": [
+        {
+          "id": "1807:15550",
+          "name": "PillsIcon",
+          "type": "INSTANCE"
+        }
+      ],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1143:1709",
+      "name": "Variant=Ghost, Size=Medium, State=Default",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Ghost",
+        "Size": "Medium",
+        "State": "Default"
+      },
+      "dimensions": {
+        "width": 215,
+        "height": 48
+      },
+      "layout": {
+        "mode": "VERTICAL",
+        "gap": 10,
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "solid",
+        "color": {
+          "hex": "#ffffff",
+          "alpha": 0.002
+        },
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Ver Ofertas relacionadas",
+        "color": {
+          "hex": "#ffffff"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1143:1885",
+      "name": "Variant=Ghost, Size=Medium, State=Hover",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Ghost",
+        "Size": "Medium",
+        "State": "Hover"
+      },
+      "dimensions": {
+        "width": 215,
+        "height": 48
+      },
+      "layout": {
+        "mode": "HORIZONTAL",
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#ffffff"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#fff0e2"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Ver Ofertas relacionadas",
+        "color": {
+          "hex": "#ed8936"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1143:1909",
+      "name": "Variant=Ghost, Size=Medium, State=Pressed",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Ghost",
+        "Size": "Medium",
+        "State": "Pressed"
+      },
+      "dimensions": {
+        "width": 215,
+        "height": 48
+      },
+      "layout": {
+        "mode": "VERTICAL",
+        "gap": 10,
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#d46e20"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#b73700"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Ver Ofertas relacionadas",
+        "color": {
+          "hex": "#e1e3e2"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1153:2443",
+      "name": "Variant=Ghost, Size=Medium, State=Disabled",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Ghost",
+        "Size": "Medium",
+        "State": "Disabled"
+      },
+      "dimensions": {
+        "width": 215,
+        "height": 48
+      },
+      "layout": {
+        "mode": "VERTICAL",
+        "gap": 10,
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#ffffff",
+              "alpha": 0.1
+            }
+          },
+          {
+            "position": 0.550000011920929,
+            "color": {
+              "hex": "#ffffff",
+              "alpha": 0
+            }
+          }
+        ],
+        "from": "Gradient"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Ver Ofertas relacionadas",
+        "color": {
+          "hex": "#ffffff",
+          "alpha": 0.35
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1932:10613",
+      "name": "Variant=Outline, Size=Medium, State=Default",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Outline",
+        "Size": "Medium",
+        "State": "Default"
+      },
+      "dimensions": {
+        "width": 215,
+        "height": 48
+      },
+      "layout": {
+        "mode": "HORIZONTAL",
+        "gap": 10,
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "solid",
+        "color": {
+          "hex": "#ffffff",
+          "alpha": 0.002
+        },
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Regístrate",
+        "color": {
+          "hex": "#ed8936"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1934:10627",
+      "name": "Variant=Outline, Size=Medium, State=Hover",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Outline",
+        "Size": "Medium",
+        "State": "Hover"
+      },
+      "dimensions": {
+        "width": 215,
+        "height": 48
+      },
+      "layout": {
+        "mode": "HORIZONTAL",
+        "gap": 10,
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#ffffff"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#fff0e2"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Regístrate",
+        "color": {
+          "hex": "#ed8936"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1935:10631",
+      "name": "Variant=Outline, Size=Medium, State=Pressed",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Outline",
+        "Size": "Medium",
+        "State": "Pressed"
+      },
+      "dimensions": {
+        "width": 215,
+        "height": 48
+      },
+      "layout": {
+        "mode": "HORIZONTAL",
+        "gap": 10,
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#d46e20"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#b73700"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Regístrate",
+        "color": {
+          "hex": "#ffffff"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1133:2345",
+      "name": "Variant=Secondary, Size=Medium, State=Hover",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Secondary",
+        "Size": "Medium",
+        "State": "Hover"
+      },
+      "dimensions": {
+        "width": 186,
+        "height": 48
+      },
+      "layout": {
+        "mode": "VERTICAL",
+        "gap": 10
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#ae8eff"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#5a35c2"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Ingresa",
+        "color": {
+          "hex": "#ffffff"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1464:19933",
+      "name": "Variant=Secondary, Size=Small, State=Hover",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Secondary",
+        "Size": "Small",
+        "State": "Hover"
+      },
+      "dimensions": {
+        "width": 160,
+        "height": 40
+      },
+      "layout": {
+        "mode": "VERTICAL",
+        "gap": 10
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#ae8eff"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#5a35c2"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 14,
+        "weight": 600,
+        "lineHeightPx": 16,
+        "letterSpacing": 0,
+        "sample": "Agenda tu visita",
+        "color": {
+          "hex": "#ffffff"
+        }
+      },
+      "icons": [
+        {
+          "id": "1807:15647",
+          "name": "PillsIcon",
+          "type": "INSTANCE"
+        }
+      ],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1133:2395",
+      "name": "Variant=Secondary, Size=Medium, State=Pressed",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Secondary",
+        "Size": "Medium",
+        "State": "Pressed"
+      },
+      "dimensions": {
+        "width": 186,
+        "height": 48
+      },
+      "layout": {
+        "mode": "HORIZONTAL",
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#3b1782"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#22005c"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 16,
+        "weight": 600,
+        "lineHeightPx": 20,
+        "letterSpacing": 0,
+        "sample": "Ingresa",
+        "color": {
+          "hex": "#d1d5dc"
+        }
+      },
+      "icons": [],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    },
+    {
+      "nodeId": "1464:20511",
+      "name": "Variant=Secondary, Size=Small, State=Pressed",
+      "type": "COMPONENT",
+      "props": {
+        "Variant": "Secondary",
+        "Size": "Small",
+        "State": "Pressed"
+      },
+      "dimensions": {
+        "width": 160,
+        "height": 40
+      },
+      "layout": {
+        "mode": "HORIZONTAL",
+        "primaryAlign": "CENTER",
+        "counterAlign": "CENTER"
+      },
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#3b1782"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#22005c"
+            }
+          }
+        ],
+        "from": "Button"
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 14,
+        "weight": 600,
+        "lineHeightPx": 16,
+        "letterSpacing": 0,
+        "sample": "Agenda tu visita",
+        "color": {
+          "hex": "#e1e3e2"
+        }
+      },
+      "icons": [
+        {
+          "id": "1807:15660",
+          "name": "PillsIcon",
+          "type": "INSTANCE"
+        }
+      ],
+      "prototype": [],
+      "childOrder": [
+        {
+          "name": "Button",
+          "type": "FRAME"
+        }
+      ]
+    }
+  ]
+}

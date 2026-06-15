@@ -1,35 +1,48 @@
 {
   "version": "1",
   "preview_base_url": "https://voyager-ds.vercel.app",
+  "figma_file_key": "7bjDwC20BX1AFrv9Q8BOIb",
+  "_figma_help": "figma_file_key = el <KEY> de la URL figma.com/design/<KEY>/... . El token va en la variable de entorno FIGMA_TOKEN (no aquí). Por componente: figma_page = nombre exacto de la página; figma_section = nombre del frame/sección donde vive; figma_name = nombre del nodo del componente (opcional). El extractor los busca por nombre — no hace falta node-id. Puedes pegar un node-id en figma_node_id si lo prefieres.",
   "components": {
     "Button": {
       "preview_anchor": "/preview/components/pase1",
-      "variants": ["primary", "secondary", "ghost", "sm-guest", "sm-logged-in"],
+      "variants": ["primary", "negotiable", "secondary", "secondary-sm", "ghost", "outline", "sm-guest", "sm-logged-in"],
       "states": ["default", "hover", "pressed", "disabled", "focus-visible"],
       "has_interactive_demo": true,
-      "figma_node_id": ""
-    }
-    ,
+      "figma_node_id": "1312-4675",
+      "figma_page": "Homepage",
+      "figma_section": "Header",
+      "figma_name": "Button"
+    },
     "LikeButton": {
       "preview_anchor": "/preview/components/pase1",
       "variants": ["sm", "md", "lg"],
       "states": ["default", "hover", "active", "disabled", "skeleton"],
       "has_interactive_demo": true,
-      "figma_node_id": ""
+      "figma_node_id": "",
+      "figma_page": "",
+      "figma_section": "",
+      "figma_name": "LikeButton"
     },
     "OfferCard": {
       "preview_anchor": "/preview/components/pase1",
       "variants": ["live", "proxima"],
       "states": ["default", "hover"],
       "has_interactive_demo": true,
-      "figma_node_id": ""
+      "figma_node_id": "",
+      "figma_page": "",
+      "figma_section": "",
+      "figma_name": "OfferCard"
     },
     "OfferType": {
       "preview_anchor": "/preview/components/pase1",
       "variants": ["negotiable", "live"],
-      "states": ["default", "hover", "focus"],
+      "states": ["default", "hover", "pressed"],
       "has_interactive_demo": true,
-      "figma_node_id": ""
+      "figma_node_id": "",
+      "figma_page": "",
+      "figma_section": "",
+      "figma_name": "OfferType"
     }
   }
 }

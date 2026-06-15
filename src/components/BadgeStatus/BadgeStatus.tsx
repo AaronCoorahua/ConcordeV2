@@ -26,14 +26,16 @@ export interface BadgeStatusProps {
 const STYLE_ID = "concorde-badgestatus-styles";
 
 const BADGESTATUS_STYLES = `
-@keyframes badgestatus-live-ring {
-  0%   { opacity: 1; transform: scale(0.8); }
-  100% { opacity: 0; transform: scale(1.9); }
+/* Pulso del punto EN VIVO — frames exactos del SVG: On (6px, opacidad 1) ↔ On-1 (4px, 0.28) */
+@keyframes badgestatus-live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.28; transform: scale(0.67); }
 }
 
+/* Parpadeo del reloj PRÓXIMA — On (sólido) ↔ Off (0.28) */
 @keyframes badgestatus-clock-blink {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.35; transform: scale(0.85); }
+  50%      { opacity: 0.28; transform: scale(0.85); }
 }
 
 /* ── Base pill ── */
@@ -52,50 +54,34 @@ const BADGESTATUS_STYLES = `
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   color: oklch(1 0 0);
-  border: 1.5px solid transparent;
+  border: 1px solid transparent;
   user-select: none;
 }
 
-/* ── EN VIVO — orange gradient ── */
+/* ── EN VIVO — sync EXACTO SVG (1310:11895 / 11904) ──
+   bg naranja diagonal + borde gradiente cálido + ring naranja */
 .badgestatus--live {
   background-image:
-    linear-gradient(135deg,
-      oklch(0.78 0.17 55) 0%,
-      oklch(0.72 0.16 55) 40%,
-      oklch(0.54 0.18 44) 100%
-    ),
-    linear-gradient(135deg,
-      oklch(0.86 0.12 55) 0%,
-      oklch(1 0 0 / 0.45) 40%,
-      oklch(0.65 0.16 50) 75%,
-      oklch(0.86 0.12 55) 100%
-    );
+    linear-gradient(135deg, #ff9639 0%, #ef852e 40%, #be3d00 100%),
+    linear-gradient(135deg, #ffbc83 0%, rgba(255,255,255,0.45) 40%, #da6c1e 75%, #ffbc83 100%);
   background-origin: padding-box, border-box;
   background-clip: padding-box, border-box;
   box-shadow:
-    oklch(0.72 0.16 55 / 0.45) 0px 2px 10px,
-    oklch(1 0 0 / 0.14) 0px 1px 0px inset;
+    rgba(239, 133, 46, 0.45) 0px 2px 10px,
+    rgba(255, 255, 255, 0.14) 0px 1px 0px inset;
 }
 
-/* ── PRÓXIMA — vault purple gradient ── */
+/* ── PRÓXIMA — sync EXACTO SVG (1310:11797 / 11799) ──
+   bg morado diagonal + borde gradiente lila + glow morado #200068 */
 .badgestatus--proxima {
   background-image:
-    linear-gradient(135deg,
-      oklch(0.48 0.24 285) 0%,
-      oklch(0.48 0.24 285) 30%,
-      oklch(0.2 0.17 285) 100%
-    ),
-    linear-gradient(135deg,
-      oklch(0.65 0.2 285) 0%,
-      oklch(1 0 0 / 0.4) 38%,
-      oklch(0.45 0.22 285) 68%,
-      oklch(0.65 0.2 285) 100%
-    );
+    linear-gradient(135deg, #8460e5 0%, #3b1782 100%),
+    linear-gradient(135deg, #8776ff 0%, rgba(255,255,255,0.4) 38%, #532bc7 68%, #8776ff 100%);
   background-origin: padding-box, border-box;
   background-clip: padding-box, border-box;
   box-shadow:
-    oklch(0.22 0.18 285 / 0.5) 0px 2px 10px,
-    oklch(1 0 0 / 0.1) 0px 1px 0px inset;
+    rgba(32, 0, 104, 0.5) 0px 2px 10px,
+    rgba(255, 255, 255, 0.1) 0px 1px 0px inset;
 }
 
 /* ── Pulsing dot (live) ── */
@@ -103,9 +89,9 @@ const BADGESTATUS_STYLES = `
   width: 6px;
   height: 6px;
   border-radius: 9999px;
-  background: oklch(1 0 0 / 0.92);
+  background: #ffffff;
   flex-shrink: 0;
-  animation: badgestatus-live-ring 1.4s ease-out infinite;
+  animation: badgestatus-live-pulse 1.4s ease-in-out infinite;
   position: relative;
 }
 

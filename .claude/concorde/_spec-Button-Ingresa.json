@@ -1,0 +1,87 @@
+{
+  "version": "1",
+  "source": "figma-rest",
+  "file_key": "7bjDwC20BX1AFrv9Q8BOIb",
+  "query": {
+    "node": "1312-4675"
+  },
+  "extracted": [
+    {
+      "nodeId": "I1312:4675;1159:4512",
+      "name": "Button",
+      "type": "FRAME",
+      "dimensions": {
+        "width": 116,
+        "height": 40
+      },
+      "layout": {},
+      "radius": 9999,
+      "fill": {
+        "kind": "GRADIENT_LINEAR",
+        "stops": [
+          {
+            "position": 0,
+            "color": {
+              "hex": "#ed8936"
+            }
+          },
+          {
+            "position": 0.4000000059604645,
+            "color": {
+              "hex": "#ed8936"
+            }
+          },
+          {
+            "position": 1,
+            "color": {
+              "hex": "#8460e5"
+            }
+          }
+        ]
+      },
+      "typography": {
+        "family": "Plus Jakarta Sans",
+        "postScript": "PlusJakartaSans-SemiBold",
+        "size": 14,
+        "weight": 600,
+        "lineHeightPx": 16,
+        "letterSpacing": 0,
+        "sample": "Ingresa",
+        "color": {
+          "hex": "#ffffff"
+        }
+      },
+      "icons": [
+        {
+          "id": "I1312:4675;1181:2822",
+          "name": "PillsIcon",
+          "type": "INSTANCE"
+        },
+        {
+          "id": "I1312:4675;1159:4513",
+          "name": "Gradient",
+          "type": "VECTOR"
+        }
+      ],
+      "childOrder": [
+        {
+          "name": "PillsIcon",
+          "type": "INSTANCE"
+        },
+        {
+          "name": "Gradient+Blur",
+          "type": "RECTANGLE"
+        },
+        {
+          "name": "Ingresa",
+          "type": "TEXT"
+        },
+        {
+          "name": "Gradient",
+          "type": "VECTOR"
+        }
+      ],
+      "imageUrl": "https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/862d2d55-f451-4217-b445-dd1deae18613"
+    }
+  ]
+}

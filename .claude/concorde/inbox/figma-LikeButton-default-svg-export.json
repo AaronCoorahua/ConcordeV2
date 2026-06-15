@@ -1,0 +1,21 @@
+{
+  "version": "1",
+  "source": "svg-export-manual",
+  "component": "LikeButton",
+  "state": "default (3 tamaños)",
+  "nodes": { "sm": "1136:11505", "md": "1126:11466", "lg": "1126:11432" },
+  "spec": {
+    "sizes": {
+      "sm": { "btn": 24, "border": 2, "heartStroke": 1, "borderGradient": "#E8DDFF 0% → #FFF 40% → #AE8EFF 75% → #CFBAFF 100% (stops finales INVERTIDOS vs md/lg)", "glassOverlay": 0.18 },
+      "md": { "btn": 32, "border": 1.44, "heartStroke": 1.2, "borderGradient": "#E8DDFF 0% → #FFF 40% → #CFBAFF 75% → #AE8EFF 100%", "glassOverlay": 0.55 },
+      "lg": { "btn": 40, "border": 2, "heartStroke": 1.4, "borderGradient": "#E8DEFF 0% → #FFF 40% → #CFBAFF 75% → #AE8EFF 100%", "glassOverlay": 0.18 }
+    },
+    "shared": {
+      "circleBg": "#FFFFFF sólido",
+      "heart": "BLANCO RELLENO + stroke #5A35C2 (no solo contorno)",
+      "dropShadow": "NINGUNA en default (los SVG no traen filter)",
+      "glassOverlay": "white → transparent al 50%, dibujado SOBRE el corazón"
+    }
+  },
+  "aplicado": "2026-06-10 — borde gradiente (doble background), corazón relleno, sin sombra default, overlay por tamaño, strokeW por tamaño. Estados hover/active/disabled/skeleton intactos (interacción Concorde)."
+}
