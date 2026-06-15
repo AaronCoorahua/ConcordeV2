@@ -12,8 +12,7 @@ import PriceIcon from "@/src/components/PriceIcon/PriceIcon";
 import ProfileButton from "@/src/components/ProfileButton/ProfileButton";
 import CardTitle from "@/src/components/CardTitle/CardTitle";
 import AuctionStatus from "@/src/components/AuctionStatus/AuctionStatus";
-import ImageViewer from "@/src/components/ImageViewer/ImageViewer";
-import Filmstrip from "@/src/components/Filmstrip/Filmstrip";
+import CardViewer from "@/src/components/CardViewer/CardViewer";
 import DetailCard from "@/src/components/DetailCard/DetailCard";
 
 // ── Registry ──────────────────────────────────────────────────────────────
@@ -187,30 +186,16 @@ const REGISTRY: ComponentEntry[] = [
     ),
   },
   {
-    id: "imageviewer",
-    name: "ImageViewer",
-    description: "Visor de imagen 443×362 con controles glass: ampliar, flechas ‹ ›, y contador (1/11). Backdrop-blur sobre negro 50%.",
+    id: "cardviewer",
+    name: "CardViewer",
+    description: "Visor de imagen 443×362 con su tira de miniaturas debajo, como una sola unidad: click en una miniatura cambia la imagen grande. Variantes live (naranja/lila) y negotiable (teal/lila).",
     status: "done",
-    handoffPath: "/handoff/imageviewer",
-    variants: 1,
+    handoffPath: "/handoff/cardviewer",
+    variants: 2,
     tags: ["Media", "Gallery", "Auction"],
     preview: (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", transform: "scale(0.5)", transformOrigin: "center" }}>
-        <ImageViewer imageSrc="/demo/bronco.jpg" current={1} total={11} />
-      </div>
-    ),
-  },
-  {
-    id: "filmstrip",
-    name: "Filmstrip",
-    description: "Tira de miniaturas con la seleccionada en borde gradiente de 3px. Variantes live (naranja/lila) y negotiable (teal/lila).",
-    status: "done",
-    handoffPath: "/handoff/filmstrip",
-    variants: 2,
-    tags: ["Media", "Gallery", "Thumbnails"],
-    preview: (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", transform: "scale(0.7)", transformOrigin: "center" }}>
-        <Filmstrip images={["/demo/bronco.jpg", "/demo/bronco.jpg", "/demo/bronco.jpg", "/demo/bronco.jpg"]} selectedIndex={0} />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", transform: "scale(0.42)", transformOrigin: "center" }}>
+        <CardViewer images={["/demo/bronco.jpg", "/demo/bronco.jpg", "/demo/bronco.jpg", "/demo/bronco.jpg"]} />
       </div>
     ),
   },
