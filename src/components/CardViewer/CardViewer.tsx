@@ -137,14 +137,24 @@ const CARDVIEWER_STYLES = `
 }
 .pcardv__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 5px; }
 .pcardv__thumb:hover { transform: translateY(-1px); }
-.pcardv__thumb:active { transform: scale(0.98); }
 .pcardv__thumb:focus-visible { outline: 2px solid #8460E5; outline-offset: 2px; }
-.pcardv__thumb--selected { padding: 3px; box-shadow: rgba(0,0,0,0.1) 0px 0px 16px 4px; }
-.pcardv__thumb--selected img { border-radius: 3px; }
-.pcardv--live .pcardv__thumb--selected {
+/* Selección = aro gradiente de 3px ENCIMA (no cambia el tamaño de la miniatura) */
+.pcardv__thumb--selected { box-shadow: rgba(0,0,0,0.1) 0px 0px 16px 4px; }
+.pcardv__thumb--selected::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 5px;
+  padding: 3px;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.pcardv--live .pcardv__thumb--selected::after {
   background: linear-gradient(120deg, #ffffff 0%, #F4AC59 25%, #8460E5 75%, #ffffff 100%);
 }
-.pcardv--negotiable .pcardv__thumb--selected {
+.pcardv--negotiable .pcardv__thumb--selected::after {
   background: linear-gradient(120deg, #ffffff 0%, #4DDCDC 25%, #6445DF 75%, #ffffff 100%);
 }
 

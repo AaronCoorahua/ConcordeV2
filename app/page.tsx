@@ -9,8 +9,15 @@ import BadgeStatus from "@/src/components/BadgeStatus/BadgeStatus";
 import CategoryCard from "@/src/components/CategoryCard/CategoryCard";
 import OfferCard from "@/src/components/OfferCard/OfferCard";
 import PriceIcon from "@/src/components/PriceIcon/PriceIcon";
+import StarIcon from "@/src/components/StarIcon/StarIcon";
+import AvatarZone from "@/src/components/AvatarZone/AvatarZone";
 import ProfileButton from "@/src/components/ProfileButton/ProfileButton";
 import CardTitle from "@/src/components/CardTitle/CardTitle";
+import Input from "@/src/components/Input/Input";
+import TabSelector from "@/src/components/TabSelector/TabSelector";
+import TermsSelector from "@/src/components/TermsSelector/TermsSelector";
+import ConditionPill from "@/src/components/ConditionPill/ConditionPill";
+import Sidebar from "@/src/components/Sidebar/Sidebar";
 import AuctionStatus from "@/src/components/AuctionStatus/AuctionStatus";
 import CardViewer from "@/src/components/CardViewer/CardViewer";
 import DetailCard from "@/src/components/DetailCard/DetailCard";
@@ -140,6 +147,112 @@ const REGISTRY: ComponentEntry[] = [
         <PriceIcon size="sm" state="default" />
         <PriceIcon size="md" state="expirada" />
         <PriceIcon size="md" state="skeleton" />
+      </div>
+    ),
+  },
+  {
+    id: "staricon",
+    name: "StarIcon",
+    description: "Insignia de estrella: círculo con relleno gradiente naranja→lila, borde gradiente y estrella blanca. Tamaño personalizable (sm/md/px). Ícono estático.",
+    status: "done",
+    handoffPath: "/handoff/staricon",
+    variants: 3,
+    tags: ["Icon", "Badge", "Star"],
+    preview: (
+      <div style={{ display: "flex", gap: 18, alignItems: "center", justifyContent: "center" }}>
+        <StarIcon size="md" />
+        <StarIcon size="sm" />
+        <StarIcon size={44} />
+      </div>
+    ),
+  },
+  {
+    id: "avatarzone",
+    name: "AvatarZone",
+    description: "Avatar circular con relleno gradiente naranja y silueta de persona blanca. Tamaño personalizable (sm/md/px). Ícono estático.",
+    status: "done",
+    handoffPath: "/handoff/avatarzone",
+    variants: 3,
+    tags: ["Icon", "Avatar", "Profile"],
+    preview: (
+      <div style={{ display: "flex", gap: 18, alignItems: "center", justifyContent: "center" }}>
+        <AvatarZone size="md" />
+        <AvatarZone size="sm" />
+        <AvatarZone size={48} />
+      </div>
+    ),
+  },
+  {
+    id: "sidebar",
+    name: "Sidebar",
+    description: "Nav lateral oscuro 226px colapsable a 64px: header con hamburguesa + slot de logo, secciones con etiqueta e ítems (icono + label + chevron). Ítem activo resaltado. Data-driven.",
+    status: "done",
+    handoffPath: "/handoff/sidebar",
+    variants: 2,
+    tags: ["Navigation", "Sidebar", "Menu"],
+    preview: (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 150, overflow: "hidden" }}>
+        <div style={{ transform: "scale(0.42)", transformOrigin: "center" }}>
+          <Sidebar logo={<span style={{ fontSize: 16, color: "#fff" }}>Subastop</span>} />
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "conditionpill",
+    name: "ConditionPill",
+    description: "Píldora 136×46 (radio 23) con relleno gradiente lila (#AE8EFF → #5A35C2), borde gradiente, sheen y sombra. Texto blanco editable; el ancho se ajusta al contenido.",
+    status: "done",
+    handoffPath: "/handoff/conditionpill",
+    variants: 1,
+    tags: ["Badge", "Pill", "Status"],
+    preview: (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <ConditionPill>Conoce más</ConditionPill>
+      </div>
+    ),
+  },
+  {
+    id: "tabselector",
+    name: "TabSelector",
+    description: "Selector tipo segmented/tab: pill blanco con opciones. La activa lleva relleno gradiente oscuro, borde gradiente y texto blanco; las inactivas, texto en gradiente lila. Controlado o no.",
+    status: "done",
+    handoffPath: "/handoff/tabselector",
+    variants: 2,
+    tags: ["Form", "Tabs", "Selector"],
+    preview: (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <TabSelector options={["Boleta", "Facturas"]} defaultValue={0} />
+      </div>
+    ),
+  },
+  {
+    id: "termsselector",
+    name: "TermsSelector",
+    description: "Checkbox de términos: casilla 16×16 con relleno y borde gradiente al marcar (+ check blanco) y una etiqueta editable. Accesible (input nativo + label). Controlado o no.",
+    status: "done",
+    handoffPath: "/handoff/termsselector",
+    variants: 2,
+    tags: ["Form", "Checkbox", "Terms"],
+    preview: (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "0 16px" }}>
+        <TermsSelector defaultChecked>Acepto los términos y condiciones.</TermsSelector>
+      </div>
+    ),
+  },
+  {
+    id: "input",
+    name: "Input",
+    description: "Campo de texto 234×48 (radio 16). 3 variantes por el borde: default (gradiente lila→cream), focus (gradiente naranja→vault + glow) y error (rojo + mensaje). Al enfocar toma el borde de focus.",
+    status: "done",
+    handoffPath: "/handoff/input",
+    variants: 3,
+    tags: ["Form", "Input", "Text"],
+    preview: (
+      <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "center", justifyContent: "center", transform: "scale(0.82)" }}>
+        <Input variant="default" placeholder="Suscríbete a las novedades" />
+        <Input variant="focus" defaultValue="correo@ejemplo.com" />
+        <Input variant="error" defaultValue="correo-malo" errorMessage="Ingresa un correo válido" />
       </div>
     ),
   },
