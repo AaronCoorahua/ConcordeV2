@@ -141,7 +141,7 @@ const SIDEBAR_STYLES = `
 .psidebar__burger {
   appearance: none; border: none; background: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+  width: 36px; height: 36px; border-radius: 0; flex-shrink: 0;
   transition: background 0.15s;
 }
 .psidebar__burger:hover { background: rgba(255,255,255,0.08); }
