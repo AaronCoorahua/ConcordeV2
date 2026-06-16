@@ -18,6 +18,10 @@ import TabSelector from "@/src/components/TabSelector/TabSelector";
 import TermsSelector from "@/src/components/TermsSelector/TermsSelector";
 import ConditionPill from "@/src/components/ConditionPill/ConditionPill";
 import Sidebar from "@/src/components/Sidebar/Sidebar";
+import AmountOption from "@/src/components/AmountOption/AmountOption";
+import CheckIcon from "@/src/components/CheckIcon/CheckIcon";
+import Table from "@/src/components/Table/Table";
+import DocButton from "@/src/components/DocButton/DocButton";
 import AuctionStatus from "@/src/components/AuctionStatus/AuctionStatus";
 import CardViewer from "@/src/components/CardViewer/CardViewer";
 import DetailCard from "@/src/components/DetailCard/DetailCard";
@@ -193,8 +197,64 @@ const REGISTRY: ComponentEntry[] = [
     preview: (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 150, overflow: "hidden" }}>
         <div style={{ transform: "scale(0.42)", transformOrigin: "center" }}>
-          <Sidebar logo={<img src="/logo-preview.png" alt="Subastop" style={{ height: 24, display: "block" }} />} />
+          <Sidebar logo={<img src="/logo-preview.png" alt="Subastop" style={{ height: 26, width: "auto", objectFit: "contain", display: "block" }} />} />
         </div>
+      </div>
+    ),
+  },
+  {
+    id: "amountoption",
+    name: "AmountOption",
+    description: "Opción de monto tipo radio (pill 254×48): círculo a la izquierda + monto a la derecha. 3 variantes: default (blanco), selected (morado) e input (campo editable con placeholder gris).",
+    status: "done",
+    handoffPath: "/handoff/amountoption",
+    variants: 3,
+    tags: ["Form", "Radio", "Amount"],
+    preview: (
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, alignItems: "center", justifyContent: "center", transform: "scale(0.8)" }}>
+        <AmountOption variant="selected" amount=">S< 80" />
+        <AmountOption variant="default" amount=">S< 130" />
+        <AmountOption variant="input" placeholder="210" />
+      </div>
+    ),
+  },
+  {
+    id: "checkicon",
+    name: "CheckIcon",
+    description: "Icono de check: círculo con gradiente naranja (#FF9639 → #EF852E → #BE3D00) y palomita recortada. Tamaño personalizable (sm 16 · md 20 · número). Copia exacta del SVG.",
+    status: "done",
+    handoffPath: "/handoff/checkicon",
+    variants: 1,
+    tags: ["Icon", "Check", "Status"],
+    preview: (
+      <div style={{ display: "flex", gap: 16, alignItems: "center", justifyContent: "center" }}>
+        <CheckIcon size={20} />
+        <CheckIcon size={28} />
+        <CheckIcon size={40} />
+      </div>
+    ),
+  },
+  {
+    id: "table",
+    name: "Table",
+    description: "Tabla de datos: header con gradiente morado (#8460E5 → #3B1782), texto blanco en mayúsculas, divisores #E1E3E2, radio 8 y scroll horizontal. Data-driven (columns + rows con celdas ReactNode).",
+    status: "done",
+    handoffPath: "/handoff/table",
+    variants: 1,
+    tags: ["Data", "Table", "Layout"],
+    preview: (
+      <div style={{ width: "100%", transform: "scale(0.78)" }}>
+        <Table
+          columns={[
+            { header: "Fecha" },
+            { header: "Monto", align: "right" },
+            { header: "Docs", align: "center" },
+          ]}
+          rows={[
+            ["23-04-2024", <span key="m" style={{ color: "#5F3ED8", fontWeight: 700 }}><span style={{ color: "#EF852E", marginRight: 6 }}>+</span>USD 200</span>, <span key="b" style={{ display: "inline-flex", gap: 8 }}><DocButton action="download" /><DocButton action="view" /></span>],
+            ["18-04-2024", <span key="m" style={{ color: "#5F3ED8", fontWeight: 700 }}><span style={{ marginRight: 6 }}>−</span>USD 80</span>, <span key="b" style={{ display: "inline-flex", gap: 8 }}><DocButton action="download" /><DocButton action="view" /></span>],
+          ]}
+        />
       </div>
     ),
   },
