@@ -35,7 +35,7 @@ const toggleBtnStyle = {
 } as const;
 
 const logo = (
-  <img src="/logo-preview.png" alt="Subastop" style={{ height: 26, display: "block" }} />
+  <img src="/logo-preview.png" alt="Subastop" style={{ height: 28, width: "auto", objectFit: "contain", display: "block" }} />
 );
 
 export default function Preview(): JSX.Element {
@@ -85,7 +85,7 @@ export default function Preview(): JSX.Element {
 
         {/* Sidebar controlado (también colapsa con su propio botón hamburguesa).
             El componente trae su propio fondo oscuro. Altura visible limitada. */}
-        <div style={{ display: "flex", height: 420, overflow: "hidden", borderRadius: 12, border: "1px solid #e2e8f0", width: "fit-content" }}>
+        <div style={{ display: "flex", height: 420, overflow: "hidden", border: "1px solid #e2e8f0", width: "fit-content" }}>
           <Sidebar logo={logo} collapsed={collapsed} onToggle={handleToggle} />
         </div>
       </div>

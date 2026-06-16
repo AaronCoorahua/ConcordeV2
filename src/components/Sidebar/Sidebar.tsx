@@ -141,7 +141,7 @@ const SIDEBAR_STYLES = `
 .psidebar__burger {
   appearance: none; border: none; background: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  width: 36px; height: 36px; border-radius: 0; flex-shrink: 0;
+  width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
   transition: background 0.15s;
 }
 .psidebar__burger:hover { background: rgba(255,255,255,0.08); }
@@ -160,7 +160,7 @@ const SIDEBAR_STYLES = `
   box-sizing: border-box;
   display: flex; align-items: center; gap: 12px;
   width: 100%; height: 48px; padding: 0 12px;
-  border: 1px solid transparent; border-radius: 0;
+  border: 1px solid transparent; border-radius: 12px;
   background: none; color: inherit; text-decoration: none; text-align: left;
   font-family: inherit; font-size: 15px; font-weight: 500; line-height: 20px;
   cursor: pointer;

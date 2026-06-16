@@ -136,8 +136,28 @@ const CARDVIEWER_STYLES = `
   transition: transform 0.18s, box-shadow 0.18s;
 }
 .pcardv__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 5px; }
-.pcardv__thumb:hover { transform: translateY(-1px); }
 .pcardv__thumb:focus-visible { outline: 2px solid #8460E5; outline-offset: 2px; }
+/* Hover preview ring · indica click sin transform (igual al filmstrip de detail-header) */
+.pcardv__thumb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 5px;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: none;
+  transition: box-shadow 200ms cubic-bezier(0.3, 0, 0, 1);
+}
+.pcardv__thumb:not(.pcardv__thumb--selected):hover::before {
+  box-shadow:
+    inset 0 0 0 2px oklch(0.66 0.17 50 / 0.45),
+    inset 0 0 0 3px oklch(1 0 0 / 0.30);
+}
+.pcardv--negotiable .pcardv__thumb:not(.pcardv__thumb--selected):hover::before {
+  box-shadow:
+    inset 0 0 0 2px oklch(0.78 0.14 195 / 0.45),
+    inset 0 0 0 3px oklch(1 0 0 / 0.30);
+}
 /* Selección = aro gradiente de 3px ENCIMA (no cambia el tamaño de la miniatura) */
 .pcardv__thumb--selected { box-shadow: rgba(0,0,0,0.1) 0px 0px 16px 4px; }
 .pcardv__thumb--selected::after {
@@ -159,7 +179,7 @@ const CARDVIEWER_STYLES = `
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pcardv__btn, .pcardv__thumb { transition: none; }
+  .pcardv__btn, .pcardv__thumb, .pcardv__thumb::before { transition: none; }
 }
 `;
 
