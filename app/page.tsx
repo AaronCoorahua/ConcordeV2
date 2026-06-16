@@ -193,7 +193,7 @@ const REGISTRY: ComponentEntry[] = [
     preview: (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 150, overflow: "hidden" }}>
         <div style={{ transform: "scale(0.42)", transformOrigin: "center" }}>
-          <Sidebar logo={<span style={{ fontSize: 16, color: "#fff" }}>Subastop</span>} />
+          <Sidebar logo={<img src="/logo-preview.png" alt="Subastop" style={{ height: 24, display: "block" }} />} />
         </div>
       </div>
     ),

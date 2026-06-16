@@ -35,9 +35,7 @@ const toggleBtnStyle = {
 } as const;
 
 const logo = (
-  <span style={{ fontSize: 16, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.01em" }}>
-    Subastop
-  </span>
+  <img src="/logo-preview.png" alt="Subastop" style={{ height: 26, display: "block" }} />
 );
 
 export default function Preview(): JSX.Element {
