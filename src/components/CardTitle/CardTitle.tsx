@@ -19,6 +19,10 @@ export interface CardTitleProps {
   title?: string;
   /** Subtítulo (default: "10 Ofertas") */
   subtitle?: string;
+  /** Tamaño del título en px (default 12 · line-height = size + 4) */
+  titleSize?: number;
+  /** Tamaño del subtítulo en px (default 14) */
+  subtitleSize?: number;
   className?: string;
 }
 
@@ -29,22 +33,24 @@ const STYLE_ID = "concorde-cardtitle-styles";
 const CARDTITLE_STYLES = `
 .cardtitle {
   position: relative;
-  display: inline-block;
-  padding: 8px 16px;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-direction: column;
+  padding: 8px 12px;
   font-family: var(--vmc-font-display, "Plus Jakarta Sans", -apple-system, sans-serif);
 }
 .cardtitle__title {
   margin: 0;
-  font-size: 17px;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0;
   color: #3b1782;
   white-space: nowrap;
 }
 .cardtitle__subtitle {
-  margin: 3px 0 0;
-  font-size: 14px;
+  margin: 2px 0 0;
+  font-size: 13px;
   font-weight: 400;
   line-height: 1.2;
   color: #191c1c;
@@ -92,6 +98,8 @@ function Bracket({ uid, corner }: { uid: string; corner: "tl" | "br" }): JSX.Ele
 export default function CardTitle({
   title = "SANTANDER CONSUMER",
   subtitle = "10 Ofertas",
+  titleSize = 12,
+  subtitleSize = 14,
   className = "",
 }: CardTitleProps): JSX.Element {
   const uid = useId().replace(/:/g, "-");
@@ -111,8 +119,8 @@ export default function CardTitle({
       <style id={`${STYLE_ID}-ssr`} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: CARDTITLE_STYLES }} />
       <div className={["cardtitle", className].filter(Boolean).join(" ")}>
         <Bracket uid={uid} corner="tl" />
-        <h3 className="cardtitle__title">{title}</h3>
-        <p className="cardtitle__subtitle">{subtitle}</p>
+        <h3 className="cardtitle__title" style={{ fontSize: titleSize, lineHeight: `${titleSize + 4}px` }}>{title}</h3>
+        {subtitle ? <p className="cardtitle__subtitle" style={{ fontSize: subtitleSize }}>{subtitle}</p> : null}
         <Bracket uid={uid} corner="br" />
       </div>
     </>

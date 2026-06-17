@@ -71,7 +71,8 @@ const OFFERCARD_STYLES = `
 /* â”€â”€ Card base â€” ancho y alto fijo, igual en ambas variantes â”€â”€ */
 .pcard {
   width: 170px;
-  height: 220px;
+  height: 232px;
+  box-sizing: border-box;
   background: #ffffff;
   border-radius: 8px;
   box-shadow:
@@ -125,7 +126,9 @@ const OFFERCARD_STYLES = `
   display: flex;
   flex-direction: column;
   padding: 12px;
-  flex: 1;
+  height: 112px;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .pcard__meta {
