@@ -22,6 +22,8 @@ import AmountOption from "@/src/components/AmountOption/AmountOption";
 import CheckIcon from "@/src/components/CheckIcon/CheckIcon";
 import Table from "@/src/components/Table/Table";
 import DocButton from "@/src/components/DocButton/DocButton";
+import Accordion from "@/src/components/Accordion/Accordion";
+import AmountOptionGroup from "@/src/components/AmountOptionGroup/AmountOptionGroup";
 import AuctionStatus from "@/src/components/AuctionStatus/AuctionStatus";
 import CardViewer from "@/src/components/CardViewer/CardViewer";
 import DetailCard from "@/src/components/DetailCard/DetailCard";
@@ -203,6 +205,20 @@ const REGISTRY: ComponentEntry[] = [
     ),
   },
   {
+    id: "amountoptiongroup",
+    name: "AmountOptionGroup",
+    description: "Selector de monto configurable (compuesto con AmountOption): defines cuántos montos fijos y si se permite la opción personalizada (input editable). Selección tipo radio.",
+    status: "done",
+    handoffPath: "/handoff/amountoptiongroup",
+    variants: 1,
+    tags: ["Form", "Radio", "Amount"],
+    preview: (
+      <div style={{ transform: "scale(0.7)" }}>
+        <AmountOptionGroup amounts={["80", "130"]} allowCustom defaultValue={0} />
+      </div>
+    ),
+  },
+  {
     id: "amountoption",
     name: "AmountOption",
     description: "Opción de monto tipo radio (pill 254×48): círculo a la izquierda + monto a la derecha. 3 variantes: default (blanco), selected (morado) e input (campo editable con placeholder gris).",
@@ -215,6 +231,22 @@ const REGISTRY: ComponentEntry[] = [
         <AmountOption variant="selected" amount=">S< 80" />
         <AmountOption variant="default" amount=">S< 130" />
         <AmountOption variant="input" placeholder="210" />
+      </div>
+    ),
+  },
+  {
+    id: "accordion",
+    name: "Accordion",
+    description: "Card colapsable (radio 4, sombra): título editable con corchetes naranjas (CardTitle) + chevron en círculo que gira hacia arriba al abrir y hacia abajo al cerrar. Contenido expandible.",
+    status: "done",
+    handoffPath: "/handoff/accordion",
+    variants: 1,
+    tags: ["Disclosure", "Accordion", "Layout"],
+    preview: (
+      <div style={{ width: 320, transform: "scale(0.86)" }}>
+        <Accordion title="INFORMACIÓN GENERAL" defaultOpen>
+          <span style={{ fontSize: 12, color: "#94a3b8", fontFamily: "monospace" }}>{"{children}"} editable</span>
+        </Accordion>
       </div>
     ),
   },
