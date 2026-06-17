@@ -3,10 +3,22 @@
   "homepage": "https://concorde-v2-theta.vercel.app",
   "items": [
     {
+      "name": "accordion",
+      "type": "registry:component",
+      "title": "Accordion",
+      "url": "https://concorde-v2-theta.vercel.app/r/accordion.json"
+    },
+    {
       "name": "amountoption",
       "type": "registry:component",
       "title": "AmountOption",
       "url": "https://concorde-v2-theta.vercel.app/r/amountoption.json"
+    },
+    {
+      "name": "amountoptiongroup",
+      "type": "registry:component",
+      "title": "AmountOptionGroup",
+      "url": "https://concorde-v2-theta.vercel.app/r/amountoptiongroup.json"
     },
     {
       "name": "auctionstatus",

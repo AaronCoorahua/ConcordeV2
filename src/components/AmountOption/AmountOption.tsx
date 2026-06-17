@@ -36,6 +36,8 @@ export interface AmountOptionProps {
   onValueChange?: (value: string) => void;
   /** Click en la opción (modo default/selected) */
   onSelect?: () => void;
+  /** Marca la opción input como seleccionada (morada) aunque no tenga foco */
+  selected?: boolean;
   disabled?: boolean;
   /** name del radio (para agrupar) */
   name?: string;
@@ -114,10 +116,12 @@ const AMOUNTOPTION_STYLES = `
   color: #D1D5DC;
 }
 .pamount__num {
-  width: 92px;
+  width: auto;
+  min-width: 1ch;
   border: none;
   outline: none;
   background: transparent;
+  text-align: right;
   font-family: inherit;
   font-size: 16px;
   font-weight: 700;
@@ -126,18 +130,24 @@ const AMOUNTOPTION_STYLES = `
 }
 .pamount__num::placeholder { color: #D1D5DC; }
 
-/* input · al hacer click (focus) se vuelve morado/seleccionado, mantiene el prefijo >S< y deja escribir */
-.pamount--input:focus-within {
+/* input · al hacer click (focus) o cuando está seleccionado (--active) se vuelve morado, mantiene >S< y deja escribir */
+.pamount--input:focus-within,
+.pamount--input.pamount--active {
   border-width: 1.5px;
   background-image:
     linear-gradient(165deg, #8460E5 0%, #3B1782 100%),
     linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 75%, #ffffff 100%);
 }
-.pamount--input:focus-within .pamount__radio { border-color: rgba(255,255,255,0.5); }
-.pamount--input:focus-within .pamount__dot { opacity: 1; }
+.pamount--input:focus-within .pamount__radio,
+.pamount--input.pamount--active .pamount__radio { border-color: rgba(255,255,255,0.5); }
+.pamount--input:focus-within .pamount__dot,
+.pamount--input.pamount--active .pamount__dot { opacity: 1; }
 .pamount--input:focus-within .pamount__prefix,
-.pamount--input:focus-within .pamount__num { color: #ffffff; }
-.pamount--input:focus-within .pamount__num::placeholder { color: rgba(255,255,255,0.65); }
+.pamount--input:focus-within .pamount__num,
+.pamount--input.pamount--active .pamount__prefix,
+.pamount--input.pamount--active .pamount__num { color: #ffffff; }
+.pamount--input:focus-within .pamount__num::placeholder,
+.pamount--input.pamount--active .pamount__num::placeholder { color: rgba(255,255,255,0.65); }
 
 /* selected (morado) */
 .pamount--selected {
@@ -168,6 +178,7 @@ export default function AmountOption({
   placeholder,
   onValueChange,
   onSelect,
+  selected = false,
   disabled = false,
   name,
   "aria-label": ariaLabel,
@@ -177,6 +188,8 @@ export default function AmountOption({
   const isSelected = variant === "selected";
   const isInput = variant === "input";
   const controlled = value !== undefined;
+  const sizeText = (controlled ? (value ?? "") : (defaultValue ?? "")) || placeholder || "";
+  const inputSize = Math.max(sizeText.length, 1);
 
   if (typeof document !== "undefined" && !_stylesInjected) {
     if (!document.getElementById(STYLE_ID)) {
@@ -192,6 +205,7 @@ export default function AmountOption({
     "pamount",
     isSelected ? "pamount--selected" : "",
     isInput ? "pamount--input" : "",
+    isInput && selected ? "pamount--active" : "",
     disabled ? "pamount--disabled" : "",
     className,
   ].filter(Boolean).join(" ");
@@ -216,6 +230,8 @@ export default function AmountOption({
               name={name}
               className="pamount__num"
               placeholder={placeholder}
+              size={inputSize}
+              inputMode="numeric"
               disabled={disabled}
               value={controlled ? value : undefined}
               defaultValue={controlled ? undefined : defaultValue}
