@@ -1,4 +1,4 @@
----
+d---
 name: ib-maestro
 description: IB Macro de Voyager/VMC Subastas. Carga este skill para obtener la arquitectura de intención completa del proyecto — Intention Matrix + Purpose Pyramid validados. Prerequisito antes de ejecutar cualquier fase o sub-IB.
 type: reference
