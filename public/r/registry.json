@@ -1,0 +1,158 @@
+{
+  "name": "concorde",
+  "homepage": "https://concorde-v2-theta.vercel.app",
+  "items": [
+    {
+      "name": "amountoption",
+      "type": "registry:component",
+      "title": "AmountOption",
+      "url": "https://concorde-v2-theta.vercel.app/r/amountoption.json"
+    },
+    {
+      "name": "auctionstatus",
+      "type": "registry:component",
+      "title": "AuctionStatus",
+      "url": "https://concorde-v2-theta.vercel.app/r/auctionstatus.json"
+    },
+    {
+      "name": "avatarzone",
+      "type": "registry:component",
+      "title": "AvatarZone",
+      "url": "https://concorde-v2-theta.vercel.app/r/avatarzone.json"
+    },
+    {
+      "name": "badgestatus",
+      "type": "registry:component",
+      "title": "BadgeStatus",
+      "url": "https://concorde-v2-theta.vercel.app/r/badgestatus.json"
+    },
+    {
+      "name": "button",
+      "type": "registry:component",
+      "title": "Button",
+      "url": "https://concorde-v2-theta.vercel.app/r/button.json"
+    },
+    {
+      "name": "cardtitle",
+      "type": "registry:component",
+      "title": "CardTitle",
+      "url": "https://concorde-v2-theta.vercel.app/r/cardtitle.json"
+    },
+    {
+      "name": "cardviewer",
+      "type": "registry:component",
+      "title": "CardViewer",
+      "url": "https://concorde-v2-theta.vercel.app/r/cardviewer.json"
+    },
+    {
+      "name": "categorycard",
+      "type": "registry:component",
+      "title": "CategoryCard",
+      "url": "https://concorde-v2-theta.vercel.app/r/categorycard.json"
+    },
+    {
+      "name": "checkicon",
+      "type": "registry:component",
+      "title": "CheckIcon",
+      "url": "https://concorde-v2-theta.vercel.app/r/checkicon.json"
+    },
+    {
+      "name": "conditionpill",
+      "type": "registry:component",
+      "title": "ConditionPill",
+      "url": "https://concorde-v2-theta.vercel.app/r/conditionpill.json"
+    },
+    {
+      "name": "detailcard",
+      "type": "registry:component",
+      "title": "DetailCard",
+      "url": "https://concorde-v2-theta.vercel.app/r/detailcard.json"
+    },
+    {
+      "name": "docbutton",
+      "type": "registry:component",
+      "title": "DocButton",
+      "url": "https://concorde-v2-theta.vercel.app/r/docbutton.json"
+    },
+    {
+      "name": "input",
+      "type": "registry:component",
+      "title": "Input",
+      "url": "https://concorde-v2-theta.vercel.app/r/input.json"
+    },
+    {
+      "name": "likebutton",
+      "type": "registry:component",
+      "title": "LikeButton",
+      "url": "https://concorde-v2-theta.vercel.app/r/likebutton.json"
+    },
+    {
+      "name": "offercard",
+      "type": "registry:component",
+      "title": "OfferCard",
+      "url": "https://concorde-v2-theta.vercel.app/r/offercard.json"
+    },
+    {
+      "name": "offertype",
+      "type": "registry:component",
+      "title": "OfferType",
+      "url": "https://concorde-v2-theta.vercel.app/r/offertype.json"
+    },
+    {
+      "name": "priceicon",
+      "type": "registry:component",
+      "title": "PriceIcon",
+      "url": "https://concorde-v2-theta.vercel.app/r/priceicon.json"
+    },
+    {
+      "name": "profilebutton",
+      "type": "registry:component",
+      "title": "ProfileButton",
+      "url": "https://concorde-v2-theta.vercel.app/r/profilebutton.json"
+    },
+    {
+      "name": "sidebar",
+      "type": "registry:component",
+      "title": "Sidebar",
+      "url": "https://concorde-v2-theta.vercel.app/r/sidebar.json"
+    },
+    {
+      "name": "staricon",
+      "type": "registry:component",
+      "title": "StarIcon",
+      "url": "https://concorde-v2-theta.vercel.app/r/staricon.json"
+    },
+    {
+      "name": "table",
+      "type": "registry:component",
+      "title": "Table",
+      "url": "https://concorde-v2-theta.vercel.app/r/table.json"
+    },
+    {
+      "name": "tabselector",
+      "type": "registry:component",
+      "title": "TabSelector",
+      "url": "https://concorde-v2-theta.vercel.app/r/tabselector.json"
+    },
+    {
+      "name": "termsselector",
+      "type": "registry:component",
+      "title": "TermsSelector",
+      "url": "https://concorde-v2-theta.vercel.app/r/termsselector.json"
+    },
+    {
+      "name": "homepage",
+      "type": "registry:block",
+      "title": "Homepage",
+      "url": "https://concorde-v2-theta.vercel.app/r/homepage.json",
+      "components": [
+        "offercard",
+        "badgestatus",
+        "profilebutton",
+        "cardtitle",
+        "offertype",
+        "categorycard"
+      ]
+    }
+  ]
+}
