@@ -98,9 +98,14 @@ function fileEntry(f) {
   return { path: f.target, type: "registry:file", target: f.target, content: f.content };
 }
 
+// Componentes internos (building blocks): no se exponen como item suelto,
+// pero sí se incluyen cuando otro componente/bloque depende de ellos.
+const PRIVATE = new Set(["AmountOption"]);
+
 const index = [];
 
 for (const Name of Object.keys(components)) {
+  if (PRIVATE.has(Name)) continue;
   const all = collectComponents([Name]);
   const item = {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",

@@ -6,7 +6,7 @@
 import type { JSX } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import Preview from "@/app/handoff/amountoption/Preview";
+import Preview from "./Preview";
 import CodeViewer from "@/app/handoff/_components/CodeViewer";
 import SpecPanel from "@/app/handoff/_components/SpecPanel";
 import type { SpecPanelData } from "@/app/handoff/_components/SpecPanel";

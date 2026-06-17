@@ -1,9 +1,9 @@
 "use client";
 
 /**
- * Preview — demo interactiva de AmountOption (client component).
- * Muestra el selector configurable AmountOptionGroup: controlas cuántos montos
- * fijos hay y si se permite la opción personalizada (input editable).
+ * Preview — demo interactiva de AmountOptionGroup (client component).
+ * Controlas cuántos montos fijos hay y si se permite la opción personalizada
+ * (input editable). Selección tipo radio.
  */
 
 import { useState } from "react";
