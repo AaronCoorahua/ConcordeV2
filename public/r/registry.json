@@ -9,12 +9,6 @@
       "url": "https://concorde-v2-theta.vercel.app/r/accordion.json"
     },
     {
-      "name": "amountoption",
-      "type": "registry:component",
-      "title": "AmountOption",
-      "url": "https://concorde-v2-theta.vercel.app/r/amountoption.json"
-    },
-    {
       "name": "amountoptiongroup",
       "type": "registry:component",
       "title": "AmountOptionGroup",
@@ -151,6 +145,16 @@
       "type": "registry:component",
       "title": "TermsSelector",
       "url": "https://concorde-v2-theta.vercel.app/r/termsselector.json"
+    },
+    {
+      "name": "detalle",
+      "type": "registry:block",
+      "title": "Detalle",
+      "url": "https://concorde-v2-theta.vercel.app/r/detalle.json",
+      "components": [
+        "auctionstatus",
+        "cardviewer"
+      ]
     },
     {
       "name": "homepage",

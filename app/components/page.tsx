@@ -18,7 +18,6 @@ import TabSelector from "@/src/components/TabSelector/TabSelector";
 import TermsSelector from "@/src/components/TermsSelector/TermsSelector";
 import ConditionPill from "@/src/components/ConditionPill/ConditionPill";
 import Sidebar from "@/src/components/Sidebar/Sidebar";
-import AmountOption from "@/src/components/AmountOption/AmountOption";
 import CheckIcon from "@/src/components/CheckIcon/CheckIcon";
 import Table from "@/src/components/Table/Table";
 import DocButton from "@/src/components/DocButton/DocButton";
@@ -215,22 +214,6 @@ const REGISTRY: ComponentEntry[] = [
     preview: (
       <div style={{ transform: "scale(0.7)" }}>
         <AmountOptionGroup amounts={["80", "130"]} allowCustom defaultValue={0} />
-      </div>
-    ),
-  },
-  {
-    id: "amountoption",
-    name: "AmountOption",
-    description: "Opción de monto tipo radio (pill 254×48): círculo a la izquierda + monto a la derecha. 3 variantes: default (blanco), selected (morado) e input (campo editable con placeholder gris).",
-    status: "done",
-    handoffPath: "/handoff/amountoption",
-    variants: 3,
-    tags: ["Form", "Radio", "Amount"],
-    preview: (
-      <div style={{ display: "flex", flexDirection: "column", gap: 10, alignItems: "center", justifyContent: "center", transform: "scale(0.8)" }}>
-        <AmountOption variant="selected" amount=">S< 80" />
-        <AmountOption variant="default" amount=">S< 130" />
-        <AmountOption variant="input" placeholder="210" />
       </div>
     ),
   },
