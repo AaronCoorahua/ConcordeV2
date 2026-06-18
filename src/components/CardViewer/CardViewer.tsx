@@ -16,7 +16,7 @@
  */
 
 import { useId, useRef, useState } from "react";
-import type { JSX, MouseEventHandler, PointerEvent as ReactPointerEvent } from "react";
+import type { JSX, ReactNode, MouseEventHandler, PointerEvent as ReactPointerEvent } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -37,6 +37,13 @@ export interface CardViewerProps {
   onSelect?: (index: number) => void;
   /** Click en el botón expandir */
   onExpand?: MouseEventHandler<HTMLButtonElement>;
+  /** Embebido dentro de una card padre: el visor va a ras (sin sombra ni
+   *  redondeo propios), porque el borde/redondeo los pone el contenedor. */
+  embedded?: boolean;
+  /** Slot opcional ARRIBA del visor, DENTRO de la card. Cuando se pasa, un solo
+   *  borde gradiente + redondeo inferior envuelve header+visor (el filmstrip
+   *  queda fuera, debajo). Úsalo para el conjunto SalaStatus + visor. */
+  header?: ReactNode;
   className?: string;
 }
 
@@ -59,7 +66,7 @@ const CARDVIEWER_STYLES = `
   position: relative;
   width: 100%;
   height: 362px;
-  border-radius: 0 0 4px 4px;
+  border-radius: 0 0 16px 16px;
   overflow: hidden;
   background: #F2F4F3;
   box-shadow: rgba(0,0,0,0.1) 0px 0px 16px 4px;
@@ -127,7 +134,7 @@ const CARDVIEWER_STYLES = `
   flex-shrink: 0;
   width: 113px;
   height: 84px;
-  border-radius: 5px;
+  border-radius: 4px;
   padding: 0;
   border: none;
   background: transparent;
@@ -135,14 +142,14 @@ const CARDVIEWER_STYLES = `
   overflow: hidden;
   transition: transform 0.18s, box-shadow 0.18s;
 }
-.pcardv__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 5px; }
+.pcardv__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 4px; }
 .pcardv__thumb:focus-visible { outline: 2px solid #8460E5; outline-offset: 2px; }
 /* Hover preview ring · indica click sin transform (igual al filmstrip de detail-header) */
 .pcardv__thumb::before {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 5px;
+  border-radius: 4px;
   pointer-events: none;
   z-index: 2;
   box-shadow: none;
@@ -164,7 +171,7 @@ const CARDVIEWER_STYLES = `
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 5px;
+  border-radius: 4px;
   padding: 3px;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -177,6 +184,28 @@ const CARDVIEWER_STYLES = `
 .pcardv--negotiable .pcardv__thumb--selected::after {
   background: linear-gradient(120deg, #ffffff 0%, #4DDCDC 25%, #6445DF 75%, #ffffff 100%);
 }
+
+/* ── Embebido en una card padre: visor a ras (el borde/redondeo lo pone el padre) ── */
+.pcardv--embedded .pcardv__viewer { border-radius: 0; box-shadow: none; }
+
+/* ── Card del conjunto (header + visor) · UN solo borde gradiente, top recto, bottom 16 ── */
+.pcardv__card {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 1.5px;
+  border-radius: 0 0 16px 16px;
+  background: linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 74.5%, #ffffff 100%);
+  box-shadow: rgba(0,0,0,0.15) 0px 8px 20px;
+}
+.pcardv__card-inner {
+  box-sizing: border-box;
+  width: 100%;
+  border-radius: 0 0 15px 15px;
+  overflow: hidden;
+  background: #2E0F70;
+}
+/* Visor a ras dentro de la card (el borde/redondeo los pone la card) */
+.pcardv__card .pcardv__viewer { border-radius: 0; box-shadow: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .pcardv__btn, .pcardv__thumb, .pcardv__thumb::before { transition: none; }
@@ -197,6 +226,8 @@ export default function CardViewer({
   defaultIndex = 0,
   onSelect,
   onExpand,
+  embedded = false,
+  header,
   className = "",
 }: CardViewerProps): JSX.Element {
   const uid = useId().replace(/:/g, "-");
@@ -258,13 +289,8 @@ export default function CardViewer({
 
   const currentSrc = images[index];
 
-  return (
-    <>
-      <style id={`${STYLE_ID}-ssr`} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: CARDVIEWER_STYLES }} />
-      <div className={["pcardv", `pcardv--${variant}`, className].filter(Boolean).join(" ")}>
-
-        {/* Visor */}
-        <div className="pcardv__viewer">
+  const viewer = (
+    <div className="pcardv__viewer">
           {currentSrc ? <img className="pcardv__img" src={currentSrc} alt={imageAlt} /> : null}
 
           <button type="button" className="pcardv__btn pcardv__btn--round pcardv__expand" onClick={onExpand} aria-label="Ampliar imagen">
@@ -286,10 +312,28 @@ export default function CardViewer({
             </svg>
           </button>
 
-          <span className="pcardv__count">{index + 1}/{total}</span>
-        </div>
+      <span className="pcardv__count">{index + 1}/{total}</span>
+    </div>
+  );
 
-        {/* Filmstrip */}
+  return (
+    <>
+      <style id={`${STYLE_ID}-ssr`} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: CARDVIEWER_STYLES }} />
+      <div className={["pcardv", `pcardv--${variant}`, embedded ? "pcardv--embedded" : "", className].filter(Boolean).join(" ")}>
+
+        {/* Conjunto header + visor (con header → card de borde gradiente; sin header → visor suelto) */}
+        {header ? (
+          <div className="pcardv__card">
+            <div className="pcardv__card-inner">
+              {header}
+              {viewer}
+            </div>
+          </div>
+        ) : (
+          viewer
+        )}
+
+        {/* Filmstrip (aparte, debajo del conjunto) */}
         <div
           ref={trackRef}
           className="pcardv__strip"

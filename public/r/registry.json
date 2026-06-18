@@ -33,6 +33,30 @@
       "url": "https://concorde-v2-theta.vercel.app/r/badgestatus.json"
     },
     {
+      "name": "bidbutton",
+      "type": "registry:component",
+      "title": "BidButton",
+      "url": "https://concorde-v2-theta.vercel.app/r/bidbutton.json"
+    },
+    {
+      "name": "bidmessage",
+      "type": "registry:component",
+      "title": "BidMessage",
+      "url": "https://concorde-v2-theta.vercel.app/r/bidmessage.json"
+    },
+    {
+      "name": "bidposition",
+      "type": "registry:component",
+      "title": "BidPosition",
+      "url": "https://concorde-v2-theta.vercel.app/r/bidposition.json"
+    },
+    {
+      "name": "bidproposal",
+      "type": "registry:component",
+      "title": "BidProposal",
+      "url": "https://concorde-v2-theta.vercel.app/r/bidproposal.json"
+    },
+    {
       "name": "button",
       "type": "registry:component",
       "title": "Button",
@@ -105,6 +129,12 @@
       "url": "https://concorde-v2-theta.vercel.app/r/offertype.json"
     },
     {
+      "name": "pricebadge",
+      "type": "registry:component",
+      "title": "PriceBadge",
+      "url": "https://concorde-v2-theta.vercel.app/r/pricebadge.json"
+    },
+    {
       "name": "priceicon",
       "type": "registry:component",
       "title": "PriceIcon",
@@ -117,10 +147,34 @@
       "url": "https://concorde-v2-theta.vercel.app/r/profilebutton.json"
     },
     {
+      "name": "progressbar",
+      "type": "registry:component",
+      "title": "ProgressBar",
+      "url": "https://concorde-v2-theta.vercel.app/r/progressbar.json"
+    },
+    {
+      "name": "salastatus",
+      "type": "registry:component",
+      "title": "SalaStatus",
+      "url": "https://concorde-v2-theta.vercel.app/r/salastatus.json"
+    },
+    {
+      "name": "sendbidicon",
+      "type": "registry:component",
+      "title": "SendBidIcon",
+      "url": "https://concorde-v2-theta.vercel.app/r/sendbidicon.json"
+    },
+    {
       "name": "sidebar",
       "type": "registry:component",
       "title": "Sidebar",
       "url": "https://concorde-v2-theta.vercel.app/r/sidebar.json"
+    },
+    {
+      "name": "signal",
+      "type": "registry:component",
+      "title": "Signal",
+      "url": "https://concorde-v2-theta.vercel.app/r/signal.json"
     },
     {
       "name": "staricon",
@@ -147,6 +201,12 @@
       "url": "https://concorde-v2-theta.vercel.app/r/termsselector.json"
     },
     {
+      "name": "timericon",
+      "type": "registry:component",
+      "title": "TimerIcon",
+      "url": "https://concorde-v2-theta.vercel.app/r/timericon.json"
+    },
+    {
       "name": "detalle",
       "type": "registry:block",
       "title": "Detalle",
@@ -168,6 +228,20 @@
         "cardtitle",
         "offertype",
         "categorycard"
+      ]
+    },
+    {
+      "name": "sala",
+      "type": "registry:block",
+      "title": "Sala",
+      "url": "https://concorde-v2-theta.vercel.app/r/sala.json",
+      "components": [
+        "avatarzone",
+        "pricebadge",
+        "badgestatus",
+        "signal",
+        "salastatus",
+        "cardviewer"
       ]
     }
   ]

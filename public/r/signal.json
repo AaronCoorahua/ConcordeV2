@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "signal",
+  "type": "registry:component",
+  "title": "Signal",
+  "description": "Componente Concorde Signal — se instala en concorde/components/Signal.",
+  "dependencies": [
+    "react"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "concorde/components/Signal/index.ts",
+      "type": "registry:file",
+      "target": "concorde/components/Signal/index.ts",
+      "content": "export { default } from \"./Signal\";\nexport type { SignalProps } from \"./Signal\";\n"
+    },
+    {
+      "path": "concorde/components/Signal/Signal.tsx",
+      "type": "registry:file",
+      "target": "concorde/components/Signal/Signal.tsx",
+      "content": "/**\n * Signal — Generado por Concorde\n * Fuente: Figma VOYAGER · \"hdr-signal1\" (3143:13306)\n *\n * Indicador de señal: 5 barras crecientes (rx1). Las activas con gradiente\n * naranja (#FF9639 → #EF852E → #BE3D00), las inactivas en blanco 20%.\n * `level` (0-5) controla cuántas están activas (default 4). Copia exacta de los\n * paths del SVG. useId para id único.\n */\n\nimport { useId } from \"react\";\nimport type { JSX } from \"react\";\n\nexport interface SignalProps {\n  /** Barras activas (0-5) — default 4 */\n  level?: number;\n  /** Ancho en px (alto = width × 16/28) — default 28 */\n  width?: number;\n  /** Texto accesible. Si se omite, es decorativo (aria-hidden). */\n  title?: string;\n  className?: string;\n}\n\nconst BARS = [\n  \"M3 12H1C0.447715 12 0 12.4477 0 13V15C0 15.5523 0.447715 16 1 16H3C3.55228 16 4 15.5523 4 15V13C4 12.4477 3.55228 12 3 12Z\",\n  \"M9 9H7C6.44772 9 6 9.44772 6 10V15C6 15.5523 6.44772 16 7 16H9C9.55228 16 10 15.5523 10 15V10C10 9.44772 9.55228 9 9 9Z\",\n  \"M15 6H13C12.4477 6 12 6.44772 12 7V15C12 15.5523 12.4477 16 13 16H15C15.5523 16 16 15.5523 16 15V7C16 6.44772 15.5523 6 15 6Z\",\n  \"M21 3H19C18.4477 3 18 3.44772 18 4V15C18 15.5523 18.4477 16 19 16H21C21.5523 16 22 15.5523 22 15V4C22 3.44772 21.5523 3 21 3Z\",\n  \"M27 0H25C24.4477 0 24 0.447715 24 1V15C24 15.5523 24.4477 16 25 16H27C27.5523 16 28 15.5523 28 15V1C28 0.447715 27.5523 0 27 0Z\",\n];\n\nexport default function Signal({ level = 4, width = 28, title, className = \"\" }: SignalProps): JSX.Element {\n  const uid = useId().replace(/:/g, \"-\");\n  const gid = `signal-grad-${uid}`;\n  const height = (width * 16) / 28;\n\n  return (\n    <svg\n      width={width}\n      height={height}\n      viewBox=\"0 0 28 16\"\n      fill=\"none\"\n      xmlns=\"http://www.w3.org/2000/svg\"\n      className={className}\n      role={title ? \"img\" : undefined}\n      aria-hidden={title ? undefined : true}\n    >\n      {title ? <title>{title}</title> : null}\n      {BARS.map(function renderBar(d, i) {\n        const active = i < level;\n        return <path key={i} d={d} fill={active ? `url(#${gid})` : \"rgba(255,255,255,0.2)\"} />;\n      })}\n      <defs>\n        <linearGradient id={gid} x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n          <stop stopColor=\"#FF9639\" />\n          <stop offset=\"0.4\" stopColor=\"#EF852E\" />\n          <stop offset=\"1\" stopColor=\"#BE3D00\" />\n        </linearGradient>\n      </defs>\n    </svg>\n  );\n}\n"
+    }
+  ]
+}

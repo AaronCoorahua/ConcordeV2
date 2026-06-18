@@ -1,6 +1,7 @@
 import type { JSX, ReactNode } from "react";
 import Homepage, { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/Homepage/Homepage";
 import Detalle, { DETALLE_WIDTH, DETALLE_HEIGHT } from "@/src/blocks/Detalle/Detalle";
+import Sala, { SALA_WIDTH, SALA_HEIGHT } from "@/src/blocks/Sala/Sala";
 import Topbar from "@/app/blocks/_components/Topbar";
 
 /**
@@ -32,6 +33,14 @@ const BLOCKS: BlockEntry[] = [
     width: DETALLE_WIDTH,
     height: DETALLE_HEIGHT,
     node: <Detalle />,
+  },
+  {
+    id: "sala",
+    name: "Sala",
+    description: "Sala de subasta. Lienzo base (fondo #2E0F70) — iremos montando las secciones.",
+    width: SALA_WIDTH,
+    height: SALA_HEIGHT,
+    node: <Sala />,
   },
 ];
 

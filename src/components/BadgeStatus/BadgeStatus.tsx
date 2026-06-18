@@ -16,8 +16,10 @@ export type BadgeStatusVariant = "live" | "proxima";
 
 export interface BadgeStatusProps {
   variant: BadgeStatusVariant;
-  /** Override de label (default: "EN VIVO" / "PRÓXIMA") */
+  /** Override de label / contenido editable (default: "EN VIVO" / "PRÓXIMA") */
   label?: string;
+  /** Muestra el dot (live) / reloj (proxima). false = solo el texto. Default true. */
+  icon?: boolean;
   className?: string;
 }
 
@@ -143,6 +145,7 @@ const LABEL_DEFAULTS: Record<BadgeStatusVariant, string> = {
 export default function BadgeStatus({
   variant,
   label,
+  icon = true,
   className = "",
 }: BadgeStatusProps): JSX.Element {
   if (typeof document !== "undefined" && !_stylesInjected) {
@@ -175,13 +178,14 @@ export default function BadgeStatus({
         role="status"
         aria-label={displayLabel}
       >
-        {variant === "live" ? (
+        {icon && variant === "live" ? (
           <span className="badgestatus-dot" aria-hidden="true" />
-        ) : (
+        ) : null}
+        {icon && variant === "proxima" ? (
           <span className="badgestatus-clock" aria-hidden="true">
             <ClockIcon />
           </span>
-        )}
+        ) : null}
         <span>{displayLabel}</span>
       </span>
     </>
