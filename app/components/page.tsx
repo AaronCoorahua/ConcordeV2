@@ -23,6 +23,16 @@ import Table from "@/src/components/Table/Table";
 import DocButton from "@/src/components/DocButton/DocButton";
 import Accordion from "@/src/components/Accordion/Accordion";
 import AmountOptionGroup from "@/src/components/AmountOptionGroup/AmountOptionGroup";
+import PriceBadge from "@/src/components/PriceBadge/PriceBadge";
+import Signal from "@/src/components/Signal/Signal";
+import BidProposal from "@/src/components/BidProposal/BidProposal";
+import BidMessage from "@/src/components/BidMessage/BidMessage";
+import BidButton from "@/src/components/BidButton/BidButton";
+import ProgressBar from "@/src/components/ProgressBar/ProgressBar";
+import BidPosition from "@/src/components/BidPosition/BidPosition";
+import SendBidIcon from "@/src/components/SendBidIcon/SendBidIcon";
+import TimerIcon from "@/src/components/TimerIcon/TimerIcon";
+import SalaStatus from "@/src/components/SalaStatus/SalaStatus";
 import AuctionStatus from "@/src/components/AuctionStatus/AuctionStatus";
 import CardViewer from "@/src/components/CardViewer/CardViewer";
 import DetailCard from "@/src/components/DetailCard/DetailCard";
@@ -214,6 +224,158 @@ const REGISTRY: ComponentEntry[] = [
     preview: (
       <div style={{ transform: "scale(0.7)" }}>
         <AmountOptionGroup amounts={["80", "130"]} allowCustom defaultValue={0} />
+      </div>
+    ),
+  },
+  {
+    id: "salastatus",
+    name: "SalaStatus",
+    description: "Cabecera de sala (443×90): gradiente naranja→morado, borde gradiente y sombra. Vehículo + año + placa a la izquierda; «INICIÓ HACE» + TimerIcon + countdown (mono) a la derecha. Editable.",
+    status: "done",
+    handoffPath: "/handoff/salastatus",
+    variants: 1,
+    tags: ["Status", "Auction", "Sala"],
+    preview: (
+      <div style={{ transform: "scale(0.7)" }}>
+        <SalaStatus />
+      </div>
+    ),
+  },
+  {
+    id: "sendbidicon",
+    name: "SendBidIcon",
+    description: "Botón circular 32×32 con flecha de enviar/reenviar puja, sombra morada + inner highlight. 2 variantes: vault (morado, flecha blanca) y white (blanco, flecha naranja gradiente).",
+    status: "done",
+    handoffPath: "/handoff/sendbidicon",
+    variants: 2,
+    tags: ["Icon", "Button", "Bid"],
+    preview: (
+      <div style={{ display: "flex", gap: 18, alignItems: "center", justifyContent: "center" }}>
+        <SendBidIcon variant="vault" />
+        <SendBidIcon variant="white" />
+        <SendBidIcon variant="vault" size={44} />
+      </div>
+    ),
+  },
+  {
+    id: "timericon",
+    name: "TimerIcon",
+    description: "Icono de temporizador/reloj (22×22), trazo redondeado 1.83. Tamaño y color personalizables (default currentColor). Copia exacta del SVG.",
+    status: "done",
+    handoffPath: "/handoff/timericon",
+    variants: 1,
+    tags: ["Icon", "Timer", "Time"],
+    preview: (
+      <div style={{ display: "flex", gap: 18, alignItems: "center", justifyContent: "center", color: "#3B1782" }}>
+        <TimerIcon size={22} />
+        <TimerIcon size={30} />
+        <TimerIcon size={40} color="#EF852E" />
+      </div>
+    ),
+  },
+  {
+    id: "bidposition",
+    name: "BidPosition",
+    description: "Tabla de posiciones de pujas (313 ancho): card morada con header «POSICIONES» y filas tipo pastilla. 1ª posición en live (naranja + trofeo dorado), el resto en vault (morado, borde gris). Data-driven.",
+    status: "done",
+    handoffPath: "/handoff/bidposition",
+    variants: 1,
+    tags: ["Leaderboard", "Bid", "Auction"],
+    preview: (
+      <div style={{ transform: "scale(0.72)" }}>
+        <BidPosition />
+      </div>
+    ),
+  },
+  {
+    id: "bidbutton",
+    name: "BidButton",
+    description: "Botón de puja: pastilla (radio 27, alto 54) gradiente naranja→morado, borde gradiente, brillo y sombra. Label + monto separados por divisor vertical. label/amount editables.",
+    status: "done",
+    handoffPath: "/handoff/bidbutton",
+    variants: 1,
+    tags: ["Button", "Bid", "Auction"],
+    preview: (
+      <div style={{ transform: "scale(0.86)" }}>
+        <BidButton />
+      </div>
+    ),
+  },
+  {
+    id: "progressbar",
+    name: "ProgressBar",
+    description: "Barra de progreso (tiempo de bid): track hundido top recto + esquinas inferiores redondeadas (13), fondo negro 22% con inner-shadows. Relleno value 0-100 (gradiente naranja por defecto).",
+    status: "done",
+    handoffPath: "/handoff/progressbar",
+    variants: 1,
+    tags: ["Progress", "Bar", "Time"],
+    preview: (
+      <div style={{ width: 240, display: "flex", flexDirection: "column", gap: 10 }}>
+        <ProgressBar value={75} />
+        <ProgressBar value={40} />
+        <ProgressBar value={15} />
+      </div>
+    ),
+  },
+  {
+    id: "bidmessage",
+    name: "BidMessage",
+    description: "Burbuja de mensaje de puja (chat). 2 lados: side=\"sent\" (derecha) / \"received\" (izquierda). Color por type: live (naranja), vault (morado), white (blanco/texto morado). Slot de logo + texto.",
+    status: "done",
+    handoffPath: "/handoff/bidmessage",
+    variants: 3,
+    tags: ["Chat", "Message", "Bid"],
+    preview: (
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "stretch", transform: "scale(0.82)" }}>
+        <div style={{ display: "flex", justifyContent: "flex-start" }}><BidMessage side="received" type="vault" logo={<img src="/logo-preview.png" alt="VMC" style={{ height: 14, width: "auto", display: "block" }} />}>ABRIÓ LA SUBASTA</BidMessage></div>
+        <div style={{ display: "flex", justifyContent: "flex-start" }}><BidMessage side="received" type="white">PROPUSO US$ 18,000</BidMessage></div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}><BidMessage side="sent" type="live">PROPUSO US$ 25,000</BidMessage></div>
+      </div>
+    ),
+  },
+  {
+    id: "bidproposal",
+    name: "BidProposal",
+    description: "Card 280×80 (radio 14): relleno gradiente morado (#5F3ED8→#140046), borde gradiente y sombra. Dot + label naranja con glow + monto grande blanco con glow morado. label/amount editables.",
+    status: "done",
+    handoffPath: "/handoff/bidproposal",
+    variants: 1,
+    tags: ["Card", "Bid", "Auction"],
+    preview: (
+      <div style={{ transform: "scale(0.92)" }}>
+        <BidProposal />
+      </div>
+    ),
+  },
+  {
+    id: "pricebadge",
+    name: "PriceBadge",
+    description: "Insignia circular 20×20: fondo blanco, borde gradiente lila (#E8DEFF→#AE8EFF), sombra morada y un ícono de etiqueta con «S» (soles) en #5A35C2. Tamaño personalizable.",
+    status: "done",
+    handoffPath: "/handoff/pricebadge",
+    variants: 1,
+    tags: ["Icon", "Badge", "Price"],
+    preview: (
+      <div style={{ display: "flex", gap: 18, alignItems: "center", justifyContent: "center" }}>
+        <PriceBadge size={20} />
+        <PriceBadge size={28} />
+        <PriceBadge size={40} />
+      </div>
+    ),
+  },
+  {
+    id: "signal",
+    name: "Signal",
+    description: "Indicador de señal: 5 barras crecientes (rx1). Activas en gradiente naranja (#FF9639→#BE3D00), inactivas en blanco 20%. `level` (0-5) controla cuántas están activas.",
+    status: "done",
+    handoffPath: "/handoff/signal",
+    variants: 1,
+    tags: ["Icon", "Signal", "Status"],
+    preview: (
+      <div style={{ display: "flex", gap: 18, alignItems: "center", justifyContent: "center", background: "#2F2173", borderRadius: 8, padding: "16px 20px" }}>
+        <Signal level={4} width={28} />
+        <Signal level={5} width={36} />
+        <Signal level={2} width={36} />
       </div>
     ),
   },

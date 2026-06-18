@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "bidproposal",
+  "type": "registry:component",
+  "title": "BidProposal",
+  "description": "Componente Concorde BidProposal — se instala en concorde/components/BidProposal.",
+  "dependencies": [
+    "react"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "concorde/components/BidProposal/BidProposal.tsx",
+      "type": "registry:file",
+      "target": "concorde/components/BidProposal/BidProposal.tsx",
+      "content": "\"use client\";\n\n/**\n * BidProposal — Generado por Concorde\n * Fuente: Figma VOYAGER · \"PropuestBid\" (3162:13023)\n *\n * Card 280×80 (radio 14) con relleno gradiente morado (#5F3ED8 → #340091 →\n * #140046), borde gradiente (white → #F4AC59 → #8460E5 → white) y sombra. Arriba\n * un punto + label naranja con glow (#FF9C3B); debajo el monto grande blanco con\n * glow morado. `label` y `amount` editables. Copia del SVG (colores/efectos).\n */\n\nimport type { JSX } from \"react\";\n\nexport interface BidProposalProps {\n  /** Texto superior (naranja) — default \"PROPUESTA · BID ACTUAL\" */\n  label?: string;\n  /** Monto grande (blanco) — default \"US$ 25,000\" */\n  amount?: string;\n  className?: string;\n}\n\nconst STYLE_ID = \"concorde-bidproposal-styles\";\n\nconst BIDPROPOSAL_STYLES = `\n.pbid {\n  position: relative;\n  box-sizing: border-box;\n  width: 280px;\n  max-width: 100%;\n  height: 80px;\n  border-radius: 14px;\n  border: 2px solid transparent;\n  background-image:\n    linear-gradient(160deg, #5F3ED8 0%, #340091 50%, #140046 100%),\n    linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 74.5%, #ffffff 100%);\n  background-origin: border-box;\n  background-clip: padding-box, border-box;\n  box-shadow: rgba(3,1,19,0.45) 0px 5px 20px, inset 0px 1px 0px rgba(255,255,255,0.16);\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: 4px;\n  padding: 10px 16px;\n  font-family: var(--vmc-font-display, \"Plus Jakarta Sans\", -apple-system, sans-serif);\n  overflow: hidden;\n}\n.pbid__label {\n  display: inline-flex;\n  align-items: center;\n  gap: 7px;\n  font-size: 12px;\n  font-weight: 700;\n  letter-spacing: 0.02em;\n  text-transform: uppercase;\n  color: #FF9C3B;\n  text-shadow: 0 0 6px rgba(239,133,46,0.5);\n  white-space: nowrap;\n}\n.pbid__dot {\n  width: 5.3px;\n  height: 5.3px;\n  border-radius: 50%;\n  background: #FF9C3B;\n  box-shadow: 0 0 7px 1px rgba(239,133,46,0.9);\n  flex-shrink: 0;\n}\n.pbid__amount {\n  font-size: 34px;\n  font-weight: 800;\n  line-height: 1;\n  letter-spacing: 0.01em;\n  color: #ffffff;\n  font-variant-numeric: tabular-nums;\n  white-space: nowrap;\n  text-shadow:\n    0 0 4px rgba(174,166,255,0.7),\n    0 0 9px rgba(107,85,222,0.6),\n    0 0 18px rgba(82,52,189,0.5),\n    0 0 30px rgba(49,0,138,0.4);\n}\n`;\n\nlet _stylesInjected = false;\n\nexport default function BidProposal({\n  label = \"PROPUESTA · BID ACTUAL\",\n  amount = \"US$ 25,000\",\n  className = \"\",\n}: BidProposalProps): JSX.Element {\n  if (typeof document !== \"undefined\" && !_stylesInjected) {\n    if (!document.getElementById(STYLE_ID)) {\n      const el = document.createElement(\"style\");\n      el.id = STYLE_ID;\n      el.textContent = BIDPROPOSAL_STYLES;\n      document.head.appendChild(el);\n    }\n    _stylesInjected = true;\n  }\n\n  return (\n    <>\n      <style id={`${STYLE_ID}-ssr`} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: BIDPROPOSAL_STYLES }} />\n      <div className={`pbid ${className}`.trim()}>\n        <span className=\"pbid__label\">\n          <span className=\"pbid__dot\" aria-hidden=\"true\" />\n          {label}\n        </span>\n        <span className=\"pbid__amount\">{amount}</span>\n      </div>\n    </>\n  );\n}\n"
+    },
+    {
+      "path": "concorde/components/BidProposal/index.ts",
+      "type": "registry:file",
+      "target": "concorde/components/BidProposal/index.ts",
+      "content": "export { default } from \"./BidProposal\";\nexport type { BidProposalProps } from \"./BidProposal\";\n"
+    }
+  ]
+}
