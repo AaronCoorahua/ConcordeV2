@@ -199,27 +199,22 @@ export default function MobileHeader({
             padding: "10px 0 0",
           }}
         >
-          {/* Título + Signal (dentro de la tarjeta izquierda 310) */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "flex-start",
-              justifyContent: "space-between",
-              width: INFO_WIDTH,
-              boxSizing: "border-box",
-              padding: "0 14px",
-            }}
-          >
+          {/* Título (Signal va aparte, absoluto, para no inflar la fila) */}
+          <div style={{ width: INFO_WIDTH, boxSizing: "border-box", padding: "0 14px" }}>
             <span style={{ fontSize: 17, fontWeight: 800, lineHeight: 1, color: "#ffffff", whiteSpace: "nowrap" }}>
               {title} <span style={{ fontWeight: 500 }}>{year}</span>
             </span>
-            <Signal variant="white" width={39} height={29} level={4} title="Conectividad" />
           </div>
 
-          {/* Vendedor */}
-          <span style={{ width: INFO_WIDTH, boxSizing: "border-box", padding: "0 14px", marginTop: 6, fontSize: 14, fontWeight: 600, lineHeight: 1, color: "#ffffff" }}>
+          {/* Vendedor — pegado al título */}
+          <span style={{ width: INFO_WIDTH, boxSizing: "border-box", padding: "0 14px", marginTop: 2, fontSize: 14, fontWeight: 600, lineHeight: 1, color: "#ffffff" }}>
             {sellerLabel} <span style={{ color: "rgba(255,255,255,0.6)" }}>{seller}</span>
           </span>
+
+          {/* Signal (white) — absoluto a la derecha; su base alineada con la base de "Vendedor" */}
+          <div style={{ position: "absolute", top: 14, left: INFO_WIDTH - 14 - 39 }}>
+            <Signal variant="white" width={39} height={29} level={4} title="Conectividad" />
+          </div>
 
           {/* Fila pills full-width: izquierda (3 glass + naranja) · derecha placa */}
           <div style={{ marginTop: 10, display: "flex", alignItems: "center", width: MOBILEHEADER_WIDTH }}>

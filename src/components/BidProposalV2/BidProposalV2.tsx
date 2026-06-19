@@ -31,10 +31,10 @@ const BIDPROPOSALV2_STYLES = `
   max-width: 100%;
   height: 78px;
   border-radius: 20px;
-  /* GLASS real: solo white 8% + backdrop-blur (sin relleno sólido) */
-  background: rgba(255,255,255,0.08);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
+  /* GLASS real: white ~10% + backdrop-blur fuerte (Figma "Background blur 28") */
+  background: rgba(255,255,255,0.10);
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
   box-shadow: rgba(20,0,69,0.3) 0px 8px 24px -2px;
   display: flex;
   flex-direction: column;
