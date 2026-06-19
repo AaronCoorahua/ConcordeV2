@@ -12,9 +12,13 @@
 
 import type { JSX } from "react";
 
+export type ProgressBarVariant = "default" | "rainbow";
+
 export interface ProgressBarProps {
   /** Progreso 0-100 (default 60) */
   value?: number;
+  /** Relleno: "default" (gradiente primary diagonal) o "rainbow" (white→#F2CCFF→#CC00FF→#FF0066 horizontal). Default "default". */
+  variant?: ProgressBarVariant;
   "aria-label"?: string;
   className?: string;
 }
@@ -39,6 +43,11 @@ const PROGRESSBAR_STYLES = `
   background: linear-gradient(135deg, #FFFFFF 0%, #F4AC59 22%, #8460E5 74.5%, #FFFFFF 100%);
   transition: width 0.3s cubic-bezier(0.3,0,0,1);
 }
+/* Rainbow horizontal (no diagonal): white → lila → magenta → rosa */
+.pprogbar__fill--rainbow {
+  background: linear-gradient(90deg, #FFFFFF 0%, #F2CCFF 25%, #CC00FF 60%, #FF0066 100%);
+  box-shadow: 0 0 6px rgba(255,255,255,0.8), 0 0 14px rgba(204,0,255,0.9), 0 0 30px rgba(255,0,102,0.5);
+}
 @media (prefers-reduced-motion: reduce) { .pprogbar__fill { transition: none; } }
 `;
 
@@ -46,6 +55,7 @@ let _stylesInjected = false;
 
 export default function ProgressBar({
   value = 60,
+  variant = "default",
   "aria-label": ariaLabel,
   className = "",
 }: ProgressBarProps): JSX.Element {
@@ -72,7 +82,10 @@ export default function ProgressBar({
         aria-valuemax={100}
         aria-label={ariaLabel ?? "Tiempo de bid"}
       >
-        <div className="pprogbar__fill" style={{ width: `${clamped}%` }} />
+        <div
+          className={`pprogbar__fill ${variant === "rainbow" ? "pprogbar__fill--rainbow" : ""}`.trim()}
+          style={{ width: `${clamped}%` }}
+        />
       </div>
     </>
   );

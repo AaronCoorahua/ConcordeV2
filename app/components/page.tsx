@@ -26,6 +26,7 @@ import AmountOptionGroup from "@/src/components/AmountOptionGroup/AmountOptionGr
 import PriceBadge from "@/src/components/PriceBadge/PriceBadge";
 import Signal from "@/src/components/Signal/Signal";
 import BidProposal from "@/src/components/BidProposal/BidProposal";
+import BidProposalV2 from "@/src/components/BidProposalV2/BidProposalV2";
 import BidMessage from "@/src/components/BidMessage/BidMessage";
 import BidButton from "@/src/components/BidButton/BidButton";
 import ProgressBar from "@/src/components/ProgressBar/ProgressBar";
@@ -344,6 +345,20 @@ const REGISTRY: ComponentEntry[] = [
     preview: (
       <div style={{ transform: "scale(0.92)" }}>
         <BidProposal />
+      </div>
+    ),
+  },
+  {
+    id: "bidproposalv2",
+    name: "BidProposalV2",
+    description: "Variante glassmorphic 278×78 (radio 20): relleno white 8% + backdrop-blur(14px), borde gradiente y sombra. Monto grande con glow morado y caption en degradado lila con glow naranja. amount/label editables · va sobre fondos oscuros.",
+    status: "done",
+    handoffPath: "/handoff/bidproposalv2",
+    variants: 1,
+    tags: ["Card", "Bid", "Auction", "Glass"],
+    preview: (
+      <div style={{ backgroundColor: "#94a3b8", backgroundImage: "linear-gradient(45deg, #64748b 25%, transparent 25%, transparent 75%, #64748b 75%), linear-gradient(45deg, #64748b 25%, transparent 25%, transparent 75%, #64748b 75%)", backgroundSize: "20px 20px", backgroundPosition: "0 0, 10px 10px", padding: 16, borderRadius: 12, transform: "scale(0.9)" }}>
+        <BidProposalV2 />
       </div>
     ),
   },

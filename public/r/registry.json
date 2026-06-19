@@ -57,6 +57,12 @@
       "url": "https://concorde-v2-theta.vercel.app/r/bidproposal.json"
     },
     {
+      "name": "bidproposalv2",
+      "type": "registry:component",
+      "title": "BidProposalV2",
+      "url": "https://concorde-v2-theta.vercel.app/r/bidproposalv2.json"
+    },
+    {
       "name": "button",
       "type": "registry:component",
       "title": "Button",
@@ -238,6 +244,7 @@
       "components": [
         "bidproposal",
         "bidbutton",
+        "bidmessage",
         "progressbar",
         "avatarzone",
         "pricebadge",
@@ -246,7 +253,18 @@
         "priceicon",
         "salastatus",
         "cardviewer",
+        "bidposition",
         "sendbidicon"
+      ]
+    },
+    {
+      "name": "salamobile",
+      "type": "registry:block",
+      "title": "SalaMobile",
+      "url": "https://concorde-v2-theta.vercel.app/r/salamobile.json",
+      "components": [
+        "progressbar",
+        "signal"
       ]
     }
   ]

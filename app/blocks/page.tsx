@@ -2,6 +2,7 @@ import type { JSX, ReactNode } from "react";
 import Homepage, { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/Homepage/Homepage";
 import Detalle, { DETALLE_WIDTH, DETALLE_HEIGHT } from "@/src/blocks/Detalle/Detalle";
 import Sala, { SALA_WIDTH, SALA_HEIGHT } from "@/src/blocks/Sala/Sala";
+import SalaMobile, { SALAMOBILE_WIDTH, SALAMOBILE_HEIGHT } from "@/src/blocks/SalaMobile/SalaMobile";
 import Topbar from "@/app/blocks/_components/Topbar";
 
 /**
@@ -41,6 +42,14 @@ const BLOCKS: BlockEntry[] = [
     width: SALA_WIDTH,
     height: SALA_HEIGHT,
     node: <Sala />,
+  },
+  {
+    id: "sala-mobile",
+    name: "Sala · Mobile",
+    description: "Sala de subasta · versión mobile. Lienzo base (gradiente morado #5F3ED8→#140046) — iremos montando las secciones.",
+    width: SALAMOBILE_WIDTH,
+    height: SALAMOBILE_HEIGHT,
+    node: <SalaMobile />,
   },
 ];
 
