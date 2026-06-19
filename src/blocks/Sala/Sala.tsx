@@ -7,8 +7,12 @@
 
 import type { JSX } from "react";
 import ConsoleHeader from "./ConsoleHeader";
+import PriceBase from "./PriceBase";
+import StatPill from "./StatPill";
+import BidChat from "./BidChat";
 import SalaStatus from "@/src/components/SalaStatus/SalaStatus";
 import CardViewer from "@/src/components/CardViewer/CardViewer";
+import BidPosition from "@/src/components/BidPosition/BidPosition";
 
 export interface SalaProps {
   className?: string;
@@ -63,10 +67,69 @@ export default function Sala({ className = "" }: SalaProps): JSX.Element {
         204 × 930
       </div>
 
-      {/* SalaStatus + visor · el borde gradiente (slot header de CardViewer) envuelve
-          SOLO SalaStatus + el visor; el filmstrip queda aparte, debajo. */}
-      <div style={{ position: "absolute", top: 96, left: 236 }}>
+      {/* Columna derecha (443 ancho) · SalaStatus+visor (borde gradiente) ·
+          filmstrip · y debajo la fila PRECIO BASE + pills */}
+      <div
+        style={{
+          position: "absolute",
+          top: 96,
+          left: 236,
+          width: 443,
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+        }}
+      >
+        {/* El borde gradiente (slot header de CardViewer) envuelve SOLO
+            SalaStatus + el visor; el filmstrip queda aparte, debajo. */}
         <CardViewer header={<SalaStatus />} images={SALA_IMAGES} />
+
+        {/* Debajo del filmstrip · izquierda: PRECIO BASE (PriceIcon) ·
+            derecha: 2 pills MIS BIDS / BIDS TOTALES (SendBidIcon) */}
+        <div style={{ display: "flex", gap: 15, alignItems: "stretch" }}>
+          <PriceBase />
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              gap: 12,
+            }}
+          >
+            <StatPill variant="bids" label="MIS BIDS" value="18" />
+            <StatPill variant="total" label="BIDS TOTALES" value="157" />
+          </div>
+        </div>
+
+        {/* Banner inferior 443×237 · debajo de la fila PRECIO BASE + pills */}
+        <div
+          data-slot="bottom-banner"
+          style={{
+            width: 443,
+            height: 237,
+            borderRadius: 8,
+            background: "#E9EAEC",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            fontFamily: "monospace",
+            fontSize: 12,
+            letterSpacing: "0.08em",
+            color: "#9AA1AC",
+          }}
+        >
+          BANNER
+          <br />
+          443 × 237
+        </div>
+      </div>
+
+      {/* Columna derecha (313) · BidChat y, debajo, BidPosition */}
+      <div style={{ position: "absolute", top: 96, left: 694, display: "flex", flexDirection: "column", gap: 16 }}>
+        <BidChat />
+        <BidPosition />
       </div>
     </div>
   );

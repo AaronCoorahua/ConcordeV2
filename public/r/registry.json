@@ -236,12 +236,17 @@
       "title": "Sala",
       "url": "https://concorde-v2-theta.vercel.app/r/sala.json",
       "components": [
+        "bidproposal",
+        "bidbutton",
+        "progressbar",
         "avatarzone",
         "pricebadge",
         "badgestatus",
         "signal",
+        "priceicon",
         "salastatus",
-        "cardviewer"
+        "cardviewer",
+        "sendbidicon"
       ]
     }
   ]
