@@ -264,7 +264,9 @@
       "url": "https://concorde-v2-theta.vercel.app/r/salamobile.json",
       "components": [
         "progressbar",
-        "signal"
+        "bidproposalv2",
+        "signal",
+        "button"
       ]
     }
   ]
