@@ -265,6 +265,7 @@
       "components": [
         "progressbar",
         "bidproposalv2",
+        "bidmessage",
         "signal",
         "button"
       ]
