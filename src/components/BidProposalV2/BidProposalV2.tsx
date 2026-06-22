@@ -64,11 +64,29 @@ const BIDPROPOSALV2_STYLES = `
   pointer-events: none;
   z-index: 2;
 }
-.pbidv2--flash::before {
-  background: conic-gradient(from var(--pbidv2-spin), #FFFFFF, #F2CCFF, #CC00FF, #FF0066, #FFFFFF);
-  animation: pbidv2-border 600ms ease-in-out;
+/* Línea de color (cometa) que gira UNA vez sobre el borde — colores del
+   ProgressBar. El borde base (::before) no cambia: solo barre esta línea, suave. */
+.pbidv2::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(from var(--pbidv2-spin), transparent 0 280deg, #F2CCFF 320deg, #CC00FF 345deg, #FF0066 358deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 3;
 }
-@keyframes pbidv2-border { from { --pbidv2-spin: 0deg; } to { --pbidv2-spin: 360deg; } }
+.pbidv2--flash::after { animation: pbidv2-arc 650ms ease-in-out; }
+@keyframes pbidv2-arc {
+  0%   { opacity: 0; --pbidv2-spin: 0deg; }
+  18%  { opacity: 1; }
+  82%  { opacity: 1; }
+  100% { opacity: 0; --pbidv2-spin: 360deg; }
+}
 
 /* Luz interna (recortada al glass) con los colores del ProgressBar, que gira */
 .pbidv2__lightwrap {
@@ -129,7 +147,7 @@ const BIDPROPOSALV2_STYLES = `
   filter: drop-shadow(0 0 6px rgba(239,133,46,0.5));
 }
 @media (prefers-reduced-motion: reduce) {
-  .pbidv2--flash::before, .pbidv2--flash .pbidv2__light,
+  .pbidv2--flash::after, .pbidv2--flash .pbidv2__light,
   .pbidv2--flash .pbidv2__amount, .pbidv2--flash .pbidv2__label { animation: none; }
 }
 `;
