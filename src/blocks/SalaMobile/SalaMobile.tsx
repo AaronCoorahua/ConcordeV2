@@ -34,6 +34,7 @@ import {
   PARTICIPANTS_TARGET,
   BASE,
   STEP,
+  ME,
   fmtMoney,
 } from "./liveData";
 
@@ -71,6 +72,9 @@ export default function SalaMobile({ className = "", live = false }: SalaMobileP
   const [bidAmount, setBidAmount] = useState(BASE);
   const [bidder, setBidder] = useState("ZAE389");
   const [pressed, setPressed] = useState(false);
+  const [flash, setFlash] = useState(0); // dispara la animación de nuevo bid
+  const [idleBid, setIdleBid] = useState(6559); // bid actual en idle (interactivo con "Bidear")
+  const [idleBidder, setIdleBidder] = useState("ZAE389");
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(
@@ -132,6 +136,7 @@ export default function SalaMobile({ className = "", live = false }: SalaMobileP
                   if (m.kind === "proposal") {
                     setBidAmount(m.amount ?? BASE);
                     setBidder(m.bidder ?? "—");
+                    setFlash((f) => f + 1); // anima el bid actual con cada puja
                     if (m.mine) {
                       setMyBids((x) => x + 1);
                       setTotalBids((x) => x + 1);
@@ -174,7 +179,15 @@ export default function SalaMobile({ className = "", live = false }: SalaMobileP
   );
 
   const progVariant: ProgressBarVariant = live ? (phase === "streaming" ? "rainbow" : "white") : "rainbow";
-  const nextBid = bidAmount + STEP;
+  const ctaAmount = (live ? bidAmount : idleBid) + STEP; // CTA = siguiente bid (un poco mayor)
+
+  // Click en "Bidear" (idle): pujo yo → sube mi bid + anima el bid actual
+  function handleBid(): void {
+    if (live) return;
+    setIdleBid((b) => b + STEP);
+    setIdleBidder(ME);
+    setFlash((f) => f + 1);
+  }
 
   return (
     <div
@@ -207,8 +220,9 @@ export default function SalaMobile({ className = "", live = false }: SalaMobileP
           progress={live ? prog : 40}
           progressVariant={progVariant}
           count={count}
-          bidAmount={live ? bidAmount : 6559}
-          bidder={live ? bidder : "ZAE389"}
+          bidAmount={live ? bidAmount : idleBid}
+          bidder={live ? bidder : idleBidder}
+          flash={flash}
         />
       </div>
 
@@ -218,7 +232,7 @@ export default function SalaMobile({ className = "", live = false }: SalaMobileP
         className={`salamobile-cta${pressed ? " salamobile-cta--pressed" : ""}`}
         style={{ position: "absolute", left: "50%", bottom: 16, transform: "translateX(-50%)" }}
       >
-        <Button variant="primary">{live ? fmtMoney(nextBid) : "US$ 7,000"}</Button>
+        <Button variant="primary" onClick={handleBid}>{fmtMoney(ctaAmount)}</Button>
       </div>
     </div>
   );

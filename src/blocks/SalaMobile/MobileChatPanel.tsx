@@ -175,6 +175,8 @@ export interface MobileChatPanelProps {
   /** Bid actual (para BidProposalV2) */
   bidAmount?: number;
   bidder?: string;
+  /** Contador que dispara la animación de nuevo bid en BidProposalV2 */
+  flash?: number;
 }
 
 export default function MobileChatPanel({
@@ -188,6 +190,7 @@ export default function MobileChatPanel({
   count = 3,
   bidAmount = 6559,
   bidder = "ZAE389",
+  flash = 0,
 }: MobileChatPanelProps): JSX.Element {
   if (typeof document !== "undefined" && !_stylesInjected) {
     if (!document.getElementById(STYLE_ID)) {
@@ -272,7 +275,7 @@ export default function MobileChatPanel({
         {/* Bid actual (glass) — arriba al centro, en idle y streaming */}
         {showProposal ? (
           <div style={{ position: "absolute", top: 14, left: 0, right: 0, display: "flex", justifyContent: "center", zIndex: 3 }}>
-            <BidProposalV2 amount={fmtMoney(bidAmount)} label={`ENVIADO POR ${bidder}`} />
+            <BidProposalV2 amount={fmtMoney(bidAmount)} label={`ENVIADO POR ${bidder}`} flash={flash} />
           </div>
         ) : null}
 
