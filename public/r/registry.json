@@ -57,12 +57,6 @@
       "url": "https://concorde-v2-theta.vercel.app/r/bidproposal.json"
     },
     {
-      "name": "bidproposalv2",
-      "type": "registry:component",
-      "title": "BidProposalV2",
-      "url": "https://concorde-v2-theta.vercel.app/r/bidproposalv2.json"
-    },
-    {
       "name": "button",
       "type": "registry:component",
       "title": "Button",
@@ -264,7 +258,7 @@
       "url": "https://concorde-v2-theta.vercel.app/r/salamobile.json",
       "components": [
         "progressbar",
-        "bidproposalv2",
+        "bidproposal",
         "bidmessage",
         "signal",
         "button"

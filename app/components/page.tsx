@@ -26,7 +26,6 @@ import AmountOptionGroup from "@/src/components/AmountOptionGroup/AmountOptionGr
 import PriceBadge from "@/src/components/PriceBadge/PriceBadge";
 import Signal from "@/src/components/Signal/Signal";
 import BidProposal from "@/src/components/BidProposal/BidProposal";
-import BidProposalV2 from "@/src/components/BidProposalV2/BidProposalV2";
 import BidMessage from "@/src/components/BidMessage/BidMessage";
 import BidButton from "@/src/components/BidButton/BidButton";
 import ProgressBar from "@/src/components/ProgressBar/ProgressBar";
@@ -337,28 +336,14 @@ const REGISTRY: ComponentEntry[] = [
   {
     id: "bidproposal",
     name: "BidProposal",
-    description: "Card 280×80 (radio 14): relleno gradiente morado (#5F3ED8→#140046), borde gradiente y sombra. Dot + label naranja con glow + monto grande blanco con glow morado. label/amount editables.",
+    description: "Propuesta de bid glassmorphic 278×78 (radio 20): white 8% + backdrop-blur, borde gradiente y sombra. Monto blanco con glow morado y caption lila. Animación de nuevo bid tipo bombilla (prop flash) con flashColors editables. amount/label editables · va sobre fondos oscuros.",
     status: "done",
     handoffPath: "/handoff/bidproposal",
     variants: 1,
-    tags: ["Card", "Bid", "Auction"],
-    preview: (
-      <div style={{ transform: "scale(0.92)" }}>
-        <BidProposal />
-      </div>
-    ),
-  },
-  {
-    id: "bidproposalv2",
-    name: "BidProposalV2",
-    description: "Variante glassmorphic 278×78 (radio 20): relleno white 8% + backdrop-blur(14px), borde gradiente y sombra. Monto grande con glow morado y caption en degradado lila con glow naranja. amount/label editables · va sobre fondos oscuros.",
-    status: "done",
-    handoffPath: "/handoff/bidproposalv2",
-    variants: 1,
     tags: ["Card", "Bid", "Auction", "Glass"],
     preview: (
-      <div style={{ backgroundColor: "#94a3b8", backgroundImage: "linear-gradient(45deg, #64748b 25%, transparent 25%, transparent 75%, #64748b 75%), linear-gradient(45deg, #64748b 25%, transparent 25%, transparent 75%, #64748b 75%)", backgroundSize: "20px 20px", backgroundPosition: "0 0, 10px 10px", padding: 16, borderRadius: 12, transform: "scale(0.9)" }}>
-        <BidProposalV2 />
+      <div style={{ background: "linear-gradient(116deg, #5F3ED8 0%, #340091 50%, #140046 100%)", padding: 16, borderRadius: 12, transform: "scale(0.9)" }}>
+        <BidProposal />
       </div>
     ),
   },

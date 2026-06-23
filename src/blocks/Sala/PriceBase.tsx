@@ -20,10 +20,11 @@ export interface PriceBaseProps {
 export const PRICEBASE_WIDTH = 272;
 export const PRICEBASE_HEIGHT = 106;
 
-// Relleno morado: paint0 horizontal (#19004A der → #2E0F70 izq)
-const FILL = "linear-gradient(270deg, #19004A 0%, #3B1782 50%, #2E0F70 100%)";
-// Borde: highlight blanco sutil arriba (paint1: white 0.1 → transparent)
-const BORDER = "linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 55%)";
+// Dark glass (paint0 + "behind transparent areas" #0A002E): base navy + sheen
+// blanco (white 28%→4%) + borde gradiente (white .9 → #F4AC59 .7 → #8460E5 .7 → white .9)
+const GLASS_SHEEN = "linear-gradient(127deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.07) 45%, rgba(255,255,255,0.03) 100%)";
+const GLASS_BASE = "linear-gradient(160deg, rgba(28,13,82,0.93) 0%, rgba(14,3,56,0.95) 100%)";
+const GLASS_BORDER = "linear-gradient(125deg, rgba(255,255,255,0.9) 0%, rgba(244,172,89,0.7) 22%, rgba(132,96,229,0.7) 74.5%, rgba(255,255,255,0.9) 100%)";
 
 export default function PriceBase({
   label = "PRECIO BASE",
@@ -39,11 +40,13 @@ export default function PriceBase({
         width: PRICEBASE_WIDTH,
         height: PRICEBASE_HEIGHT,
         borderRadius: 16,
-        backgroundImage: `${FILL}, ${BORDER}`,
+        backgroundImage: `${GLASS_SHEEN}, ${GLASS_BASE}, ${GLASS_BORDER}`,
         backgroundOrigin: "border-box",
-        backgroundClip: "padding-box, border-box",
+        backgroundClip: "padding-box, padding-box, border-box",
         border: "1.5px solid transparent",
-        boxShadow: "rgba(20,0,70,0.42) 0px 8px 22px, inset 0px 1px 0px rgba(255,255,255,0.2)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        boxShadow: "rgba(10,0,46,0.6) 0px 12px 36px -4px, inset 0 1px 0 rgba(255,255,255,0.22)",
         padding: "16px 20px",
         display: "flex",
         flexDirection: "column",

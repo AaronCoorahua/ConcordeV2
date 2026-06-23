@@ -68,12 +68,11 @@ let _glassInjected = false;
 export const STATPILL_WIDTH = 156;
 export const STATPILL_HEIGHT = 47;
 
-// Naranja (MIS BIDS): paint0 vertical + borde gradiente vivo (white→naranja→lila→white)
-const BIDS_FILL = "linear-gradient(180deg, #FF9639 0%, #EF852E 40%, #BE3D00 100%)";
-const BIDS_BORDER = "linear-gradient(125deg, #ffffff 0%, #F4AC59 22%, #8460E5 74.5%, #ffffff 100%)";
-// Morado (BIDS TOTALES): paint0 horizontal + highlight blanco sutil arriba
-const TOTAL_FILL = "linear-gradient(270deg, #19004A 0%, #3B1782 50%, #2E0F70 100%)";
-const TOTAL_BORDER = "linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 55%)";
+// Dark glass (MIS BIDS / BIDS TOTALES): base navy (= "behind transparent areas"
+// #0A002E) + sheen blanco (white 28%→4%) + borde gradiente
+const STAT_GLASS_SHEEN = "linear-gradient(127deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.07) 45%, rgba(255,255,255,0.03) 100%)";
+const STAT_GLASS_BASE = "linear-gradient(160deg, rgba(28,13,82,0.93) 0%, rgba(14,3,56,0.95) 100%)";
+const STAT_GLASS_BORDER = "linear-gradient(125deg, rgba(255,255,255,0.9) 0%, rgba(244,172,89,0.7) 22%, rgba(132,96,229,0.7) 74.5%, rgba(255,255,255,0.9) 100%)";
 
 export default function StatPill({
   variant = "bids",
@@ -120,11 +119,13 @@ export default function StatPill({
         width: STATPILL_WIDTH,
         height: STATPILL_HEIGHT,
         borderRadius: 16,
-        backgroundImage: isBids ? `${BIDS_FILL}, ${BIDS_BORDER}` : `${TOTAL_FILL}, ${TOTAL_BORDER}`,
+        backgroundImage: `${STAT_GLASS_SHEEN}, ${STAT_GLASS_BASE}, ${STAT_GLASS_BORDER}`,
         backgroundOrigin: "border-box",
-        backgroundClip: "padding-box, border-box",
+        backgroundClip: "padding-box, padding-box, border-box",
         border: "1.5px solid transparent",
-        boxShadow: "rgba(20,0,70,0.42) 0px 8px 22px, inset 0px 1px 0px rgba(255,255,255,0.2)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        boxShadow: "rgba(10,0,46,0.6) 0px 12px 36px -4px, inset 0 1px 0 rgba(255,255,255,0.22)",
         display: "flex",
         alignItems: "center",
         gap: 14,

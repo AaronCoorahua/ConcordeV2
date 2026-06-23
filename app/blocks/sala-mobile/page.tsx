@@ -29,7 +29,7 @@ interface RequiredComponent {
 const REQUIRED: RequiredComponent[] = [
   { name: "Signal", path: "/handoff/signal", role: "Indicador de conectividad (variante «white») en el header" },
   { name: "SendBidIcon", path: "/handoff/sendbidicon", role: "Flecha de las pills glass (vía StatPill «glass»)" },
-  { name: "BidProposalV2", path: "/handoff/bidproposalv2", role: "Propuesta de bid actual (glass) arriba del chat" },
+  { name: "BidProposal", path: "/handoff/bidproposal", role: "Propuesta de bid actual (glass, efecto bombilla) arriba del chat" },
   { name: "ProgressBar", path: "/handoff/progressbar", role: "Barra de tiempo de bid (variante «rainbow», horizontal) al fondo del panel" },
   { name: "Button", path: "/handoff/button", role: "CTA primary «US$ 7,000» (320×48) abajo del todo" },
 ];
@@ -37,7 +37,7 @@ const REQUIRED: RequiredComponent[] = [
 const FILES: { filename: string; code: string; note: string }[] = [
   { filename: "src/blocks/SalaMobile/SalaMobile.tsx", code: readSrc("src/blocks/SalaMobile/SalaMobile.tsx"), note: "Lienzo 420×844 (gradiente morado #5F3ED8→#340091→#140046). Monta el MobileHeader arriba, el panel glass del chat pegado debajo y el CTA primary «US$ 7,000» abajo del todo." },
   { filename: "src/blocks/SalaMobile/MobileHeader.tsx", code: readSrc("src/blocks/SalaMobile/MobileHeader.tsx"), note: "Header 420×95 · dos bloques cuadrados (sin redondeo): tarjeta sala 310×95 (gradiente naranja→morado, borde gradiente, título + Signal white + vendedor + pills) y carro 110×95 con placa glass. Pills y placa comparten una sola fila flex para alinearse exacto." },
-  { filename: "src/blocks/SalaMobile/MobileChatPanel.tsx", code: readSrc("src/blocks/SalaMobile/MobileChatPanel.tsx"), note: "Panel glass 420×670 (white 8% + blur, top cuadrado / abajo redondeado 16, borde gradiente vía máscara). BidProposalV2 arriba al centro y ProgressBar «rainbow» pegada al fondo." },
+  { filename: "src/blocks/SalaMobile/MobileChatPanel.tsx", code: readSrc("src/blocks/SalaMobile/MobileChatPanel.tsx"), note: "Panel glass 420×670 (white 8% + blur, top cuadrado / abajo redondeado 16, borde gradiente vía máscara). BidProposal (glass) arriba al centro y ProgressBar «rainbow» pegada al fondo." },
   { filename: "src/blocks/Sala/StatPill.tsx", code: readSrc("src/blocks/Sala/StatPill.tsx"), note: "Pills del header. Variante «glass» 50×22 (glass real con borde gradiente vía máscara, ícono custom) usada en mobile; «bids»/«total» 156×47 en el Sala desktop." },
 ];
 

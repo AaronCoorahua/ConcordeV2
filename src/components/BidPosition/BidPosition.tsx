@@ -5,7 +5,7 @@
  * Fuente: Figma VOYAGER · "ConsolePositions" (2934:14554) +
  *         "Background+Border" (3188:11944 live · 3188:11955 vault)
  *
- * Tabla de posiciones de pujas: card morada (radio 16, borde gradiente, sombra)
+ * Tabla de posiciones de pujas: card glass (white 28%→4% + backdrop-blur, radio 16, borde gradiente, sombra)
  * con header de columnas (PUESTO · USUARIO · BIDS, decodificado del SVG) y N
  * filas tipo pastilla en grid de 3 columnas:
  *   · 1ª posición  → live (naranja #FF9639→#BE3D00, borde gradiente, trofeo dorado)
@@ -53,13 +53,18 @@ const BIDPOSITION_STYLES = `
   width: 313px;
   max-width: 100%;
   border-radius: 16px;
-  border: 1px solid transparent;
+  border: 1.5px solid transparent;
+  /* GLASS oscuro: base navy (= el "behind transparent areas" #0A002E) + sheen
+     blanco (paint0: white 28%→4%) + backdrop-blur (Figma "bg blur 40" → 20px) */
   background-image:
-    linear-gradient(150deg, #5F3ED8 0%, #340091 50%, #140046 100%),
-    linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 74.5%, #ffffff 100%);
+    linear-gradient(127deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.07) 45%, rgba(255,255,255,0.03) 100%),
+    linear-gradient(160deg, rgba(28,13,82,0.93) 0%, rgba(14,3,56,0.95) 100%),
+    linear-gradient(125deg, rgba(255,255,255,0.9) 0%, rgba(244,172,89,0.7) 22%, rgba(132,96,229,0.7) 74.5%, rgba(255,255,255,0.9) 100%);
   background-origin: border-box;
-  background-clip: padding-box, border-box;
-  box-shadow: rgba(0,0,0,0.35) 0px 0px 20px 4px;
+  background-clip: padding-box, padding-box, border-box;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow: rgba(10,0,46,0.6) 0px 12px 36px -4px, inset 0 1px 0 rgba(255,255,255,0.22);
   padding: 0 16px 16px;
   font-family: var(--vmc-font-display, "Plus Jakarta Sans", -apple-system, sans-serif);
 }
