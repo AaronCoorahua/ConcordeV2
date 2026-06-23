@@ -22,6 +22,12 @@ import Signal from "@/src/components/Signal/Signal";
 export const CONSOLEHEADER_WIDTH = 991;
 export const CONSOLEHEADER_HEIGHT = 64;
 
+// Dark glass (paint0 + "behind transparent areas" #0A002E): base navy + sheen
+// blanco (white 28%→4%) + borde gradiente (white .9 → #F4AC59 .7 → #8460E5 .7 → white .9)
+const GLASS_SHEEN = "linear-gradient(127deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.07) 45%, rgba(255,255,255,0.03) 100%)";
+const GLASS_BASE = "linear-gradient(160deg, rgba(28,13,82,0.93) 0%, rgba(14,3,56,0.95) 100%)";
+const GLASS_BORDER = "linear-gradient(125deg, rgba(255,255,255,0.9) 0%, rgba(244,172,89,0.7) 22%, rgba(132,96,229,0.7) 74.5%, rgba(255,255,255,0.9) 100%)";
+
 export interface ConsoleHeaderProps {
   userLabel?: string;
   user?: string;
@@ -65,12 +71,14 @@ export default function ConsoleHeader({
         alignItems: "center",
         justifyContent: "space-between",
         padding: "0 16px",
-        border: "1px solid transparent",
-        backgroundImage:
-          "linear-gradient(160deg, #5F3ED8 0%, #340091 50%, #140046 100%), linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 74.5%, #ffffff 100%)",
+        borderRadius: 16,
+        border: "1.5px solid transparent",
+        backgroundImage: `${GLASS_SHEEN}, ${GLASS_BASE}, ${GLASS_BORDER}`,
         backgroundOrigin: "border-box",
-        backgroundClip: "padding-box, border-box",
-        boxShadow: "rgba(0,0,0,0.1) 0px 0px 16px 4px",
+        backgroundClip: "padding-box, padding-box, border-box",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        boxShadow: "rgba(10,0,46,0.6) 0px 12px 36px -4px, inset 0 1px 0 rgba(255,255,255,0.22)",
         fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)",
       }}
     >
