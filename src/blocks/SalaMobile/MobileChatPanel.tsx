@@ -4,18 +4,18 @@
  *
  * Presentacional: el motor de la animación vive en SalaMobile y le pasa el
  * estado por props. Renderiza:
- *   · idle      → lista estática de BidMessage + BidProposalV2 + ProgressBar.
+ *   · idle      → lista estática de BidMessage + BidProposal + ProgressBar.
  *   · welcome   → "Recibiendo participantes" + dots + caja "Inicia en" (reloj).
  *   · extended  → + "Inicio extendido" + caja "Inicia en" (símbolo +).
  *   · streaming → BidMessage entrando con fade+slide horizontal (received←izq,
- *                 sent←der) y subiendo; BidProposalV2 con el bid actual.
+ *                 sent←der) y subiendo; BidProposal con el bid actual.
  */
 
 "use client";
 
 import type { JSX } from "react";
 import ProgressBar, { type ProgressBarVariant } from "@/src/components/ProgressBar/ProgressBar";
-import BidProposalV2 from "@/src/components/BidProposalV2/BidProposalV2";
+import BidProposal from "@/src/components/BidProposal/BidProposal";
 import BidMessage from "@/src/components/BidMessage/BidMessage";
 import { STREAM, STATIC, fmtMoney, type LiveMsg, type Phase } from "./liveData";
 
@@ -175,10 +175,10 @@ export interface MobileChatPanelProps {
   progress?: number;
   progressVariant?: ProgressBarVariant;
   count?: number;
-  /** Bid actual (para BidProposalV2) */
+  /** Bid actual (para BidProposal) */
   bidAmount?: number;
   bidder?: string;
-  /** Contador que dispara la animación de nuevo bid en BidProposalV2 */
+  /** Contador que dispara la animación de nuevo bid en BidProposal */
   flash?: number;
   /** Colores del efecto de luz (editable) */
   flashColors?: string[];
@@ -281,7 +281,7 @@ export default function MobileChatPanel({
         {/* Bid actual (glass) — arriba al centro, en idle y streaming */}
         {showProposal ? (
           <div style={{ position: "absolute", top: 14, left: 0, right: 0, display: "flex", justifyContent: "center", zIndex: 3 }}>
-            <BidProposalV2 amount={fmtMoney(bidAmount)} label={`ENVIADO POR ${bidder}`} flash={flash} flashColors={flashColors} />
+            <BidProposal amount={fmtMoney(bidAmount)} label={`ENVIADO POR ${bidder}`} flash={flash} flashColors={flashColors} />
           </div>
         ) : null}
 
