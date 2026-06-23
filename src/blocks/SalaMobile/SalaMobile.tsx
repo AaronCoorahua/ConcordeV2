@@ -45,7 +45,7 @@ export interface SalaMobileProps {
   /** Colores del efecto de luz del bid actual (editable). Default: primary. */
   flashColors?: string[];
   /** Tipo de efecto de luz: "bulb" (bombilla) o "spin" (gira). Default "bulb". */
-  flashMode?: "bulb" | "spin" | "explode" | "pulse";
+  flashMode?: "bulb" | "spin" | "explode" | "pulse" | "combo";
 }
 
 // CTA primary 320×48 + estado "presionado" (réplica de .pvbtn:active)

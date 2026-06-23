@@ -47,12 +47,13 @@ const PALETTES: { name: string; colors: string[] }[] = [
 ];
 
 // Tipo de efecto de luz (editable vía `flashMode`)
-type FlashMode = "bulb" | "spin" | "explode" | "pulse";
+type FlashMode = "bulb" | "spin" | "explode" | "pulse" | "combo";
 const EFFECTS: { name: string; value: FlashMode }[] = [
   { name: "💡 Bombilla", value: "bulb" },
   { name: "🌀 Gira", value: "spin" },
   { name: "💥 Estalla", value: "explode" },
   { name: "✨ Anticipa", value: "pulse" },
+  { name: "🎆 Festejo", value: "combo" },
 ];
 
 export default function Viewer(): JSX.Element {
