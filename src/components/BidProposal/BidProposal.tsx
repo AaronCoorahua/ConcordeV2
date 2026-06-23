@@ -8,17 +8,19 @@
  * backdrop-blur(5px), borde gradiente y sombra morada. Monto grande blanco con
  * glow morado y caption lila.
  *
- * Animación de "nuevo bid" (prop `flash`), con los colores `flashColors` y dos
- * modos `flashMode`:
- *   · "bulb" → se ILUMINA como una bombilla que se prende y apaga (sin giro).
- *   · "spin" → un haz/cometa de luz que GIRA una vez por dentro y por el borde.
- * En ambos, el nuevo monto aparece al apagarse la luz.
+ * Animación de "nuevo bid" (prop `flash`), con los colores `flashColors` y 4
+ * modos `flashMode` (taxonomía de animación de slots):
+ *   · "bulb"    → Luminiscente: se prende y apaga como una bombilla (sin giro).
+ *   · "spin"    → Rotatoria: un haz/cometa de luz que gira una vez.
+ *   · "explode" → Explosiva: estallido de chispas/partículas hacia afuera.
+ *   · "pulse"   → Anticipación/Expansiva: escala elástica + borde neón intermitente.
+ * En todos, el nuevo monto aparece al apagarse/asentarse la luz.
  */
 
 import { useEffect, useRef, useState } from "react";
 import type { JSX, CSSProperties } from "react";
 
-export type BidProposalFlashMode = "bulb" | "spin";
+export type BidProposalFlashMode = "bulb" | "spin" | "explode" | "pulse";
 
 export interface BidProposalProps {
   /** Monto grande (blanco) — default "US$ 6,559" */
@@ -29,13 +31,14 @@ export interface BidProposalProps {
   flash?: number;
   /** Colores del efecto de luz (editable). Default: primary (naranja→lila→blanco). */
   flashColors?: string[];
-  /** Tipo de efecto: "bulb" (bombilla) o "spin" (gira). Default "bulb". */
+  /** Tipo de efecto. Default "bulb". */
   flashMode?: BidProposalFlashMode;
   className?: string;
 }
 
 // Primary (VYStrokes1): naranja-500 → vault-500 → blanco
 const DEFAULT_FLASH_COLORS = ["#F4AC59", "#8460E5", "#ffffff"];
+const SPARKS = 12;
 
 const STYLE_ID = "concorde-bidproposal-styles";
 
@@ -138,8 +141,61 @@ const BIDPROPOSAL_STYLES = `
   100% { opacity: 0; --pbid-spin: 360deg; }
 }
 
-/* Glow externo (común): la card "irradia" al prenderse */
-.pbid--flash { animation: pbid-glow 600ms ease-in-out; }
+/* ===== Modo EXPLODE (estallido: flash central + chispas hacia afuera) ===== */
+.pbid--explode .pbid__light {
+  background: radial-gradient(circle at 50% 50%, var(--pbid-c3, #ffffff) 0%, var(--pbid-c2, #8460E5) 38%, var(--pbid-c1, #F4AC59) 65%, transparent 80%);
+}
+.pbid--explode.pbid--flash .pbid__light { animation: pbid-burst 500ms ease-out; }
+.pbid--explode::after {
+  background: linear-gradient(135deg, var(--pbid-c1, #F4AC59) 0%, var(--pbid-c2, #8460E5) 50%, var(--pbid-c3, #ffffff) 100%);
+}
+.pbid--explode.pbid--flash::after { animation: pbid-onoff 500ms ease-out; }
+@keyframes pbid-burst {
+  0%   { opacity: 0; transform: scale(0.3); }
+  16%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.35); }
+}
+.pbid__sparks { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+.pbid__spark {
+  position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--pbid-c3, #ffffff) 0%, var(--pbid-c1, #F4AC59) 70%, transparent 100%);
+  filter: drop-shadow(0 0 4px var(--pbid-c2, #8460E5));
+  opacity: 0;
+}
+.pbid--explode.pbid--flash .pbid__spark { animation: pbid-spark 600ms cubic-bezier(0.2,0.7,0.3,1); }
+@keyframes pbid-spark {
+  0%   { opacity: 0; transform: rotate(var(--ang)) translateX(6px) scale(0.4); }
+  22%  { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--ang)) translateX(66px) scale(1); }
+}
+
+/* ===== Modo PULSE (anticipación/expansiva: escala elástica + neón intermitente) ===== */
+.pbid--pulse.pbid--flash { animation: pbid-pulse 700ms cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes pbid-pulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+.pbid--pulse .pbid__light {
+  background: linear-gradient(95deg, var(--pbid-c1, #F4AC59) 0%, var(--pbid-c2, #8460E5) 52%, var(--pbid-c3, #ffffff) 100%);
+}
+.pbid--pulse.pbid--flash .pbid__light { animation: pbid-pulse-light 700ms ease-in-out; }
+.pbid--pulse::after {
+  background: linear-gradient(135deg, var(--pbid-c1, #F4AC59) 0%, var(--pbid-c2, #8460E5) 50%, var(--pbid-c3, #ffffff) 100%);
+}
+.pbid--pulse.pbid--flash::after { animation: pbid-flicker 700ms steps(1, end); }
+@keyframes pbid-pulse-light {
+  0% { opacity: 0; } 25% { opacity: 0.9; } 50% { opacity: 0.2; } 75% { opacity: 0.9; } 100% { opacity: 0; }
+}
+@keyframes pbid-flicker {
+  0% { opacity: 0; } 12% { opacity: 1; } 28% { opacity: 0.15; } 44% { opacity: 1; } 60% { opacity: 0.15; } 78% { opacity: 1; } 100% { opacity: 0; }
+}
+
+/* Glow externo (común salvo pulse): la card "irradia" al prenderse */
+.pbid--bulb.pbid--flash, .pbid--spin.pbid--flash, .pbid--explode.pbid--flash {
+  animation: pbid-glow 600ms ease-in-out;
+}
 @keyframes pbid-glow {
   0%, 100% { box-shadow: rgba(20,0,69,0.3) 0px 8px 24px -2px; }
   28% {
@@ -191,7 +247,7 @@ const BIDPROPOSAL_STYLES = `
   filter: drop-shadow(0 0 6px rgba(239,133,46,0.5));
 }
 @media (prefers-reduced-motion: reduce) {
-  .pbid--flash, .pbid--flash::after, .pbid--flash .pbid__light,
+  .pbid--flash, .pbid--flash::after, .pbid--flash .pbid__light, .pbid--flash .pbid__spark,
   .pbid--flash .pbid__amount, .pbid--flash .pbid__label { animation: none; }
 }
 `;
@@ -249,6 +305,13 @@ export default function BidProposal({
         <span className="pbid__lightwrap" aria-hidden="true">
           <span className="pbid__light" />
         </span>
+        {flashMode === "explode" ? (
+          <span className="pbid__sparks" aria-hidden="true">
+            {Array.from({ length: SPARKS }).map((_, i) => (
+              <span key={i} className="pbid__spark" style={{ "--ang": `${(360 / SPARKS) * i}deg` } as CSSProperties} />
+            ))}
+          </span>
+        ) : null}
         <span className="pbid__amount">{amount}</span>
         {label ? <span className="pbid__label">{label}</span> : null}
       </div>
