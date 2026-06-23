@@ -25,7 +25,7 @@ export interface BidChatProps {
   /** Colores del efecto de luz del bid actual (editable). Default: primary. */
   flashColors?: string[];
   /** Tipo de efecto de luz: "bulb" (bombilla) o "spin" (gira). Default "bulb". */
-  flashMode?: "bulb" | "spin";
+  flashMode?: "bulb" | "spin" | "explode" | "pulse";
 }
 
 export const BIDCHAT_WIDTH = 316;

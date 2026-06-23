@@ -18,14 +18,17 @@ const PALETTES: { name: string; colors: string[] }[] = [
 ];
 
 // Tipo de efecto de luz (editable vía `flashMode`)
-const EFFECTS: { name: string; value: "bulb" | "spin" }[] = [
+type FlashMode = "bulb" | "spin" | "explode" | "pulse";
+const EFFECTS: { name: string; value: FlashMode }[] = [
   { name: "💡 Bombilla", value: "bulb" },
   { name: "🌀 Gira", value: "spin" },
+  { name: "💥 Estalla", value: "explode" },
+  { name: "✨ Anticipa", value: "pulse" },
 ];
 
 export default function SalaViewer(): JSX.Element {
   const [pal, setPal] = useState(0);
-  const [mode, setMode] = useState<"bulb" | "spin">("bulb");
+  const [mode, setMode] = useState<FlashMode>("bulb");
 
   return (
     <>
