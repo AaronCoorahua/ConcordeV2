@@ -46,11 +46,18 @@ const PALETTES: { name: string; colors: string[] }[] = [
   { name: "Lila", colors: ["#CFBAFF", "#AE8EFF", "#ffffff"] },
 ];
 
+// Tipo de efecto de luz (editable vía `flashMode`)
+const EFFECTS: { name: string; value: "bulb" | "spin" }[] = [
+  { name: "💡 Bombilla", value: "bulb" },
+  { name: "🌀 Gira", value: "spin" },
+];
+
 export default function Viewer(): JSX.Element {
   const [live, setLive] = useState(false);
   const [fs, setFs] = useState(false);
   const [scale, setScale] = useState(1);
   const [pal, setPal] = useState(0);
+  const [mode, setMode] = useState<"bulb" | "spin">("bulb");
   const flashColors = PALETTES[pal].colors;
 
   // Escala el canvas para caber en la pantalla (usa innerHeight real, no 100vh)
@@ -145,13 +152,39 @@ export default function Viewer(): JSX.Element {
             </button>
           );
         })}
+
+        {/* Selector de tipo de efecto (editable) */}
+        <span style={{ fontSize: 12, fontWeight: 600, color: "#64748b", marginLeft: 4 }}>Efecto:</span>
+        {EFFECTS.map(function renderEffect(e) {
+          return (
+            <button
+              key={e.value}
+              type="button"
+              onClick={() => setMode(e.value)}
+              style={{
+                height: 28,
+                padding: "0 12px",
+                borderRadius: 14,
+                border: mode === e.value ? "2px solid #4f2ed8" : "1px solid #cbd5e1",
+                background: "#ffffff",
+                color: "#0f172a",
+                fontFamily: "inherit",
+                fontSize: 11,
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              {e.name}
+            </button>
+          );
+        })}
       </div>
 
       {/* Canvas a tamaño real sobre panel claro */}
       <main style={{ display: "flex", justifyContent: "center", padding: "32px 40px" }}>
         <div style={{ background: "#f8fafc", border: "1px solid #f1f5f9", borderRadius: 16, padding: 32, overflow: "auto", maxWidth: "100%" }}>
           <div style={{ boxShadow: "0 12px 40px rgba(15,23,42,0.12)", outline: "1px solid #e2e8f0", borderRadius: 4, overflow: "hidden", width: SALAMOBILE_WIDTH }}>
-            <SalaMobile live={live} flashColors={flashColors} />
+            <SalaMobile live={live} flashColors={flashColors} flashMode={mode} />
           </div>
         </div>
       </main>
@@ -171,7 +204,7 @@ export default function Viewer(): JSX.Element {
           }}
         >
           <div style={{ width: SALAMOBILE_WIDTH, height: SALAMOBILE_HEIGHT, transform: `scale(${scale})`, transformOrigin: "center", flexShrink: 0 }}>
-            <SalaMobile live={live} flashColors={flashColors} />
+            <SalaMobile live={live} flashColors={flashColors} flashMode={mode} />
           </div>
 
           {/* Controles flotantes */}

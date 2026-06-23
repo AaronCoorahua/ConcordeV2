@@ -182,6 +182,8 @@ export interface MobileChatPanelProps {
   flash?: number;
   /** Colores del efecto de luz (editable) */
   flashColors?: string[];
+  /** Tipo de efecto de luz: "bulb" o "spin" */
+  flashMode?: "bulb" | "spin";
 }
 
 export default function MobileChatPanel({
@@ -197,6 +199,7 @@ export default function MobileChatPanel({
   bidder = "ZAE389",
   flash = 0,
   flashColors,
+  flashMode = "bulb",
 }: MobileChatPanelProps): JSX.Element {
   if (typeof document !== "undefined" && !_stylesInjected) {
     if (!document.getElementById(STYLE_ID)) {
@@ -281,7 +284,7 @@ export default function MobileChatPanel({
         {/* Bid actual (glass) — arriba al centro, en idle y streaming */}
         {showProposal ? (
           <div style={{ position: "absolute", top: 14, left: 0, right: 0, display: "flex", justifyContent: "center", zIndex: 3 }}>
-            <BidProposal amount={fmtMoney(bidAmount)} label={`ENVIADO POR ${bidder}`} flash={flash} flashColors={flashColors} />
+            <BidProposal amount={fmtMoney(bidAmount)} label={`ENVIADO POR ${bidder}`} flash={flash} flashColors={flashColors} flashMode={flashMode} />
           </div>
         ) : null}
 

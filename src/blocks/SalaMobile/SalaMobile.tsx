@@ -44,6 +44,8 @@ export interface SalaMobileProps {
   live?: boolean;
   /** Colores del efecto de luz del bid actual (editable). Default: primary. */
   flashColors?: string[];
+  /** Tipo de efecto de luz: "bulb" (bombilla) o "spin" (gira). Default "bulb". */
+  flashMode?: "bulb" | "spin";
 }
 
 // CTA primary 320×48 + estado "presionado" (réplica de .pvbtn:active)
@@ -63,7 +65,7 @@ export const SALAMOBILE_WIDTH = 420;
 export const SALAMOBILE_HEIGHT = 844;
 export const SALAMOBILE_BG = "linear-gradient(116deg, #5F3ED8 0%, #340091 50%, #140046 100%)";
 
-export default function SalaMobile({ className = "", live = false, flashColors }: SalaMobileProps): JSX.Element {
+export default function SalaMobile({ className = "", live = false, flashColors, flashMode = "bulb" }: SalaMobileProps): JSX.Element {
   const [phase, setPhase] = useState<Phase>("idle");
   const [shown, setShown] = useState(0);
   const [prog, setProg] = useState(40);
@@ -226,6 +228,7 @@ export default function SalaMobile({ className = "", live = false, flashColors }
           bidder={live ? bidder : idleBidder}
           flash={flash}
           flashColors={flashColors}
+          flashMode={flashMode}
         />
       </div>
 

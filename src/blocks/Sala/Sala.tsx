@@ -16,6 +16,10 @@ import BidPosition from "@/src/components/BidPosition/BidPosition";
 
 export interface SalaProps {
   className?: string;
+  /** Colores del efecto de luz del bid actual (editable). Default: primary. */
+  flashColors?: string[];
+  /** Tipo de efecto de luz: "bulb" (bombilla) o "spin" (gira). Default "bulb". */
+  flashMode?: "bulb" | "spin";
 }
 
 export const SALA_WIDTH = 1023;
@@ -23,7 +27,7 @@ export const SALA_HEIGHT = 1042;
 
 const SALA_IMAGES = ["/demo/bronco.jpg", "/demo/bronco.jpg", "/demo/bronco.jpg", "/demo/bronco.jpg"];
 
-export default function Sala({ className = "" }: SalaProps): JSX.Element {
+export default function Sala({ className = "", flashColors, flashMode = "bulb" }: SalaProps): JSX.Element {
   return (
     <div
       className={className}
@@ -126,9 +130,9 @@ export default function Sala({ className = "" }: SalaProps): JSX.Element {
         </div>
       </div>
 
-      {/* Columna derecha (313) · BidChat y, debajo, BidPosition */}
-      <div style={{ position: "absolute", top: 96, left: 694, display: "flex", flexDirection: "column", gap: 16 }}>
-        <BidChat />
+      {/* Columna derecha (316) · BidChat y, debajo, BidPosition */}
+      <div style={{ position: "absolute", top: 96, left: 691, display: "flex", flexDirection: "column", gap: 16 }}>
+        <BidChat flashColors={flashColors} flashMode={flashMode} />
         <BidPosition />
       </div>
     </div>
