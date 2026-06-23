@@ -69,7 +69,7 @@ const SMCHATPANEL_STYLES = `
 .smchatpanel {
   position: relative;
   width: ${MOBILECHATPANEL_WIDTH}px;
-  border-radius: 0 0 16px 16px;
+  border-radius: 0;
   background: rgba(255,255,255,0.03);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -82,7 +82,8 @@ const SMCHATPANEL_STYLES = `
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
+  /* sin borde arriba: el panel se conecta con el header sin línea que corte */
+  padding: 0 1px 1px 1px;
   background: linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 74.5%, #ffffff 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -93,6 +94,8 @@ const SMCHATPANEL_STYLES = `
 .smchat__list::-webkit-scrollbar, .smchat__stream::-webkit-scrollbar { width: 0; height: 0; display: none; }
 .smchat__list .pbidmsg, .smchat__stream .pbidmsg { font-size: 13px; }
 .smchat__list .pbidmsg--sent { align-self: flex-end; }
+/* ProgressBar del panel: sin esquinas redondeadas (override del componente) */
+.smchatpanel .pprogbar { border-radius: 0; }
 
 .smchat__stream {
   position: absolute; top: 0; left: 0; right: 0; bottom: 22px;
@@ -177,6 +180,8 @@ export interface MobileChatPanelProps {
   bidder?: string;
   /** Contador que dispara la animación de nuevo bid en BidProposalV2 */
   flash?: number;
+  /** Colores del efecto de luz (editable) */
+  flashColors?: string[];
 }
 
 export default function MobileChatPanel({
@@ -191,6 +196,7 @@ export default function MobileChatPanel({
   bidAmount = 6559,
   bidder = "ZAE389",
   flash = 0,
+  flashColors,
 }: MobileChatPanelProps): JSX.Element {
   if (typeof document !== "undefined" && !_stylesInjected) {
     if (!document.getElementById(STYLE_ID)) {
@@ -275,7 +281,7 @@ export default function MobileChatPanel({
         {/* Bid actual (glass) — arriba al centro, en idle y streaming */}
         {showProposal ? (
           <div style={{ position: "absolute", top: 14, left: 0, right: 0, display: "flex", justifyContent: "center", zIndex: 3 }}>
-            <BidProposalV2 amount={fmtMoney(bidAmount)} label={`ENVIADO POR ${bidder}`} flash={flash} />
+            <BidProposalV2 amount={fmtMoney(bidAmount)} label={`ENVIADO POR ${bidder}`} flash={flash} flashColors={flashColors} />
           </div>
         ) : null}
 

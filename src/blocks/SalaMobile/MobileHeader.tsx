@@ -164,6 +164,7 @@ export default function MobileHeader({
             backgroundOrigin: "border-box",
             backgroundClip: "padding-box, border-box",
             border: "1.5px solid transparent",
+            borderRadius: "0 0 0 16px", // rounded en el bottom-left
           }}
         />
         {/* Capa fondo: carro 110×95 (cuadrado, borde gradiente) */}
@@ -177,12 +178,14 @@ export default function MobileHeader({
             height: MOBILEHEADER_HEIGHT,
             backgroundImage: INFO_BORDER,
             padding: "1.32px",
+            borderRadius: "0 0 16px 0", // rounded en el bottom-right
+            overflow: "hidden",
           }}
         >
           <img
             src={carSrc}
             alt={title}
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderRadius: "0 0 15px 0" }}
           />
         </div>
 

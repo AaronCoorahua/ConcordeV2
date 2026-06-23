@@ -39,10 +39,19 @@ function LiveButton({ live, onClick }: { live: boolean; onClick: () => void }): 
   );
 }
 
+// Paletas del efecto de luz del bid actual (componente editable vía `flashColors`)
+const PALETTES: { name: string; colors: string[] }[] = [
+  { name: "Primary", colors: ["#F4AC59", "#8460E5", "#ffffff"] },
+  { name: "Rainbow", colors: ["#F2CCFF", "#CC00FF", "#FF0066"] },
+  { name: "Lila", colors: ["#CFBAFF", "#AE8EFF", "#ffffff"] },
+];
+
 export default function Viewer(): JSX.Element {
   const [live, setLive] = useState(false);
   const [fs, setFs] = useState(false);
   const [scale, setScale] = useState(1);
+  const [pal, setPal] = useState(0);
+  const flashColors = PALETTES[pal].colors;
 
   // Escala el canvas para caber en la pantalla (usa innerHeight real, no 100vh)
   useEffect(
@@ -98,13 +107,51 @@ export default function Viewer(): JSX.Element {
         >
           ⛶ Pantalla completa
         </button>
+
+        {/* Selector de paleta del efecto de luz (editable) */}
+        <span style={{ fontSize: 12, fontWeight: 600, color: "#64748b", marginLeft: 4 }}>Luz:</span>
+        {PALETTES.map(function renderPal(p, i) {
+          return (
+            <button
+              key={p.name}
+              type="button"
+              onClick={() => setPal(i)}
+              title={p.name}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                height: 28,
+                padding: "0 10px",
+                borderRadius: 14,
+                border: pal === i ? "2px solid #4f2ed8" : "1px solid #cbd5e1",
+                background: "#ffffff",
+                color: "#0f172a",
+                fontFamily: "inherit",
+                fontSize: 11,
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              <span
+                style={{
+                  width: 14,
+                  height: 14,
+                  borderRadius: "50%",
+                  background: `conic-gradient(${p.colors[0]}, ${p.colors[1]}, ${p.colors[2]}, ${p.colors[0]})`,
+                }}
+              />
+              {p.name}
+            </button>
+          );
+        })}
       </div>
 
       {/* Canvas a tamaño real sobre panel claro */}
       <main style={{ display: "flex", justifyContent: "center", padding: "32px 40px" }}>
         <div style={{ background: "#f8fafc", border: "1px solid #f1f5f9", borderRadius: 16, padding: 32, overflow: "auto", maxWidth: "100%" }}>
           <div style={{ boxShadow: "0 12px 40px rgba(15,23,42,0.12)", outline: "1px solid #e2e8f0", borderRadius: 4, overflow: "hidden", width: SALAMOBILE_WIDTH }}>
-            <SalaMobile live={live} />
+            <SalaMobile live={live} flashColors={flashColors} />
           </div>
         </div>
       </main>
@@ -124,7 +171,7 @@ export default function Viewer(): JSX.Element {
           }}
         >
           <div style={{ width: SALAMOBILE_WIDTH, height: SALAMOBILE_HEIGHT, transform: `scale(${scale})`, transformOrigin: "center", flexShrink: 0 }}>
-            <SalaMobile live={live} />
+            <SalaMobile live={live} flashColors={flashColors} />
           </div>
 
           {/* Controles flotantes */}

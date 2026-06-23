@@ -14,7 +14,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import type { JSX } from "react";
+import type { JSX, CSSProperties } from "react";
 
 export interface BidProposalV2Props {
   /** Monto grande (blanco) — default "US$ 6,559" */
@@ -23,8 +23,13 @@ export interface BidProposalV2Props {
   label?: string;
   /** Contador: al cambiar, dispara la animación de nuevo bid */
   flash?: number;
+  /** Colores del efecto de luz/cometa (editable). Default: primary (naranja→lila→blanco). */
+  flashColors?: string[];
   className?: string;
 }
+
+// Primary (VYStrokes1): naranja-500 → vault-500 → blanco
+const DEFAULT_FLASH_COLORS = ["#F4AC59", "#8460E5", "#ffffff"];
 
 const STYLE_ID = "concorde-bidproposalv2-styles";
 
@@ -72,13 +77,15 @@ const BIDPROPOSALV2_STYLES = `
   inset: 0;
   border-radius: inherit;
   padding: 1.5px;
-  background: conic-gradient(from var(--pbidv2-spin), transparent 0 280deg, #F2CCFF 320deg, #CC00FF 345deg, #FF0066 358deg, transparent 360deg);
+  background: conic-gradient(from var(--pbidv2-spin), transparent 0 280deg, var(--pbidv2-c1, #F4AC59) 320deg, var(--pbidv2-c2, #8460E5) 345deg, var(--pbidv2-c3, #ffffff) 358deg, transparent 360deg);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
   opacity: 0;
   z-index: 3;
+  /* glow de la línea cometa */
+  filter: drop-shadow(0 0 4px var(--pbidv2-c3, #ffffff)) drop-shadow(0 0 9px var(--pbidv2-c2, #8460E5)) drop-shadow(0 0 16px var(--pbidv2-c1, #F4AC59));
 }
 .pbidv2--flash::after { animation: pbidv2-arc 650ms ease-in-out; }
 @keyframes pbidv2-arc {
@@ -95,16 +102,17 @@ const BIDPROPOSALV2_STYLES = `
 }
 .pbidv2__light {
   position: absolute; inset: -45%;
-  background: conic-gradient(from 0deg, transparent 0deg, #F2CCFF 60deg, #CC00FF 150deg, #FF0066 230deg, transparent 330deg);
-  filter: blur(20px);
+  background: conic-gradient(from 0deg, transparent 0deg, var(--pbidv2-c1, #F4AC59) 60deg, var(--pbidv2-c2, #8460E5) 150deg, var(--pbidv2-c3, #ffffff) 230deg, transparent 330deg);
+  filter: blur(18px) saturate(1.4) brightness(1.25);
+  mix-blend-mode: screen; /* ilumina más sobre el glass oscuro */
   opacity: 0;
 }
 .pbidv2--flash .pbidv2__light { animation: pbidv2-light 600ms ease-in-out; }
 @keyframes pbidv2-light {
-  0%   { opacity: 0;    transform: rotate(0deg) scale(1.2); }
-  25%  { opacity: 0.9;  }
-  60%  { opacity: 0.9;  }
-  100% { opacity: 0;    transform: rotate(360deg) scale(1.2); }
+  0%   { opacity: 0; transform: rotate(0deg) scale(1.2); }
+  22%  { opacity: 1; }
+  62%  { opacity: 1; }
+  100% { opacity: 0; transform: rotate(360deg) scale(1.2); }
 }
 
 /* El nuevo monto/label aparecen cuando la luz se va */
@@ -158,10 +166,18 @@ export default function BidProposalV2({
   amount = "US$ 6,559",
   label = "ENVIADO POR ZAE389",
   flash = 0,
+  flashColors = DEFAULT_FLASH_COLORS,
   className = "",
 }: BidProposalV2Props): JSX.Element {
   const [flashing, setFlashing] = useState(false);
   const prevFlash = useRef(flash);
+
+  const [c1, c2, c3] = flashColors;
+  const colorVars = {
+    "--pbidv2-c1": c1 ?? DEFAULT_FLASH_COLORS[0],
+    "--pbidv2-c2": c2 ?? DEFAULT_FLASH_COLORS[1],
+    "--pbidv2-c3": c3 ?? DEFAULT_FLASH_COLORS[2],
+  } as CSSProperties;
 
   if (typeof document !== "undefined" && !_stylesInjected) {
     if (!document.getElementById(STYLE_ID)) {
@@ -192,7 +208,7 @@ export default function BidProposalV2({
   return (
     <>
       <style id={`${STYLE_ID}-ssr`} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: BIDPROPOSALV2_STYLES }} />
-      <div className={`pbidv2${flashing ? " pbidv2--flash" : ""} ${className}`.trim()}>
+      <div className={`pbidv2${flashing ? " pbidv2--flash" : ""} ${className}`.trim()} style={colorVars}>
         <span className="pbidv2__lightwrap" aria-hidden="true">
           <span className="pbidv2__light" />
         </span>
