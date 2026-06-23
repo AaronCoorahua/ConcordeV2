@@ -14,13 +14,14 @@
  *   · "spin"    → Rotatoria: un haz/cometa de luz que gira una vez.
  *   · "explode" → Explosiva: estallido de chispas/partículas hacia afuera.
  *   · "pulse"   → Anticipación/Expansiva: escala elástica + borde neón intermitente.
+ *   · "combo"   → Celebración: estallido (explode) + anticipación (pulse) juntos.
  * En todos, el nuevo monto aparece al apagarse/asentarse la luz.
  */
 
 import { useEffect, useRef, useState } from "react";
 import type { JSX, CSSProperties } from "react";
 
-export type BidProposalFlashMode = "bulb" | "spin" | "explode" | "pulse";
+export type BidProposalFlashMode = "bulb" | "spin" | "explode" | "pulse" | "combo";
 
 export interface BidProposalProps {
   /** Monto grande (blanco) — default "US$ 6,559" */
@@ -192,7 +193,41 @@ const BIDPROPOSAL_STYLES = `
   0% { opacity: 0; } 12% { opacity: 1; } 28% { opacity: 0.15; } 44% { opacity: 1; } 60% { opacity: 0.15; } 78% { opacity: 1; } 100% { opacity: 0; }
 }
 
-/* Glow externo (común salvo pulse): la card "irradia" al prenderse */
+/* ===== Modo COMBO (5ta: estalla + anticipa juntos) ===== */
+.pbid--combo.pbid--flash { animation: pbid-combo 800ms cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes pbid-combo {
+  0%   { transform: scale(1); box-shadow: rgba(20,0,69,0.3) 0px 8px 24px -2px; }
+  18%  {
+    transform: scale(1.06);
+    box-shadow:
+      rgba(20,0,69,0.3) 0px 8px 24px -2px,
+      0 0 20px var(--pbid-c3, #ffffff),
+      0 0 38px var(--pbid-c2, #8460E5),
+      0 0 58px var(--pbid-c1, #F4AC59);
+  }
+  40%  { transform: scale(1.005); box-shadow: rgba(20,0,69,0.3) 0px 8px 24px -2px; }
+  62%  {
+    transform: scale(1.045);
+    box-shadow:
+      rgba(20,0,69,0.3) 0px 8px 24px -2px,
+      0 0 18px var(--pbid-c3, #ffffff),
+      0 0 34px var(--pbid-c2, #8460E5),
+      0 0 52px var(--pbid-c1, #F4AC59);
+  }
+  100% { transform: scale(1); box-shadow: rgba(20,0,69,0.3) 0px 8px 24px -2px; }
+}
+.pbid--combo .pbid__light {
+  background: radial-gradient(circle at 50% 50%, var(--pbid-c3, #ffffff) 0%, var(--pbid-c2, #8460E5) 38%, var(--pbid-c1, #F4AC59) 65%, transparent 80%);
+}
+/* luz interna intermitente (como Anticipa) en vez de un solo estallido */
+.pbid--combo.pbid--flash .pbid__light { animation: pbid-pulse-light 800ms ease-in-out; }
+.pbid--combo::after {
+  background: linear-gradient(135deg, var(--pbid-c1, #F4AC59) 0%, var(--pbid-c2, #8460E5) 50%, var(--pbid-c3, #ffffff) 100%);
+}
+.pbid--combo.pbid--flash::after { animation: pbid-flicker 800ms steps(1, end); }
+.pbid--combo.pbid--flash .pbid__spark { animation: pbid-spark 650ms cubic-bezier(0.2,0.7,0.3,1); }
+
+/* Glow externo (común salvo pulse/combo): la card "irradia" al prenderse */
 .pbid--bulb.pbid--flash, .pbid--spin.pbid--flash, .pbid--explode.pbid--flash {
   animation: pbid-glow 600ms ease-in-out;
 }
@@ -289,7 +324,7 @@ export default function BidProposal({
       // reinicia la animación (quita y vuelve a poner la clase)
       setFlashing(false);
       const raf = requestAnimationFrame(() => requestAnimationFrame(() => setFlashing(true)));
-      const t = setTimeout(() => setFlashing(false), 700);
+      const t = setTimeout(() => setFlashing(false), 850);
       return () => {
         cancelAnimationFrame(raf);
         clearTimeout(t);
@@ -305,7 +340,7 @@ export default function BidProposal({
         <span className="pbid__lightwrap" aria-hidden="true">
           <span className="pbid__light" />
         </span>
-        {flashMode === "explode" ? (
+        {flashMode === "explode" || flashMode === "combo" ? (
           <span className="pbid__sparks" aria-hidden="true">
             {Array.from({ length: SPARKS }).map((_, i) => (
               <span key={i} className="pbid__spark" style={{ "--ang": `${(360 / SPARKS) * i}deg` } as CSSProperties} />

@@ -183,7 +183,7 @@ export interface MobileChatPanelProps {
   /** Colores del efecto de luz (editable) */
   flashColors?: string[];
   /** Tipo de efecto de luz: "bulb" o "spin" */
-  flashMode?: "bulb" | "spin" | "explode" | "pulse";
+  flashMode?: "bulb" | "spin" | "explode" | "pulse" | "combo";
 }
 
 export default function MobileChatPanel({
