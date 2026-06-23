@@ -15,13 +15,14 @@
  *   · "explode" → Explosiva: estallido de chispas/partículas hacia afuera.
  *   · "pulse"   → Anticipación/Expansiva: escala elástica + borde neón intermitente.
  *   · "combo"   → Celebración: estallido (explode) + anticipación (pulse) juntos.
+ *   · "shine"   → Como "combo" pero SIN chispas (solo latido + luz + neón).
  * En todos, el nuevo monto aparece al apagarse/asentarse la luz.
  */
 
 import { useEffect, useRef, useState } from "react";
 import type { JSX, CSSProperties } from "react";
 
-export type BidProposalFlashMode = "bulb" | "spin" | "explode" | "pulse" | "combo";
+export type BidProposalFlashMode = "bulb" | "spin" | "explode" | "pulse" | "combo" | "shine";
 
 export interface BidProposalProps {
   /** Monto grande (blanco) — default "US$ 6,559" */
@@ -193,8 +194,8 @@ const BIDPROPOSAL_STYLES = `
   0% { opacity: 0; } 12% { opacity: 1; } 28% { opacity: 0.15; } 44% { opacity: 1; } 60% { opacity: 0.15; } 78% { opacity: 1; } 100% { opacity: 0; }
 }
 
-/* ===== Modo COMBO (5ta: estalla + anticipa juntos) ===== */
-.pbid--combo.pbid--flash { animation: pbid-combo 800ms cubic-bezier(0.34,1.56,0.64,1); }
+/* ===== Modos COMBO (estalla + anticipa) y SHINE (combo sin chispas) ===== */
+.pbid--combo.pbid--flash, .pbid--shine.pbid--flash { animation: pbid-combo 800ms cubic-bezier(0.34,1.56,0.64,1); }
 @keyframes pbid-combo {
   0%   { transform: scale(1); box-shadow: rgba(20,0,69,0.3) 0px 8px 24px -2px; }
   18%  {
@@ -216,15 +217,16 @@ const BIDPROPOSAL_STYLES = `
   }
   100% { transform: scale(1); box-shadow: rgba(20,0,69,0.3) 0px 8px 24px -2px; }
 }
-.pbid--combo .pbid__light {
+.pbid--combo .pbid__light, .pbid--shine .pbid__light {
   background: radial-gradient(circle at 50% 50%, var(--pbid-c3, #ffffff) 0%, var(--pbid-c2, #8460E5) 38%, var(--pbid-c1, #F4AC59) 65%, transparent 80%);
 }
 /* luz interna intermitente (como Anticipa) en vez de un solo estallido */
-.pbid--combo.pbid--flash .pbid__light { animation: pbid-pulse-light 800ms ease-in-out; }
-.pbid--combo::after {
+.pbid--combo.pbid--flash .pbid__light, .pbid--shine.pbid--flash .pbid__light { animation: pbid-pulse-light 800ms ease-in-out; }
+.pbid--combo::after, .pbid--shine::after {
   background: linear-gradient(135deg, var(--pbid-c1, #F4AC59) 0%, var(--pbid-c2, #8460E5) 50%, var(--pbid-c3, #ffffff) 100%);
 }
-.pbid--combo.pbid--flash::after { animation: pbid-flicker 800ms steps(1, end); }
+.pbid--combo.pbid--flash::after, .pbid--shine.pbid--flash::after { animation: pbid-flicker 800ms steps(1, end); }
+/* solo "combo" lanza chispas */
 .pbid--combo.pbid--flash .pbid__spark { animation: pbid-spark 650ms cubic-bezier(0.2,0.7,0.3,1); }
 
 /* Glow externo (común salvo pulse/combo): la card "irradia" al prenderse */

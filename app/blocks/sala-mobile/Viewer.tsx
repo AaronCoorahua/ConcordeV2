@@ -8,7 +8,7 @@
  */
 
 import { useState, useEffect } from "react";
-import type { JSX } from "react";
+import type { JSX, CSSProperties } from "react";
 import SalaMobile, { SALAMOBILE_WIDTH, SALAMOBILE_HEIGHT } from "@/src/blocks/SalaMobile/SalaMobile";
 
 function LiveButton({ live, onClick }: { live: boolean; onClick: () => void }): JSX.Element {
@@ -47,14 +47,36 @@ const PALETTES: { name: string; colors: string[] }[] = [
 ];
 
 // Tipo de efecto de luz (editable vía `flashMode`)
-type FlashMode = "bulb" | "spin" | "explode" | "pulse" | "combo";
+type FlashMode = "bulb" | "spin" | "explode" | "pulse" | "combo" | "shine";
 const EFFECTS: { name: string; value: FlashMode }[] = [
   { name: "💡 Bombilla", value: "bulb" },
   { name: "🌀 Gira", value: "spin" },
   { name: "💥 Estalla", value: "explode" },
   { name: "✨ Anticipa", value: "pulse" },
   { name: "🎆 Festejo", value: "combo" },
+  { name: "🌟 Resplandor", value: "shine" },
 ];
+
+const CHIP_BASE = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
+  height: 34,
+  padding: "0 14px",
+  borderRadius: 17,
+  fontFamily: "inherit",
+  fontSize: 13,
+  fontWeight: 700,
+  cursor: "pointer",
+} as const;
+function chipStyle(active: boolean): CSSProperties {
+  return {
+    ...CHIP_BASE,
+    border: active ? "2px solid #4f2ed8" : "1px solid #cbd5e1",
+    background: active ? "#f1edff" : "#ffffff",
+    color: active ? "#4f2ed8" : "#0f172a",
+  };
+}
 
 export default function Viewer(): JSX.Element {
   const [live, setLive] = useState(false);
@@ -119,69 +141,31 @@ export default function Viewer(): JSX.Element {
           ⛶ Pantalla completa
         </button>
 
-        {/* Selector de paleta del efecto de luz (editable) */}
-        <span style={{ fontSize: 12, fontWeight: 600, color: "#64748b", marginLeft: 4 }}>Luz:</span>
-        {PALETTES.map(function renderPal(p, i) {
-          return (
-            <button
-              key={p.name}
-              type="button"
-              onClick={() => setPal(i)}
-              title={p.name}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                height: 28,
-                padding: "0 10px",
-                borderRadius: 14,
-                border: pal === i ? "2px solid #4f2ed8" : "1px solid #cbd5e1",
-                background: "#ffffff",
-                color: "#0f172a",
-                fontFamily: "inherit",
-                fontSize: 11,
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              <span
-                style={{
-                  width: 14,
-                  height: 14,
-                  borderRadius: "50%",
-                  background: `conic-gradient(${p.colors[0]}, ${p.colors[1]}, ${p.colors[2]}, ${p.colors[0]})`,
-                }}
-              />
-              {p.name}
-            </button>
-          );
-        })}
+      </div>
 
-        {/* Selector de tipo de efecto (editable) */}
-        <span style={{ fontSize: 12, fontWeight: 600, color: "#64748b", marginLeft: 4 }}>Efecto:</span>
-        {EFFECTS.map(function renderEffect(e) {
-          return (
-            <button
-              key={e.value}
-              type="button"
-              onClick={() => setMode(e.value)}
-              style={{
-                height: 28,
-                padding: "0 12px",
-                borderRadius: 14,
-                border: mode === e.value ? "2px solid #4f2ed8" : "1px solid #cbd5e1",
-                background: "#ffffff",
-                color: "#0f172a",
-                fontFamily: "inherit",
-                fontSize: 11,
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              {e.name}
-            </button>
-          );
-        })}
+      {/* Panel de controles del efecto de luz (visible, debajo del título) */}
+      <div style={{ maxWidth: 1120, margin: "16px auto 0", padding: "0 40px", display: "flex", flexWrap: "wrap", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 14, padding: "10px 14px", boxShadow: "0 1px 3px rgba(15,23,42,0.06)" }}>
+          <span style={{ fontSize: 12, fontWeight: 800, letterSpacing: "0.04em", textTransform: "uppercase", color: "#64748b", marginRight: 2 }}>Luz</span>
+          {PALETTES.map(function renderPal(p, i) {
+            return (
+              <button key={p.name} type="button" onClick={() => setPal(i)} title={p.name} style={chipStyle(pal === i)}>
+                <span style={{ width: 16, height: 16, borderRadius: "50%", background: `conic-gradient(${p.colors[0]}, ${p.colors[1]}, ${p.colors[2]}, ${p.colors[0]})` }} />
+                {p.name}
+              </button>
+            );
+          })}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 14, padding: "10px 14px", boxShadow: "0 1px 3px rgba(15,23,42,0.06)" }}>
+          <span style={{ fontSize: 12, fontWeight: 800, letterSpacing: "0.04em", textTransform: "uppercase", color: "#64748b", marginRight: 2 }}>Efecto</span>
+          {EFFECTS.map(function renderEffect(e) {
+            return (
+              <button key={e.value} type="button" onClick={() => setMode(e.value)} style={chipStyle(mode === e.value)}>
+                {e.name}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Canvas a tamaño real sobre panel claro */}
