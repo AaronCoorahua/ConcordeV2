@@ -14,9 +14,10 @@
 import { existsSync, mkdirSync, writeFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, resolve, relative, join } from "node:path";
 import { createInterface } from "node:readline/promises";
+import { emitKeypressEvents } from "node:readline";
 import { stdin, stdout } from "node:process";
 
-const VERSION = "0.3.0";
+const VERSION = "0.4.0";
 const REGISTRY_BASE = (process.env.CONCORDE_REGISTRY || "https://concorde-v2-theta.vercel.app").replace(/\/$/, "");
 
 // ── Colores (ANSI, se desactivan sin TTY o con NO_COLOR) ──────────────────────
@@ -87,33 +88,84 @@ function defaultDir() {
   return cwd;
 }
 
-async function pickDir(rl, start) {
+// Selector dinámico de flechas (raw mode + keypress, redibuja en el lugar).
+function selectMenu({ title, subtitle, options }) {
+  return new Promise(function exec(resolveSel) {
+    let idx = 0;
+    let drawn = 0;
+
+    function frame() {
+      let out = "  " + bold(title) + "\n";
+      if (subtitle) out += "  " + dim("carpeta: ") + vault(subtitle) + "\n";
+      out += "\n";
+      options.forEach(function row(o, i) {
+        const sel = i === idx;
+        out += (sel ? "  " + vault("❯ ") : "    ") + (sel ? bold(o.label) : o.label) + "\n";
+      });
+      out += "\n  " + dim("↑↓ mover · enter elegir · esc cancelar") + "\n";
+      return out;
+    }
+
+    function draw(first) {
+      if (!first) stdout.write(`\x1b[${drawn}A\x1b[0J`);
+      const out = frame();
+      stdout.write(out);
+      drawn = out.split("\n").length - 1;
+    }
+
+    function cleanup() {
+      stdin.removeListener("keypress", onKey);
+      stdout.write(`\x1b[${drawn}A\x1b[0J`); // borra el menú
+      if (stdin.isTTY) stdin.setRawMode(false);
+      stdin.pause();
+      stdout.write("\x1b[?25h"); // muestra el cursor
+    }
+
+    function onKey(_str, key) {
+      if (!key) return;
+      if (key.name === "up" || key.name === "k") { idx = (idx - 1 + options.length) % options.length; draw(false); }
+      else if (key.name === "down" || key.name === "j") { idx = (idx + 1) % options.length; draw(false); }
+      else if (key.name === "return") { cleanup(); resolveSel(options[idx].value); }
+      else if (key.name === "escape") { cleanup(); resolveSel(null); }
+      else if (key.ctrl && key.name === "c") { cleanup(); stdout.write("\n"); process.exit(130); }
+    }
+
+    emitKeypressEvents(stdin);
+    if (stdin.isTTY) stdin.setRawMode(true);
+    stdin.resume();
+    stdout.write("\x1b[?25l"); // oculta el cursor
+    draw(true);
+    stdin.on("keypress", onKey);
+  });
+}
+
+async function askLine(q) {
+  const rl = createInterface({ input: stdin, output: stdout });
+  const a = (await rl.question(q)).trim();
+  rl.close();
+  return a;
+}
+
+async function pickDir(start) {
   let cur = start;
   for (;;) {
     const subs = listSubdirs(cur);
-    stdout.write("\n  " + bold("¿Dónde instalo los archivos?") + "\n");
-    stdout.write("  " + dim("carpeta actual: ") + vault(relFromCwd(cur)) + "\n\n");
-    stdout.write("    " + green("0") + dim(")") + " ✓ instalar aquí\n");
-    subs.forEach(function row(d, i) {
-      stdout.write("    " + bold(String(i + 1)) + dim(")") + " 📁 " + d + "/\n");
-    });
-    stdout.write(
-      "    " + bold("u") + dim(")") + " ⬆ subir   " +
-      bold("n") + dim(")") + " ＋ nueva carpeta   " +
-      bold("q") + dim(")") + " cancelar\n",
-    );
-    const ans = (await rl.question("  " + SYM.arrow + " ")).trim().toLowerCase();
-    if (ans === "0" || ans === "") return cur;
-    if (ans === "q") return null;
-    if (ans === "u") { cur = dirname(cur); continue; }
-    if (ans === "n") {
-      const name = (await rl.question("  nombre de la carpeta nueva: ")).trim();
+    const atRoot = dirname(cur) === cur;
+    const options = [{ label: green("✓") + " instalar aquí", value: { a: "here" } }];
+    subs.forEach(function row(d) { options.push({ label: "📁 " + d + "/", value: { a: "enter", d } }); });
+    if (!atRoot) options.push({ label: "⬆ subir", value: { a: "up" } });
+    options.push({ label: "＋ nueva carpeta", value: { a: "new" } });
+
+    const choice = await selectMenu({ title: "¿Dónde instalo los archivos?", subtitle: relFromCwd(cur), options });
+    if (!choice) return null;
+    if (choice.a === "here") return cur;
+    if (choice.a === "up") { cur = dirname(cur); continue; }
+    if (choice.a === "enter") { cur = join(cur, choice.d); continue; }
+    if (choice.a === "new") {
+      const name = await askLine("  nombre de la carpeta nueva: ");
       if (name) { const nd = join(cur, name); mkdirSync(nd, { recursive: true }); cur = nd; }
       continue;
     }
-    const n = Number.parseInt(ans, 10);
-    if (Number.isInteger(n) && n >= 1 && n <= subs.length) { cur = join(cur, subs[n - 1]); continue; }
-    stdout.write("  " + yellow("opción inválida") + "\n");
   }
 }
 
@@ -137,19 +189,19 @@ async function add(targets, opts) {
   }
 
   const tty = stdin.isTTY && stdout.isTTY;
-  const rl = tty ? createInterface({ input: stdin, output: stdout }) : null;
 
   // ── Carpeta destino ──
   let baseDir;
   if (opts.dir) baseDir = resolve(process.cwd(), opts.dir);
-  else if (rl) {
-    baseDir = await pickDir(rl, defaultDir());
-    if (!baseDir) { stdout.write("\n  cancelado\n\n"); rl.close(); return; }
+  else if (tty) {
+    baseDir = await pickDir(defaultDir());
+    if (!baseDir) { stdout.write("  cancelado\n\n"); return; }
   } else {
     baseDir = defaultDir();
   }
-  stdout.write("\n  " + dim("instalando en ") + vault(relFromCwd(baseDir)) + dim("/") + "\n\n");
+  stdout.write("  " + dim("instalando en ") + vault(relFromCwd(baseDir)) + dim("/") + "\n\n");
 
+  const rl = tty && !opts.force && !opts.skip ? createInterface({ input: stdin, output: stdout }) : null;
   let overwriteAll = opts.force;
   let skipAll = opts.skip;
   const totals = { added: 0, over: 0, skipped: 0, items: 0, failed: 0 };
@@ -223,8 +275,7 @@ async function add(targets, opts) {
     dim(`${totals.skipped} saltados`),
   ];
   if (totals.failed) parts.push(red(`${totals.failed} fallidos`));
-  stdout.write(`${bold("Listo.")}  ${parts.join(dim(" · "))}\n`);
-  stdout.write(dim(`Archivos en ${relFromCwd(baseDir)}/ — imports relativos, sin tocar tu config.\n`));
+  stdout.write(`${bold("Listo.")}  ${parts.join(dim(" · "))}  ${dim(relFromCwd(baseDir) + "/")}\n`);
   if (npmDeps.size > 0) {
     stdout.write(`\n  ${SYM.ask} Instala dependencias npm:  ${bold(`npm i ${[...npmDeps].join(" ")}`)}\n`);
   }
