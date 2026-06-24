@@ -3,23 +3,17 @@
   "name": "conditionpill",
   "type": "registry:component",
   "title": "ConditionPill",
-  "description": "Componente Concorde ConditionPill — se instala en concorde/components/ConditionPill.",
+  "description": "Componente Concorde ConditionPill — un solo archivo, ConditionPill.tsx.",
   "dependencies": [
     "react"
   ],
   "registryDependencies": [],
   "files": [
     {
-      "path": "concorde/components/ConditionPill/ConditionPill.tsx",
+      "path": "ConditionPill.tsx",
       "type": "registry:file",
-      "target": "concorde/components/ConditionPill/ConditionPill.tsx",
+      "target": "ConditionPill.tsx",
       "content": "\"use client\";\n\n/**\n * ConditionPill — Generado por Concorde\n * Fuente: Figma VOYAGER · \"ConditionPill\" (nodo 3023:1638)\n *\n * Píldora 136×46 (radio 23) con relleno gradiente lila (#AE8EFF → #5A35C2),\n * borde gradiente (#CFBAFF → white → #AE8EFF → #CFBAFF), sheen blanco superior,\n * sombra externa gris (0 4px 6px) e inner highlight blanco. Texto blanco\n * centrado y editable (children). El ancho se ajusta al contenido.\n */\n\nimport type { JSX, ReactNode } from \"react\";\n\n// ─── Types ────────────────────────────────────────────────────────────────────\n\nexport interface ConditionPillProps {\n  /** Texto dentro de la píldora (editable) */\n  children?: ReactNode;\n  className?: string;\n}\n\n// ─── Self-contained CSS ───────────────────────────────────────────────────────\n\nconst STYLE_ID = \"concorde-conditionpill-styles\";\n\nconst CONDITIONPILL_STYLES = `\n.pcondpill {\n  position: relative;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 46px;\n  padding: 6px 28px;\n  border-radius: 23px;\n  border: 2px solid transparent;\n  overflow: hidden;\n  font-family: var(--vmc-font-display, \"Plus Jakarta Sans\", -apple-system, sans-serif);\n  font-size: 14px;\n  font-weight: 600;\n  line-height: 18px;\n  text-align: center;\n  color: #ffffff;\n  text-shadow: rgba(0,0,0,0.25) 0px 1px 3px;\n  /* Relleno gradiente (#AE8EFF → #5A35C2) + borde gradiente (#CFBAFF → white → #AE8EFF → #CFBAFF) */\n  background-image:\n    linear-gradient(225deg, #AE8EFF 0%, #5A35C2 100%),\n    linear-gradient(130deg, #CFBAFF 0%, #ffffff 35%, #AE8EFF 65%, #CFBAFF 100%);\n  background-origin: border-box;\n  background-clip: padding-box, border-box;\n  box-shadow: rgba(153,161,175,0.3) 0px 4px 6px, inset 0px 1px 0px rgba(255,255,255,0.15);\n}\n/* Sheen blanco superior (paint2 del SVG: white 0.17 → 0) */\n.pcondpill::before {\n  content: \"\";\n  position: absolute;\n  inset: 0;\n  border-radius: 23px;\n  background: linear-gradient(180deg, rgba(255,255,255,0.17) 0%, rgba(255,255,255,0) 55%);\n  pointer-events: none;\n  z-index: 0;\n}\n.pcondpill__text {\n  position: relative;\n  z-index: 1;\n}\n`;\n\nlet _stylesInjected = false;\n\n// ─── Component ────────────────────────────────────────────────────────────────\n\nexport default function ConditionPill({ children = \"Etiqueta\", className = \"\" }: ConditionPillProps): JSX.Element {\n  if (typeof document !== \"undefined\" && !_stylesInjected) {\n    if (!document.getElementById(STYLE_ID)) {\n      const el = document.createElement(\"style\");\n      el.id = STYLE_ID;\n      el.textContent = CONDITIONPILL_STYLES;\n      document.head.appendChild(el);\n    }\n    _stylesInjected = true;\n  }\n\n  return (\n    <>\n      <style id={`${STYLE_ID}-ssr`} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: CONDITIONPILL_STYLES }} />\n      <span className={[\"pcondpill\", className].filter(Boolean).join(\" \")}>\n        <span className=\"pcondpill__text\">{children}</span>\n      </span>\n    </>\n  );\n}\n"
-    },
-    {
-      "path": "concorde/components/ConditionPill/index.ts",
-      "type": "registry:file",
-      "target": "concorde/components/ConditionPill/index.ts",
-      "content": "export { default } from \"./ConditionPill\";\nexport type { ConditionPillProps } from \"./ConditionPill\";\n"
     }
   ]
 }
