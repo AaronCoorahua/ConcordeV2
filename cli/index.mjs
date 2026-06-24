@@ -2,9 +2,9 @@
 /**
  * concorde — CLI del registry de Concorde (estilo shadcn, marca propia).
  *
- *   npx @subastop/concorde@latest add homepage
- *   npx @subastop/concorde@latest add cardtitle offercard
- *   npx @subastop/concorde@latest add https://concorde-v2-theta.vercel.app/r/homepage.json
+ *   npx github:AaronCoorahua/ConcordeV2#cli add homepage
+ *   npx github:AaronCoorahua/ConcordeV2#cli add cardtitle offercard
+ *   npx github:AaronCoorahua/ConcordeV2#cli add https://concorde-v2-theta.vercel.app/r/homepage.json
  *
  * Copia el/los items a la carpeta ./concorde de tu proyecto (imports relativos,
  * sin tocar tu config ni tu alias @/*). Si un archivo ya existe, pregunta si
@@ -184,9 +184,9 @@ function help() {
     `    -h, --help       muestra esta ayuda`,
     ``,
     `  ${bold("Ejemplos")}`,
-    `    ${dim("$")} npx @subastop/concorde@latest add button`,
-    `    ${dim("$")} npx @subastop/concorde@latest add homepage      ${dim("# bloque + sus componentes")}`,
-    `    ${dim("$")} npx @subastop/concorde@latest add cardtitle offercard`,
+    `    ${dim("$")} npx github:AaronCoorahua/ConcordeV2#cli add button`,
+    `    ${dim("$")} npx github:AaronCoorahua/ConcordeV2#cli add homepage      ${dim("# bloque + sus componentes")}`,
+    `    ${dim("$")} npx github:AaronCoorahua/ConcordeV2#cli add cardtitle offercard`,
     ``,
   ].join("\n"));
 }
