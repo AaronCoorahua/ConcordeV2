@@ -1,13 +1,16 @@
 /**
  * build-registry.mjs — Genera un registry estilo shadcn para Concorde.
  *
- * Lee src/components/* y src/blocks/* y emite public/r/<name>.json
- * (schema registry-item de shadcn). Cada item copia sus archivos a una carpeta
- * `concorde/` del proyecto destino. Los imports cross-componente se reescriben a
- * rutas RELATIVAS dentro de `concorde/`, así NO dependen del alias `@/*` del consumidor.
+ * Lee src/components/* y src/blocks/* y emite public/r/<name>.json.
+ * - Cada COMPONENTE se distribuye como UN solo archivo plano: `<Name>.tsx`
+ *   (sin carpeta y sin index.ts).
+ * - Cada BLOQUE se distribuye como `<Block>/<archivo>.tsx` + los componentes
+ *   que usa (planos, al lado).
+ * - Los imports `@/src/...` se reescriben a rutas RELATIVAS, así el dev puede
+ *   instalarlo en la carpeta que quiera (el CLI elige el destino).
  *
  * Uso:  node scripts/build-registry.mjs
- *       node scripts/build-registry.mjs https://concorde.tu-host.com   (base para URLs del índice)
+ *       node scripts/build-registry.mjs https://concorde-v2-theta.vercel.app
  */
 
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, statSync } from "node:fs";
@@ -27,46 +30,57 @@ function listDirs(p) {
   return readdirSync(p).filter(function isDir(n) { return statSync(join(p, n)).isDirectory(); });
 }
 
-function toRel(fromTarget, toTarget) {
-  let r = relative(dirname(fromTarget), toTarget).split("\\").join("/");
+// Ruta relativa (sin extensión) desde el archivo `fromTarget` hacia `toModule`.
+function toRel(fromTarget, toModule) {
+  let r = relative(dirname(fromTarget), toModule).split("\\").join("/");
   if (!r.startsWith(".")) r = "./" + r;
   return r;
 }
 
-// Reescribe imports `@/src/components|blocks/...` a rutas relativas dentro de concorde/
+// Reescribe imports `@/src/components/X/...` → ruta relativa al archivo plano `X`,
+// y `@/src/blocks/B/file` → ruta relativa a `B/file`.
 function rewrite(content, fromTarget) {
-  content = content.replace(/@\/src\/components\/([\w-]+)\/([\w./-]+)/g, function rep(_, name, rest) {
-    return toRel(fromTarget, `concorde/components/${name}/${rest}`);
+  content = content.replace(/@\/src\/components\/([\w-]+)(?:\/[\w./-]+)?/g, function rep(_, name) {
+    return toRel(fromTarget, name);
   });
-  content = content.replace(/@\/src\/blocks\/([\w-]+)\/([\w./-]+)/g, function rep(_, name, rest) {
-    return toRel(fromTarget, `concorde/blocks/${name}/${rest}`);
+  content = content.replace(/@\/src\/blocks\/([\w-]+)\/([\w-]+)/g, function rep(_, block, file) {
+    return toRel(fromTarget, `${block}/${file}`);
   });
   return content;
 }
 
-// Recolecta archivos .tsx/.ts de un dir (excluye *Handoff.tsx; limpia exports Handoff de index.ts)
-function gatherFiles(dir, targetBase) {
+// Archivos .tsx de un dir (excluye *Handoff.tsx e index.ts — no se distribuyen).
+// `prefix` = "" para componentes (plano) o "<Block>/" para bloques.
+function gatherFiles(dir, prefix) {
   const out = [];
   for (const name of readdirSync(dir)) {
     const full = join(dir, name);
     if (!statSync(full).isFile()) continue;
     if (!/\.tsx?$/.test(name)) continue;
-    if (/Handoff\.tsx$/.test(name)) continue; // el panel de handoff no se distribuye
-    const target = `${targetBase}/${name}`;
-    let raw = readFileSync(full, "utf8");
-    if (name === "index.ts") {
-      raw = raw.split("\n").filter(function noHandoff(l) { return !l.includes("Handoff"); }).join("\n");
-    }
-    out.push({ target, raw, content: rewrite(raw, target) });
+    if (/Handoff\.tsx$/.test(name)) continue;
+    if (name === "index.ts") continue;
+    const target = `${prefix}${name}`;
+    const raw = readFileSync(full, "utf8");
+    out.push({ name, target, raw, content: rewrite(raw, target) });
   }
   return out;
 }
 
-function depsOf(raw) {
+// Componentes referenciados en un archivo (@/src/components/X/)
+function compDepsOf(raw) {
   const set = new Set();
   const re = /@\/src\/components\/([\w-]+)\//g;
   let m;
   while ((m = re.exec(raw)) !== null) set.add(m[1]);
+  return [...set];
+}
+
+// Archivos de bloque referenciados (@/src/blocks/B/file) — para deps cross-bloque.
+function blockFileDepsOf(raw) {
+  const set = new Set();
+  const re = /@\/src\/blocks\/([\w-]+)\/([\w-]+)/g;
+  let m;
+  while ((m = re.exec(raw)) !== null) set.add(`${m[1]}/${m[2]}`);
   return [...set];
 }
 
@@ -76,12 +90,12 @@ const compRoot = join(SRC, "components");
 const components = {}; // Name -> { Name, name, files, deps }
 
 for (const Name of listDirs(compRoot)) {
-  const files = gatherFiles(join(compRoot, Name), `concorde/components/${Name}`);
-  const deps = [...new Set(files.flatMap(function d(f) { return depsOf(f.raw); }))].filter(function self(d) { return d !== Name; });
+  const files = gatherFiles(join(compRoot, Name), "");
+  const deps = [...new Set(files.flatMap(function d(f) { return compDepsOf(f.raw); }))].filter(function self(d) { return d !== Name; });
   components[Name] = { Name, name: Name.toLowerCase(), files, deps };
 }
 
-// Cierre transitivo: dado un set de Names de componentes, junta todos sus archivos (dedup por target)
+// Cierre transitivo de componentes (dedup por target)
 function collectComponents(names, acc = new Map(), seen = new Set()) {
   for (const Name of names) {
     if (seen.has(Name)) continue;
@@ -98,8 +112,7 @@ function fileEntry(f) {
   return { path: f.target, type: "registry:file", target: f.target, content: f.content };
 }
 
-// Componentes internos (building blocks): no se exponen como item suelto,
-// pero sí se incluyen cuando otro componente/bloque depende de ellos.
+// Componentes privados (building blocks): solo se incluyen como dependencia.
 const PRIVATE = new Set(["AmountOption"]);
 
 const index = [];
@@ -112,7 +125,7 @@ for (const Name of Object.keys(components)) {
     name: components[Name].name,
     type: "registry:component",
     title: Name,
-    description: `Componente Concorde ${Name} — se instala en concorde/components/${Name}.`,
+    description: `Componente Concorde ${Name} — un solo archivo, ${Name}.tsx.`,
     dependencies: ["react"],
     registryDependencies: [],
     files: [...all.values()].map(fileEntry),
@@ -125,14 +138,38 @@ for (const Name of Object.keys(components)) {
 
 const blockRoot = join(SRC, "blocks");
 
+// Todos los archivos de bloque (para resolver deps cross-bloque, ej. StatPill).
+const allBlockFiles = new Map(); // "Block/file" (sin ext) -> file
+const blockGathered = {}; // Block -> files[]
 for (const BlockName of listDirs(blockRoot)) {
-  const blockFiles = gatherFiles(join(blockRoot, BlockName), `concorde/blocks/${BlockName}`);
-  const blockDeps = [...new Set(blockFiles.flatMap(function d(f) { return depsOf(f.raw); }))];
-  const compFiles = collectComponents(blockDeps);
+  const files = gatherFiles(join(blockRoot, BlockName), `${BlockName}/`);
+  blockGathered[BlockName] = files;
+  for (const f of files) {
+    const key = `${BlockName}/${f.name.replace(/\.tsx?$/, "")}`;
+    allBlockFiles.set(key, f);
+  }
+}
 
+for (const BlockName of listDirs(blockRoot)) {
+  const blockFiles = blockGathered[BlockName];
   const merged = new Map();
   for (const f of blockFiles) merged.set(f.target, f);
-  for (const [k, v] of compFiles) merged.set(k, v);
+
+  // Componentes que usa el bloque (cierre transitivo, planos)
+  const compDeps = [...new Set(blockFiles.flatMap(function d(f) { return compDepsOf(f.raw); }))];
+  for (const [k, v] of collectComponents(compDeps)) merged.set(k, v);
+
+  // Archivos de OTROS bloques referenciados (ej. SalaMobile → Sala/StatPill),
+  // incluyendo los componentes que ESOS archivos usen (ej. StatPill → SendBidIcon).
+  for (const f of blockFiles) {
+    for (const ref of blockFileDepsOf(f.raw)) {
+      if (ref.startsWith(`${BlockName}/`)) continue; // mismo bloque, ya incluido
+      const dep = allBlockFiles.get(ref);
+      if (!dep) continue;
+      merged.set(dep.target, dep);
+      for (const [k, v] of collectComponents(compDepsOf(dep.raw))) merged.set(k, v);
+    }
+  }
 
   const name = BlockName.toLowerCase();
   const item = {
@@ -140,13 +177,13 @@ for (const BlockName of listDirs(blockRoot)) {
     name,
     type: "registry:block",
     title: BlockName,
-    description: `Bloque Concorde ${BlockName} — incluye sus ${blockDeps.length} componentes. Se instala en concorde/.`,
+    description: `Bloque Concorde ${BlockName} — incluye sus ${compDeps.length} componentes.`,
     dependencies: ["react"],
     registryDependencies: [],
     files: [...merged.values()].map(fileEntry),
   };
   writeFileSync(join(OUT, `${name}.json`), JSON.stringify(item, null, 2));
-  index.push({ name, type: item.type, title: BlockName, url: `${BASE}/r/${name}.json`, components: blockDeps.map(function lc(d) { return d.toLowerCase(); }) });
+  index.push({ name, type: item.type, title: BlockName, url: `${BASE}/r/${name}.json`, components: compDeps.map(function lc(d) { return d.toLowerCase(); }) });
 }
 
 // ─── 3. Índice ─────────────────────────────────────────────────────────────────

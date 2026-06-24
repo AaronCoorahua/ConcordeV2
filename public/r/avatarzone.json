@@ -3,23 +3,17 @@
   "name": "avatarzone",
   "type": "registry:component",
   "title": "AvatarZone",
-  "description": "Componente Concorde AvatarZone — se instala en concorde/components/AvatarZone.",
+  "description": "Componente Concorde AvatarZone — un solo archivo, AvatarZone.tsx.",
   "dependencies": [
     "react"
   ],
   "registryDependencies": [],
   "files": [
     {
-      "path": "concorde/components/AvatarZone/AvatarZone.tsx",
+      "path": "AvatarZone.tsx",
       "type": "registry:file",
-      "target": "concorde/components/AvatarZone/AvatarZone.tsx",
+      "target": "AvatarZone.tsx",
       "content": "\"use client\";\n\n/**\n * AvatarZone — Generado por Concorde\n * Fuente: Figma VOYAGER · \"Avatar Zone\" (nodo 2035:16583)\n *\n * Avatar circular 32×32: relleno gradiente naranja (#FF9639 → #EF852E → #BE3D00)\n * con silueta de persona blanca centrada. Tamaño personalizable:\n * \"sm\" (24px) · \"md\" (32px) · o número de px.\n */\n\nimport { useId } from \"react\";\nimport type { JSX } from \"react\";\n\n// ─── Types ────────────────────────────────────────────────────────────────────\n\nexport type AvatarZoneSize = \"sm\" | \"md\";\n\nexport interface AvatarZoneProps {\n  /** Tamaño: \"sm\"=24px · \"md\"=32px · o número de px (default \"md\") */\n  size?: AvatarZoneSize | number;\n  /** Texto accesible — si se omite, el avatar es decorativo (aria-hidden) */\n  title?: string;\n  className?: string;\n}\n\nconst SIZE_PX: Record<AvatarZoneSize, number> = { sm: 24, md: 32 };\n\nconst CIRCLE_PATH =\n  \"M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z\";\n\n// ─── Component ────────────────────────────────────────────────────────────────\n\nexport default function AvatarZone({ size = \"md\", title, className = \"\" }: AvatarZoneProps): JSX.Element {\n  const uid = useId().replace(/:/g, \"-\");\n  const px = typeof size === \"number\" ? size : SIZE_PX[size];\n\n  return (\n    <svg\n      width={px}\n      height={px}\n      viewBox=\"0 0 32 32\"\n      fill=\"none\"\n      className={className}\n      role={title ? \"img\" : undefined}\n      aria-hidden={title ? undefined : true}\n      aria-label={title}\n    >\n      {title ? <title>{title}</title> : null}\n      <g clipPath={`url(#${uid}-c0)`}>\n        <path d={CIRCLE_PATH} fill={`url(#${uid}-bg)`} />\n        <g clipPath={`url(#${uid}-c1)`}>\n          <path\n            d=\"M19.5412 11.36C19.5412 9.52 17.9765 8 16 8C14.0235 8 12.5412 9.52 12.5412 11.36C12.5412 13.28 14.0235 14.8 16 14.8C17.9765 14.8 19.5412 13.28 19.5412 11.36ZM9 20.4C10.4824 22.56 13.1176 24 16 24C18.8824 24 21.5176 22.56 23 20.4C23 18.16 18.3059 16.88 16 16.88C13.6941 16.88 9 18.16 9 20.4Z\"\n            fill=\"white\"\n          />\n        </g>\n      </g>\n      <defs>\n        <linearGradient id={`${uid}-bg`} x1=\"5.42742\" y1=\"-16.8777\" x2=\"43.7544\" y2=\"-4.5528\" gradientUnits=\"userSpaceOnUse\">\n          <stop stopColor=\"#FF9639\" />\n          <stop offset=\"0.5\" stopColor=\"#EF852E\" />\n          <stop offset=\"1\" stopColor=\"#BE3D00\" />\n        </linearGradient>\n        <clipPath id={`${uid}-c0`}>\n          <path d={CIRCLE_PATH} fill=\"white\" />\n        </clipPath>\n        <clipPath id={`${uid}-c1`}>\n          <rect width=\"24\" height=\"24\" fill=\"white\" transform=\"translate(4 4)\" />\n        </clipPath>\n      </defs>\n    </svg>\n  );\n}\n"
-    },
-    {
-      "path": "concorde/components/AvatarZone/index.ts",
-      "type": "registry:file",
-      "target": "concorde/components/AvatarZone/index.ts",
-      "content": "export { default } from \"./AvatarZone\";\nexport type { AvatarZoneProps, AvatarZoneSize } from \"./AvatarZone\";\n"
     }
   ]
 }
