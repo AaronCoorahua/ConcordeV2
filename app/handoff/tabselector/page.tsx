@@ -1,17 +1,16 @@
 /**
- * /handoff/tabselector
- * Generado por Concorde — NO EDITAR (regenerar con /concorde TabSelector)
+ * /handoff/tabselector — Documentación de TabSelector (estilo shadcn, limpio).
  */
 
-import type { JSX } from "react";
+import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import Preview from "@/app/handoff/tabselector/Preview";
-import CodeViewer from "@/app/handoff/_components/CodeViewer";
-import SpecPanel from "@/app/handoff/_components/SpecPanel";
-import type { SpecPanelData } from "@/app/handoff/_components/SpecPanel";
+import TabSelector from "@/src/components/TabSelector/TabSelector";
+import Preview from "@/app/handoff/_components/Preview";
+import CodeBlock from "@/app/handoff/_components/CodeBlock";
+import InstallCommand from "@/app/handoff/_components/InstallCommand";
+import PropsTable, { type PropRow } from "@/app/handoff/_components/PropsTable";
 
-// Server component: lee el código fuente REAL del componente para mostrarlo copiable.
 function readComponentSource(): string {
   try {
     return readFileSync(join(process.cwd(), "src/components/TabSelector/TabSelector.tsx"), "utf8");
@@ -20,122 +19,125 @@ function readComponentSource(): string {
   }
 }
 
-const INDEX_SOURCE = `export { default } from "./TabSelector";
-export type { TabSelectorProps } from "./TabSelector";
-`;
+// ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `// No controlado (defaultValue): el componente maneja su propio estado
+const USAGE = `import TabSelector from "@/src/components/TabSelector/TabSelector";
+
 <TabSelector options={["Boletas", "Filtros"]} defaultValue={0} />
 
-// Controlado (value + onChange): el padre maneja el índice activo
+// Controlado
 const [active, setActive] = useState(0);
-<TabSelector
+<TabSelector options={["En vivo", "Negociable", "Todos"]} value={active} onChange={setActive} />`;
+
+interface Example {
+  id: string;
+  title: string;
+  description?: string;
+  tone?: "light" | "dark";
+  node: ReactNode;
+  code: string;
+}
+
+const EXAMPLES: Example[] = [
+  {
+    id: "two",
+    title: "Dos opciones",
+    description: "Click en una opción la marca como activa.",
+    node: <TabSelector options={["Boletas", "Filtros"]} />,
+    code: `<TabSelector options={["Boletas", "Filtros"]} />`,
+  },
+  {
+    id: "three",
+    title: "Tres opciones",
+    node: <TabSelector options={["En vivo", "Negociable", "Todos"]} aria-label="Estado de la subasta" />,
+    code: `<TabSelector
   options={["En vivo", "Negociable", "Todos"]}
-  value={active}
-  onChange={(index) => setActive(index)}
   aria-label="Estado de la subasta"
-/>`;
+/>`,
+  },
+  {
+    id: "default-value",
+    title: "Activa inicial",
+    description: "defaultValue fija la opción seleccionada al montar.",
+    node: <TabSelector options={["Boletas", "Filtros"]} defaultValue={1} />,
+    code: `<TabSelector options={["Boletas", "Filtros"]} defaultValue={1} />`,
+  },
+];
+
+const API: PropRow[] = [
+  { name: "options", type: "string[]", description: "Etiquetas de las opciones (una por tab)." },
+  { name: "value", type: "number", description: "Índice activo controlado (0-based)." },
+  { name: "defaultValue", type: "number", default: "0", description: "Índice inicial en modo no controlado." },
+  { name: "onChange", type: "(index: number) => void", description: "Callback con el índice al cambiar de opción." },
+  { name: "aria-label", type: "string", description: "Etiqueta accesible del role=\"tablist\"." },
+  { name: "className", type: "string", default: `""`, description: "Clase extra sobre .ptabs." },
+];
+
+// ── Estilos de sección ───────────────────────────────────────────────────────
+
+const h2 = { fontSize: 20, fontWeight: 700, color: "#09090b", letterSpacing: "-0.01em", margin: "48px 0 16px" } as const;
+const h3 = { fontSize: 15, fontWeight: 600, color: "#18181b", margin: "0 0 4px" } as const;
+const muted = { fontSize: 14, color: "#71717a", lineHeight: 1.6, margin: 0 } as const;
 
 export default function TabSelectorHandoffPage(): JSX.Element {
   const source = readComponentSource();
 
-  const spec: SpecPanelData = {
-    name: "TabSelector",
-    description:
-      "Selector tipo segmented/tab: pill blanco con N opciones. La activa lleva relleno gradiente oscuro (#8460E5 → #3B1782), borde gradiente y texto blanco; las inactivas llevan texto en gradiente lila (#8460E5 → #3B1782). Controlado o no controlado.",
-    source: "Figma VOYAGER",
-    files: [
-      {
-        filename: "TabSelector.tsx",
-        code: source,
-        level: "must",
-        desc: "Componente self-contained (CSS-in-JS, gradient-border, zero deps)",
-      },
-      {
-        filename: "index.ts",
-        code: INDEX_SOURCE,
-        level: "opt",
-        desc: "Barrel export",
-      },
-    ],
-    imports: [
-      'import TabSelector from "@/src/components/TabSelector/TabSelector";',
-      'import TabSelector from "@/src/components/TabSelector";',
-    ],
-    usage: USAGE,
-    props: [
-      { prop: "options", type: "string[]", def: "—", note: "Etiquetas de las opciones (una por tab)." },
-      { prop: "value", type: "number", def: "—", note: "Índice activo controlado (0-based); activa modo controlado." },
-      { prop: "defaultValue", type: "number", def: "0", note: "Índice inicial en modo no controlado." },
-      { prop: "onChange", type: "(index: number) => void", def: "—", note: "Callback con el índice al cambiar de opción." },
-      { prop: "aria-label", type: "string", def: "—", note: "Etiqueta accesible del role=\"tablist\"." },
-      { prop: "className", type: "string", def: '""', note: "Clase extra sobre .ptabs." },
-    ],
-    variants: [
-      { name: "activa", cssClass: ".ptabs__tab--active", size: "alto 34 · radio 17", note: "Relleno gradiente oscuro + borde gradiente + texto blanco + sombra." },
-      { name: "inactiva", cssClass: ".ptabs__tab", size: "alto 34 · radio 17", note: "Fondo transparente · texto en gradiente lila #8460E5 → #3B1782." },
-    ],
-    states: [
-      { state: "activo", selector: ".ptabs__tab--active", transform: "—", effects: "Relleno + borde gradiente · texto blanco · sombra rgba(32,0,104,0.2) 0 8 16 -4." },
-      { state: "hover", selector: ".ptabs__tab:hover", transform: "—", effects: "opacity 0.78 (el activo vuelve a 1)." },
-      { state: "active (pressed)", selector: ".ptabs__tab:active", transform: "scale(0.97)", effects: "Feedback de presión." },
-      { state: "focus teclado", selector: ".ptabs__tab:focus-visible", transform: "—", effects: "outline 2px solid #8460E5 · outline-offset 2px." },
-      { state: "reduced motion", selector: "@media (prefers-reduced-motion)", transform: "—", effects: "transition: none." },
-    ],
-    tokens: [
-      { zone: "Borde contenedor", token: "#8460E5 → #FFF8F1" },
-      { zone: "Relleno activo", token: "#8460E5 → #3B1782" },
-      { zone: "Borde activo", token: "white → #F4AC59 → #8460E5 → white" },
-      { zone: "Texto inactivo", token: "#8460E5 → #3B1782 (gradiente)" },
-      { zone: "Texto activo", token: "#ffffff" },
-      { zone: "Sombra activo", token: "rgba(32,0,104,0.2) 0px 8px 16px -4px" },
-    ],
-    qa: [
-      "Renderiza N tabs a partir de options (uno por etiqueta).",
-      "Click en una opción la marca como activa (relleno gradiente + texto blanco).",
-      "Modo controlado (value + onChange) refleja el índice en el estado padre.",
-      "Modo no controlado (defaultValue) cambia de tab sin onChange.",
-      "El contenedor usa role=\"tablist\" y cada opción role=\"tab\".",
-      "El tab activo fija aria-selected=\"true\" (los demás \"false\").",
-      "Foco con teclado muestra outline visible (:focus-visible).",
-      "Sin FOUC en SSR (estilos inyectados con suppressHydrationWarning).",
-      "Respeta prefers-reduced-motion: reduce (sin transiciones).",
-    ],
-    sourcePath: "src/components/TabSelector/TabSelector.tsx",
-  };
-
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: "40px 24px", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+    <main style={{ maxWidth: 768, margin: "0 auto", padding: "48px 24px 96px", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)", color: "#09090b" }}>
 
-      {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#0f172a", margin: 0 }}>TabSelector</h1>
-          <span style={{ fontSize: 11, fontWeight: 700, fontFamily: "monospace", padding: "2px 8px", borderRadius: 4, background: "#dbeafe", color: "#1d4ed8" }}>Concorde · DONE</span>
+      {/* Title */}
+      <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 8px" }}>TabSelector</h1>
+      <p style={{ ...muted, fontSize: 16 }}>Selector segmentado tipo tabs con opción activa en gradiente.</p>
+
+      {/* Hero preview */}
+      <div style={{ marginTop: 28 }}>
+        <Preview
+          minHeight={240}
+          code={`<TabSelector options={["En vivo", "Negociable", "Todos"]} />`}
+        >
+          <TabSelector options={["En vivo", "Negociable", "Todos"]} aria-label="Estado de la subasta" />
+        </Preview>
+      </div>
+
+      {/* Installation */}
+      <h2 style={h2}>Instalación</h2>
+      <InstallCommand name="tabselector" />
+
+      {/* Usage */}
+      <h2 style={h2}>Uso</h2>
+      <CodeBlock code={USAGE} />
+
+      {/* Examples */}
+      <h2 style={h2}>Ejemplos</h2>
+      <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+        {EXAMPLES.map(function renderExample(ex) {
+          return (
+            <div key={ex.id}>
+              <h3 style={h3}>{ex.title}</h3>
+              {ex.description ? <p style={{ ...muted, marginBottom: 12 }}>{ex.description}</p> : <div style={{ height: 12 }} />}
+              <Preview tone={ex.tone} code={ex.code} minHeight={180}>
+                {ex.node}
+              </Preview>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* API */}
+      <h2 style={h2}>API</h2>
+      <PropsTable rows={API} />
+
+      {/* Component source (oculto por defecto) */}
+      <h2 style={h2}>Código del componente</h2>
+      <details>
+        <summary style={{ cursor: "pointer", fontSize: 14, color: "#52525b", padding: "10px 14px", border: "1px solid #e4e4e7", borderRadius: 10, background: "#fafafa", userSelect: "none", listStyle: "none", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span>Ver <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}>TabSelector.tsx</code> completo · self-contained · zero deps</span>
+          <span style={{ color: "#a1a1aa" }}>▾</span>
+        </summary>
+        <div style={{ marginTop: 12 }}>
+          <CodeBlock code={source} filename="TabSelector.tsx" maxHeight={520} />
         </div>
-        <p style={{ fontSize: 14, color: "#64748b", margin: 0 }}>
-          Spec &amp; Handoff — selector segmented/tab: pill blanco con N opciones, la activa con relleno y borde gradiente, las inactivas con texto en{" "}
-          <code style={{ fontSize: 12, background: "#f1f5f9", padding: "1px 5px", borderRadius: 3 }}>gradiente lila</code>.
-        </p>
-      </div>
-
-      {/* Preview interactivo */}
-      <Preview />
-
-      {/* Código completo del componente — copy-paste exacto para el developer */}
-      <div style={{ marginBottom: 8 }}>
-        <span style={{ fontSize: 10, fontWeight: 700, fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.08em", color: "#64748b" }}>
-          Código del componente
-        </span>
-      </div>
-      <CodeViewer
-        code={source}
-        filename="TabSelector.tsx"
-        note="Visual de Figma + estilos de Concorde. Pégalo como src/components/TabSelector/TabSelector.tsx y úsalo tal cual."
-      />
-
-      {/* Panel handoff */}
-      <SpecPanel {...spec} />
+      </details>
 
     </main>
   );

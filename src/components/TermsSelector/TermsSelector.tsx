@@ -9,24 +9,22 @@
  * cuando está marcada, más una etiqueta en #3B1782. Controlado o no controlado.
  */
 
-import { useId } from "react";
-import type { JSX, ReactNode } from "react";
+import { forwardRef, useId } from "react";
+import type { InputHTMLAttributes, JSX, ReactNode } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export interface TermsSelectorProps {
-  /** Estado marcado (controlado) */
-  checked?: boolean;
-  /** Estado inicial (no controlado) */
-  defaultChecked?: boolean;
+/**
+ * Hereda los atributos nativos del <input type="checkbox"> (name, id, required,
+ * aria-*, data-*, value…) salvo onChange, que aquí entrega el booleano marcado,
+ * y children, que es la etiqueta. className se aplica al <label> raíz.
+ */
+export interface TermsSelectorProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children" | "type"> {
   /** Callback al alternar */
   onChange?: (checked: boolean) => void;
   /** Etiqueta (texto de términos) */
   children?: ReactNode;
-  disabled?: boolean;
-  id?: string;
-  name?: string;
-  className?: string;
 }
 
 // ─── Self-contained CSS ───────────────────────────────────────────────────────
@@ -88,16 +86,16 @@ let _stylesInjected = false;
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function TermsSelector({
+const TermsSelector = forwardRef<HTMLInputElement, TermsSelectorProps>(function TermsSelector({
   checked,
   defaultChecked,
   onChange,
   children = "He leído y acepto los términos y condiciones.",
   disabled = false,
   id,
-  name,
   className = "",
-}: TermsSelectorProps): JSX.Element {
+  ...rest
+}, ref): JSX.Element {
   const uid = useId().replace(/:/g, "-");
   const inputId = id ?? `${uid}-input`;
   const controlled = checked !== undefined;
@@ -117,8 +115,9 @@ export default function TermsSelector({
       <style id={`${STYLE_ID}-ssr`} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: TERMS_STYLES }} />
       <label htmlFor={inputId} className={["pterms", disabled ? "pterms--disabled" : "", className].filter(Boolean).join(" ")}>
         <input
+          ref={ref}
+          {...rest}
           id={inputId}
-          name={name}
           type="checkbox"
           className="pterms__input"
           checked={controlled ? checked : undefined}
@@ -135,4 +134,6 @@ export default function TermsSelector({
       </label>
     </>
   );
-}
+});
+
+export default TermsSelector;

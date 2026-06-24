@@ -1,15 +1,16 @@
 /**
- * /handoff/button
- * Generado por Concorde — NO EDITAR (regenerar con /concorde Button)
+ * /handoff/button — Documentación de Button (estilo shadcn, limpio).
  */
 
-import type { JSX } from "react";
+import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { Button, ButtonHandoff } from "@/src/components/Button";
-import CodeViewer from "@/app/handoff/_components/CodeViewer";
+import Button from "@/src/components/Button/Button";
+import Preview from "@/app/handoff/_components/Preview";
+import CodeBlock from "@/app/handoff/_components/CodeBlock";
+import InstallCommand from "@/app/handoff/_components/InstallCommand";
+import PropsTable, { type PropRow } from "@/app/handoff/_components/PropsTable";
 
-// Server component: lee el código fuente REAL del componente para mostrarlo copiable.
 function readComponentSource(): string {
   try {
     return readFileSync(join(process.cwd(), "src/components/Button/Button.tsx"), "utf8");
@@ -18,80 +19,170 @@ function readComponentSource(): string {
   }
 }
 
+// ── Contenido ───────────────────────────────────────────────────────────────
+
+const USAGE = `import Button from "@/src/components/Button/Button";
+
+<Button variant="primary">Participa</Button>`;
+
+interface Example {
+  id: string;
+  title: string;
+  description?: string;
+  tone?: "light" | "dark";
+  node: ReactNode;
+  code: string;
+}
+
+const EXAMPLES: Example[] = [
+  {
+    id: "primary",
+    title: "Primary",
+    description: "CTA principal — gradiente naranja → morado.",
+    node: <Button variant="primary">Participa</Button>,
+    code: `<Button variant="primary">Participa</Button>`,
+  },
+  {
+    id: "negotiable",
+    title: "Negotiable",
+    description: "Para subastas en negociación — gradiente teal → morado.",
+    node: <Button variant="negotiable">Negocia ahora</Button>,
+    code: `<Button variant="negotiable">Negocia ahora</Button>`,
+  },
+  {
+    id: "secondary",
+    title: "Secondary",
+    node: <Button variant="secondary">Ingresa</Button>,
+    code: `<Button variant="secondary">Ingresa</Button>`,
+  },
+  {
+    id: "secondary-sm",
+    title: "Secondary · small",
+    description: "Versión compacta con ícono de calendario.",
+    node: <Button variant="secondary-sm">Agenda tu visita</Button>,
+    code: `<Button variant="secondary-sm">Agenda tu visita</Button>`,
+  },
+  {
+    id: "outline",
+    title: "Outline",
+    description: "Borde gradiente naranja sobre fondo claro.",
+    node: <Button variant="outline">Regístrate</Button>,
+    code: `<Button variant="outline">Regístrate</Button>`,
+  },
+  {
+    id: "ghost",
+    title: "Ghost",
+    description: "Pensado para fondos oscuros (texto y borde blancos).",
+    tone: "dark",
+    node: <Button variant="ghost">Ver ofertas relacionadas</Button>,
+    code: `<Button variant="ghost">Ver ofertas relacionadas</Button>`,
+  },
+  {
+    id: "navbar",
+    title: "Navbar",
+    description: "Botones del header: sin sesión y con sesión.",
+    node: (
+      <>
+        <Button variant="sm-guest">Ingresa</Button>
+        <Button variant="sm-logged-in" username="ZAEX5G" />
+      </>
+    ),
+    code: `<Button variant="sm-guest">Ingresa</Button>
+<Button variant="sm-logged-in" username="ZAEX5G" />`,
+  },
+  {
+    id: "disabled",
+    title: "Disabled",
+    node: (
+      <>
+        <Button variant="primary" disabled>Participa</Button>
+        <Button variant="secondary" disabled>Ingresa</Button>
+      </>
+    ),
+    code: `<Button variant="primary" disabled>Participa</Button>
+<Button variant="secondary" disabled>Ingresa</Button>`,
+  },
+];
+
+const API: PropRow[] = [
+  { name: "variant", type: `"primary" | "negotiable" | "secondary" | "secondary-sm" | "ghost" | "outline" | "sm-guest" | "sm-logged-in"`, default: `"primary"`, description: "Estilo visual del botón." },
+  { name: "children", type: "ReactNode", description: "Contenido del botón." },
+  { name: "username", type: "string", description: "Usuario mostrado cuando variant=\"sm-logged-in\"." },
+  { name: "disabled", type: "boolean", default: "false" },
+  { name: "type", type: `"button" | "submit" | "reset"`, default: `"button"` },
+  { name: "onClick", type: "(e) => void" },
+  { name: "...props", type: "ButtonHTMLAttributes", description: "Cualquier atributo nativo de <button> (className, style, name, ref…)." },
+];
+
+// ── Estilos de sección ───────────────────────────────────────────────────────
+
+const h2 = { fontSize: 20, fontWeight: 700, color: "#09090b", letterSpacing: "-0.01em", margin: "48px 0 16px" } as const;
+const h3 = { fontSize: 15, fontWeight: 600, color: "#18181b", margin: "0 0 4px" } as const;
+const muted = { fontSize: 14, color: "#71717a", lineHeight: 1.6, margin: 0 } as const;
+
 export default function ButtonHandoffPage(): JSX.Element {
   const source = readComponentSource();
 
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: "40px 24px", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+    <main style={{ maxWidth: 768, margin: "0 auto", padding: "48px 24px 96px", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)", color: "#09090b" }}>
 
-      {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#0f172a", margin: 0 }}>Button</h1>
-          <span style={{ fontSize: 11, fontWeight: 700, fontFamily: "monospace", padding: "2px 8px", borderRadius: 4, background: "#dbeafe", color: "#1d4ed8" }}>Concorde · DONE</span>
-        </div>
-        <p style={{ fontSize: 14, color: "#64748b", margin: 0 }}>
-          Spec & Handoff — 8 variantes extraídas de{" "}
-          <code style={{ fontSize: 12, background: "#f1f5f9", padding: "1px 5px", borderRadius: 3 }}>
-            voyager-ds.vercel.app/preview/components/pase1
-          </code>
-        </p>
-      </div>
+      {/* Title */}
+      <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 8px" }}>Button</h1>
+      <p style={{ ...muted, fontSize: 16 }}>Botón de acción con las variantes de marca de Subastop.</p>
 
-      {/* Preview — primary */}
-      <div style={{ marginBottom: 16, borderRadius: 8, border: "1px solid #e2e8f0", overflow: "hidden" }}>
-        <div style={{ padding: "8px 14px", background: "#f1f5f9", borderBottom: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontSize: 10, fontWeight: 700, fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.08em", color: "#64748b" }}>preview · md</span>
-          <span style={{ fontSize: 10, color: "#94a3b8", fontFamily: "monospace" }}>primary · negotiable · secondary · ghost · outline</span>
-        </div>
-        <div style={{ padding: "32px 24px", background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)", display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center" }}>
+      {/* Hero preview */}
+      <div style={{ marginTop: 28 }}>
+        <Preview
+          minHeight={240}
+          code={`<Button variant="primary">Participa</Button>
+<Button variant="negotiable">Negocia ahora</Button>
+<Button variant="outline">Regístrate</Button>`}
+        >
           <Button variant="primary">Participa</Button>
           <Button variant="negotiable">Negocia ahora</Button>
-          <Button variant="secondary">Ingresa</Button>
-          <Button variant="ghost">Ver Ofertas relacionadas</Button>
           <Button variant="outline">Regístrate</Button>
-        </div>
+        </Preview>
       </div>
 
-      {/* Preview — sm */}
-      <div style={{ marginBottom: 16, borderRadius: 8, border: "1px solid #e2e8f0", overflow: "hidden" }}>
-        <div style={{ padding: "8px 14px", background: "#f1f5f9", borderBottom: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontSize: 10, fontWeight: 700, fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.08em", color: "#64748b" }}>preview · sm</span>
-          <span style={{ fontSize: 10, color: "#94a3b8", fontFamily: "monospace" }}>sm-guest · sm-logged-in · secondary-sm</span>
-        </div>
-        <div style={{ padding: "20px 24px", background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)", display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center" }}>
-          <Button variant="sm-guest">Ingresa</Button>
-          <Button variant="sm-logged-in" username="ZAEX5G" />
-          <Button variant="secondary-sm">Agenda tu visita</Button>
-        </div>
+      {/* Installation */}
+      <h2 style={h2}>Instalación</h2>
+      <InstallCommand name="button" />
+
+      {/* Usage */}
+      <h2 style={h2}>Uso</h2>
+      <CodeBlock code={USAGE} />
+
+      {/* Examples */}
+      <h2 style={h2}>Ejemplos</h2>
+      <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+        {EXAMPLES.map(function renderExample(ex) {
+          return (
+            <div key={ex.id}>
+              <h3 style={h3}>{ex.title}</h3>
+              {ex.description ? <p style={{ ...muted, marginBottom: 12 }}>{ex.description}</p> : <div style={{ height: 12 }} />}
+              <Preview tone={ex.tone} code={ex.code} minHeight={180}>
+                {ex.node}
+              </Preview>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Preview — disabled */}
-      <div style={{ marginBottom: 24, borderRadius: 8, border: "1px solid #e2e8f0", overflow: "hidden" }}>
-        <div style={{ padding: "8px 14px", background: "#f1f5f9", borderBottom: "1px solid #e2e8f0" }}>
-          <span style={{ fontSize: 10, fontWeight: 700, fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.08em", color: "#64748b" }}>preview · disabled</span>
-        </div>
-        <div style={{ padding: "24px", background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)", display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center" }}>
-          <Button variant="primary" disabled>Participa</Button>
-          <Button variant="secondary" disabled>Ingresa</Button>
-          <Button variant="ghost" disabled>Ver Ofertas relacionadas</Button>
-        </div>
-      </div>
+      {/* API */}
+      <h2 style={h2}>API</h2>
+      <PropsTable rows={API} />
 
-      {/* Código completo del componente — copy-paste exacto para el developer */}
-      <div style={{ marginBottom: 8 }}>
-        <span style={{ fontSize: 10, fontWeight: 700, fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.08em", color: "#64748b" }}>
-          Código del componente
-        </span>
-      </div>
-      <CodeViewer
-        code={source}
-        filename="Button.tsx"
-        note="Visual de Figma + animación de Concorde. Pégalo como src/components/Button/Button.tsx y úsalo tal cual."
-      />
-
-      {/* Panel handoff */}
-      <ButtonHandoff sourceCode={source} />
+      {/* Component source (oculto por defecto) */}
+      <h2 style={h2}>Código del componente</h2>
+      <details>
+        <summary style={{ cursor: "pointer", fontSize: 14, color: "#52525b", padding: "10px 14px", border: "1px solid #e4e4e7", borderRadius: 10, background: "#fafafa", userSelect: "none", listStyle: "none", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span>Ver <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}>Button.tsx</code> completo · self-contained · zero deps</span>
+          <span style={{ color: "#a1a1aa" }}>▾</span>
+        </summary>
+        <div style={{ marginTop: 12 }}>
+          <CodeBlock code={source} filename="Button.tsx" maxHeight={520} />
+        </div>
+      </details>
 
     </main>
   );

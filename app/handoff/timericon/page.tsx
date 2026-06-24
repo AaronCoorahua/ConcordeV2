@@ -1,17 +1,16 @@
 /**
- * /handoff/timericon
- * Generado por Concorde — NO EDITAR (regenerar con /concorde TimerIcon)
+ * /handoff/timericon — Documentación de TimerIcon (estilo shadcn, limpio).
  */
 
-import type { JSX } from "react";
+import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import TimerIcon from "@/src/components/TimerIcon/TimerIcon";
-import CodeViewer from "@/app/handoff/_components/CodeViewer";
-import SpecPanel from "@/app/handoff/_components/SpecPanel";
-import type { SpecPanelData } from "@/app/handoff/_components/SpecPanel";
+import Preview from "@/app/handoff/_components/Preview";
+import CodeBlock from "@/app/handoff/_components/CodeBlock";
+import InstallCommand from "@/app/handoff/_components/InstallCommand";
+import PropsTable, { type PropRow } from "@/app/handoff/_components/PropsTable";
 
-// Server component: lee el código fuente REAL del componente para mostrarlo copiable.
 function readComponentSource(): string {
   try {
     return readFileSync(join(process.cwd(), "src/components/TimerIcon/TimerIcon.tsx"), "utf8");
@@ -20,202 +19,138 @@ function readComponentSource(): string {
   }
 }
 
-const INDEX_TS = `export { default } from "./TimerIcon";
-export type { TimerIconProps } from "./TimerIcon";
-`;
+// ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import TimerIcon from "@/components/TimerIcon/TimerIcon";
+const USAGE = `import TimerIcon from "@/src/components/TimerIcon/TimerIcon";
 
-// Default (22px, currentColor)
-<TimerIcon />
+<TimerIcon size={30} color="#3B1782" />`;
 
-// Tamaño + color por prop
-<TimerIcon size={30} color="#3B1782" />
-<TimerIcon size={40} color="#EF852E" />
+interface Example {
+  id: string;
+  title: string;
+  description?: string;
+  tone?: "light" | "dark";
+  node: ReactNode;
+  code: string;
+}
 
-// Accesible (role=img + aria-label)
-<TimerIcon title="Tiempo restante" />`;
+const EXAMPLES: Example[] = [
+  {
+    id: "sizes",
+    title: "Tamaños",
+    description: "El trazo hereda currentColor del contenedor.",
+    node: (
+      <div style={{ display: "flex", gap: 24, alignItems: "center", color: "#3B1782" }}>
+        <TimerIcon size={22} />
+        <TimerIcon size={30} />
+        <TimerIcon size={40} />
+      </div>
+    ),
+    code: `<div style={{ color: "#3B1782" }}>
+  <TimerIcon size={22} />
+  <TimerIcon size={30} />
+  <TimerIcon size={40} />
+</div>`,
+  },
+  {
+    id: "color",
+    title: "Color por prop",
+    node: (
+      <>
+        <TimerIcon size={40} color="#3B1782" />
+        <TimerIcon size={40} color="#EF852E" />
+      </>
+    ),
+    code: `<TimerIcon size={40} color="#3B1782" />
+<TimerIcon size={40} color="#EF852E" />`,
+  },
+  {
+    id: "dark",
+    title: "Sobre fondo oscuro",
+    description: "Trazo blanco con color por prop.",
+    tone: "dark",
+    node: <TimerIcon size={40} color="#ffffff" />,
+    code: `<TimerIcon size={40} color="#ffffff" />`,
+  },
+];
+
+const API: PropRow[] = [
+  { name: "size", type: "number", default: "22", description: "Tamaño en px (width = height)." },
+  { name: "color", type: "string", default: `"currentColor"`, description: "Color del trazo." },
+  { name: "title", type: "string", description: "Texto accesible. Sin él, es decorativo (aria-hidden)." },
+  { name: "className", type: "string", default: `""`, description: "Clases extra sobre el <svg>." },
+];
+
+// ── Estilos de sección ───────────────────────────────────────────────────────
+
+const h2 = { fontSize: 20, fontWeight: 700, color: "#09090b", letterSpacing: "-0.01em", margin: "48px 0 16px" } as const;
+const h3 = { fontSize: 15, fontWeight: 600, color: "#18181b", margin: "0 0 4px" } as const;
+const muted = { fontSize: 14, color: "#71717a", lineHeight: 1.6, margin: 0 } as const;
 
 export default function TimerIconHandoffPage(): JSX.Element {
   const source = readComponentSource();
 
-  const spec: SpecPanelData = {
-    name: "TimerIcon",
-    description:
-      "Icono de temporizador/reloj 22×22, trazo redondeado 1.83. Tamaño y color personalizables (default currentColor). Copia exacta del SVG.",
-    source: "Figma VOYAGER",
-    files: [
-      {
-        filename: "TimerIcon.tsx",
-        code: source,
-        level: "must",
-        desc: "Icono SVG stroke self-contained · zero deps",
-      },
-      {
-        filename: "index.ts",
-        code: INDEX_TS,
-        level: "opt",
-        desc: "Barrel export",
-      },
-    ],
-    imports: [
-      'import TimerIcon from "@/src/components/TimerIcon/TimerIcon";',
-      'import TimerIcon from "@/src/components/TimerIcon";',
-    ],
-    usage: USAGE,
-    props: [
-      { prop: "size", type: "number", def: "22", note: "Tamaño en px (width = height)" },
-      { prop: "color", type: "string", def: '"currentColor"', note: "Color del trazo" },
-      { prop: "title", type: "string", def: "—", note: "Texto accesible; sin él el icono es aria-hidden" },
-      { prop: "className", type: "string", def: '""', note: "Clases extra sobre el <svg>" },
-    ],
-    variants: [
-      {
-        name: "reloj / temporizador",
-        size: "22×22 (escalable)",
-        note: "Trazo stroke 1.83 redondeado · color configurable",
-      },
-    ],
-    states: undefined,
-    tokens: [
-      { zone: "stroke-width", token: "1.83333" },
-      { zone: "stroke-linecap / linejoin", token: "round" },
-      { zone: "viewBox", token: "0 0 22 22" },
-      { zone: "color", token: "por prop o currentColor" },
-    ],
-    qa: [
-      "Render correcto en varios size (22, 30, 40) sin recortes ni deformación.",
-      "Color aplicado por prop (color=\"#3B1782\") se ve en el trazo.",
-      "Sin prop color, hereda currentColor del contenedor.",
-      "Con title → role=img + aria-label presente para accesibilidad.",
-      "Sin title → aria-hidden=true (decorativo).",
-      "Trazo nítido a cualquier escala (SVG vectorial).",
-      "stroke-linecap/linejoin round: extremos y uniones redondeados.",
-    ],
-    sourcePath: "src/components/TimerIcon/TimerIcon.tsx",
-  };
-
   return (
-    <main
-      style={{
-        maxWidth: 900,
-        margin: "0 auto",
-        padding: "40px 24px",
-        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-      }}
-    >
-      {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#0f172a", margin: 0 }}>TimerIcon</h1>
-          <span
-            style={{
-              fontSize: 11,
-              fontWeight: 700,
-              fontFamily: "monospace",
-              padding: "2px 8px",
-              borderRadius: 4,
-              background: "#dbeafe",
-              color: "#1d4ed8",
-            }}
-          >
-            Concorde · DONE
-          </span>
-        </div>
-        <p style={{ fontSize: 14, color: "#64748b", margin: 0 }}>
-          Spec &amp; Handoff — icono de temporizador/reloj (22×22), trazo redondeado 1.83, tamaño y color personalizables.
-        </p>
-      </div>
+    <main style={{ maxWidth: 768, margin: "0 auto", padding: "48px 24px 96px", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)", color: "#09090b" }}>
 
-      {/* Preview — varios tamaños y colores */}
-      <div style={{ marginBottom: 24, borderRadius: 8, border: "1px solid #e2e8f0", overflow: "hidden" }}>
-        <div
-          style={{
-            padding: "8px 14px",
-            background: "#f1f5f9",
-            borderBottom: "1px solid #e2e8f0",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <span
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              fontFamily: "monospace",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-              color: "#64748b",
-            }}
-          >
-            preview
-          </span>
-          <span style={{ fontSize: 10, color: "#94a3b8", fontFamily: "monospace" }}>
-            22 · 30 · 40 · color por prop · currentColor
-          </span>
-        </div>
-        <div
-          style={{
-            padding: "36px 24px",
-            background: "#f8fafc",
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 36,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {/* Tamaños heredando currentColor del contenedor (#3B1782) */}
-          <div style={{ display: "flex", gap: 24, alignItems: "center", color: "#3B1782" }}>
-            <TimerIcon size={22} />
-            <TimerIcon size={30} />
-            <TimerIcon size={40} />
-          </div>
+      {/* Title */}
+      <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 8px" }}>TimerIcon</h1>
+      <p style={{ ...muted, fontSize: 16 }}>Icono de temporizador con trazo redondeado, tamaño y color configurables.</p>
 
-          {/* Color por prop */}
-          <TimerIcon size={40} color="#3B1782" />
+      {/* Hero preview */}
+      <div style={{ marginTop: 28 }}>
+        <Preview
+          minHeight={200}
+          code={`<TimerIcon size={22} color="#3B1782" />
+<TimerIcon size={30} color="#3B1782" />
+<TimerIcon size={40} color="#EF852E" />`}
+        >
+          <TimerIcon size={22} color="#3B1782" />
+          <TimerIcon size={30} color="#3B1782" />
           <TimerIcon size={40} color="#EF852E" />
+        </Preview>
+      </div>
 
-          {/* Blanco sobre chip oscuro */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: 12,
-              borderRadius: 10,
-              background: "#0f172a",
-            }}
-          >
-            <TimerIcon size={40} color="#ffffff" />
-          </div>
+      {/* Installation */}
+      <h2 style={h2}>Instalación</h2>
+      <InstallCommand name="timericon" />
+
+      {/* Usage */}
+      <h2 style={h2}>Uso</h2>
+      <CodeBlock code={USAGE} />
+
+      {/* Examples */}
+      <h2 style={h2}>Ejemplos</h2>
+      <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+        {EXAMPLES.map(function renderExample(ex) {
+          return (
+            <div key={ex.id}>
+              <h3 style={h3}>{ex.title}</h3>
+              {ex.description ? <p style={{ ...muted, marginBottom: 12 }}>{ex.description}</p> : <div style={{ height: 12 }} />}
+              <Preview tone={ex.tone} code={ex.code} minHeight={180}>
+                {ex.node}
+              </Preview>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* API */}
+      <h2 style={h2}>API</h2>
+      <PropsTable rows={API} />
+
+      {/* Component source (oculto por defecto) */}
+      <h2 style={h2}>Código del componente</h2>
+      <details>
+        <summary style={{ cursor: "pointer", fontSize: 14, color: "#52525b", padding: "10px 14px", border: "1px solid #e4e4e7", borderRadius: 10, background: "#fafafa", userSelect: "none", listStyle: "none", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span>Ver <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}>TimerIcon.tsx</code> completo · self-contained · zero deps</span>
+          <span style={{ color: "#a1a1aa" }}>▾</span>
+        </summary>
+        <div style={{ marginTop: 12 }}>
+          <CodeBlock code={source} filename="TimerIcon.tsx" maxHeight={520} />
         </div>
-      </div>
+      </details>
 
-      {/* Código completo del componente — copy-paste exacto para el developer */}
-      <div style={{ marginBottom: 8 }}>
-        <span
-          style={{
-            fontSize: 10,
-            fontWeight: 700,
-            fontFamily: "monospace",
-            textTransform: "uppercase",
-            letterSpacing: "0.08em",
-            color: "#64748b",
-          }}
-        >
-          Código del componente
-        </span>
-      </div>
-      <CodeViewer
-        code={source}
-        filename="TimerIcon.tsx"
-        note="Icono SVG stroke de Concorde (Figma VOYAGER). Pégalo como src/components/TimerIcon/TimerIcon.tsx y úsalo tal cual."
-      />
-
-      {/* Panel handoff */}
-      <SpecPanel {...spec} />
     </main>
   );
 }

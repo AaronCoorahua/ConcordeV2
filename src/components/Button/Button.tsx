@@ -5,7 +5,8 @@
 
 "use client";
 
-import type { JSX, ReactNode } from "react";
+import { forwardRef } from "react";
+import type { ButtonHTMLAttributes, JSX, ReactNode } from "react";
 
 export type ButtonVariant =
   | "primary"
@@ -17,13 +18,14 @@ export type ButtonVariant =
   | "sm-guest"
   | "sm-logged-in";
 
-export interface ButtonProps {
+/**
+ * Hereda todos los atributos nativos de <button> (type, name, className, style,
+ * onMouseEnter, data-*, etc.) — basta con props, no hace falta editar el archivo.
+ */
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  /** Estilo visual del botón. */
   variant?: ButtonVariant;
-  children?: ReactNode;
-  disabled?: boolean;
-  onClick?: () => void;
-  "aria-label"?: string;
-  /** Nombre de usuario — requerido cuando variant="sm-logged-in" */
+  /** Nombre de usuario — usado cuando variant="sm-logged-in". */
   username?: string;
 }
 
@@ -875,14 +877,10 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
 
 // ── Component ─────────────────────────────────────────────────────────────
 
-export default function Button({
-  variant = "primary",
-  children,
-  disabled,
-  onClick,
-  "aria-label": ariaLabel,
-  username,
-}: ButtonProps): JSX.Element {
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  { variant = "primary", username, className, type = "button", children, ...rest },
+  ref,
+) {
   injectStyles();
 
   const cls = VARIANT_CLASS[variant];
@@ -928,14 +926,15 @@ export default function Button({
         dangerouslySetInnerHTML={{ __html: BUTTON_STYLES }}
       />
       <button
-        className={cls}
-        disabled={disabled}
-        onClick={onClick}
-        aria-label={ariaLabel}
-        type="button"
+        ref={ref}
+        className={[cls, className].filter(Boolean).join(" ")}
+        type={type}
+        {...rest}
       >
         {content}
       </button>
     </>
   );
-}
+});
+
+export default Button;
