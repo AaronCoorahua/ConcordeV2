@@ -179,14 +179,23 @@ export default function BlockViewer({ id, description, width, height, canvas, fi
     });
   }
 
-  const previewPaneHeight = fullscreen ? "100vh" : 640;
-
   const previewPane = (
-    <div style={{ display: "flex", flexDirection: "column", height: previewPaneHeight, background: "#fafafa" }}>
+    <div style={{ display: "flex", flexDirection: "column", background: "#fafafa", ...(fullscreen ? { height: "100vh" } : {}) }}>
       {controls ? (
         <div style={{ borderBottom: "1px solid #ececee", padding: "10px 14px", background: "#ffffff" }}>{controls}</div>
       ) : null}
-      <div style={{ flex: 1, overflow: "auto", display: "flex", justifyContent: "center", alignItems: "flex-start", padding: 24 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "flex-start",
+          padding: 24,
+          // En normal el panel crece al alto del canvas (sin scroll vertical).
+          // En pantalla completa ocupa el alto disponible y permite scroll.
+          overflow: "auto",
+          ...(fullscreen ? { flex: 1 } : {}),
+        }}
+      >
         <div style={{ width: width * scale, height: height * scale, position: "relative", flexShrink: 0, boxShadow: "0 12px 40px rgba(15,23,42,0.12)", outline: "1px solid #e2e8f0", borderRadius: 4, overflow: "hidden" }}>
           <div key={refreshKey} style={{ position: "absolute", top: 0, left: 0, width, height, transform: `scale(${scale})`, transformOrigin: "top left" }}>
             {canvas}
