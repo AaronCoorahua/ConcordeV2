@@ -1,19 +1,16 @@
 /**
- * /handoff/bidmessage
- * Generado por Concorde — NO EDITAR (regenerar con /concorde BidMessage)
- *
- * Burbuja de chat presentacional (NO interactiva) — render directo en server.
+ * /handoff/bidmessage — Documentación de BidMessage (estilo shadcn, limpio).
  */
 
-import type { JSX } from "react";
+import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import Preview from "./Preview";
-import CodeViewer from "@/app/handoff/_components/CodeViewer";
-import SpecPanel from "@/app/handoff/_components/SpecPanel";
-import type { SpecPanelData } from "@/app/handoff/_components/SpecPanel";
+import BidMessage from "@/src/components/BidMessage/BidMessage";
+import Preview from "@/app/handoff/_components/Preview";
+import CodeBlock from "@/app/handoff/_components/CodeBlock";
+import InstallCommand from "@/app/handoff/_components/InstallCommand";
+import PropsTable, { type PropRow } from "@/app/handoff/_components/PropsTable";
 
-// Server component: lee el código fuente REAL del componente para mostrarlo copiable.
 function readComponentSource(): string {
   try {
     return readFileSync(join(process.cwd(), "src/components/BidMessage/BidMessage.tsx"), "utf8");
@@ -22,124 +19,124 @@ function readComponentSource(): string {
   }
 }
 
-const INDEX_TS = `export { default } from "./BidMessage";
-export type { BidMessageProps, BidMessageSide, BidMessageType } from "./BidMessage";
-`;
+// ── Contenido ───────────────────────────────────────────────────────────────
 
 const USAGE = `import BidMessage from "@/src/components/BidMessage/BidMessage";
 
-// Lado "sent" → por defecto type="live" (naranja), cola inferior-derecha
-<BidMessage side="sent" type="live">PROPUSO US$ 25,000</BidMessage>
+<BidMessage side="sent" type="live">PROPUSO US$ 25,000</BidMessage>`;
 
-// Lado "received" → por defecto type="vault" (morado), cola inferior-izquierda
-<BidMessage side="received" type="vault">PROPUSO US$ 25,000</BidMessage>
+interface Example {
+  id: string;
+  title: string;
+  description?: string;
+  tone?: "light" | "dark";
+  node: ReactNode;
+  code: string;
+}
 
-// Variante blanca (texto morado)
-<BidMessage side="received" type="white">PROPUSO US$ 25,000</BidMessage>
+const EXAMPLES: Example[] = [
+  {
+    id: "sent-live",
+    title: "Sent · live",
+    description: "Lado derecho, relleno naranja.",
+    tone: "dark",
+    node: <BidMessage side="sent" type="live">PROPUSO US$ 25,000</BidMessage>,
+    code: `<BidMessage side="sent" type="live">PROPUSO US$ 25,000</BidMessage>`,
+  },
+  {
+    id: "received-vault",
+    title: "Received · vault",
+    description: "Lado izquierdo, relleno morado.",
+    tone: "dark",
+    node: <BidMessage side="received" type="vault">PROPUSO US$ 25,000</BidMessage>,
+    code: `<BidMessage side="received" type="vault">PROPUSO US$ 25,000</BidMessage>`,
+  },
+  {
+    id: "received-white",
+    title: "Received · white",
+    description: "Burbuja blanca con texto morado.",
+    tone: "dark",
+    node: <BidMessage side="received" type="white">PROPUSO US$ 25,000</BidMessage>,
+    code: `<BidMessage side="received" type="white">PROPUSO US$ 25,000</BidMessage>`,
+  },
+];
 
-// Versión VMC — logo en el slot (antes del texto)
-<BidMessage side="received" type="vault" logo={<img src="/logo-preview.png" alt="VMC" style={{ height: 16 }} />}>
-  ABRIÓ LA SUBASTA
-</BidMessage>`;
+const API: PropRow[] = [
+  { name: "side", type: `"sent" | "received"`, default: `"received"`, description: "Lado de la burbuja; define la esquina de la cola." },
+  { name: "type", type: `"live" | "vault" | "white"`, default: "sent→live · received→vault", description: "Color de la burbuja." },
+  { name: "logo", type: "ReactNode", description: "Slot opcional antes del texto." },
+  { name: "children", type: "ReactNode", default: `"PROPUSO US$ 25,000"`, description: "Contenido del mensaje." },
+  { name: "className", type: "string", default: `""` },
+];
+
+// ── Estilos de sección ───────────────────────────────────────────────────────
+
+const h2 = { fontSize: 20, fontWeight: 700, color: "#09090b", letterSpacing: "-0.01em", margin: "48px 0 16px" } as const;
+const h3 = { fontSize: 15, fontWeight: 600, color: "#18181b", margin: "0 0 4px" } as const;
+const muted = { fontSize: 14, color: "#71717a", lineHeight: 1.6, margin: 0 } as const;
 
 export default function BidMessageHandoffPage(): JSX.Element {
   const source = readComponentSource();
 
-  const spec: SpecPanelData = {
-    name: "BidMessage",
-    description:
-      "Burbuja de mensaje de puja estilo chat; 2 lados sent/received con la cola en la esquina inferior del lado; color por type: live naranja, vault morado, white blanco con texto morado; slot de logo + children.",
-    source: "Figma VOYAGER",
-    files: [
-      {
-        filename: "BidMessage.tsx",
-        code: source,
-        level: "must",
-        desc: "Burbuja self-contained (CSS-in-JS, gradient-border) · zero deps",
-      },
-      {
-        filename: "index.ts",
-        code: INDEX_TS,
-        level: "opt",
-        desc: "Barrel export",
-      },
-    ],
-    imports: [
-      'import BidMessage from "@/src/components/BidMessage/BidMessage";',
-      'import BidMessage from "@/src/components/BidMessage";',
-    ],
-    usage: USAGE,
-    props: [
-      { prop: "side", type: '"sent" | "received"', def: '"received"', note: "Lado de la burbuja; define la esquina de la cola" },
-      { prop: "type", type: '"live" | "vault" | "white"', def: "sent→live / received→vault", note: "Color de la burbuja (por defecto según side)" },
-      { prop: "logo", type: "ReactNode", def: "—", note: "Slot opcional antes del texto" },
-      { prop: "children", type: "ReactNode", def: '"PROPUSO US$ 25,000"', note: "Contenido del mensaje (editable)" },
-      { prop: "className", type: "string", def: '""', note: "Clases extra sobre .pbidmsg" },
-    ],
-    variants: [
-      { name: "live", cssClass: ".pbidmsg--live", note: "Relleno naranja #FF9639→#BE3D00 + borde gradiente + texto blanco" },
-      { name: "vault", cssClass: ".pbidmsg--vault", note: "Relleno morado #19004A→#3B1782→#2E0F70 + texto blanco" },
-      { name: "white", cssClass: ".pbidmsg--white", note: "Blanco + borde lila #CFBAFF→#AE8EFF + texto #3B1782" },
-    ],
-    states: [
-      { state: "received", selector: ".pbidmsg--received", transform: "border-radius 20px 20px 20px 4px", effects: "Cola en esquina inferior-izquierda" },
-      { state: "sent", selector: ".pbidmsg--sent", transform: "border-radius 20px 20px 4px 20px", effects: "Cola en esquina inferior-derecha" },
-      { state: "estático", selector: "—", transform: "—", effects: "Sin interacción (presentacional)" },
-    ],
-    tokens: [
-      { zone: "live · relleno", token: "#FF9639 → #EF852E → #BE3D00" },
-      { zone: "live · borde", token: "white → #F4AC59 → #8460E5 → white" },
-      { zone: "live · sombra", token: "rgba(225,108,16,0.3) 0px 2px 12px" },
-      { zone: "vault · relleno", token: "#19004A → #3B1782 → #2E0F70" },
-      { zone: "white · borde", token: "#CFBAFF → white → #AE8EFF → #CFBAFF" },
-      { zone: "white · texto", token: "#3B1782" },
-      { zone: "white · sombra", token: "rgba(90,53,194,0.5) 0px 2px 10px" },
-      { zone: "Radius", token: "20px / 4px (cola)" },
-    ],
-    qa: [
-      "side cambia la cola de esquina (received → inferior-izquierda, sent → inferior-derecha).",
-      "Los 3 type pintan el color correcto (live naranja, vault morado, white blanco).",
-      "Slot de logo opcional se renderiza antes del texto cuando se pasa.",
-      "children es editable — se muestra el contenido pasado.",
-      "Borde gradiente visible en variantes live y white.",
-      "Contraste de texto correcto por type (blanco en live/vault, #3B1782 en white).",
-      "side=\"sent\" por defecto resuelve a type=\"live\".",
-      "Sin FOUC en SSR — estilos presentes en el primer render.",
-    ],
-    sourcePath: "src/components/BidMessage/BidMessage.tsx",
-  };
-
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: "40px 24px", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+    <main style={{ maxWidth: 768, margin: "0 auto", padding: "48px 24px 96px", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)", color: "#09090b" }}>
 
-      {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#0f172a", margin: 0 }}>BidMessage</h1>
-          <span style={{ fontSize: 11, fontWeight: 700, fontFamily: "monospace", padding: "2px 8px", borderRadius: 4, background: "#dbeafe", color: "#1d4ed8" }}>Concorde · DONE</span>
+      {/* Title */}
+      <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 8px" }}>BidMessage</h1>
+      <p style={{ ...muted, fontSize: 16 }}>Burbuja de mensaje de puja estilo chat, con lado y color por tipo.</p>
+
+      {/* Hero preview */}
+      <div style={{ marginTop: 28 }}>
+        <Preview
+          tone="dark"
+          minHeight={240}
+          code={`<BidMessage side="sent" type="live">PROPUSO US$ 25,000</BidMessage>
+<BidMessage side="received" type="vault">PROPUSO US$ 25,000</BidMessage>`}
+        >
+          <BidMessage side="sent" type="live">PROPUSO US$ 25,000</BidMessage>
+          <BidMessage side="received" type="vault">PROPUSO US$ 25,000</BidMessage>
+        </Preview>
+      </div>
+
+      {/* Installation */}
+      <h2 style={h2}>Instalación</h2>
+      <InstallCommand name="bidmessage" />
+
+      {/* Usage */}
+      <h2 style={h2}>Uso</h2>
+      <CodeBlock code={USAGE} />
+
+      {/* Examples */}
+      <h2 style={h2}>Ejemplos</h2>
+      <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+        {EXAMPLES.map(function renderExample(ex) {
+          return (
+            <div key={ex.id}>
+              <h3 style={h3}>{ex.title}</h3>
+              {ex.description ? <p style={{ ...muted, marginBottom: 12 }}>{ex.description}</p> : <div style={{ height: 12 }} />}
+              <Preview tone={ex.tone} code={ex.code} minHeight={180}>
+                {ex.node}
+              </Preview>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* API */}
+      <h2 style={h2}>API</h2>
+      <PropsTable rows={API} />
+
+      {/* Component source (oculto por defecto) */}
+      <h2 style={h2}>Código del componente</h2>
+      <details>
+        <summary style={{ cursor: "pointer", fontSize: 14, color: "#52525b", padding: "10px 14px", border: "1px solid #e4e4e7", borderRadius: 10, background: "#fafafa", userSelect: "none", listStyle: "none", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span>Ver <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}>BidMessage.tsx</code> completo · self-contained · zero deps</span>
+          <span style={{ color: "#a1a1aa" }}>▾</span>
+        </summary>
+        <div style={{ marginTop: 12 }}>
+          <CodeBlock code={source} filename="BidMessage.tsx" maxHeight={520} />
         </div>
-        <p style={{ fontSize: 14, color: "#64748b", margin: 0 }}>
-          Spec &amp; Handoff — burbuja de mensaje de puja estilo chat con 2 lados (cola por esquina) y 3 colores por type.
-        </p>
-      </div>
-
-      {/* Live demo */}
-      <Preview />
-
-      {/* Código completo del componente — copy-paste exacto para el developer */}
-      <div style={{ marginBottom: 8 }}>
-        <span style={{ fontSize: 10, fontWeight: 700, fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.08em", color: "#64748b" }}>
-          Código del componente
-        </span>
-      </div>
-      <CodeViewer
-        code={source}
-        filename="BidMessage.tsx"
-        note="Visual de Figma + CSS-in-JS de Concorde. Pégalo como src/components/BidMessage/BidMessage.tsx y úsalo tal cual."
-      />
-
-      {/* Panel handoff */}
-      <SpecPanel {...spec} />
+      </details>
 
     </main>
   );

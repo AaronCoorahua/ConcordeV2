@@ -8,29 +8,29 @@
  * EDITAR LIBREMENTE después de generar
  */
 
-import { useState, useCallback } from "react";
-import type { JSX } from "react";
+import { forwardRef, useState, useCallback } from "react";
+import type { ButtonHTMLAttributes, JSX, MouseEvent } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type LikeButtonSize = "sm" | "md" | "lg";
 
-export interface LikeButtonProps {
+/**
+ * Hereda los atributos nativos de <button> (type, name, aria-*, data-*, style…)
+ * salvo onChange, que aquí entrega el booleano de estado activo.
+ */
+export interface LikeButtonProps
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onChange"> {
   /** Tamaño: sm=24px · md=32px · lg=40px */
   size?: LikeButtonSize;
   /** Estado activo controlado externamente */
   active?: boolean;
   /** Estado activo inicial (modo no controlado) */
   defaultActive?: boolean;
-  /** Deshabilita interacciones */
-  disabled?: boolean;
   /** Muestra skeleton de carga */
   skeleton?: boolean;
   /** Callback al alternar el like */
   onChange?: (active: boolean) => void;
-  /** Texto accesible del botón */
-  "aria-label"?: string;
-  className?: string;
 }
 
 // ─── Tokens de tamaño — fuente: Figma node 1119:11379 ─────────────────────────
@@ -220,16 +220,19 @@ let _stylesInjected = false;
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function LikeButton({
+const LikeButton = forwardRef<HTMLButtonElement, LikeButtonProps>(function LikeButton({
   size = "md",
   active: controlledActive,
   defaultActive = false,
   disabled = false,
   skeleton = false,
   onChange,
+  onClick,
+  style,
   "aria-label": ariaLabel = "Me gusta",
   className = "",
-}: LikeButtonProps): JSX.Element {
+  ...rest
+}, ref): JSX.Element {
   // Soporte controlado / no controlado
   const isControlled = controlledActive !== undefined;
   const [internalActive, setInternalActive] = useState(defaultActive);
@@ -249,7 +252,8 @@ export default function LikeButton({
     _stylesInjected = true;
   }
 
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback((e: MouseEvent<HTMLButtonElement>) => {
+    onClick?.(e);
     if (disabled || skeleton) return;
     const next = !isActive;
     if (!isControlled) setInternalActive(next);
@@ -258,7 +262,7 @@ export default function LikeButton({
       setPopping(true);
       setTimeout(() => { setPopping(false); }, 420);
     }
-  }, [isActive, isControlled, disabled, skeleton, onChange]);
+  }, [isActive, isControlled, disabled, skeleton, onChange, onClick]);
 
   const { btn: btnPx, icon: iconPx, strokeW } = SIZE_MAP[size];
 
@@ -290,13 +294,15 @@ export default function LikeButton({
         dangerouslySetInnerHTML={{ __html: PLIKE_STYLES }}
       />
       <button
+        ref={ref}
         type="button"
+        {...rest}
         className={classes}
         onClick={handleClick}
         disabled={disabled}
         aria-label={ariaLabel}
         aria-pressed={isActive}
-        style={{ width: btnPx, height: btnPx }}
+        style={{ width: btnPx, height: btnPx, ...style }}
       >
         {!skeleton && (
           <svg
@@ -316,4 +322,6 @@ export default function LikeButton({
       </button>
     </>
   );
-}
+});
+
+export default LikeButton;

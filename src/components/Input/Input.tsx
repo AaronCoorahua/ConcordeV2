@@ -12,31 +12,26 @@
  * Al enfocar (real) un input "default" toma automáticamente el borde de focus.
  */
 
-import { useId } from "react";
-import type { JSX } from "react";
+import { forwardRef, useId } from "react";
+import type { InputHTMLAttributes, JSX } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type InputVariant = "default" | "focus" | "error";
 
-export interface InputProps {
+/**
+ * Hereda los atributos nativos de <input> (type, name, id, placeholder, disabled,
+ * aria-*, data-*, etc.) salvo onChange, que aquí entrega el string directo.
+ * className se aplica al contenedor raíz (.pinput-root); el resto va al <input>.
+ */
+export interface InputProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> {
   /** Apariencia del borde (default "default"). El foco real activa "focus" solo. */
   variant?: InputVariant;
-  /** Valor controlado */
-  value?: string;
-  /** Valor inicial (no controlado) */
-  defaultValue?: string;
-  placeholder?: string;
-  /** type del input nativo (text, email, password, …) */
-  type?: string;
-  disabled?: boolean;
   /** Mensaje rojo bajo el campo — se muestra con variant="error" */
   errorMessage?: string;
+  /** Recibe el string del input (no el evento). */
   onChange?: (value: string) => void;
-  name?: string;
-  id?: string;
-  "aria-label"?: string;
-  className?: string;
 }
 
 // ─── Self-contained CSS ───────────────────────────────────────────────────────
@@ -113,23 +108,17 @@ let _stylesInjected = false;
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function Input({
+const Input = forwardRef<HTMLInputElement, InputProps>(function Input({
   variant = "default",
-  value,
-  defaultValue,
-  placeholder,
   type = "text",
   disabled = false,
   errorMessage = "Ingresa un correo válido",
   onChange,
-  name,
-  id,
-  "aria-label": ariaLabel,
   className = "",
-}: InputProps): JSX.Element {
+  ...rest
+}, ref): JSX.Element {
   const uid = useId().replace(/:/g, "-");
   const msgId = `${uid}-msg`;
-  const controlled = value !== undefined;
   const showMsg = variant === "error" && Boolean(errorMessage);
 
   if (typeof document !== "undefined" && !_stylesInjected) {
@@ -155,22 +144,20 @@ export default function Input({
       <div className={["pinput-root", className].filter(Boolean).join(" ")}>
         <div className={boxClass}>
           <input
+            ref={ref}
+            {...rest}
             className="pinput__field"
             type={type}
-            placeholder={placeholder}
             disabled={disabled}
-            name={name}
-            id={id}
-            value={controlled ? value : undefined}
-            defaultValue={controlled ? undefined : defaultValue}
             onChange={function handle(e) { onChange?.(e.target.value); }}
-            aria-label={ariaLabel}
-            aria-invalid={variant === "error" ? true : undefined}
-            aria-describedby={showMsg ? msgId : undefined}
+            aria-invalid={variant === "error" ? true : rest["aria-invalid"]}
+            aria-describedby={showMsg ? msgId : rest["aria-describedby"]}
           />
         </div>
         {showMsg ? <p className="pinput__msg" id={msgId}>{errorMessage}</p> : null}
       </div>
     </>
   );
-}
+});
+
+export default Input;
