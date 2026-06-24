@@ -1,6 +1,6 @@
 {
   "name": "@subastop/concorde",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "CLI del registry de Concorde — copia componentes y bloques de Voyager DS a tu proyecto (estilo shadcn).",
   "type": "module",
   "bin": {

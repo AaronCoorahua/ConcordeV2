@@ -57,13 +57,13 @@ const EXAMPLES: Example[] = [
   {
     id: "expanded",
     title: "Expandido",
-    description: "226px — labels, chevron y etiquetas de sección visibles.",
+    description: "226px — labels, chevron y etiquetas de sección visibles. Al omitir sections, el menú visible (Hoy, Tienda, Categorías, Empresas, Soporte → Centro de ayuda con sus iconos) proviene del set por defecto del diseño; pásalo con la prop sections para personalizarlo.",
     node: (
       <div style={{ display: "flex", height: 420, overflow: "hidden" }}>
         <Sidebar logo={logo} />
       </div>
     ),
-    code: `<Sidebar logo={logo} />`,
+    code: `<Sidebar logo={logo} /> {/* sin sections: usa el menú por defecto del diseño */}`,
   },
   {
     id: "collapsed",

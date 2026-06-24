@@ -5,7 +5,7 @@
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import Button from "@/src/components/Button/Button";
+import Button, { UserIcon, CalendarIcon } from "@/src/components/Button/Button";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -58,9 +58,11 @@ const EXAMPLES: Example[] = [
   {
     id: "secondary-sm",
     title: "Secondary · small",
-    description: "Versión compacta con ícono de calendario.",
-    node: <Button variant="secondary-sm">Agenda tu visita</Button>,
-    code: `<Button variant="secondary-sm">Agenda tu visita</Button>`,
+    description: "Versión compacta. El ícono se pasa con la prop icon.",
+    node: <Button variant="secondary-sm" icon={<CalendarIcon />}>Agenda tu visita</Button>,
+    code: `import Button, { CalendarIcon } from "@/src/components/Button/Button";
+
+<Button variant="secondary-sm" icon={<CalendarIcon />}>Agenda tu visita</Button>`,
   },
   {
     id: "outline",
@@ -80,15 +82,18 @@ const EXAMPLES: Example[] = [
   {
     id: "navbar",
     title: "Navbar",
-    description: "Botones del header: sin sesión y con sesión.",
+    description: "Botones del header. El ícono se pasa con icon; sm-logged-in muestra «Bienvenido, {username}».",
     node: (
       <>
-        <Button variant="sm-guest">Ingresa</Button>
-        <Button variant="sm-logged-in" username="ZAEX5G" />
+        <Button variant="sm-guest" icon={<UserIcon />}>Ingresa</Button>
+        <Button variant="sm-logged-in" username="ZAEX5G" icon={<UserIcon />} />
       </>
     ),
-    code: `<Button variant="sm-guest">Ingresa</Button>
-<Button variant="sm-logged-in" username="ZAEX5G" />`,
+    code: `import Button, { UserIcon } from "@/src/components/Button/Button";
+
+<Button variant="sm-guest" icon={<UserIcon />}>Ingresa</Button>
+
+<Button variant="sm-logged-in" username="ZAEX5G" icon={<UserIcon />} />`,
   },
   {
     id: "disabled",
@@ -106,8 +111,9 @@ const EXAMPLES: Example[] = [
 
 const API: PropRow[] = [
   { name: "variant", type: `"primary" | "negotiable" | "secondary" | "secondary-sm" | "ghost" | "outline" | "sm-guest" | "sm-logged-in"`, default: `"primary"`, description: "Estilo visual del botón." },
-  { name: "children", type: "ReactNode", description: "Contenido del botón." },
-  { name: "username", type: "string", description: "Usuario mostrado cuando variant=\"sm-logged-in\"." },
+  { name: "children", type: "ReactNode", description: "Texto del botón. En sm-logged-in se ignora (usa username)." },
+  { name: "icon", type: "ReactNode", description: "Ícono en el slot circular de sm-guest, secondary-sm y sm-logged-in. Exportamos UserIcon y CalendarIcon." },
+  { name: "username", type: "string", description: "Usuario mostrado en sm-logged-in, precedido de «Bienvenido,»." },
   { name: "disabled", type: "boolean", default: "false" },
   { name: "type", type: `"button" | "submit" | "reset"`, default: `"button"` },
   { name: "onClick", type: "(e) => void" },
@@ -171,6 +177,12 @@ export default function ButtonHandoffPage(): JSX.Element {
       {/* API */}
       <h2 style={h2}>API</h2>
       <PropsTable rows={API} />
+      <p style={{ ...muted, marginTop: 12, fontSize: 13 }}>
+        El ícono ya no está incrustado: se pasa con la prop{" "}
+        <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 12.5, color: "#7c3aed" }}>icon</code>. El componente exporta{" "}
+        <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 12.5, color: "#7c3aed" }}>UserIcon</code> y{" "}
+        <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 12.5, color: "#7c3aed" }}>CalendarIcon</code>, o usa el tuyo.
+      </p>
 
       {/* Component source (oculto por defecto) */}
       <h2 style={h2}>Código del componente</h2>

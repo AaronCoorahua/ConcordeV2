@@ -103,7 +103,7 @@ export default function OfferCardHandoffPage(): JSX.Element {
 
       {/* Title */}
       <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 8px" }}>OfferCard</h1>
-      <p style={{ ...muted, fontSize: 16 }}>Card de oferta de vehículo con imagen, precio y botón de favorito.</p>
+      <p style={{ ...muted, fontSize: 16 }}>Card de oferta de vehículo con imagen, precio y botón de favorito. En la variante live la fila de precio incluye un icono de gema fijo integrado (no se controla por props).</p>
 
       {/* Hero preview */}
       <div style={{ marginTop: 28 }}>

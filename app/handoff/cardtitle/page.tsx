@@ -38,9 +38,9 @@ const EXAMPLES: Example[] = [
   {
     id: "default",
     title: "Default",
-    description: "Valores por defecto del componente.",
+    description: "Valores por defecto del componente. Los brackets naranjas de las esquinas son decoración fija integrada, no se controlan por props.",
     node: <CardTitle />,
-    code: `<CardTitle />`,
+    code: `<CardTitle /> {/* incluye brackets naranjas fijos en las esquinas */}`,
   },
   {
     id: "custom",
