@@ -1,0 +1,17 @@
+{
+  "name": "concorde",
+  "version": "0.2.0",
+  "description": "CLI del registry de Concorde — copia componentes y bloques de Voyager DS a tu proyecto (estilo shadcn).",
+  "type": "module",
+  "bin": {
+    "concorde": "index.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "index.mjs"
+  ],
+  "keywords": ["concorde", "voyager", "design-system", "registry", "shadcn"],
+  "license": "MIT"
+}
