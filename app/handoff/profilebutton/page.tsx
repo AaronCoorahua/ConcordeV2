@@ -41,9 +41,10 @@ const EXAMPLES: Example[] = [
   {
     id: "default",
     title: "Default",
-    description: "Pasa el mouse o mantén presionado para ver hover y pressed.",
+    description: "El chevron circular y el label «Ir al Perfil» están integrados; pasa el mouse o mantén presionado para ver hover y pressed.",
     node: <ProfileButton />,
-    code: `<ProfileButton />`,
+    code: `// El chevron circular es parte del componente; el label por defecto es «Ir al Perfil».
+<ProfileButton />`,
   },
   {
     id: "custom-label",

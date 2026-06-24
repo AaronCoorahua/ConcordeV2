@@ -25,6 +25,8 @@ export type ButtonVariant =
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Estilo visual del botón. */
   variant?: ButtonVariant;
+  /** Ícono opcional en el slot circular (variantes sm-guest, secondary-sm, sm-logged-in). */
+  icon?: ReactNode;
   /** Nombre de usuario — usado cuando variant="sm-logged-in". */
   username?: string;
 }
@@ -825,7 +827,7 @@ function injectStyles(): void {
 // Ícono "user" — path EXACTO del SVG export de Figma (Primary/Small "Ingresa",
 // nodo 1159:4466). Cabeza circular + cuerpo (hombros) rellenos. 24px dentro del
 // círculo de 32px (igual que Figma). fill=currentColor → en pressed hereda #E1E3E2.
-function UserIcon(): JSX.Element {
+export function UserIcon(): JSX.Element {
   return (
     <svg
       width="24"
@@ -841,7 +843,7 @@ function UserIcon(): JSX.Element {
 
 // Ícono calendario — paths EXACTOS del SVG de Figma (Secondary/Small "Agenda tu visita").
 // stroke currentColor → en pressed hereda #e1e3e2 igual que en Figma.
-function CalendarIcon(): JSX.Element {
+export function CalendarIcon(): JSX.Element {
   return (
     <svg
       width="24"
@@ -878,7 +880,7 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
 // ── Component ─────────────────────────────────────────────────────────────
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = "primary", username, className, type = "button", children, ...rest },
+  { variant = "primary", icon, username, className, type = "button", children, ...rest },
   ref,
 ) {
   injectStyles();
@@ -889,27 +891,21 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   if (variant === "sm-guest") {
     content = (
       <>
-        <span className="pvbtn-icon">
-          <UserIcon />
-        </span>
+        {icon ? <span className="pvbtn-icon">{icon}</span> : null}
         {children}
       </>
     );
   } else if (variant === "secondary-sm") {
     content = (
       <>
-        <span className="psec-sm-icon">
-          <CalendarIcon />
-        </span>
-        {children ?? "Agenda tu visita"}
+        {icon ? <span className="psec-sm-icon">{icon}</span> : null}
+        {children}
       </>
     );
   } else if (variant === "sm-logged-in") {
     content = (
       <>
-        <span className="pvbtn-auth-d-icon">
-          <UserIcon />
-        </span>
+        {icon ? <span className="pvbtn-auth-d-icon">{icon}</span> : null}
         Bienvenido,{" "}
         <span className="pvbtn-auth-d-username">{username ?? children}</span>
       </>

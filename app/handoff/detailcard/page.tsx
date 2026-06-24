@@ -91,7 +91,7 @@ export default function DetailCardHandoffPage(): JSX.Element {
 
       {/* Title */}
       <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 8px" }}>DetailCard</h1>
-      <p style={{ ...muted, fontSize: 16 }}>Tarjeta de detalle de oferta con header oscuro, stats y botón Participa.</p>
+      <p style={{ ...muted, fontSize: 16 }}>Tarjeta de detalle de oferta con header oscuro, stats y botón Participa. Las stats traen iconos fijos integrados: ojo (vistas) y grupo (participantes); likes va sin icono.</p>
 
       {/* Hero preview */}
       <div style={{ marginTop: 28 }}>

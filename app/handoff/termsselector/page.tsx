@@ -42,9 +42,9 @@ const EXAMPLES: Example[] = [
   {
     id: "default",
     title: "Sin marcar",
-    description: "Casilla blanca con borde lila claro. Click en la casilla o el texto alterna.",
+    description: "Casilla blanca con borde lila claro. Click en la casilla o el texto alterna. Sin children, el componente muestra su etiqueta por defecto «He leído y acepto los términos y condiciones.».",
     node: <TermsSelector />,
-    code: `<TermsSelector />`,
+    code: `<TermsSelector /> {/* etiqueta por defecto: "He leído y acepto los términos y condiciones." */}`,
   },
   {
     id: "checked",
