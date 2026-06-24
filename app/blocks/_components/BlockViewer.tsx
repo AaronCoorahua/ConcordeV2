@@ -166,7 +166,7 @@ export default function BlockViewer({ id, description, width, height, canvas, fi
   const [fullscreen, setFullscreen] = useState(false);
   const [copiedCmd, setCopiedCmd] = useState(false);
 
-  const cmd = `npx @subastop/concorde@latest add ${id}`;
+  const cmd = `npx github:AaronCoorahua/ConcordeV2#cli add ${id}`;
   const scale = Math.min(1, VIEWPORT_W[viewport] / width);
   const tree = buildTree(files);
   const current = files[activeFile] ?? files[0];
@@ -265,7 +265,7 @@ export default function BlockViewer({ id, description, width, height, canvas, fi
           style={{ display: "inline-flex", alignItems: "center", gap: 8, border: "1px solid #e4e4e7", borderRadius: 8, padding: "5px 10px", background: "#fafafa", cursor: "pointer" }}
         >
           <code style={{ fontSize: 12, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", color: "#3f3f46", whiteSpace: "nowrap" }}>
-            <span style={{ color: "#a1a1aa" }}>$ </span>{cmd.replace("@latest ", "")}
+            <span style={{ color: "#a1a1aa" }}>$ </span>{cmd}
           </code>
           <span style={{ fontSize: 11, fontWeight: 600, color: copiedCmd ? "#16a34a" : "#a1a1aa", fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}>{copiedCmd ? "✓" : "copiar"}</span>
         </button>
