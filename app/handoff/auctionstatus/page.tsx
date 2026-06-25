@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/auctionstatus — Documentación de AuctionStatus (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import AuctionStatus from "@/src/components/AuctionStatus/AuctionStatus";
+import AuctionStatus from "@/src/components/AuctionStatus";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import AuctionStatus from "@/src/components/AuctionStatus/AuctionStatus";
+const USAGE = `import AuctionStatus from "@/src/components/AuctionStatus";
 
 <AuctionStatus variant="live" title="Volkswagen Gol 2015" subtitle="Vendedor: SubasCars" />`;
 

@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/sidebar — Documentación de Sidebar (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import Sidebar from "@/src/components/Sidebar/Sidebar";
+import Sidebar from "@/src/components/Sidebar";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -25,7 +25,7 @@ const logo = (
   <img src="/logo-preview.png" alt="Subastop" style={{ height: 28, width: "auto", objectFit: "contain", display: "block" }} />
 );
 
-const USAGE = `import Sidebar from "@/src/components/Sidebar/Sidebar";
+const USAGE = `import Sidebar from "@/src/components/Sidebar";
 
 <Sidebar
   logo={<span style={{ fontWeight: 700 }}>Subastop</span>}

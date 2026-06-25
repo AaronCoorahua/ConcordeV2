@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/amountoptiongroup — Documentación de AmountOptionGroup (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import AmountOptionGroup from "@/src/components/AmountOptionGroup/AmountOptionGroup";
+import AmountOptionGroup from "@/src/components/AmountOptionGroup";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import AmountOptionGroup from "@/src/components/AmountOptionGroup/AmountOptionGroup";
+const USAGE = `import AmountOptionGroup from "@/src/components/AmountOptionGroup";
 
 <AmountOptionGroup amounts={["80", "130", "210"]} defaultValue={0} />
 

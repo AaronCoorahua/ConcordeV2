@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/sendbidicon — Documentación de SendBidIcon (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import SendBidIcon from "@/src/components/SendBidIcon/SendBidIcon";
+import SendBidIcon from "@/src/components/SendBidIcon";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import SendBidIcon from "@/src/components/SendBidIcon/SendBidIcon";
+const USAGE = `import SendBidIcon from "@/src/components/SendBidIcon";
 
 <SendBidIcon variant="vault" />`;
 

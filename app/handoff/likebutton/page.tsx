@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/likebutton — Documentación de LikeButton (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import LikeButton from "@/src/components/LikeButton/LikeButton";
+import LikeButton from "@/src/components/LikeButton";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import LikeButton from "@/src/components/LikeButton/LikeButton";
+const USAGE = `import LikeButton from "@/src/components/LikeButton";
 
 <LikeButton size="md" />
 

@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/offercard — Documentación de OfferCard (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import OfferCard from "@/src/components/OfferCard/OfferCard";
+import OfferCard from "@/src/components/OfferCard";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import OfferCard from "@/src/components/OfferCard/OfferCard";
+const USAGE = `import OfferCard from "@/src/components/OfferCard";
 
 <OfferCard
   variant="live"

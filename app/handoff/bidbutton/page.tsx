@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/bidbutton — Documentación de BidButton (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import BidButton from "@/src/components/BidButton/BidButton";
+import BidButton from "@/src/components/BidButton";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import BidButton from "@/src/components/BidButton/BidButton";
+const USAGE = `import BidButton from "@/src/components/BidButton";
 
 <BidButton label="BIDEAR" amount="US$ 25,000" onClick={() => bid()} />`;
 
@@ -81,6 +81,29 @@ export default function BidButtonHandoffPage(): JSX.Element {
       {/* Title */}
       <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 8px" }}>BidButton</h1>
       <p style={{ ...muted, fontSize: 16 }}>Botón de puja con label y monto separados por un divisor.</p>
+
+      {/* Deprecation banner */}
+      <div
+        role="note"
+        style={{
+          marginTop: 20,
+          display: "flex",
+          alignItems: "flex-start",
+          gap: 10,
+          padding: "12px 14px",
+          borderRadius: 10,
+          background: "#fef3c7",
+          border: "1px solid #fde68a",
+          color: "#92400e",
+        }}
+      >
+        <span aria-hidden="true" style={{ fontSize: 15, lineHeight: "20px" }}>⚠️</span>
+        <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.55 }}>
+          <strong>Deprecado · ya no se usa.</strong> En el flujo actual la puja se refleja en vivo con{" "}
+          <a href="/handoff/bidproposal" style={{ color: "#92400e", fontWeight: 700 }}>BidProposal</a>{" "}
+          (el bid actual se actualiza solo). Se mantiene aquí solo como referencia.
+        </p>
+      </div>
 
       {/* Hero preview */}
       <div style={{ marginTop: 28 }}>

@@ -1,12 +1,12 @@
-/**
+﻿/**
  * /handoff/table — Documentación de Table (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import Table, { type TableColumn } from "@/src/components/Table/Table";
-import DocButton from "@/src/components/DocButton/DocButton";
+import Table, { type TableColumn } from "@/src/components/Table";
+import DocButton from "@/src/components/DocButton";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -77,7 +77,7 @@ const rows: ReactNode[][] = [
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import Table, { type TableColumn } from "@/src/components/Table/Table";
+const USAGE = `import Table, { type TableColumn } from "@/src/components/Table";
 
 const columns: TableColumn[] = [
   { header: "Fecha" },

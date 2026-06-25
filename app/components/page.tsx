@@ -1,41 +1,47 @@
-"use client";
+﻿"use client";
 
 import type { JSX } from "react";
 import Header from "@/app/_components/Header";
-import Button from "@/src/components/Button/Button";
-import LikeButton from "@/src/components/LikeButton/LikeButton";
-import OfferType from "@/src/components/OfferType/OfferType";
-import BadgeStatus from "@/src/components/BadgeStatus/BadgeStatus";
-import CategoryCard from "@/src/components/CategoryCard/CategoryCard";
-import OfferCard from "@/src/components/OfferCard/OfferCard";
-import PriceIcon from "@/src/components/PriceIcon/PriceIcon";
-import StarIcon from "@/src/components/StarIcon/StarIcon";
-import AvatarZone from "@/src/components/AvatarZone/AvatarZone";
-import ProfileButton from "@/src/components/ProfileButton/ProfileButton";
-import CardTitle from "@/src/components/CardTitle/CardTitle";
-import Input from "@/src/components/Input/Input";
-import TabSelector from "@/src/components/TabSelector/TabSelector";
-import TermsSelector from "@/src/components/TermsSelector/TermsSelector";
-import ConditionPill from "@/src/components/ConditionPill/ConditionPill";
-import Sidebar from "@/src/components/Sidebar/Sidebar";
-import CheckIcon from "@/src/components/CheckIcon/CheckIcon";
-import Table from "@/src/components/Table/Table";
-import DocButton from "@/src/components/DocButton/DocButton";
-import Accordion from "@/src/components/Accordion/Accordion";
-import AmountOptionGroup from "@/src/components/AmountOptionGroup/AmountOptionGroup";
-import PriceBadge from "@/src/components/PriceBadge/PriceBadge";
-import Signal from "@/src/components/Signal/Signal";
-import BidProposal from "@/src/components/BidProposal/BidProposal";
-import BidMessage from "@/src/components/BidMessage/BidMessage";
-import BidButton from "@/src/components/BidButton/BidButton";
-import ProgressBar from "@/src/components/ProgressBar/ProgressBar";
-import BidPosition from "@/src/components/BidPosition/BidPosition";
-import SendBidIcon from "@/src/components/SendBidIcon/SendBidIcon";
-import TimerIcon from "@/src/components/TimerIcon/TimerIcon";
-import SalaStatus from "@/src/components/SalaStatus/SalaStatus";
-import AuctionStatus from "@/src/components/AuctionStatus/AuctionStatus";
-import CardViewer from "@/src/components/CardViewer/CardViewer";
-import DetailCard from "@/src/components/DetailCard/DetailCard";
+import Button from "@/src/components/Button";
+import LikeButton from "@/src/components/LikeButton";
+import OfferType from "@/src/components/OfferType";
+import BadgeStatus from "@/src/components/BadgeStatus";
+import CategoryCard from "@/src/components/CategoryCard";
+import OfferCard from "@/src/components/OfferCard";
+import PriceIcon from "@/src/components/PriceIcon";
+import StarIcon from "@/src/components/StarIcon";
+import AvatarZone from "@/src/components/AvatarZone";
+import ProfileButton from "@/src/components/ProfileButton";
+import CardTitle from "@/src/components/CardTitle";
+import Input from "@/src/components/Input";
+import TabSelector from "@/src/components/TabSelector";
+import TermsSelector from "@/src/components/TermsSelector";
+import ConditionPill from "@/src/components/ConditionPill";
+import Sidebar from "@/src/components/Sidebar";
+import CheckIcon from "@/src/components/CheckIcon";
+import Table from "@/src/components/Table";
+import DocButton from "@/src/components/DocButton";
+import Accordion from "@/src/components/Accordion";
+import AmountOptionGroup from "@/src/components/AmountOptionGroup";
+import PriceBadge from "@/src/components/PriceBadge";
+import Signal from "@/src/components/Signal";
+import BidProposal from "@/src/components/BidProposal";
+import BidMessage from "@/src/components/BidMessage";
+import BidButton from "@/src/components/BidButton";
+import ProgressBar from "@/src/components/ProgressBar";
+import BidPosition from "@/src/components/BidPosition";
+import SendBidIcon from "@/src/components/SendBidIcon";
+import StatPill from "@/src/components/StatPill";
+import TimerIcon from "@/src/components/TimerIcon";
+import SalaStatus from "@/src/components/SalaStatus";
+import AuctionStatus from "@/src/components/AuctionStatus";
+import CardViewer from "@/src/components/CardViewer";
+import DetailCard from "@/src/components/DetailCard";
+import TodayIcon from "@/src/components/TodayIcon";
+import ServiceCenterIcon from "@/src/components/ServiceCenterIcon";
+import BusinessIcon from "@/src/components/BusinessIcon";
+import CategoryIcon from "@/src/components/CategoryIcon";
+import OfferIcon from "@/src/components/OfferIcon";
 
 // ── Registry ──────────────────────────────────────────────────────────────
 
@@ -44,6 +50,8 @@ interface ComponentEntry {
   name: string;
   handoffPath: string;
   preview: JSX.Element;
+  /** Marca el componente como en desuso (badge "Deprecado"). */
+  deprecated?: boolean;
 }
 
 const REGISTRY: ComponentEntry[] = [
@@ -188,6 +196,17 @@ const REGISTRY: ComponentEntry[] = [
     ),
   },
   {
+    id: "statpill",
+    name: "StatPill",
+    handoffPath: "/handoff/statpill",
+    preview: (
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, alignItems: "center", justifyContent: "center", background: "linear-gradient(116deg, #5F3ED8 0%, #340091 50%, #140046 100%)", borderRadius: 12, padding: "16px 20px" }}>
+        <StatPill variant="bids" label="MIS BIDS" value="18" />
+        <StatPill variant="total" label="BIDS TOTALES" value="157" />
+      </div>
+    ),
+  },
+  {
     id: "sendbidicon",
     name: "SendBidIcon",
     handoffPath: "/handoff/sendbidicon",
@@ -225,8 +244,9 @@ const REGISTRY: ComponentEntry[] = [
     id: "bidbutton",
     name: "BidButton",
     handoffPath: "/handoff/bidbutton",
+    deprecated: true,
     preview: (
-      <div style={{ transform: "scale(0.86)" }}>
+      <div style={{ transform: "scale(0.86)", opacity: 0.55, filter: "grayscale(0.35)" }}>
         <BidButton />
       </div>
     ),
@@ -334,6 +354,17 @@ const REGISTRY: ComponentEntry[] = [
     ),
   },
   {
+    id: "docbutton",
+    name: "DocButton",
+    handoffPath: "/handoff/docbutton",
+    preview: (
+      <div style={{ display: "flex", gap: 16, alignItems: "center", justifyContent: "center" }}>
+        <DocButton action="download" />
+        <DocButton action="view" />
+      </div>
+    ),
+  },
+  {
     id: "conditionpill",
     name: "ConditionPill",
     handoffPath: "/handoff/conditionpill",
@@ -425,6 +456,66 @@ const REGISTRY: ComponentEntry[] = [
       </div>
     ),
   },
+  {
+    id: "todayicon",
+    name: "TodayIcon",
+    handoffPath: "/handoff/todayicon",
+    preview: (
+      <div style={{ background: "#2E0F70", borderRadius: 8, padding: "16px 20px", display: "flex", gap: 18, alignItems: "center", justifyContent: "center" }}>
+        <TodayIcon size={22} state="default" />
+        <TodayIcon size={22} state="hover" />
+        <TodayIcon size={22} state="active" />
+      </div>
+    ),
+  },
+  {
+    id: "servicecentericon",
+    name: "ServiceCenterIcon",
+    handoffPath: "/handoff/servicecentericon",
+    preview: (
+      <div style={{ background: "#2E0F70", borderRadius: 8, padding: "16px 20px", display: "flex", gap: 18, alignItems: "center", justifyContent: "center" }}>
+        <ServiceCenterIcon size={22} state="default" />
+        <ServiceCenterIcon size={22} state="hover" />
+        <ServiceCenterIcon size={22} state="active" />
+      </div>
+    ),
+  },
+  {
+    id: "businessicon",
+    name: "BusinessIcon",
+    handoffPath: "/handoff/businessicon",
+    preview: (
+      <div style={{ background: "#2E0F70", borderRadius: 8, padding: "16px 20px", display: "flex", gap: 18, alignItems: "center", justifyContent: "center" }}>
+        <BusinessIcon size={22} state="default" />
+        <BusinessIcon size={22} state="hover" />
+        <BusinessIcon size={22} state="active" />
+      </div>
+    ),
+  },
+  {
+    id: "categoryicon",
+    name: "CategoryIcon",
+    handoffPath: "/handoff/categoryicon",
+    preview: (
+      <div style={{ background: "#2E0F70", borderRadius: 8, padding: "16px 20px", display: "flex", gap: 18, alignItems: "center", justifyContent: "center" }}>
+        <CategoryIcon size={22} state="default" />
+        <CategoryIcon size={22} state="hover" />
+        <CategoryIcon size={22} state="active" />
+      </div>
+    ),
+  },
+  {
+    id: "offericon",
+    name: "OfferIcon",
+    handoffPath: "/handoff/offericon",
+    preview: (
+      <div style={{ background: "#2E0F70", borderRadius: 8, padding: "16px 20px", display: "flex", gap: 18, alignItems: "center", justifyContent: "center" }}>
+        <OfferIcon size={22} state="default" />
+        <OfferIcon size={22} state="hover" />
+        <OfferIcon size={22} state="active" />
+      </div>
+    ),
+  },
 ];
 
 // ── Styles ────────────────────────────────────────────────────────────────
@@ -500,10 +591,24 @@ const PAGE_STYLES = `
     padding: 14px 18px;
   }
   .cp-card-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     font-size: 14px;
     font-weight: 700;
     color: #0f172a;
     letter-spacing: -0.01em;
+  }
+  .cp-card-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #b45309;
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    border-radius: 999px;
+    padding: 2px 7px;
   }
   .cp-card-arrow {
     font-size: 15px;
@@ -540,7 +645,10 @@ export default function ComponentsPage(): JSX.Element {
                 <a key={c.id} href={c.handoffPath} className="cp-card">
                   <div className="cp-card-preview">{c.preview}</div>
                   <div className="cp-card-foot">
-                    <span className="cp-card-name">{c.name}</span>
+                    <span className="cp-card-name">
+                      {c.name}
+                      {c.deprecated ? <span className="cp-card-badge">Deprecado</span> : null}
+                    </span>
                     <span className="cp-card-arrow" aria-hidden="true">→</span>
                   </div>
                 </a>

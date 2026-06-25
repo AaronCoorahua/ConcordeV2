@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/categorycard — Documentación de CategoryCard (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import CategoryCard from "@/src/components/CategoryCard/CategoryCard";
+import CategoryCard from "@/src/components/CategoryCard";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import CategoryCard from "@/src/components/CategoryCard/CategoryCard";
+const USAGE = `import CategoryCard from "@/src/components/CategoryCard";
 
 <CategoryCard category="vehicular" onClick={() => filter("vehicular")} />`;
 

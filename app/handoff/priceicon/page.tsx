@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/priceicon — Documentación de PriceIcon (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import PriceIcon from "@/src/components/PriceIcon/PriceIcon";
+import PriceIcon from "@/src/components/PriceIcon";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import PriceIcon from "@/src/components/PriceIcon/PriceIcon";
+const USAGE = `import PriceIcon from "@/src/components/PriceIcon";
 
 <PriceIcon size="md" state="default" />`;
 

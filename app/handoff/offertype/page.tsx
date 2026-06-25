@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/offertype — Documentación de OfferType (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import OfferType from "@/src/components/OfferType/OfferType";
+import OfferType from "@/src/components/OfferType";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import OfferType from "@/src/components/OfferType/OfferType";
+const USAGE = `import OfferType from "@/src/components/OfferType";
 
 <OfferType variant="live" onClick={() => verTodas("live")} />`;
 

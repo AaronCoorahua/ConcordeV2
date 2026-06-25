@@ -1,11 +1,12 @@
-/**
+﻿/**
  * /handoff/bidposition — Documentación de BidPosition (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import BidPosition, { type BidPositionItem } from "@/src/components/BidPosition/BidPosition";
+import BidPosition, { type BidPositionItem } from "@/src/components/BidPosition";
+import BidPositionDemo from "./BidPositionDemo";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -27,12 +28,23 @@ const SAMPLE: BidPositionItem[] = [
   { name: "jp_motors", value: "7" },
 ];
 
-const USAGE = `import BidPosition, { type BidPositionItem } from "@/src/components/BidPosition/BidPosition";
+const USAGE = `import BidPosition, { type BidPositionItem } from "@/src/components/BidPosition";
 
 const positions: BidPositionItem[] = [
   { name: "rodrigo_88", value: "12" },
   { name: "ana.valdez", value: "9" },
 ];
+
+<BidPosition positions={positions} />`;
+
+const LIVE_USAGE = `// El reorden se anima solo si cada fila trae un \`id\` estable.
+const [positions, setPositions] = useState<BidPositionItem[]>([]);
+
+useEffect(() => {
+  const socket = subscribe("auction:positions");
+  socket.on("update", (rows) => setPositions(rows)); // rows: { id, name, value }[]
+  return () => socket.close();
+}, []);
 
 <BidPosition positions={positions} />`;
 
@@ -102,6 +114,16 @@ export default function BidPositionHandoffPage(): JSX.Element {
           <BidPosition positions={SAMPLE} />
         </Preview>
       </div>
+
+      {/* Live / socket */}
+      <h2 style={h2}>En vivo (API / socket)</h2>
+      <p style={{ ...muted, marginBottom: 12 }}>
+        Las posiciones se alimentan en vivo: cuando un postor sube de puesto, la fila
+        se desliza a su nueva posición (animación FLIP). Requiere <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}>id</code> estable por fila.
+      </p>
+      <Preview minHeight={320} code={LIVE_USAGE}>
+        <BidPositionDemo />
+      </Preview>
 
       {/* Installation */}
       <h2 style={h2}>Instalación</h2>

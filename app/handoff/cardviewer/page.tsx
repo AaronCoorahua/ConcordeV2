@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/cardviewer — Documentación de CardViewer (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import CardViewer from "@/src/components/CardViewer/CardViewer";
+import CardViewer from "@/src/components/CardViewer";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -23,7 +23,7 @@ const DEMO_IMAGES = ["/demo/bronco.jpg", "/demo/bronco.jpg", "/demo/bronco.jpg",
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import CardViewer from "@/src/components/CardViewer/CardViewer";
+const USAGE = `import CardViewer from "@/src/components/CardViewer";
 
 <CardViewer images={["/a.jpg", "/b.jpg", "/c.jpg", "/d.jpg"]} />`;
 

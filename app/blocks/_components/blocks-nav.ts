@@ -9,7 +9,7 @@ export interface BlockNavItem {
 
 export const BLOCKS_NAV: BlockNavItem[] = [
   { id: "homepage", name: "Homepage" },
-  { id: "detalle", name: "Detalle" },
-  { id: "sala", name: "Sala" },
-  { id: "sala-mobile", name: "Sala · Mobile" },
+  { id: "detalle",  name: "Detalle" },
+  { id: "sala",     name: "Sala" },
+  { id: "sidebar",  name: "Sidebar" },
 ];

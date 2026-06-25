@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/button — Documentación de Button (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import Button, { UserIcon, CalendarIcon } from "@/src/components/Button/Button";
+import Button, { UserIcon, CalendarIcon } from "@/src/components/Button";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import Button from "@/src/components/Button/Button";
+const USAGE = `import Button from "@/src/components/Button";
 
 <Button variant="primary">Participa</Button>`;
 
@@ -60,7 +60,7 @@ const EXAMPLES: Example[] = [
     title: "Secondary · small",
     description: "Versión compacta. El ícono se pasa con la prop icon.",
     node: <Button variant="secondary-sm" icon={<CalendarIcon />}>Agenda tu visita</Button>,
-    code: `import Button, { CalendarIcon } from "@/src/components/Button/Button";
+    code: `import Button, { CalendarIcon } from "@/src/components/Button";
 
 <Button variant="secondary-sm" icon={<CalendarIcon />}>Agenda tu visita</Button>`,
   },
@@ -89,7 +89,7 @@ const EXAMPLES: Example[] = [
         <Button variant="sm-logged-in" username="ZAEX5G" icon={<UserIcon />} />
       </>
     ),
-    code: `import Button, { UserIcon } from "@/src/components/Button/Button";
+    code: `import Button, { UserIcon } from "@/src/components/Button";
 
 <Button variant="sm-guest" icon={<UserIcon />}>Ingresa</Button>
 

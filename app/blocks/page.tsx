@@ -1,8 +1,8 @@
 import type { JSX, ReactNode } from "react";
-import Homepage, { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/Homepage/Homepage";
-import Detalle, { DETALLE_WIDTH, DETALLE_HEIGHT } from "@/src/blocks/Detalle/Detalle";
-import Sala, { SALA_WIDTH, SALA_HEIGHT } from "@/src/blocks/Sala/Sala";
-import SalaMobile, { SALAMOBILE_WIDTH, SALAMOBILE_HEIGHT } from "@/src/blocks/SalaMobile/SalaMobile";
+import Homepage, { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/homepage/desktop/Homepage";
+import Detalle, { DETALLE_WIDTH, DETALLE_HEIGHT } from "@/src/blocks/detalle/desktop/Detalle";
+import SalaDesktop, { SALA_WIDTH, SALA_HEIGHT } from "@/src/blocks/sala/desktop/SalaDesktop";
+import Sidebar, { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/Sidebar";
 import Header from "@/app/_components/Header";
 
 /**
@@ -14,14 +14,20 @@ interface BlockEntry {
   name: string;
   width: number;
   height: number;
+  /** Altura usada sólo para calcular la escala del thumbnail (recorta la vista desde arriba) */
+  thumbHeight?: number;
   node: ReactNode;
 }
 
 const BLOCKS: BlockEntry[] = [
   { id: "homepage", name: "Homepage", width: HOMEPAGE_WIDTH, height: HOMEPAGE_HEIGHT, node: <Homepage /> },
-  { id: "detalle", name: "Detalle", width: DETALLE_WIDTH, height: DETALLE_HEIGHT, node: <Detalle /> },
-  { id: "sala", name: "Sala", width: SALA_WIDTH, height: SALA_HEIGHT, node: <Sala /> },
-  { id: "sala-mobile", name: "Sala · Mobile", width: SALAMOBILE_WIDTH, height: SALAMOBILE_HEIGHT, node: <SalaMobile /> },
+  { id: "detalle",  name: "Detalle",  width: DETALLE_WIDTH,  height: DETALLE_HEIGHT,  node: <Detalle /> },
+  { id: "sala",     name: "Sala",     width: SALA_WIDTH,     height: SALA_HEIGHT,     node: <SalaDesktop /> },
+  { id: "sidebar",  name: "Sidebar",  width: SIDEBAR_WIDTH,  height: SIDEBAR_HEIGHT,
+    /* El sidebar mide 226×1042 → scale normal ≈ 0.22 → 49px ancho (invisible).
+       Con thumbHeight 214 el scale sube a ~1.06 → thumbnail 240×227px mostrando header + nav items */
+    thumbHeight: 214,
+    node: <Sidebar /> },
 ];
 
 const THUMB_H = 260;
@@ -39,11 +45,12 @@ export default function BlocksPage(): JSX.Element {
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
           {BLOCKS.map(function renderBlock(b) {
-            const scale = Math.min((THUMB_H - 32) / b.height, 240 / b.width);
+            const th = b.thumbHeight ?? b.height;
+            const scale = Math.min((THUMB_H - 32) / th, 240 / b.width);
             return (
               <a key={b.id} href={`/blocks/${b.id}`} className="blk-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", borderRadius: 12, overflow: "hidden", background: "#ffffff", border: "1px solid #e2e8f0", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
                 <div style={{ height: THUMB_H, display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
-                  <div style={{ width: b.width * scale, height: b.height * scale, position: "relative", overflow: "hidden", borderRadius: 4, boxShadow: "0 6px 18px rgba(15,23,42,0.12)", outline: "1px solid #e2e8f0" }}>
+                  <div style={{ width: b.width * scale, height: th * scale, position: "relative", overflow: "hidden", borderRadius: 4, boxShadow: "0 6px 18px rgba(15,23,42,0.12)", outline: "1px solid #e2e8f0" }}>
                     <div style={{ position: "absolute", top: 0, left: 0, width: b.width, height: b.height, transform: `scale(${scale})`, transformOrigin: "top left" }}>
                       {b.node}
                     </div>

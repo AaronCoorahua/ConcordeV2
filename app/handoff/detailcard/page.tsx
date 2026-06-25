@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/detailcard — Documentación de DetailCard (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import DetailCard from "@/src/components/DetailCard/DetailCard";
+import DetailCard from "@/src/components/DetailCard";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import DetailCard from "@/src/components/DetailCard/DetailCard";
+const USAGE = `import DetailCard from "@/src/components/DetailCard";
 
 <DetailCard
   variant="live"

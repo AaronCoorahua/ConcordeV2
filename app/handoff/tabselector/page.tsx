@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/tabselector — Documentación de TabSelector (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import TabSelector from "@/src/components/TabSelector/TabSelector";
+import TabSelector from "@/src/components/TabSelector";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import TabSelector from "@/src/components/TabSelector/TabSelector";
+const USAGE = `import TabSelector from "@/src/components/TabSelector";
 
 <TabSelector options={["Boletas", "Filtros"]} defaultValue={0} />
 

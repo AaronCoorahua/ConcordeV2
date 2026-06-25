@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import Detalle, { DETALLE_WIDTH, DETALLE_HEIGHT } from "@/src/blocks/Detalle/Detalle";
+import Detalle, { DETALLE_WIDTH, DETALLE_HEIGHT } from "@/src/blocks/detalle/desktop/Detalle";
 import Header from "@/app/_components/Header";
 import BlockViewer, { type BlockFile } from "@/app/blocks/_components/BlockViewer";
 
@@ -18,7 +18,7 @@ function readSrc(rel: string): string {
 }
 
 const FILES: BlockFile[] = [
-  { path: "src/blocks/Detalle/Detalle.tsx", code: readSrc("src/blocks/Detalle/Detalle.tsx") },
+  { path: "src/blocks/detalle/desktop/Detalle.tsx", code: readSrc("src/blocks/detalle/desktop/Detalle.tsx") },
 ];
 
 export default function DetalleBlockPage(): JSX.Element {

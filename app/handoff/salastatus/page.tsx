@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/salastatus — Documentación de SalaStatus (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import SalaStatus from "@/src/components/SalaStatus/SalaStatus";
+import SalaStatus from "@/src/components/SalaStatus";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import SalaStatus from "@/src/components/SalaStatus/SalaStatus";
+const USAGE = `import SalaStatus from "@/src/components/SalaStatus";
 
 <SalaStatus />`;
 

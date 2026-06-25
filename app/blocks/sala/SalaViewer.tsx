@@ -1,13 +1,9 @@
 "use client";
 
-/**
- * SalaViewer — visor client del bloque Sala (desktop) con el chrome shadcn
- * (BlockViewer) + el selector de efecto de luz que controla `<Sala flashColors flashMode />`.
- */
-
 import { useState } from "react";
 import type { JSX, CSSProperties } from "react";
-import Sala, { SALA_WIDTH, SALA_HEIGHT } from "@/src/blocks/Sala/Sala";
+import SalaDesktop, { SALA_WIDTH, SALA_HEIGHT } from "@/src/blocks/sala/desktop/SalaDesktop";
+import SalaMobile, { SALAMOBILE_WIDTH, SALAMOBILE_HEIGHT } from "@/src/blocks/sala/mobile/SalaMobile";
 import BlockViewer, { type BlockFile } from "@/app/blocks/_components/BlockViewer";
 
 const PALETTES: { name: string; colors: string[] }[] = [
@@ -60,9 +56,17 @@ const GROUP_LABEL: CSSProperties = {
 export default function SalaViewer({ files }: { files: BlockFile[] }): JSX.Element {
   const [pal, setPal] = useState(0);
   const [mode, setMode] = useState<FlashMode>("bulb");
+  const [live, setLive] = useState(false);
 
   const controls = (
     <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center" }}>
+      <button
+        type="button"
+        onClick={function toggle() { setLive(function flip(v) { return !v; }); }}
+        style={{ ...CHIP_BASE, border: "none", color: "#ffffff", fontWeight: 700, background: live ? "#FF0066" : "linear-gradient(120deg, #5F3ED8 0%, #340091 100%)", boxShadow: "0 2px 8px rgba(20,0,69,0.25)" }}
+      >
+        {live ? "■ Detener" : "▶ Ver live"}
+      </button>
       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
         <span style={GROUP_LABEL}>Luz</span>
         {PALETTES.map(function renderPal(p, i) {
@@ -90,10 +94,17 @@ export default function SalaViewer({ files }: { files: BlockFile[] }): JSX.Eleme
   return (
     <BlockViewer
       id="sala"
-      description="Sala de subasta en vivo: visor, chat de pujas y posiciones."
+      description="Sala de subasta en vivo — desktop y mobile."
       width={SALA_WIDTH}
       height={SALA_HEIGHT}
-      canvas={<Sala flashColors={PALETTES[pal].colors} flashMode={mode} />}
+      canvas={<SalaDesktop flashColors={PALETTES[pal].colors} flashMode={mode} />}
+      canvasForViewport={{
+        mobile: {
+          node: <SalaMobile live={live} flashColors={PALETTES[pal].colors} flashMode={mode} />,
+          width: SALAMOBILE_WIDTH,
+          height: SALAMOBILE_HEIGHT,
+        },
+      }}
       files={files}
       controls={controls}
     />
