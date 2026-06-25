@@ -32,6 +32,7 @@ const REQUIRED: RequiredItem[] = [
   { name: "ProgressBar", path: "/handoff/progressbar", role: "Barra de tiempo de bid — desktop y mobile" },
   { name: "Button", path: "/handoff/button", role: "CTA primary (monto) — desktop 200×48, mobile 320×48" },
   { name: "BidPosition", path: "/handoff/bidposition", role: "Tabla de posiciones de pujas (solo desktop)" },
+  { name: "StatPill", path: "/handoff/statpill", role: "Pills de estadística MIS BIDS / BIDS TOTALES" },
 ];
 
 // Archivos propios del bloque
@@ -44,7 +45,6 @@ const BLOCK_FILES: BlockFile[] = [
   { path: "src/blocks/sala/mobile/SalaMobile.tsx", code: readSrc("src/blocks/sala/mobile/SalaMobile.tsx") },
   { path: "src/blocks/sala/mobile/MobileHeader.tsx", code: readSrc("src/blocks/sala/mobile/MobileHeader.tsx") },
   { path: "src/blocks/sala/mobile/MobileChatPanel.tsx", code: readSrc("src/blocks/sala/mobile/MobileChatPanel.tsx") },
-  { path: "src/blocks/sala/StatPill.tsx", code: readSrc("src/blocks/sala/StatPill.tsx") },
   { path: "src/blocks/sala/useSala.ts", code: readSrc("src/blocks/sala/useSala.ts") },
   { path: "src/blocks/sala/liveData.ts", code: readSrc("src/blocks/sala/liveData.ts") },
 ];
