@@ -1,0 +1,52 @@
+# Concorde — Design System de Subastop
+
+Componentes y bloques React listos para producción. Cada componente es **un solo
+archivo `.tsx` autocontenido** (estilos CSS-in-JS, sin dependencias salvo React).
+Esta guía es para asistentes de IA (Claude, Cursor, etc.): explica dónde buscar y
+cómo traer componentes a un proyecto.
+
+## Cómo traer un componente o bloque
+
+Opción A — CLI (recomendada):
+
+    npx github:AaronCoorahua/ConcordeV2#cli add <nombre>          # un componente
+    npx github:AaronCoorahua/ConcordeV2#cli add homepage          # un bloque + sus componentes
+    npx github:AaronCoorahua/ConcordeV2#cli add button --dir src/components
+
+Copia cada componente como un solo archivo; un bloque arrastra los componentes que
+usa. Si se omite `--dir`, abre un selector de carpeta. Flags: `--force`, `--skip`.
+
+Opción B — sin terminal (fetch directo del registry):
+
+    1. Índice de todo:     https://concorde-v2-theta.vercel.app/r/registry.json
+    2. Código de un item:  https://concorde-v2-theta.vercel.app/r/<nombre>.json
+       El JSON trae `files[]`, cada uno con { target, content }.
+       Escribe `content` en una ruta de tu proyecto (los imports son relativos `./X`).
+
+Docs con preview + props (para humanos):
+- Componentes: https://concorde-v2-theta.vercel.app/handoff/<nombre>
+- Bloques:     https://concorde-v2-theta.vercel.app/blocks/<id>
+
+## Reglas
+
+- Un componente = un archivo. Puedes editarlo, pero normalmente basta con las props.
+- No reescribas los estilos: usa las props y variantes del componente.
+- Los imports entre archivos son relativos; instala los dependientes juntos (la CLI
+  y los JSON de bloque ya los incluyen).
+- El catálogo vivo siempre está en `/r/registry.json` — féchalo para la lista actual.
+
+## Componentes (34)
+
+accordion, amountoptiongroup, auctionstatus, avatarzone, badgestatus, bidbutton,
+bidmessage, bidposition, bidproposal, button, cardtitle, cardviewer, categorycard,
+checkicon, conditionpill, detailcard, docbutton, input, likebutton, offercard,
+offertype, pricebadge, priceicon, profilebutton, progressbar, salastatus,
+sendbidicon, sidebar, signal, staricon, table, tabselector, termsselector, timericon
+
+## Bloques (página completa = bloque + sus componentes)
+
+- homepage  → offercard, badgestatus, profilebutton, cardtitle, offertype, categorycard
+- detalle   → auctionstatus, cardviewer
+- sala      → bidproposal, bidmessage, progressbar, button, avatarzone, pricebadge,
+              badgestatus, signal, priceicon, salastatus, cardviewer, bidposition, sendbidicon
+- salamobile→ progressbar, bidproposal, bidmessage, signal, button
