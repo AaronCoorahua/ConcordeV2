@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import Detalle, { DETALLE_WIDTH, DETALLE_HEIGHT } from "@/src/blocks/detalle/desktop/Detalle";
 import Header from "@/app/_components/Header";
-import BlockViewer, { type BlockFile } from "@/app/blocks/_components/BlockViewer";
+import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_components/BlockViewer";
 
 /**
  * /blocks/detalle — Visor del bloque Detalle (estilo shadcn).
@@ -42,6 +42,7 @@ export default function DetalleBlockPage(): JSX.Element {
         height={DETALLE_HEIGHT}
         canvas={<Detalle />}
         files={FILES}
+        previewBg={VAULT_PREVIEW_BG}
       />
     </div>
   );

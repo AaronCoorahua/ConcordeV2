@@ -14,9 +14,18 @@ import PropsTable, { type PropRow } from "@/app/handoff/_components/PropsTable";
 
 function readComponentSource(): string {
   try {
-    return readFileSync(join(process.cwd(), "src/components/BidProposal/BidProposal.tsx"), "utf8");
+    return readFileSync(join(process.cwd(), "src/components/BidProposal.tsx"), "utf8");
   } catch {
     return "// No se pudo leer BidProposal.tsx en build.";
+  }
+}
+
+// Código real del demo en vivo.
+function readDemoSource(): string {
+  try {
+    return readFileSync(join(process.cwd(), "app/handoff/bidproposal/BidProposalDemo.tsx"), "utf8");
+  } catch {
+    return "// No se pudo leer BidProposalDemo.tsx en build.";
   }
 }
 
@@ -26,18 +35,6 @@ const USAGE = `import BidProposal from "@/src/components/BidProposal";
 
 // Al cambiar 'flash' se dispara la animación de nuevo bid.
 <BidProposal amount="US$ 6,559" flash={flash} flashMode="bulb" />`;
-
-const LIVE_USAGE = `const [flash, setFlash] = useState(0);
-const [mode, setMode] = useState<BidProposalFlashMode>("combo");
-const [colors, setColors] = useState(["#F4AC59", "#8460E5", "#ffffff"]);
-
-// dispara la animación cada vez que llega un bid (aquí, cada 2 s)
-useEffect(() => {
-  const t = setInterval(() => setFlash((f) => f + 1), 2000);
-  return () => clearInterval(t);
-}, []);
-
-<BidProposal amount="US$ 6,559" flash={flash} flashMode={mode} flashColors={colors} />`;
 
 interface Example {
   id: string;
@@ -84,6 +81,7 @@ const muted = { fontSize: 14, color: "#71717a", lineHeight: 1.6, margin: 0 } as 
 
 export default function BidProposalHandoffPage(): JSX.Element {
   const source = readComponentSource();
+  const demoSource = readDemoSource();
 
   return (
     <main style={{ maxWidth: 768, margin: "0 auto", padding: "48px 24px 96px", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)", color: "#09090b" }}>
@@ -113,7 +111,7 @@ export default function BidProposalHandoffPage(): JSX.Element {
         y paletas (<code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}>flashColors</code>)
         que usa el bloque <a href="/blocks/sala" style={{ color: "#4f2ed8", fontWeight: 600 }}>Sala</a>.
       </p>
-      <Preview tone="dark" minHeight={340} code={LIVE_USAGE}>
+      <Preview tone="dark" minHeight={340} code={demoSource}>
         <BidProposalDemo />
       </Preview>
 

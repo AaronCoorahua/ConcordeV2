@@ -13,7 +13,7 @@ import PropsTable, { type PropRow } from "@/app/handoff/_components/PropsTable";
 
 function readComponentSource(): string {
   try {
-    return readFileSync(join(process.cwd(), "src/components/TermsSelector/TermsSelector.tsx"), "utf8");
+    return readFileSync(join(process.cwd(), "src/components/TermsSelector.tsx"), "utf8");
   } catch {
     return "// No se pudo leer TermsSelector.tsx en build.";
   }

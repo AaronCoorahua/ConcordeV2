@@ -11,22 +11,28 @@ import { useEffect, useState } from "react";
 import type { JSX } from "react";
 import BidPosition, { type BidPositionItem } from "@/src/components/BidPosition";
 
+// Nombres de ejemplo (hardcoded para el demo; en producción vienen del socket).
 const INITIAL: BidPositionItem[] = [
   { id: "u1", name: "rodrigo_88", value: "12" },
-  { id: "u2", name: "ana.valdez", value: "9" },
-  { id: "u3", name: "jp_motors", value: "7" },
-  { id: "u4", name: "lucia.q", value: "5" },
-  { id: "u5", name: "max_rt", value: "3" },
+  { id: "u2", name: "ana.valdez", value: "11" },
+  { id: "u3", name: "jp_motors", value: "10" },
+  { id: "u4", name: "lucia.q", value: "6" },
+  { id: "u5", name: "max_rt", value: "4" },
 ];
 
 function bump(prev: BidPositionItem[]): BidPositionItem[] {
-  // Un postor al azar suma 1–3 bids…
-  const idx = Math.floor(Math.random() * prev.length);
+  // Sesga la puja hacia el 2º y 3º para que peleen el 1er puesto → los cambios
+  // arriba (1º ↔ 2º ↔ 3º) son frecuentes y bien visibles.
+  const pool = [1, 2, 1, 2, 0, 3].filter(function inRange(i) { return i < prev.length; });
+  const idx = pool[Math.floor(Math.random() * pool.length)];
+  const top = Math.max(...prev.map(function val(p) { return Number(p.value); }));
+  const cur = Number(prev[idx].value);
+  // Si es un perseguidor, súbele lo justo para rebasar al líder; si ya es líder, +1/2.
+  const inc = idx === 0 ? 1 + Math.floor(Math.random() * 2) : top - cur + 1 + Math.floor(Math.random() * 2);
   const updated = prev.map(function add(p, i) {
-    if (i !== idx) return p;
-    return { ...p, value: String(Number(p.value) + 1 + Math.floor(Math.random() * 3)) };
+    return i === idx ? { ...p, value: String(cur + inc) } : p;
   });
-  // …y la tabla se reordena por bids desc (la 1ª pasa a live + trofeo).
+  // Reordena por bids desc (la 1ª pasa a live + trofeo).
   return [...updated].sort(function byValue(a, b) {
     return Number(b.value) - Number(a.value);
   });
@@ -38,7 +44,7 @@ export default function BidPositionDemo(): JSX.Element {
   useEffect(function subscribe() {
     const t = setInterval(function onMessage() {
       setItems(bump);
-    }, 1500);
+    }, 1000);
     return function unsubscribe() {
       clearInterval(t);
     };

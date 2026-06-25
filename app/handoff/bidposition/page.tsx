@@ -14,9 +14,18 @@ import PropsTable, { type PropRow } from "@/app/handoff/_components/PropsTable";
 
 function readComponentSource(): string {
   try {
-    return readFileSync(join(process.cwd(), "src/components/BidPosition/BidPosition.tsx"), "utf8");
+    return readFileSync(join(process.cwd(), "src/components/BidPosition.tsx"), "utf8");
   } catch {
     return "// No se pudo leer BidPosition.tsx en build.";
+  }
+}
+
+// Código real del demo en vivo (incluye los nombres de ejemplo hardcodeados).
+function readDemoSource(): string {
+  try {
+    return readFileSync(join(process.cwd(), "app/handoff/bidposition/BidPositionDemo.tsx"), "utf8");
+  } catch {
+    return "// No se pudo leer BidPositionDemo.tsx en build.";
   }
 }
 
@@ -34,17 +43,6 @@ const positions: BidPositionItem[] = [
   { name: "rodrigo_88", value: "12" },
   { name: "ana.valdez", value: "9" },
 ];
-
-<BidPosition positions={positions} />`;
-
-const LIVE_USAGE = `// El reorden se anima solo si cada fila trae un \`id\` estable.
-const [positions, setPositions] = useState<BidPositionItem[]>([]);
-
-useEffect(() => {
-  const socket = subscribe("auction:positions");
-  socket.on("update", (rows) => setPositions(rows)); // rows: { id, name, value }[]
-  return () => socket.close();
-}, []);
 
 <BidPosition positions={positions} />`;
 
@@ -100,6 +98,7 @@ const muted = { fontSize: 14, color: "#71717a", lineHeight: 1.6, margin: 0 } as 
 
 export default function BidPositionHandoffPage(): JSX.Element {
   const source = readComponentSource();
+  const demoSource = readDemoSource();
 
   return (
     <main style={{ maxWidth: 768, margin: "0 auto", padding: "48px 24px 96px", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)", color: "#09090b" }}>
@@ -120,8 +119,9 @@ export default function BidPositionHandoffPage(): JSX.Element {
       <p style={{ ...muted, marginBottom: 12 }}>
         Las posiciones se alimentan en vivo: cuando un postor sube de puesto, la fila
         se desliza a su nueva posición (animación FLIP). Requiere <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}>id</code> estable por fila.
+        El código de abajo es el del demo (los nombres están hardcodeados; en producción vienen del socket).
       </p>
-      <Preview minHeight={320} code={LIVE_USAGE}>
+      <Preview minHeight={320} code={demoSource}>
         <BidPositionDemo />
       </Preview>
 
