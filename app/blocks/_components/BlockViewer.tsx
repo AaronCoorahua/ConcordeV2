@@ -35,7 +35,7 @@ type Viewport = "desktop" | "mobile";
 const VIEWPORT_W: Record<Viewport, number> = { desktop: 1100, mobile: 390 };
 
 /** Fondo "vault" (morado del DS) para enmarcar bloques en el preview. */
-export const VAULT_PREVIEW_BG = "linear-gradient(135deg, #19004A 0%, #2E0F70 55%, #3B1782 100%)";
+export const VAULT_PREVIEW_BG = "#2E0F70";
 
 // ── Árbol de archivos ───────────────────────────────────────────────────────
 
@@ -190,7 +190,7 @@ export default function BlockViewer({ id, width, height, canvas, files, controls
           overflow: "auto",
         }}
       >
-        <div style={{ width: activeWidth * scale, height: activeHeight * scale, position: "relative", flexShrink: 0, boxShadow: "0 12px 40px rgba(15,23,42,0.12)", outline: "1px solid #e2e8f0", borderRadius: 4, overflow: "hidden" }}>
+        <div style={{ width: activeWidth * scale, height: activeHeight * scale, position: "relative", flexShrink: 0, boxShadow: "0 12px 40px rgba(15,23,42,0.12)", ...(previewBg === "#fafafa" ? { outline: "1px solid #e2e8f0" } : {}), borderRadius: 4, overflow: "hidden" }}>
           <div style={{ position: "absolute", top: 0, left: 0, width: activeWidth, height: activeHeight, transform: `scale(${scale})`, transformOrigin: "top left" }}>
             {activeCanvas}
           </div>
