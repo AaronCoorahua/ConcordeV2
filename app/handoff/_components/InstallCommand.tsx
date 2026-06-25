@@ -10,9 +10,16 @@ import type { JSX } from "react";
 
 export const CLI_SPEC = "github:AaronCoorahua/ConcordeV2#cli";
 
-export default function InstallCommand({ name }: { name: string }): JSX.Element {
+interface InstallCommandProps {
+  /** Nombre del componente/bloque para `add <name>`. */
+  name?: string;
+  /** Comando completo a mostrar (sobreescribe a `add <name>`). */
+  command?: string;
+}
+
+export default function InstallCommand({ name, command }: InstallCommandProps): JSX.Element {
   const [copied, setCopied] = useState(false);
-  const cmd = `npx ${CLI_SPEC} add ${name}`;
+  const cmd = command ?? `npx ${CLI_SPEC} add ${name}`;
 
   function handleCopy(): void {
     void navigator.clipboard.writeText(cmd).then(function done() {
