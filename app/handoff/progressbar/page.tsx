@@ -1,11 +1,12 @@
-/**
+﻿/**
  * /handoff/progressbar — Documentación de ProgressBar (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import ProgressBar from "@/src/components/ProgressBar/ProgressBar";
+import ProgressBar from "@/src/components/ProgressBar";
+import ProgressBarDemo from "./ProgressBarDemo";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,9 +22,18 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import ProgressBar from "@/src/components/ProgressBar/ProgressBar";
+const USAGE = `import ProgressBar from "@/src/components/ProgressBar";
 
 <ProgressBar value={60} />`;
+
+const LIVE_USAGE = `const [value, setValue] = useState(0);
+
+useEffect(() => {
+  const t = setInterval(() => setValue((v) => (v >= 100 ? 0 : v + 4)), 500);
+  return () => clearInterval(t);
+}, []);
+
+<ProgressBar value={value} />`;
 
 interface Example {
   id: string;
@@ -109,6 +119,16 @@ export default function ProgressBarHandoffPage(): JSX.Element {
           </Bar>
         </Preview>
       </div>
+
+      {/* Live */}
+      <h2 style={h2}>En vivo</h2>
+      <p style={{ ...muted, marginBottom: 12 }}>
+        Al cambiar <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}>value</code> la barra
+        sube con una transición suave de <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}>width</code>.
+      </p>
+      <Preview minHeight={160} code={LIVE_USAGE}>
+        <ProgressBarDemo />
+      </Preview>
 
       {/* Installation */}
       <h2 style={h2}>Instalación</h2>

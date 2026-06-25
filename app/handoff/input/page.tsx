@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/input — Documentación de Input (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import Input from "@/src/components/Input/Input";
+import Input from "@/src/components/Input";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import Input from "@/src/components/Input/Input";
+const USAGE = `import Input from "@/src/components/Input";
 
 <Input placeholder="Suscríbete a las novedades" />
 

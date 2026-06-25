@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/cardtitle — Documentación de CardTitle (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import CardTitle from "@/src/components/CardTitle/CardTitle";
+import CardTitle from "@/src/components/CardTitle";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import CardTitle from "@/src/components/CardTitle/CardTitle";
+const USAGE = `import CardTitle from "@/src/components/CardTitle";
 
 <CardTitle title="SANTANDER CONSUMER" subtitle="10 Ofertas" />`;
 

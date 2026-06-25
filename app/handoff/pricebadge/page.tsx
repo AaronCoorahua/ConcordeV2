@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/pricebadge — Documentación de PriceBadge (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import PriceBadge from "@/src/components/PriceBadge/PriceBadge";
+import PriceBadge from "@/src/components/PriceBadge";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import PriceBadge from "@/src/components/PriceBadge/PriceBadge";
+const USAGE = `import PriceBadge from "@/src/components/PriceBadge";
 
 <PriceBadge title="Precio en soles" />`;
 

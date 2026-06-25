@@ -1,11 +1,12 @@
-/**
+﻿/**
  * /handoff/bidmessage — Documentación de BidMessage (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import BidMessage from "@/src/components/BidMessage/BidMessage";
+import BidMessage from "@/src/components/BidMessage";
+import BidMessageDemo from "./BidMessageDemo";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,9 +22,19 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import BidMessage from "@/src/components/BidMessage/BidMessage";
+const USAGE = `import BidMessage from "@/src/components/BidMessage";
 
 <BidMessage side="sent" type="live">PROPUSO US$ 25,000</BidMessage>`;
+
+const LIVE_USAGE = `// Cada mensaje entra animado. Velocidad = duración del slide; Distancia = recorrido.
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(var(--d)); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+<div style={{ "--d": distance + "px", animation: \`msg-in \${speed}ms cubic-bezier(0.22,1,0.36,1) both\` }}>
+  <BidMessage side={m.side} type={m.type}>{m.text}</BidMessage>
+</div>`;
 
 interface Example {
   id: string;
@@ -97,6 +108,16 @@ export default function BidMessageHandoffPage(): JSX.Element {
           <BidMessage side="received" type="vault">PROPUSO US$ 25,000</BidMessage>
         </Preview>
       </div>
+
+      {/* Live / interactivo */}
+      <h2 style={h2}>En vivo (velocidad + distancia)</h2>
+      <p style={{ ...muted, marginBottom: 12 }}>
+        Los mensajes van llegando y entran animados. Ajusta la <strong>velocidad</strong> (duración del
+        deslizamiento) y la <strong>distancia</strong> (cuánto recorre al aparecer).
+      </p>
+      <Preview tone="dark" minHeight={360} code={LIVE_USAGE}>
+        <BidMessageDemo />
+      </Preview>
 
       {/* Installation */}
       <h2 style={h2}>Instalación</h2>

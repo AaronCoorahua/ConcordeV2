@@ -165,6 +165,12 @@
       "url": "https://concorde-v2-theta.vercel.app/r/sendbidicon.json"
     },
     {
+      "name": "statpill",
+      "type": "registry:component",
+      "title": "StatPill",
+      "url": "https://concorde-v2-theta.vercel.app/r/statpill.json"
+    },
+    {
       "name": "sidebar",
       "type": "registry:component",
       "title": "Sidebar",
@@ -248,20 +254,8 @@
         "salastatus",
         "cardviewer",
         "bidposition",
-        "sendbidicon"
-      ]
-    },
-    {
-      "name": "salamobile",
-      "type": "registry:block",
-      "title": "SalaMobile",
-      "url": "https://concorde-v2-theta.vercel.app/r/salamobile.json",
-      "components": [
-        "progressbar",
-        "bidproposal",
-        "bidmessage",
-        "signal",
-        "button"
+        "sendbidicon",
+        "statpill"
       ]
     }
   ]

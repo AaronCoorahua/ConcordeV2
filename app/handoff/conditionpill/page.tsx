@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/conditionpill — Documentación de ConditionPill (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import ConditionPill from "@/src/components/ConditionPill/ConditionPill";
+import ConditionPill from "@/src/components/ConditionPill";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import ConditionPill from "@/src/components/ConditionPill/ConditionPill";
+const USAGE = `import ConditionPill from "@/src/components/ConditionPill";
 
 <ConditionPill>Conoce más</ConditionPill>`;
 

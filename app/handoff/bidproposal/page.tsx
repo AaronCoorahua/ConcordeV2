@@ -1,11 +1,12 @@
-/**
+﻿/**
  * /handoff/bidproposal — Documentación de BidProposal (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import BidProposal from "@/src/components/BidProposal/BidProposal";
+import BidProposal from "@/src/components/BidProposal";
+import BidProposalDemo from "./BidProposalDemo";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,10 +22,22 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import BidProposal from "@/src/components/BidProposal/BidProposal";
+const USAGE = `import BidProposal from "@/src/components/BidProposal";
 
 // Al cambiar 'flash' se dispara la animación de nuevo bid.
 <BidProposal amount="US$ 6,559" flash={flash} flashMode="bulb" />`;
+
+const LIVE_USAGE = `const [flash, setFlash] = useState(0);
+const [mode, setMode] = useState<BidProposalFlashMode>("combo");
+const [colors, setColors] = useState(["#F4AC59", "#8460E5", "#ffffff"]);
+
+// dispara la animación cada vez que llega un bid (aquí, cada 2 s)
+useEffect(() => {
+  const t = setInterval(() => setFlash((f) => f + 1), 2000);
+  return () => clearInterval(t);
+}, []);
+
+<BidProposal amount="US$ 6,559" flash={flash} flashMode={mode} flashColors={colors} />`;
 
 interface Example {
   id: string;
@@ -91,6 +104,17 @@ export default function BidProposalHandoffPage(): JSX.Element {
           <BidProposal amount="US$ 7,191" label="ENVIADO POR KAHTH4" />
         </Preview>
       </div>
+
+      {/* Live / interactivo */}
+      <h2 style={h2}>En vivo (tipo + color)</h2>
+      <p style={{ ...muted, marginBottom: 12 }}>
+        La animación de nuevo bid se dispara sola cada 2 s. Elige el
+        <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}> flashMode</code> (tipo)
+        y la paleta de <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}>flashColors</code> (color).
+      </p>
+      <Preview tone="dark" minHeight={340} code={LIVE_USAGE}>
+        <BidProposalDemo />
+      </Preview>
 
       {/* Installation */}
       <h2 style={h2}>Instalación</h2>

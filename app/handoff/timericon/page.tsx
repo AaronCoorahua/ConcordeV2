@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/timericon — Documentación de TimerIcon (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import TimerIcon from "@/src/components/TimerIcon/TimerIcon";
+import TimerIcon from "@/src/components/TimerIcon";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import TimerIcon from "@/src/components/TimerIcon/TimerIcon";
+const USAGE = `import TimerIcon from "@/src/components/TimerIcon";
 
 <TimerIcon size={30} color="#3B1782" />`;
 

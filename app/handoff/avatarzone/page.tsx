@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/avatarzone — Documentación de AvatarZone (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import AvatarZone from "@/src/components/AvatarZone/AvatarZone";
+import AvatarZone from "@/src/components/AvatarZone";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -21,7 +21,7 @@ function readComponentSource(): string {
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
-const USAGE = `import AvatarZone from "@/src/components/AvatarZone/AvatarZone";
+const USAGE = `import AvatarZone from "@/src/components/AvatarZone";
 
 <AvatarZone title="Mi cuenta" />`;
 

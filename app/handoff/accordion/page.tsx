@@ -1,11 +1,11 @@
-/**
+﻿/**
  * /handoff/accordion — Documentación de Accordion (estilo shadcn, limpio).
  */
 
 import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import Accordion from "@/src/components/Accordion/Accordion";
+import Accordion from "@/src/components/Accordion";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -25,7 +25,7 @@ function DemoContent(): JSX.Element {
   return <p style={{ margin: 0 }}>Contenido que se expande y colapsa al pulsar el encabezado.</p>;
 }
 
-const USAGE = `import Accordion from "@/src/components/Accordion/Accordion";
+const USAGE = `import Accordion from "@/src/components/Accordion";
 
 <Accordion title="INFORMACIÓN GENERAL" defaultOpen>
   Contenido que se expande y colapsa.

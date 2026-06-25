@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import Homepage, { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/Homepage/Homepage";
+import Homepage, { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/homepage/desktop/Homepage";
 import Header from "@/app/_components/Header";
 import BlockViewer, { type BlockFile } from "@/app/blocks/_components/BlockViewer";
 import RequiredComponents, { type RequiredItem } from "@/app/blocks/_components/RequiredComponents";
@@ -28,9 +28,9 @@ const REQUIRED: RequiredItem[] = [
 ];
 
 const FILES: BlockFile[] = [
-  { path: "src/blocks/Homepage/Homepage.tsx", code: readSrc("src/blocks/Homepage/Homepage.tsx") },
-  { path: "src/blocks/Homepage/CategoriesSection.tsx", code: readSrc("src/blocks/Homepage/CategoriesSection.tsx") },
-  { path: "src/blocks/Homepage/AuctioneerSection.tsx", code: readSrc("src/blocks/Homepage/AuctioneerSection.tsx") },
+  { path: "src/blocks/homepage/desktop/Homepage.tsx", code: readSrc("src/blocks/homepage/desktop/Homepage.tsx") },
+  { path: "src/blocks/homepage/desktop/CategoriesSection.tsx", code: readSrc("src/blocks/homepage/desktop/CategoriesSection.tsx") },
+  { path: "src/blocks/homepage/desktop/AuctioneerSection.tsx", code: readSrc("src/blocks/homepage/desktop/AuctioneerSection.tsx") },
 ];
 
 export default function HomepageBlockPage(): JSX.Element {
