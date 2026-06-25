@@ -1,0 +1,14 @@
+{
+  "name": "concorde",
+  "owner": {
+    "name": "Aaron Coorahua",
+    "url": "https://github.com/AaronCoorahua"
+  },
+  "plugins": [
+    {
+      "name": "concorde-ui",
+      "source": "./plugins/concorde-ui",
+      "description": "Descubre e instala componentes/bloques de Concorde (design system de Subastop) con ayuda de la IA."
+    }
+  ]
+}
