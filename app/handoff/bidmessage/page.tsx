@@ -14,9 +14,18 @@ import PropsTable, { type PropRow } from "@/app/handoff/_components/PropsTable";
 
 function readComponentSource(): string {
   try {
-    return readFileSync(join(process.cwd(), "src/components/BidMessage/BidMessage.tsx"), "utf8");
+    return readFileSync(join(process.cwd(), "src/components/BidMessage.tsx"), "utf8");
   } catch {
     return "// No se pudo leer BidMessage.tsx en build.";
+  }
+}
+
+// Código real del demo en vivo.
+function readDemoSource(): string {
+  try {
+    return readFileSync(join(process.cwd(), "app/handoff/bidmessage/BidMessageDemo.tsx"), "utf8");
+  } catch {
+    return "// No se pudo leer BidMessageDemo.tsx en build.";
   }
 }
 
@@ -25,16 +34,6 @@ function readComponentSource(): string {
 const USAGE = `import BidMessage from "@/src/components/BidMessage";
 
 <BidMessage side="sent" type="live">PROPUSO US$ 25,000</BidMessage>`;
-
-const LIVE_USAGE = `// Cada mensaje entra animado. Velocidad = duración del slide; Distancia = recorrido.
-@keyframes msg-in {
-  from { opacity: 0; transform: translateY(var(--d)); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-<div style={{ "--d": distance + "px", animation: \`msg-in \${speed}ms cubic-bezier(0.22,1,0.36,1) both\` }}>
-  <BidMessage side={m.side} type={m.type}>{m.text}</BidMessage>
-</div>`;
 
 interface Example {
   id: string;
@@ -88,6 +87,7 @@ const muted = { fontSize: 14, color: "#71717a", lineHeight: 1.6, margin: 0 } as 
 
 export default function BidMessageHandoffPage(): JSX.Element {
   const source = readComponentSource();
+  const demoSource = readDemoSource();
 
   return (
     <main style={{ maxWidth: 768, margin: "0 auto", padding: "48px 24px 96px", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)", color: "#09090b" }}>
@@ -115,7 +115,7 @@ export default function BidMessageHandoffPage(): JSX.Element {
         Los mensajes van llegando y entran animados. Ajusta la <strong>velocidad</strong> (duración del
         deslizamiento) y la <strong>distancia</strong> (cuánto recorre al aparecer).
       </p>
-      <Preview tone="dark" minHeight={360} code={LIVE_USAGE}>
+      <Preview tone="dark" minHeight={360} code={demoSource}>
         <BidMessageDemo />
       </Preview>
 

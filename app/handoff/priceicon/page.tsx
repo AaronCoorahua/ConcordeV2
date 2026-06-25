@@ -13,7 +13,7 @@ import PropsTable, { type PropRow } from "@/app/handoff/_components/PropsTable";
 
 function readComponentSource(): string {
   try {
-    return readFileSync(join(process.cwd(), "src/components/PriceIcon/PriceIcon.tsx"), "utf8");
+    return readFileSync(join(process.cwd(), "src/components/PriceIcon.tsx"), "utf8");
   } catch {
     return "// No se pudo leer PriceIcon.tsx en build.";
   }

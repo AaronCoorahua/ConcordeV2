@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { JSX, CSSProperties } from "react";
 import SalaDesktop, { SALA_WIDTH, SALA_HEIGHT } from "@/src/blocks/sala/desktop/SalaDesktop";
 import SalaMobile, { SALAMOBILE_WIDTH, SALAMOBILE_HEIGHT } from "@/src/blocks/sala/mobile/SalaMobile";
-import BlockViewer, { type BlockFile } from "@/app/blocks/_components/BlockViewer";
+import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_components/BlockViewer";
 
 const PALETTES: { name: string; colors: string[] }[] = [
   { name: "Primary", colors: ["#F4AC59", "#8460E5", "#ffffff"] },
@@ -107,6 +107,7 @@ export default function SalaViewer({ files }: { files: BlockFile[] }): JSX.Eleme
       }}
       files={files}
       controls={controls}
+      previewBg={VAULT_PREVIEW_BG}
     />
   );
 }

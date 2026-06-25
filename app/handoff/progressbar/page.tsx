@@ -14,9 +14,18 @@ import PropsTable, { type PropRow } from "@/app/handoff/_components/PropsTable";
 
 function readComponentSource(): string {
   try {
-    return readFileSync(join(process.cwd(), "src/components/ProgressBar/ProgressBar.tsx"), "utf8");
+    return readFileSync(join(process.cwd(), "src/components/ProgressBar.tsx"), "utf8");
   } catch {
     return "// No se pudo leer ProgressBar.tsx en build.";
+  }
+}
+
+// Código real del demo en vivo.
+function readDemoSource(): string {
+  try {
+    return readFileSync(join(process.cwd(), "app/handoff/progressbar/ProgressBarDemo.tsx"), "utf8");
+  } catch {
+    return "// No se pudo leer ProgressBarDemo.tsx en build.";
   }
 }
 
@@ -25,15 +34,6 @@ function readComponentSource(): string {
 const USAGE = `import ProgressBar from "@/src/components/ProgressBar";
 
 <ProgressBar value={60} />`;
-
-const LIVE_USAGE = `const [value, setValue] = useState(0);
-
-useEffect(() => {
-  const t = setInterval(() => setValue((v) => (v >= 100 ? 0 : v + 4)), 500);
-  return () => clearInterval(t);
-}, []);
-
-<ProgressBar value={value} />`;
 
 interface Example {
   id: string;
@@ -103,6 +103,7 @@ const muted = { fontSize: 14, color: "#71717a", lineHeight: 1.6, margin: 0 } as 
 
 export default function ProgressBarHandoffPage(): JSX.Element {
   const source = readComponentSource();
+  const demoSource = readDemoSource();
 
   return (
     <main style={{ maxWidth: 768, margin: "0 auto", padding: "48px 24px 96px", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)", color: "#09090b" }}>
@@ -126,7 +127,7 @@ export default function ProgressBarHandoffPage(): JSX.Element {
         Al cambiar <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}>value</code> la barra
         sube con una transición suave de <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}>width</code>.
       </p>
-      <Preview minHeight={160} code={LIVE_USAGE}>
+      <Preview minHeight={160} code={demoSource}>
         <ProgressBarDemo />
       </Preview>
 

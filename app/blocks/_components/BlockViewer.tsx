@@ -25,12 +25,17 @@ interface BlockViewerProps {
   controls?: ReactNode;
   /** Canvas alternativo por viewport. Cuando se provee, reemplaza canvas+dimensiones para ese viewport. */
   canvasForViewport?: { mobile?: CanvasSlot };
+  /** Fondo del área de preview (detrás del bloque). Default gris claro. */
+  previewBg?: string;
 }
 
 type ViewMode = "preview" | "code";
 type Viewport = "desktop" | "mobile";
 
 const VIEWPORT_W: Record<Viewport, number> = { desktop: 1100, mobile: 390 };
+
+/** Fondo "vault" (morado del DS) para enmarcar bloques en el preview. */
+export const VAULT_PREVIEW_BG = "linear-gradient(135deg, #19004A 0%, #2E0F70 55%, #3B1782 100%)";
 
 // ── Árbol de archivos ───────────────────────────────────────────────────────
 
@@ -147,7 +152,7 @@ function PhoneIcon(): JSX.Element {
 }
 // ── Componente ──────────────────────────────────────────────────────────────
 
-export default function BlockViewer({ id, width, height, canvas, files, controls, canvasForViewport }: BlockViewerProps): JSX.Element {
+export default function BlockViewer({ id, width, height, canvas, files, controls, canvasForViewport, previewBg = "#fafafa" }: BlockViewerProps): JSX.Element {
   const [mode, setMode] = useState<ViewMode>("preview");
   const [viewport, setViewport] = useState<Viewport>("desktop");
   const [activeFile, setActiveFile] = useState(0);
@@ -172,7 +177,7 @@ export default function BlockViewer({ id, width, height, canvas, files, controls
   }
 
   const previewPane = (
-    <div style={{ display: "flex", flexDirection: "column", background: "#fafafa" }}>
+    <div style={{ display: "flex", flexDirection: "column", background: previewBg }}>
       {controls ? (
         <div style={{ borderBottom: "1px solid #ececee", padding: "10px 14px", background: "#ffffff" }}>{controls}</div>
       ) : null}

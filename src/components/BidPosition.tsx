@@ -181,15 +181,18 @@ export default function BidPosition({
   }, []);
 
   // ── FLIP: anima el deslizamiento de cada fila a su nueva posición ───────────
+  // Usa offsetTop/offsetLeft (relativos al contenedor, NO al viewport) para que
+  // el scroll de la página no genere deltas falsos. Solo corre cuando cambian las
+  // posiciones (no en cada render ni al scrollear).
   const rowRefs = useRef<Map<string, HTMLDivElement>>(new Map());
-  const prevRects = useRef<Map<string, DOMRect>>(new Map());
+  const prevPos = useRef<Map<string, { top: number; left: number }>>(new Map());
 
   useLayoutEffect(function flip() {
     const refs = rowRefs.current;
-    const before = prevRects.current;
-    const after = new Map<string, DOMRect>();
+    const before = prevPos.current;
+    const after = new Map<string, { top: number; left: number }>();
     refs.forEach(function measure(node, key) {
-      after.set(key, node.getBoundingClientRect());
+      after.set(key, { top: node.offsetTop, left: node.offsetLeft });
     });
     refs.forEach(function play(node, key) {
       const a = before.get(key);
@@ -202,14 +205,14 @@ export default function BidPosition({
       node.style.transition = "transform 0s";
       node.style.transform = `translate(${dx}px, ${dy}px)`;
       // 2) fuerza reflow y deja que anime hasta su lugar real
-      node.getBoundingClientRect();
+      void node.offsetWidth;
       requestAnimationFrame(function release() {
         node.style.transition = "transform 0.5s cubic-bezier(0.22,1,0.36,1)";
         node.style.transform = "";
       });
     });
-    prevRects.current = after;
-  });
+    prevPos.current = after;
+  }, [positions]);
 
   return (
     <>

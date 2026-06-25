@@ -5,7 +5,7 @@ import Homepage, { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/homepage
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/dimensions";
 import Header from "@/app/_components/Header";
-import BlockViewer, { type BlockFile } from "@/app/blocks/_components/BlockViewer";
+import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_components/BlockViewer";
 import RequiredComponents, { type RequiredItem } from "@/app/blocks/_components/RequiredComponents";
 
 /**
@@ -89,6 +89,7 @@ export default function HomepageBlockPage(): JSX.Element {
         height={COMBINED_HEIGHT}
         canvas={CANVAS}
         files={FILES}
+        previewBg={VAULT_PREVIEW_BG}
       />
       <RequiredComponents items={REQUIRED} />
     </div>
