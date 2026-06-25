@@ -6,8 +6,8 @@
  *   npx github:AaronCoorahua/ConcordeV2#cli add button     # un componente
  *   npx github:AaronCoorahua/ConcordeV2#cli add homepage   # un bloque + sus componentes
  *
- * `add` copia cada componente como UN archivo en ./components/concorde (desde donde
- * se ejecuta). `skill` instala la skill en .claude/skills/ (o .cursor/rules con --cursor).
+ * `add` copia a ./concorde (componentes → concorde/components, bloques → concorde/bloques)
+ * con imports `@/concorde/...`. `skill` instala la skill en .claude/skills/ (o .cursor/rules con --cursor).
  */
 
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
@@ -15,9 +15,8 @@ import { dirname, resolve, relative } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 
-const VERSION = "0.5.0";
+const VERSION = "0.6.0";
 const REGISTRY_BASE = (process.env.CONCORDE_REGISTRY || "https://concorde-v2-theta.vercel.app").replace(/\/$/, "");
-const DEFAULT_DEST = "components/concorde";
 const SKILL_URL = "https://raw.githubusercontent.com/AaronCoorahua/ConcordeV2/master/plugins/concorde-ui/skills/concorde-ui/SKILL.md";
 
 // ── Colores (ANSI, se desactivan sin TTY o con NO_COLOR) ──────────────────────
@@ -87,7 +86,8 @@ async function add(targets, opts) {
     process.exit(1);
   }
 
-  const baseDir = resolve(process.cwd(), opts.dir || DEFAULT_DEST);
+  // Siempre dentro de concorde/ (componentes → concorde/components, bloques → concorde/bloques).
+  const baseDir = resolve(process.cwd(), opts.dir || ".", "concorde");
   stdout.write("  " + dim("instalando en ") + vault(relFromCwd(baseDir)) + dim("/") + "\n\n");
 
   const tty = stdin.isTTY && stdout.isTTY;
@@ -225,11 +225,11 @@ function help() {
   stdout.write([
     `  ${bold("Uso")}`,
     `    concorde skill                       instala la skill de IA (.claude/skills/)`,
-    `    concorde add <nombre|url> [...]      copia componente(s)/bloque(s) en components/concorde`,
+    `    concorde add <nombre|url> [...]      copia a concorde/components y concorde/bloques`,
     ``,
     `  ${bold("Opciones")}`,
     `    --cursor           (con skill) instala como regla de Cursor (.cursor/rules)`,
-    `    -d, --dir <ruta>   (con add) carpeta destino. Default: components/concorde`,
+    `    -d, --dir <ruta>   (con add) carpeta padre de concorde/. Default: raíz del proyecto`,
     `    -f, --force        sobrescribe lo existente sin preguntar`,
     `    -s, --skip         salta lo existente sin preguntar`,
     `    -v, --version      muestra la versión`,

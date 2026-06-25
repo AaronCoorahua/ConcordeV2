@@ -27,9 +27,9 @@ Preferido — CLI (copia el/los archivos al proyecto):
 
     npx github:AaronCoorahua/ConcordeV2#cli add <nombre>
 
-- Instala en `./components/concorde` (relativo a donde se corre). Cambia destino con `--dir <ruta>`.
-- Un componente → un archivo (`Button.tsx`). Un bloque → sus secciones + componentes.
-- Flags: `--force` (sobrescribe), `--skip` (salta existentes).
+- Instala en `./concorde`: componentes → `concorde/components/<Name>.tsx`, bloques → `concorde/bloques/<Block>/`.
+- Imports con alias `@/concorde/...` (el proyecto debe mapear `@/*` a la raíz de `concorde/`).
+- Un componente → un archivo. Un bloque → sus secciones + componentes. Flags: `--force`, `--skip`.
 
 Sin terminal: fetchea `<nombre>.json` y escribe cada `files[].content` en un archivo
 (los imports entre archivos son relativos `./X`, así que guarda los dependientes juntos).

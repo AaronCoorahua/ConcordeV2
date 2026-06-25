@@ -12,9 +12,10 @@ Opción A — CLI (recomendada):
     npx github:AaronCoorahua/ConcordeV2#cli add <nombre>          # un componente
     npx github:AaronCoorahua/ConcordeV2#cli add homepage          # un bloque + sus componentes
 
-Instala cada componente como un solo archivo en ./components/concorde (relativo a
-donde corres el comando); un bloque arrastra los componentes que usa. Flags:
-`--dir <ruta>` (cambia destino), `--force`, `--skip`.
+Instala en ./concorde: componentes → `concorde/components/<Name>.tsx`, bloques →
+`concorde/bloques/<Block>/`. Un bloque arrastra sus componentes. Los imports usan el
+alias `@/concorde/...`, así que tu proyecto debe mapear `@/*` a la raíz donde queda
+`concorde/`. Flags: `--dir <ruta>` (carpeta padre de concorde/), `--force`, `--skip`.
 
 Instalar esta guía como skill de IA (para que un asistente la cargue solo):
 
