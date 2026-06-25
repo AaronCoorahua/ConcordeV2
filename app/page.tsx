@@ -2,7 +2,7 @@
 
 import type { JSX } from "react";
 import Header from "@/app/_components/Header";
-import InstallCommand from "@/app/handoff/_components/InstallCommand";
+import InstallCommand, { CLI_SPEC } from "@/app/handoff/_components/InstallCommand";
 
 /**
  * Home — landing del sistema de diseño de Subastop.
@@ -109,8 +109,11 @@ export default function Home(): JSX.Element {
           </a>
         </div>
 
-        <div style={{ width: "100%", maxWidth: 520, marginTop: 28 }}>
-          <InstallCommand name="button" />
+        <div style={{ width: "100%", maxWidth: 560, marginTop: 28 }}>
+          <p style={{ fontSize: 13, color: "#94a3b8", margin: "0 0 8px", fontWeight: 500 }}>
+            Conecta tu IA al design system:
+          </p>
+          <InstallCommand command={`npx ${CLI_SPEC} skill`} />
         </div>
       </main>
     </div>

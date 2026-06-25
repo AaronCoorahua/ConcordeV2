@@ -11,10 +11,15 @@ Opción A — CLI (recomendada):
 
     npx github:AaronCoorahua/ConcordeV2#cli add <nombre>          # un componente
     npx github:AaronCoorahua/ConcordeV2#cli add homepage          # un bloque + sus componentes
-    npx github:AaronCoorahua/ConcordeV2#cli add button --dir src/components
 
-Copia cada componente como un solo archivo; un bloque arrastra los componentes que
-usa. Si se omite `--dir`, abre un selector de carpeta. Flags: `--force`, `--skip`.
+Instala cada componente como un solo archivo en ./components/concorde (relativo a
+donde corres el comando); un bloque arrastra los componentes que usa. Flags:
+`--dir <ruta>` (cambia destino), `--force`, `--skip`.
+
+Instalar esta guía como skill de IA (para que un asistente la cargue solo):
+
+    npx github:AaronCoorahua/ConcordeV2#cli skill            # → .claude/skills/
+    npx github:AaronCoorahua/ConcordeV2#cli skill --cursor   # → .cursor/rules/
 
 Opción B — sin terminal (fetch directo del registry):
 

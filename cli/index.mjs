@@ -2,23 +2,23 @@
 /**
  * concorde — CLI del registry de Concorde (estilo shadcn, marca propia).
  *
- *   npx github:AaronCoorahua/ConcordeV2#cli add button
- *   npx github:AaronCoorahua/ConcordeV2#cli add homepage
- *   npx github:AaronCoorahua/ConcordeV2#cli add cardtitle offercard
+ *   npx github:AaronCoorahua/ConcordeV2#cli skill          # instala la skill de IA
+ *   npx github:AaronCoorahua/ConcordeV2#cli add button     # un componente
+ *   npx github:AaronCoorahua/ConcordeV2#cli add homepage   # un bloque + sus componentes
  *
- * Cada componente es UN archivo (Button.tsx). El CLI te deja ELEGIR la carpeta
- * destino con un navegador visual (o pásala con --dir). Si un archivo ya existe,
- * pregunta si sobrescribir o saltar.
+ * `add` copia cada componente como UN archivo en ./components/concorde (desde donde
+ * se ejecuta). `skill` instala la skill en .claude/skills/ (o .cursor/rules con --cursor).
  */
 
-import { existsSync, mkdirSync, writeFileSync, readdirSync, statSync } from "node:fs";
-import { dirname, resolve, relative, join } from "node:path";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { dirname, resolve, relative } from "node:path";
 import { createInterface } from "node:readline/promises";
-import { emitKeypressEvents } from "node:readline";
 import { stdin, stdout } from "node:process";
 
-const VERSION = "0.4.0";
+const VERSION = "0.5.0";
 const REGISTRY_BASE = (process.env.CONCORDE_REGISTRY || "https://concorde-v2-theta.vercel.app").replace(/\/$/, "");
+const DEFAULT_DEST = "components/concorde";
+const SKILL_URL = "https://raw.githubusercontent.com/AaronCoorahua/ConcordeV2/master/plugins/concorde-ui/skills/concorde-ui/SKILL.md";
 
 // ── Colores (ANSI, se desactivan sin TTY o con NO_COLOR) ──────────────────────
 const COLOR = stdout.isTTY && !process.env.NO_COLOR;
@@ -67,108 +67,6 @@ function relFromCwd(p) {
   return relative(process.cwd(), p).split("\\").join("/") || ".";
 }
 
-// ── Navegador de carpetas ─────────────────────────────────────────────────────
-function listSubdirs(dir) {
-  let entries = [];
-  try { entries = readdirSync(dir); } catch { return []; }
-  return entries
-    .filter(function keep(n) {
-      if (n.startsWith(".")) return false;
-      if (n === "node_modules") return false;
-      try { return statSync(join(dir, n)).isDirectory(); } catch { return false; }
-    })
-    .sort();
-}
-
-function defaultDir() {
-  const cwd = process.cwd();
-  if (existsSync(join(cwd, "src", "components"))) return join(cwd, "src", "components");
-  if (existsSync(join(cwd, "src"))) return join(cwd, "src");
-  if (existsSync(join(cwd, "components"))) return join(cwd, "components");
-  return cwd;
-}
-
-// Selector dinámico de flechas (raw mode + keypress, redibuja en el lugar).
-function selectMenu({ title, subtitle, options }) {
-  return new Promise(function exec(resolveSel) {
-    let idx = 0;
-    let drawn = 0;
-
-    function frame() {
-      let out = "  " + bold(title) + "\n";
-      if (subtitle) out += "  " + dim("carpeta: ") + vault(subtitle) + "\n";
-      out += "\n";
-      options.forEach(function row(o, i) {
-        const sel = i === idx;
-        out += (sel ? "  " + vault("❯ ") : "    ") + (sel ? bold(o.label) : o.label) + "\n";
-      });
-      out += "\n  " + dim("↑↓ mover · enter elegir · esc cancelar") + "\n";
-      return out;
-    }
-
-    function draw(first) {
-      if (!first) stdout.write(`\x1b[${drawn}A\x1b[0J`);
-      const out = frame();
-      stdout.write(out);
-      drawn = out.split("\n").length - 1;
-    }
-
-    function cleanup() {
-      stdin.removeListener("keypress", onKey);
-      stdout.write(`\x1b[${drawn}A\x1b[0J`); // borra el menú
-      if (stdin.isTTY) stdin.setRawMode(false);
-      stdin.pause();
-      stdout.write("\x1b[?25h"); // muestra el cursor
-    }
-
-    function onKey(_str, key) {
-      if (!key) return;
-      if (key.name === "up" || key.name === "k") { idx = (idx - 1 + options.length) % options.length; draw(false); }
-      else if (key.name === "down" || key.name === "j") { idx = (idx + 1) % options.length; draw(false); }
-      else if (key.name === "return") { cleanup(); resolveSel(options[idx].value); }
-      else if (key.name === "escape") { cleanup(); resolveSel(null); }
-      else if (key.ctrl && key.name === "c") { cleanup(); stdout.write("\n"); process.exit(130); }
-    }
-
-    emitKeypressEvents(stdin);
-    if (stdin.isTTY) stdin.setRawMode(true);
-    stdin.resume();
-    stdout.write("\x1b[?25l"); // oculta el cursor
-    draw(true);
-    stdin.on("keypress", onKey);
-  });
-}
-
-async function askLine(q) {
-  const rl = createInterface({ input: stdin, output: stdout });
-  const a = (await rl.question(q)).trim();
-  rl.close();
-  return a;
-}
-
-async function pickDir(start) {
-  let cur = start;
-  for (;;) {
-    const subs = listSubdirs(cur);
-    const atRoot = dirname(cur) === cur;
-    const options = [{ label: green("✓") + " instalar aquí", value: { a: "here" } }];
-    subs.forEach(function row(d) { options.push({ label: "📁 " + d + "/", value: { a: "enter", d } }); });
-    if (!atRoot) options.push({ label: "⬆ subir", value: { a: "up" } });
-    options.push({ label: "＋ nueva carpeta", value: { a: "new" } });
-
-    const choice = await selectMenu({ title: "¿Dónde instalo los archivos?", subtitle: relFromCwd(cur), options });
-    if (!choice) return null;
-    if (choice.a === "here") return cur;
-    if (choice.a === "up") { cur = dirname(cur); continue; }
-    if (choice.a === "enter") { cur = join(cur, choice.d); continue; }
-    if (choice.a === "new") {
-      const name = await askLine("  nombre de la carpeta nueva: ");
-      if (name) { const nd = join(cur, name); mkdirSync(nd, { recursive: true }); cur = nd; }
-      continue;
-    }
-  }
-}
-
 async function askOverwrite(rl, rel) {
   const q =
     `  ${SYM.ask} ${bold(rel)} ${dim("ya existe")} — ` +
@@ -180,6 +78,7 @@ async function askOverwrite(rl, rel) {
   return "skip";
 }
 
+// ── add: componentes/bloques → ./components/concorde ──────────────────────────
 async function add(targets, opts) {
   banner();
 
@@ -188,19 +87,10 @@ async function add(targets, opts) {
     process.exit(1);
   }
 
-  const tty = stdin.isTTY && stdout.isTTY;
-
-  // ── Carpeta destino ──
-  let baseDir;
-  if (opts.dir) baseDir = resolve(process.cwd(), opts.dir);
-  else if (tty) {
-    baseDir = await pickDir(defaultDir());
-    if (!baseDir) { stdout.write("  cancelado\n\n"); return; }
-  } else {
-    baseDir = defaultDir();
-  }
+  const baseDir = resolve(process.cwd(), opts.dir || DEFAULT_DEST);
   stdout.write("  " + dim("instalando en ") + vault(relFromCwd(baseDir)) + dim("/") + "\n\n");
 
+  const tty = stdin.isTTY && stdout.isTTY;
   const rl = tty && !opts.force && !opts.skip ? createInterface({ input: stdin, output: stdout }) : null;
   let overwriteAll = opts.force;
   let skipAll = opts.skip;
@@ -282,35 +172,86 @@ async function add(targets, opts) {
   stdout.write("\n");
 }
 
+// ── skill: instala la skill de IA en el proyecto ──────────────────────────────
+function toCursorRule(md) {
+  const m = md.match(/^---\n([\s\S]*?)\n---\n?/);
+  let desc = "Traer componentes del design system Concorde (Subastop).";
+  let body = md;
+  if (m) {
+    const dm = m[1].match(/description:\s*(.*)/);
+    if (dm) desc = dm[1].trim();
+    body = md.slice(m[0].length);
+  }
+  return `---\ndescription: ${desc}\nalwaysApply: false\n---\n\n${body}`;
+}
+
+async function installSkill(opts) {
+  banner();
+
+  let res;
+  try {
+    res = await fetch(SKILL_URL);
+  } catch (err) {
+    stdout.write(`  ${SYM.err} error de red: ${err.message}\n\n`);
+    process.exit(1);
+  }
+  if (!res.ok) {
+    stdout.write(`  ${SYM.err} no se pudo bajar la skill ${dim(`(${res.status})`)}\n\n`);
+    process.exit(1);
+  }
+  const md = await res.text();
+
+  const dest = opts.cursor
+    ? resolve(process.cwd(), ".cursor/rules/concorde-ui.mdc")
+    : resolve(process.cwd(), ".claude/skills/concorde-ui/SKILL.md");
+  const content = opts.cursor ? toCursorRule(md) : md;
+  const rel = relFromCwd(dest);
+
+  if (existsSync(dest) && !opts.force) {
+    stdout.write(`  ${SYM.skip} ${dim(rel)} ${dim("ya existe — usa --force para sobrescribir")}\n\n`);
+    return;
+  }
+
+  mkdirSync(dirname(dest), { recursive: true });
+  writeFileSync(dest, content);
+
+  stdout.write(`  ${SYM.add} ${rel}\n\n`);
+  stdout.write(`  ${bold("Skill instalada.")} ${dim(opts.cursor ? "Recarga Cursor." : "Reinicia Claude Code para detectarla.")}\n`);
+  stdout.write(`  ${dim("Luego pídele: “trae el componente X de Concorde”.")}\n\n`);
+}
+
 function help() {
   banner();
   stdout.write([
     `  ${bold("Uso")}`,
-    `    concorde add <nombre|url> [...]      copia componente(s)/bloque(s) a tu proyecto`,
+    `    concorde skill                       instala la skill de IA (.claude/skills/)`,
+    `    concorde add <nombre|url> [...]      copia componente(s)/bloque(s) en components/concorde`,
     ``,
     `  ${bold("Opciones")}`,
-    `    -d, --dir <ruta>   carpeta destino (si se omite, abre el navegador)`,
-    `    -f, --force        sobrescribe los archivos existentes sin preguntar`,
-    `    -s, --skip         salta los archivos existentes sin preguntar`,
+    `    --cursor           (con skill) instala como regla de Cursor (.cursor/rules)`,
+    `    -d, --dir <ruta>   (con add) carpeta destino. Default: components/concorde`,
+    `    -f, --force        sobrescribe lo existente sin preguntar`,
+    `    -s, --skip         salta lo existente sin preguntar`,
     `    -v, --version      muestra la versión`,
     `    -h, --help         muestra esta ayuda`,
     ``,
     `  ${bold("Ejemplos")}`,
+    `    ${dim("$")} npx github:AaronCoorahua/ConcordeV2#cli skill`,
     `    ${dim("$")} npx github:AaronCoorahua/ConcordeV2#cli add button`,
-    `    ${dim("$")} npx github:AaronCoorahua/ConcordeV2#cli add homepage          ${dim("# bloque + sus componentes")}`,
-    `    ${dim("$")} npx github:AaronCoorahua/ConcordeV2#cli add button --dir src/components`,
+    `    ${dim("$")} npx github:AaronCoorahua/ConcordeV2#cli add homepage        ${dim("# bloque + componentes")}`,
     ``,
   ].join("\n"));
 }
 
 // ── Parse de argumentos ───────────────────────────────────────────────────────
 const argv = process.argv.slice(2);
-const opts = { force: false, skip: false, dir: null };
+const opts = { force: false, skip: false, cursor: false, dir: null };
 const positional = [];
 for (let i = 0; i < argv.length; i += 1) {
   const a = argv[i];
   if (a === "-f" || a === "--force" || a === "-y" || a === "--yes") opts.force = true;
   else if (a === "-s" || a === "--skip") opts.skip = true;
+  else if (a === "--cursor") opts.cursor = true;
   else if (a === "-d" || a === "--dir") { opts.dir = argv[i + 1]; i += 1; }
   else if (a === "-v" || a === "--version") { stdout.write(`${VERSION}\n`); process.exit(0); }
   else if (a === "-h" || a === "--help") { help(); process.exit(0); }
@@ -319,8 +260,6 @@ for (let i = 0; i < argv.length; i += 1) {
 
 const [cmd, ...rest] = positional;
 
-if (cmd === "add") {
-  add(rest, opts);
-} else {
-  help();
-}
+if (cmd === "add") add(rest, opts);
+else if (cmd === "skill") installSkill(opts);
+else help();

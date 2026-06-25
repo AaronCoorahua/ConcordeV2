@@ -26,10 +26,10 @@ Para ver el código/props de un item: `https://concorde-v2-theta.vercel.app/r/<n
 Preferido — CLI (copia el/los archivos al proyecto):
 
     npx github:AaronCoorahua/ConcordeV2#cli add <nombre>
-    npx github:AaronCoorahua/ConcordeV2#cli add <nombre> --dir src/components
 
+- Instala en `./components/concorde` (relativo a donde se corre). Cambia destino con `--dir <ruta>`.
 - Un componente → un archivo (`Button.tsx`). Un bloque → sus secciones + componentes.
-- `--dir <ruta>` salta el selector de carpeta. Flags: `--force`, `--skip`.
+- Flags: `--force` (sobrescribe), `--skip` (salta existentes).
 
 Sin terminal: fetchea `<nombre>.json` y escribe cada `files[].content` en un archivo
 (los imports entre archivos son relativos `./X`, así que guarda los dependientes juntos).
