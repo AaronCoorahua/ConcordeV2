@@ -10,7 +10,15 @@ import { useEffect, useState } from "react";
 import type { CSSProperties, JSX } from "react";
 import BidProposal, { type BidProposalFlashMode } from "@/src/components/BidProposal";
 
-const MODES: BidProposalFlashMode[] = ["bulb", "spin", "explode", "pulse", "combo", "shine"];
+// Mismos efectos y paletas que el bloque Sala (SalaViewer).
+const MODES: { value: BidProposalFlashMode; label: string }[] = [
+  { value: "bulb", label: "💡 Bombilla" },
+  { value: "spin", label: "🌀 Gira" },
+  { value: "explode", label: "💥 Estalla" },
+  { value: "pulse", label: "✨ Anticipa" },
+  { value: "combo", label: "🎆 Festejo" },
+  { value: "shine", label: "🌟 Resplandor" },
+];
 
 interface ColorPreset {
   id: string;
@@ -20,10 +28,8 @@ interface ColorPreset {
 
 const COLOR_PRESETS: ColorPreset[] = [
   { id: "primary", label: "Primary", colors: ["#F4AC59", "#8460E5", "#ffffff"] },
-  { id: "live", label: "Live", colors: ["#FF9639", "#EF852E", "#ffffff"] },
-  { id: "vault", label: "Vault", colors: ["#AE8EFF", "#8460E5", "#CFBAFF"] },
-  { id: "neon", label: "Neón", colors: ["#CC00FF", "#FF0066", "#ffffff"] },
-  { id: "gold", label: "Oro", colors: ["#FBC47D", "#F0BB3B", "#ffffff"] },
+  { id: "rainbow", label: "Rainbow", colors: ["#F2CCFF", "#CC00FF", "#FF0066"] },
+  { id: "lila", label: "Lila", colors: ["#CFBAFF", "#AE8EFF", "#ffffff"] },
 ];
 
 const REPEAT_MS = 2000;
@@ -46,7 +52,6 @@ function chipStyle(active: boolean): CSSProperties {
     padding: "5px 11px",
     borderRadius: 8,
     cursor: "pointer",
-    textTransform: "capitalize",
     border: `1px solid ${active ? "transparent" : "rgba(255,255,255,0.2)"}`,
     background: active ? "#ffffff" : "rgba(255,255,255,0.06)",
     color: active ? "#18181b" : "rgba(255,255,255,0.78)",
@@ -68,7 +73,7 @@ function swatchStyle(colors: string[], active: boolean): CSSProperties {
 }
 
 export default function BidProposalDemo(): JSX.Element {
-  const [mode, setMode] = useState<BidProposalFlashMode>("combo");
+  const [mode, setMode] = useState<BidProposalFlashMode>("bulb");
   const [presetId, setPresetId] = useState("primary");
   const [flash, setFlash] = useState(1);
 
@@ -92,12 +97,12 @@ export default function BidProposalDemo(): JSX.Element {
       />
 
       <div style={rowStyle}>
-        <span style={labelStyle}>Tipo</span>
+        <span style={labelStyle}>Efecto</span>
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           {MODES.map(function renderMode(m) {
             return (
-              <button key={m} type="button" onClick={function pick() { setMode(m); }} style={chipStyle(m === mode)}>
-                {m}
+              <button key={m.value} type="button" onClick={function pick() { setMode(m.value); }} style={chipStyle(m.value === mode)}>
+                {m.label}
               </button>
             );
           })}

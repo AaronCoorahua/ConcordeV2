@@ -17,7 +17,6 @@ import Input from "@/src/components/Input";
 import TabSelector from "@/src/components/TabSelector";
 import TermsSelector from "@/src/components/TermsSelector";
 import ConditionPill from "@/src/components/ConditionPill";
-import Sidebar from "@/src/components/Sidebar";
 import CheckIcon from "@/src/components/CheckIcon";
 import Table from "@/src/components/Table";
 import DocButton from "@/src/components/DocButton";
@@ -27,7 +26,6 @@ import PriceBadge from "@/src/components/PriceBadge";
 import Signal from "@/src/components/Signal";
 import BidProposal from "@/src/components/BidProposal";
 import BidMessage from "@/src/components/BidMessage";
-import BidButton from "@/src/components/BidButton";
 import ProgressBar from "@/src/components/ProgressBar";
 import BidPosition from "@/src/components/BidPosition";
 import SendBidIcon from "@/src/components/SendBidIcon";
@@ -50,8 +48,6 @@ interface ComponentEntry {
   name: string;
   handoffPath: string;
   preview: JSX.Element;
-  /** Marca el componente como en desuso (badge "Deprecado"). */
-  deprecated?: boolean;
 }
 
 const REGISTRY: ComponentEntry[] = [
@@ -164,18 +160,6 @@ const REGISTRY: ComponentEntry[] = [
     ),
   },
   {
-    id: "sidebar",
-    name: "Sidebar",
-    handoffPath: "/handoff/sidebar",
-    preview: (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 150, overflow: "hidden" }}>
-        <div style={{ transform: "scale(0.42)", transformOrigin: "center" }}>
-          <Sidebar logo={<img src="/logo-preview.png" alt="Subastop" style={{ height: 26, width: "auto", objectFit: "contain", display: "block" }} />} />
-        </div>
-      </div>
-    ),
-  },
-  {
     id: "amountoptiongroup",
     name: "AmountOptionGroup",
     handoffPath: "/handoff/amountoptiongroup",
@@ -237,17 +221,6 @@ const REGISTRY: ComponentEntry[] = [
     preview: (
       <div style={{ transform: "scale(0.72)" }}>
         <BidPosition />
-      </div>
-    ),
-  },
-  {
-    id: "bidbutton",
-    name: "BidButton",
-    handoffPath: "/handoff/bidbutton",
-    deprecated: true,
-    preview: (
-      <div style={{ transform: "scale(0.86)", opacity: 0.55, filter: "grayscale(0.35)" }}>
-        <BidButton />
       </div>
     ),
   },
@@ -591,24 +564,10 @@ const PAGE_STYLES = `
     padding: 14px 18px;
   }
   .cp-card-name {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
     font-size: 14px;
     font-weight: 700;
     color: #0f172a;
     letter-spacing: -0.01em;
-  }
-  .cp-card-badge {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: #b45309;
-    background: #fef3c7;
-    border: 1px solid #fde68a;
-    border-radius: 999px;
-    padding: 2px 7px;
   }
   .cp-card-arrow {
     font-size: 15px;
@@ -645,10 +604,7 @@ export default function ComponentsPage(): JSX.Element {
                 <a key={c.id} href={c.handoffPath} className="cp-card">
                   <div className="cp-card-preview">{c.preview}</div>
                   <div className="cp-card-foot">
-                    <span className="cp-card-name">
-                      {c.name}
-                      {c.deprecated ? <span className="cp-card-badge">Deprecado</span> : null}
-                    </span>
+                    <span className="cp-card-name">{c.name}</span>
                     <span className="cp-card-arrow" aria-hidden="true">→</span>
                   </div>
                 </a>

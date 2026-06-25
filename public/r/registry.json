@@ -33,12 +33,6 @@
       "url": "https://concorde-v2-theta.vercel.app/r/badgestatus.json"
     },
     {
-      "name": "bidbutton",
-      "type": "registry:component",
-      "title": "BidButton",
-      "url": "https://concorde-v2-theta.vercel.app/r/bidbutton.json"
-    },
-    {
       "name": "bidmessage",
       "type": "registry:component",
       "title": "BidMessage",
@@ -169,12 +163,6 @@
       "type": "registry:component",
       "title": "StatPill",
       "url": "https://concorde-v2-theta.vercel.app/r/statpill.json"
-    },
-    {
-      "name": "sidebar",
-      "type": "registry:component",
-      "title": "Sidebar",
-      "url": "https://concorde-v2-theta.vercel.app/r/sidebar.json"
     },
     {
       "name": "signal",

@@ -41,13 +41,13 @@ Docs con preview + props (para humanos):
   y los JSON de bloque ya los incluyen).
 - El catálogo vivo siempre está en `/r/registry.json` — féchalo para la lista actual.
 
-## Componentes (34)
+## Componentes (32)
 
-accordion, amountoptiongroup, auctionstatus, avatarzone, badgestatus, bidbutton,
+accordion, amountoptiongroup, auctionstatus, avatarzone, badgestatus,
 bidmessage, bidposition, bidproposal, button, cardtitle, cardviewer, categorycard,
 checkicon, conditionpill, detailcard, docbutton, input, likebutton, offercard,
 offertype, pricebadge, priceicon, profilebutton, progressbar, salastatus,
-sendbidicon, sidebar, signal, staricon, table, tabselector, termsselector, timericon
+sendbidicon, signal, staricon, table, tabselector, termsselector, timericon
 
 ## Bloques (página completa = bloque + sus componentes)
 

@@ -2,7 +2,8 @@ import type { JSX, ReactNode } from "react";
 import Homepage, { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/homepage/desktop/Homepage";
 import Detalle, { DETALLE_WIDTH, DETALLE_HEIGHT } from "@/src/blocks/detalle/desktop/Detalle";
 import SalaDesktop, { SALA_WIDTH, SALA_HEIGHT } from "@/src/blocks/sala/desktop/SalaDesktop";
-import Sidebar, { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/Sidebar";
+import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
+import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/dimensions";
 import Header from "@/app/_components/Header";
 
 /**
@@ -19,8 +20,23 @@ interface BlockEntry {
   node: ReactNode;
 }
 
+// Homepage se compone con el Sidebar pegado a la izquierda (homepage arranca bajo el header del sidebar)
+const HP_SIDEBAR_HEADER_H = 60;
+const HP_COMBINED_W = SIDEBAR_WIDTH + HOMEPAGE_WIDTH;
+const HP_COMBINED_H = Math.max(SIDEBAR_HEIGHT, HP_SIDEBAR_HEADER_H + HOMEPAGE_HEIGHT);
+
+// Layout flex: al colapsar el Sidebar su width se anima y el Homepage lo sigue (queda pegado).
+const HOMEPAGE_COMBINED = (
+  <div style={{ display: "flex", alignItems: "flex-start", width: HP_COMBINED_W, height: HP_COMBINED_H, background: "#ffffff" }}>
+    <Sidebar />
+    <div style={{ marginTop: HP_SIDEBAR_HEADER_H, flexShrink: 0 }}>
+      <Homepage />
+    </div>
+  </div>
+);
+
 const BLOCKS: BlockEntry[] = [
-  { id: "homepage", name: "Homepage", width: HOMEPAGE_WIDTH, height: HOMEPAGE_HEIGHT, node: <Homepage /> },
+  { id: "homepage", name: "Homepage", width: HP_COMBINED_W, height: HP_COMBINED_H, node: HOMEPAGE_COMBINED },
   { id: "detalle",  name: "Detalle",  width: DETALLE_WIDTH,  height: DETALLE_HEIGHT,  node: <Detalle /> },
   { id: "sala",     name: "Sala",     width: SALA_WIDTH,     height: SALA_HEIGHT,     node: <SalaDesktop /> },
   { id: "sidebar",  name: "Sidebar",  width: SIDEBAR_WIDTH,  height: SIDEBAR_HEIGHT,

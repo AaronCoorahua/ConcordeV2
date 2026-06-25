@@ -34,7 +34,8 @@ const REQUIRED: RequiredItem[] = [
   { name: "BidPosition", path: "/handoff/bidposition", role: "Tabla de posiciones de pujas (solo desktop)" },
 ];
 
-const FILES: BlockFile[] = [
+// Archivos propios del bloque
+const BLOCK_FILES: BlockFile[] = [
   { path: "src/blocks/sala/desktop/SalaDesktop.tsx", code: readSrc("src/blocks/sala/desktop/SalaDesktop.tsx") },
   { path: "src/blocks/sala/desktop/ConsoleHeader.tsx", code: readSrc("src/blocks/sala/desktop/ConsoleHeader.tsx") },
   { path: "src/blocks/sala/desktop/PriceBase.tsx", code: readSrc("src/blocks/sala/desktop/PriceBase.tsx") },
@@ -47,6 +48,14 @@ const FILES: BlockFile[] = [
   { path: "src/blocks/sala/useSala.ts", code: readSrc("src/blocks/sala/useSala.ts") },
   { path: "src/blocks/sala/liveData.ts", code: readSrc("src/blocks/sala/liveData.ts") },
 ];
+
+// Componentes que usa el bloque (derivados de REQUIRED) → aparecen bajo src/components/
+const COMPONENT_FILES: BlockFile[] = REQUIRED.map(function toFile(r) {
+  const rel = `src/components/${r.name}.tsx`;
+  return { path: rel, code: readSrc(rel) };
+});
+
+const FILES: BlockFile[] = [...BLOCK_FILES, ...COMPONENT_FILES];
 
 export default function SalaBlockPage(): JSX.Element {
   return (
