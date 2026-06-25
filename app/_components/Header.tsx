@@ -57,7 +57,7 @@ export default function Header({ active, right }: { active?: Active; right?: Rea
               <path d="M7 1L12.196 4V10L7 13L1.804 10V4L7 1Z" fill="white" fillOpacity="0.9" />
             </svg>
           </div>
-          <span style={{ fontSize: 15, fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em" }}>Subastop</span>
+          <span style={{ fontSize: 15, fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em" }}>Concorde</span>
         </a>
         <nav style={{ display: "flex", alignItems: "center", gap: 4, marginLeft: 24 }}>
           <a href="/components" style={active === "components" ? activeStyle : idleStyle}>Componentes</a>

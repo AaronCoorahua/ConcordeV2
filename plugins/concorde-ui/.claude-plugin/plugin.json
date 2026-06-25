@@ -1,0 +1,6 @@
+{
+  "name": "concorde-ui",
+  "description": "Descubre e instala componentes y bloques del design system Concorde (Subastop). Incluye la skill concorde-ui.",
+  "author": { "name": "Aaron Coorahua", "url": "https://github.com/AaronCoorahua" },
+  "homepage": "https://concorde-v2-theta.vercel.app"
+}
