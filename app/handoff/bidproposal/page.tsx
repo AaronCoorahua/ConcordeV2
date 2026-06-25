@@ -106,11 +106,12 @@ export default function BidProposalHandoffPage(): JSX.Element {
       </div>
 
       {/* Live / interactivo */}
-      <h2 style={h2}>En vivo (tipo + color)</h2>
+      <h2 style={h2}>En vivo (efecto + color)</h2>
       <p style={{ ...muted, marginBottom: 12 }}>
-        La animación de nuevo bid se dispara sola cada 2 s. Elige el
-        <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}> flashMode</code> (tipo)
-        y la paleta de <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}>flashColors</code> (color).
+        La animación de nuevo bid se dispara sola cada 2 s. Mismos efectos
+        (<code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}>flashMode</code>)
+        y paletas (<code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 13 }}>flashColors</code>)
+        que usa el bloque <a href="/blocks/sala" style={{ color: "#4f2ed8", fontWeight: 600 }}>Sala</a>.
       </p>
       <Preview tone="dark" minHeight={340} code={LIVE_USAGE}>
         <BidProposalDemo />

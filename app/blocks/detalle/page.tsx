@@ -17,9 +17,19 @@ function readSrc(rel: string): string {
   }
 }
 
-const FILES: BlockFile[] = [
+// Archivos propios del bloque
+const BLOCK_FILES: BlockFile[] = [
   { path: "src/blocks/detalle/desktop/Detalle.tsx", code: readSrc("src/blocks/detalle/desktop/Detalle.tsx") },
 ];
+
+// Componentes que usa el bloque → aparecen bajo src/components/
+const USED_COMPONENTS = ["AuctionStatus", "CardViewer"];
+const COMPONENT_FILES: BlockFile[] = USED_COMPONENTS.map(function toFile(name) {
+  const rel = `src/components/${name}.tsx`;
+  return { path: rel, code: readSrc(rel) };
+});
+
+const FILES: BlockFile[] = [...BLOCK_FILES, ...COMPONENT_FILES];
 
 export default function DetalleBlockPage(): JSX.Element {
   return (

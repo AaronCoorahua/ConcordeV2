@@ -19,6 +19,11 @@ export interface ProgressBarProps {
   value?: number;
   /** Relleno: "default" (gradiente primary), "rainbow" (white→magenta→rosa) o "white" (blanco sólido). Default "default". */
   variant?: ProgressBarVariant;
+  /**
+   * Duración (ms) de la transición de ancho al cambiar `value`. Si se omite usa
+   * la del CSS (0.3s). Útil para animar un llenado continuo (p. ej. 3000ms lineal).
+   */
+  transitionMs?: number;
   "aria-label"?: string;
   className?: string;
 }
@@ -61,6 +66,7 @@ let _stylesInjected = false;
 export default function ProgressBar({
   value = 60,
   variant = "default",
+  transitionMs,
   "aria-label": ariaLabel,
   className = "",
 }: ProgressBarProps): JSX.Element {
@@ -89,7 +95,7 @@ export default function ProgressBar({
       >
         <div
           className={`pprogbar__fill ${variant !== "default" ? `pprogbar__fill--${variant}` : ""}`.trim()}
-          style={{ width: `${clamped}%` }}
+          style={{ width: `${clamped}%`, ...(transitionMs != null ? { transition: `width ${transitionMs}ms linear` } : {}) }}
         />
       </div>
     </>

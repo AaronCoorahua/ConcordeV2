@@ -29,9 +29,10 @@ import CategoryIcon from "@/src/components/CategoryIcon";
 import BusinessIcon from "@/src/components/BusinessIcon";
 import ServiceCenterIcon from "@/src/components/ServiceCenterIcon";
 
-export const SIDEBAR_WIDTH  = 226;
-export const SIDEBAR_HEIGHT = 1042;  // 60 header + 935 content frame + 47 margen inferior
-export const SIDEBAR_COLLAPSED_WIDTH = 76;  // solo iconos
+// Dimensiones en un módulo plano (no-client) para que los Server Components puedan
+// importarlas sin obtener undefined. Se re-exportan para los consumidores cliente.
+export { SIDEBAR_WIDTH, SIDEBAR_HEIGHT, SIDEBAR_COLLAPSED_WIDTH } from "./dimensions";
+import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT, SIDEBAR_COLLAPSED_WIDTH } from "./dimensions";
 
 const EASE = "cubic-bezier(0.4,0,0.2,1)";
 
@@ -152,9 +153,8 @@ export default function Sidebar({
           className="sb-content-frame"
           style={{
             width:         collapsed ? SIDEBAR_COLLAPSED_WIDTH - 10 : 216,
-            height:        935,
-            margin:        "0 5px",
-            flexShrink:    0,
+            flex:          1,
+            margin:        "0 5px 47px",
             display:       "flex",
             flexDirection: "column",
             overflow:      "hidden",

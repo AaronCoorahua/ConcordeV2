@@ -1,5 +1,6 @@
 import type { JSX } from "react";
-import Sidebar, { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/Sidebar";
+import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
+import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/dimensions";
 import Header from "@/app/_components/Header";
 import BlockViewer, { type BlockFile } from "@/app/blocks/_components/BlockViewer";
 import { readFileSync } from "node:fs";
@@ -13,13 +14,23 @@ function readSrc(rel: string): string {
   }
 }
 
-const FILES: BlockFile[] = [
+// Archivos propios del bloque
+const BLOCK_FILES: BlockFile[] = [
   { path: "src/blocks/sidebar/desktop/Sidebar.tsx",        code: readSrc("src/blocks/sidebar/desktop/Sidebar.tsx") },
   { path: "src/blocks/sidebar/desktop/SidebarItem.tsx",    code: readSrc("src/blocks/sidebar/desktop/SidebarItem.tsx") },
   { path: "src/blocks/sidebar/desktop/SidebarSubItem.tsx", code: readSrc("src/blocks/sidebar/desktop/SidebarSubItem.tsx") },
   { path: "src/blocks/sidebar/desktop/SidebarHeader.tsx",  code: readSrc("src/blocks/sidebar/desktop/SidebarHeader.tsx") },
   { path: "src/blocks/sidebar/desktop/SidebarBanner.tsx",  code: readSrc("src/blocks/sidebar/desktop/SidebarBanner.tsx") },
 ];
+
+// Componentes que usa el bloque (iconos de navegación) → aparecen bajo src/components/
+const USED_COMPONENTS = ["TodayIcon", "OfferIcon", "CategoryIcon", "BusinessIcon", "ServiceCenterIcon"];
+const COMPONENT_FILES: BlockFile[] = USED_COMPONENTS.map(function toFile(name) {
+  const rel = `src/components/${name}.tsx`;
+  return { path: rel, code: readSrc(rel) };
+});
+
+const FILES: BlockFile[] = [...BLOCK_FILES, ...COMPONENT_FILES];
 
 export default function SidebarBlockPage(): JSX.Element {
   return (

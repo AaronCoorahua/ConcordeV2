@@ -28,8 +28,8 @@ const MAX_VISIBLE = 6;
 
 const KEYFRAMES = `
 @keyframes bmsgdemo-in {
-  from { opacity: 0; transform: translateY(var(--bmsg-d, 48px)); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateX(var(--bmsg-d, 48px)); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 @media (prefers-reduced-motion: reduce) {
   .bmsgdemo-row { animation: none !important; }
@@ -117,7 +117,8 @@ export default function BidMessageDemo(): JSX.Element {
               style={{
                 display: "flex",
                 justifyContent: m.side === "sent" ? "flex-end" : "flex-start",
-                ["--bmsg-d" as string]: `${m.dist}px`,
+                // sent entra desde la derecha (+), received desde la izquierda (−)
+                ["--bmsg-d" as string]: `${m.side === "sent" ? m.dist : -m.dist}px`,
                 animation: `bmsgdemo-in ${m.dur}ms cubic-bezier(0.22,1,0.36,1) both`,
               }}
             >
