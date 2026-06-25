@@ -30,27 +30,21 @@ function listDirs(p) {
   return readdirSync(p).filter(function isDir(n) { return statSync(join(p, n)).isDirectory(); });
 }
 
-// Ruta relativa (sin extensión) desde el archivo `fromTarget` hacia `toModule`.
-function toRel(fromTarget, toModule) {
-  let r = relative(dirname(fromTarget), toModule).split("\\").join("/");
-  if (!r.startsWith(".")) r = "./" + r;
-  return r;
-}
-
-// Reescribe imports `@/src/components/X/...` → ruta relativa al archivo plano `X`,
-// y `@/src/blocks/B/file` → ruta relativa a `B/file`.
-function rewrite(content, fromTarget) {
+// Reescribe imports al alias del consumidor:
+//   @/src/components/X/...  → @/concorde/components/X
+//   @/src/blocks/B/file     → @/concorde/bloques/B/file
+function rewrite(content) {
   content = content.replace(/@\/src\/components\/([\w-]+)(?:\/[\w./-]+)?/g, function rep(_, name) {
-    return toRel(fromTarget, name);
+    return `@/concorde/components/${name}`;
   });
   content = content.replace(/@\/src\/blocks\/([\w-]+)\/([\w-]+)/g, function rep(_, block, file) {
-    return toRel(fromTarget, `${block}/${file}`);
+    return `@/concorde/bloques/${block}/${file}`;
   });
   return content;
 }
 
 // Archivos .tsx de un dir (excluye *Handoff.tsx e index.ts — no se distribuyen).
-// `prefix` = "" para componentes (plano) o "<Block>/" para bloques.
+// `prefix` = "components/" o "bloques/<Block>/".
 function gatherFiles(dir, prefix) {
   const out = [];
   for (const name of readdirSync(dir)) {
@@ -61,7 +55,7 @@ function gatherFiles(dir, prefix) {
     if (name === "index.ts") continue;
     const target = `${prefix}${name}`;
     const raw = readFileSync(full, "utf8");
-    out.push({ name, target, raw, content: rewrite(raw, target) });
+    out.push({ name, target, raw, content: rewrite(raw) });
   }
   return out;
 }
@@ -90,7 +84,7 @@ const compRoot = join(SRC, "components");
 const components = {}; // Name -> { Name, name, files, deps }
 
 for (const Name of listDirs(compRoot)) {
-  const files = gatherFiles(join(compRoot, Name), "");
+  const files = gatherFiles(join(compRoot, Name), "components/");
   const deps = [...new Set(files.flatMap(function d(f) { return compDepsOf(f.raw); }))].filter(function self(d) { return d !== Name; });
   components[Name] = { Name, name: Name.toLowerCase(), files, deps };
 }
@@ -142,7 +136,7 @@ const blockRoot = join(SRC, "blocks");
 const allBlockFiles = new Map(); // "Block/file" (sin ext) -> file
 const blockGathered = {}; // Block -> files[]
 for (const BlockName of listDirs(blockRoot)) {
-  const files = gatherFiles(join(blockRoot, BlockName), `${BlockName}/`);
+  const files = gatherFiles(join(blockRoot, BlockName), `bloques/${BlockName}/`);
   blockGathered[BlockName] = files;
   for (const f of files) {
     const key = `${BlockName}/${f.name.replace(/\.tsx?$/, "")}`;
