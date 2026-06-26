@@ -1,14 +1,20 @@
 # Skill: publish
-**Registra un componente existente en el catálogo + crea su handoff page.**
-Úsalo siempre que crees un nuevo componente en `src/components/`. Sin esto el componente existe pero no aparece en ningún lado.
+**Registra un componente O un bloque en todos los lugares donde debe aparecer.**
+- **Componente** (`src/components/`): catálogo + handoff page. Sin esto el componente existe pero no aparece en ningún lado.
+- **Bloque** (`src/blocks/`): visor `/code` + registry del CLI + lista de componentes que necesita. Úsalo también cuando **agregas un componente a un bloque ya existente** (p. ej. metiste un `Accordion` dentro de `Detalle`) — hay que actualizar los 3 sitios o el bloque se ve incompleto.
+
+> Para componentes mira la sección **Qué hace**. Para bloques mira la sección **Bloques**.
 
 ---
 
 ## Activación
 ```
-/publish NombreComponente
+/publish NombreComponente      # componente
 /publish TodayIcon
 /publish MyButton
+
+/publish bloque Detalle         # bloque (registrar o actualizar)
+/publish bloque Homepage
 ```
 
 ---
@@ -222,3 +228,90 @@ export default function MyIconHandoffPage(): JSX.Element {
   ),
 },
 ```
+
+---
+
+# Bloques — registrar o actualizar un bloque
+
+Un bloque vive en `src/blocks/{Bloque}/` y se compone de **uno o más archivos de bloque** + **los componentes de `src/components/` que usa** (importados con rutas relativas, ej. `import Accordion from "../../../components/Accordion"`).
+
+Cuando creas un bloque, o cuando **metes un componente nuevo dentro de un bloque existente**, hay que tocar **3 sitios**. Si olvidas uno, el bloque se ve bien en pantalla pero queda incompleto en el catálogo, el `/code` o el CLI.
+
+## El pipeline (los 3 sitios)
+
+### 1. `/code` del bloque → `app/blocks/{id}/page.tsx`
+
+El visor (`<BlockViewer files={FILES} />`) muestra una pestaña **Code** con un árbol de archivos. Ese árbol es el array `FILES`. **Todo componente que use el bloque debe estar en `FILES`** o no aparece su código.
+
+- `readSrc(rel)` lee el source en build (`readFileSync` relativo a `process.cwd()`).
+- Convención: agrupa por origen y concatena.
+
+```tsx
+// Archivos propios del bloque
+const BLOCK_FILES: BlockFile[] = [
+  { path: "src/blocks/detalle/desktop/Detalle.tsx", code: readSrc("src/blocks/detalle/desktop/Detalle.tsx") },
+];
+
+// Componentes que usa el bloque → aparecen bajo src/components/
+const USED_COMPONENTS = ["AuctionStatus", "CardViewer", "Accordion", "CardTitle"];
+const COMPONENT_FILES: BlockFile[] = USED_COMPONENTS.map(function toFile(name) {
+  return { path: `src/components/${name}.tsx`, code: readSrc(`src/components/${name}.tsx`) };
+});
+
+const FILES: BlockFile[] = [...BLOCK_FILES, ...COMPONENT_FILES];
+```
+
+- **Incluye las dependencias transitivas.** Si `Accordion` importa `CardTitle`, mete los dos en `USED_COMPONENTS`.
+- **Extras de composición** (Sidebar, Header u otro bloque que solo se monta en el visor, no dentro del `.tsx` del bloque): agrégalos también a `FILES` con su propio grupo, ej. `SIDEBAR_FILES` / `HEADER_FILES` (incluye los íconos que esos bloques usan).
+
+### 2. CLI / registry → `public/r/`
+
+El CLI (`npx github:AaronCoorahua/ConcordeV2#cli add {id}`) baja `public/r/{id}.json`. **Esto se autogenera** con `scripts/build-registry.mjs` — un solo comando, no edites los JSON a mano:
+
+```bash
+node scripts/build-registry.mjs
+# o con base de deploy:  node scripts/build-registry.mjs https://concorde-v2-theta.vercel.app
+```
+
+El generador lee `src/components/` (archivos planos `X.tsx`) y `src/blocks/` (recursivo: `desktop/`, `mobile/`, etc.), detecta los componentes que usa cada bloque por sus imports (alias `@/src/components/X` **o** relativos `../../../components/X`), e incluye el cierre transitivo (si `Accordion` importa `CardTitle`, entra solo). Emite:
+- **`public/r/{id}.json`** → `files` con el bloque + cada componente que usa (con su `content` al día).
+- **`public/r/registry.json`** → índice; la entrada del bloque lista en `components` los ids (minúscula) que usa.
+
+Después de correrlo, **revisa el diff**: `git diff --stat public/r` — deben aparecer tu bloque y los componentes que agregaste, nada más raro.
+
+### 3. Componentes que necesita → `RequiredComponents` en `app/blocks/{id}/page.tsx`
+
+Bajo el visor, `<RequiredComponents items={REQUIRED} />` muestra las cards «este bloque se compone con N componentes». Cada componente nuevo necesita su `RequiredItem`:
+
+```tsx
+import RequiredComponents, { type RequiredItem } from "@/app/blocks/_components/RequiredComponents";
+
+const REQUIRED: RequiredItem[] = [
+  { name: "AuctionStatus", path: "/handoff/auctionstatus", role: "Estado de la subasta (arriba a la izquierda)" },
+  { name: "CardViewer",    path: "/handoff/cardviewer",    role: "Visor de imágenes + filmstrip" },
+  { name: "Accordion",     path: "/handoff/accordion",     role: "Secciones colapsables (Información general, Condiciones…)" },
+];
+
+// …dentro del return, después de <BlockViewer/>:
+<RequiredComponents items={REQUIRED} />
+```
+
+- `path` es el handoff del componente (`/handoff/{id}`, minúsculas). Si el componente aún no tiene handoff, primero corre `/publish {Componente}`.
+- El `role` es una frase corta de para-qué-sirve dentro de ESTE bloque.
+
+## Bloque NUEVO (además de los 3 pasos)
+
+Si el bloque no existía, regístralo también en:
+- **`app/blocks/{id}/page.tsx`** — crea la ruta del visor (copia la de otro bloque: `Header active="blocks"` + `<BlockViewer …/>` + `<RequiredComponents/>`).
+- **`app/blocks/_components/blocks-nav.ts`** — agrega `{ id, name }` a `BLOCKS_NAV` (tabs del visor).
+- **`app/blocks/page.tsx`** — agrega la `BlockEntry` `{ id, name, width, height, node }` al array `BLOCKS` (card del catálogo `/blocks`).
+- El source del bloque va en `src/blocks/{Bloque}/desktop/` (y `mobile/` si aplica). Exporta sus dimensiones desde un módulo **plano** (`dimensions.ts`, sin `"use client"`) para que los Server Components puedan importarlas sin que den `NaN`.
+
+## Checklist de bloque
+
+- [ ] `app/blocks/{id}/page.tsx` → `FILES` incluye el bloque + **todos** sus componentes (y dependencias transitivas + extras de composición)
+- [ ] `app/blocks/{id}/page.tsx` → `REQUIRED` tiene un `RequiredItem` por cada componente, y `<RequiredComponents items={REQUIRED}/>` está en el render
+- [ ] Corrí `node scripts/build-registry.mjs` y revisé `git diff --stat public/r` (el bloque + sus componentes aparecen)
+- [ ] Cada componente del bloque ya está publicado (tiene `/handoff/{id}`) — si no, `/publish {Componente}` primero
+- [ ] (bloque nuevo) ruta + `BLOCKS_NAV` + `BLOCKS` del catálogo
+- [ ] `npx tsc --noEmit` pasa

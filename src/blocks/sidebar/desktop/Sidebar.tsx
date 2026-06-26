@@ -94,6 +94,9 @@ export interface SidebarProps {
   primaryItems?: SidebarNavItem[];
   secondaryItems?: SidebarNavItem[];
   defaultActiveId?: string;
+  /** Alto del sidebar. Por defecto SIDEBAR_HEIGHT; pásale el alto del canvas
+   *  cuando el contenido a la derecha sea más alto, para que crezca con él. */
+  height?: number | string;
   onItemClick?: (id: string) => void;
   onBannerCta?: () => void;
 }
@@ -102,7 +105,8 @@ export default function Sidebar({
   logo,
   primaryItems  = DEFAULT_PRIMARY,
   secondaryItems = DEFAULT_SECONDARY,
-  defaultActiveId = "hoy",
+  defaultActiveId,
+  height = SIDEBAR_HEIGHT,
   onItemClick,
   onBannerCta,
 }: SidebarProps): JSX.Element {
@@ -132,7 +136,7 @@ export default function Sidebar({
         className="sb-root"
         style={{
           width:         collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH,
-          height:        SIDEBAR_HEIGHT,
+          height,
           background:    "#2E0F70",
           display:       "flex",
           flexDirection: "column",
@@ -142,6 +146,17 @@ export default function Sidebar({
           overflow:      "hidden",
         }}
       >
+        {/* Bloque interno de tamaño FIJO (SIDEBAR_HEIGHT): header + frame. Si el
+            sidebar crece (prop height), sólo se alarga el relleno morado de abajo;
+            lo interno (nav + banner) queda igual, no se estira. */}
+        <div
+          style={{
+            height:        SIDEBAR_HEIGHT,
+            flexShrink:    0,
+            display:       "flex",
+            flexDirection: "column",
+          }}
+        >
         <SidebarHeader
           logo={logo}
           collapsed={collapsed}
@@ -196,6 +211,7 @@ export default function Sidebar({
           <div className={`sb-banner${collapsed ? " sb-banner--collapsed" : ""}`}>
             <SidebarBanner onCta={onBannerCta} />
           </div>
+        </div>
         </div>
       </div>
     </>

@@ -10,13 +10,13 @@
  */
 
 import { useId } from "react";
-import type { JSX } from "react";
+import type { JSX, ReactNode } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface CardTitleProps {
-  /** Título (default: "SANTANDER CONSUMER") */
-  title?: string;
+  /** Título (default: "SANTANDER CONSUMER"). Acepta texto o nodos (p.ej. un dot + texto). */
+  title?: ReactNode;
   /** Subtítulo (default: "10 Ofertas") */
   subtitle?: string;
   /** Tamaño del título en px (default 12 · line-height = size + 4) */

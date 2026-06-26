@@ -17,8 +17,8 @@ import type { JSX, ReactNode } from "react";
 import CardTitle from "@/src/components/CardTitle";
 
 export interface AccordionProps {
-  /** Título (editable) — default "INFORMACIÓN GENERAL" */
-  title?: string;
+  /** Título (editable) — default "INFORMACIÓN GENERAL". Acepta texto o nodos (p.ej. un dot + texto). */
+  title?: ReactNode;
   /** Contenido que se expande/colapsa */
   children?: ReactNode;
   /** Abierto (controlado) */
@@ -34,7 +34,16 @@ export interface AccordionProps {
 const STYLE_ID = "concorde-accordion-styles";
 
 const ACCORDION_STYLES = `
-.pacc { width: 100%; font-family: var(--vmc-font-display, "Plus Jakarta Sans", -apple-system, sans-serif); }
+/* La card BLANCA + sombra + redondeo envuelven TODO (header + contenido), así el
+   contenido abierto queda sobre fondo blanco dentro de la misma card. */
+.pacc {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: rgba(0,0,0,0.1) 0px 0px 16px 4px;
+  overflow: hidden;
+  font-family: var(--vmc-font-display, "Plus Jakarta Sans", -apple-system, sans-serif);
+}
 .pacc__header {
   display: flex;
   align-items: center;
@@ -44,13 +53,13 @@ const ACCORDION_STYLES = `
   min-height: 66px;
   box-sizing: border-box;
   padding: 0 16px;
-  background: #ffffff;
+  background: transparent;
   border: none;
-  border-radius: 4px;
-  box-shadow: rgba(0,0,0,0.1) 0px 0px 16px 4px;
   cursor: pointer;
   text-align: left;
 }
+/* Divisor entre header y contenido — solo visible cuando está abierto */
+.pacc--open .pacc__header { box-shadow: inset 0 -1px 0 #ECECEE; }
 .pacc__chevron {
   flex-shrink: 0;
   transition: transform 0.25s cubic-bezier(0.3, 0, 0, 1);
@@ -64,7 +73,7 @@ const ACCORDION_STYLES = `
 .pacc--open .pacc__content { grid-template-rows: 1fr; }
 .pacc__content-inner { overflow: hidden; }
 .pacc__content-pad {
-  padding: 12px 18px 18px;
+  padding: 16px 18px 18px;
   font-size: 14px;
   line-height: 1.6;
   color: #475569;
