@@ -8,31 +8,37 @@
 
 "use client";
 
-import type { JSX } from "react";
+import type { JSX, ReactNode } from "react";
 import Button, { UserIcon } from "../../../components/Button";
 import { HEADER_WIDTH, HEADER_HEIGHT } from "./dimensions";
 
 export interface HeaderProps {
+  /** Ancho de la barra. Por defecto HEADER_WIDTH (798, desktop); 420 en mobile. */
+  width?: number | string;
+  /** Logo a la izquierda (slot). En desktop no se usa (el logo va en el Sidebar);
+   *  en mobile se pasa el logo de la marca. */
+  logo?: ReactNode;
   className?: string;
 }
 
-export default function Header({ className = "" }: HeaderProps): JSX.Element {
+export default function Header({ width = HEADER_WIDTH, logo, className = "" }: HeaderProps): JSX.Element {
   return (
     <header
       className={className}
       data-block="header"
       style={{
-        width: HEADER_WIDTH,
+        width,
         height: HEADER_HEIGHT,
         background: "#2E0F70",
         display: "flex",
         alignItems: "center",
-        justifyContent: "flex-end",
+        justifyContent: logo ? "space-between" : "flex-end",
         padding: "0 16px",
         flexShrink: 0,
         boxSizing: "border-box",
       }}
     >
+      {logo}
       <Button variant="sm-guest" icon={<UserIcon />}>
         Ingresa
       </Button>

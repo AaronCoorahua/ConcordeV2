@@ -32,7 +32,7 @@ interface BlockViewerProps {
 type ViewMode = "preview" | "code";
 type Viewport = "desktop" | "mobile";
 
-const VIEWPORT_W: Record<Viewport, number> = { desktop: 1100, mobile: 390 };
+const VIEWPORT_W: Record<Viewport, number> = { desktop: 1100, mobile: 420 };
 
 /** Fondo "vault" (morado del DS) para enmarcar bloques en el preview. */
 export const VAULT_PREVIEW_BG = "#2E0F70";
@@ -190,10 +190,17 @@ export default function BlockViewer({ id, width, height, canvas, files, controls
           overflow: "auto",
         }}
       >
-        <div style={{ width: activeWidth * scale, height: activeHeight * scale, position: "relative", flexShrink: 0, boxShadow: "0 12px 40px rgba(15,23,42,0.12)", ...(previewBg === "#fafafa" ? { outline: "1px solid #e2e8f0" } : {}), borderRadius: 4, overflow: "hidden" }}>
-          <div style={{ position: "absolute", top: 0, left: 0, width: activeWidth, height: activeHeight, transform: `scale(${scale})`, transformOrigin: "top left" }}>
-            {activeCanvas}
-          </div>
+        {/* Sin escala (scale === 1, p.ej. mobile 420): renderizamos el canvas
+            directo para que el marco CREZCA con el contenido (accordions que se
+            abren) y la página haga scroll, en vez de recortarse a un alto fijo. */}
+        <div style={{ width: activeWidth * scale, height: scale === 1 ? "auto" : activeHeight * scale, position: "relative", flexShrink: 0, boxShadow: "0 12px 40px rgba(15,23,42,0.12)", ...(previewBg === "#fafafa" ? { outline: "1px solid #e2e8f0" } : {}), borderRadius: 4, overflow: "hidden" }}>
+          {scale === 1 ? (
+            activeCanvas
+          ) : (
+            <div style={{ position: "absolute", top: 0, left: 0, width: activeWidth, height: activeHeight, transform: `scale(${scale})`, transformOrigin: "top left" }}>
+              {activeCanvas}
+            </div>
+          )}
         </div>
       </div>
     </div>

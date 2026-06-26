@@ -6,6 +6,7 @@ import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/dimensions";
 import AppHeader from "@/src/blocks/header/desktop/Header";
 import { HEADER_HEIGHT } from "@/src/blocks/header/desktop/dimensions";
+import HomepageMobile, { HOMEPAGE_MOBILE_WIDTH, HOMEPAGE_MOBILE_HEIGHT } from "@/src/blocks/homepage/mobile/HomepageMobile";
 import Header from "@/app/_components/Header";
 import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_components/BlockViewer";
 import RequiredComponents, { type RequiredItem } from "@/app/blocks/_components/RequiredComponents";
@@ -38,6 +39,7 @@ const BLOCK_FILES: BlockFile[] = [
   { path: "src/blocks/homepage/desktop/Homepage.tsx", code: readSrc("src/blocks/homepage/desktop/Homepage.tsx") },
   { path: "src/blocks/homepage/desktop/CategoriesSection.tsx", code: readSrc("src/blocks/homepage/desktop/CategoriesSection.tsx") },
   { path: "src/blocks/homepage/desktop/AuctioneerSection.tsx", code: readSrc("src/blocks/homepage/desktop/AuctioneerSection.tsx") },
+  { path: "src/blocks/homepage/mobile/HomepageMobile.tsx", code: readSrc("src/blocks/homepage/mobile/HomepageMobile.tsx") },
 ];
 
 // Componentes que usa el bloque (derivados de REQUIRED) → aparecen bajo src/components/
@@ -96,6 +98,7 @@ export default function HomepageBlockPage(): JSX.Element {
         width={COMBINED_WIDTH}
         height={COMBINED_HEIGHT}
         canvas={CANVAS}
+        canvasForViewport={{ mobile: { node: <HomepageMobile />, width: HOMEPAGE_MOBILE_WIDTH, height: HOMEPAGE_MOBILE_HEIGHT } }}
         files={FILES}
         previewBg={VAULT_PREVIEW_BG}
       />
