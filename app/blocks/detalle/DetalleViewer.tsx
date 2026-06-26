@@ -5,7 +5,7 @@ import type { JSX, CSSProperties } from "react";
 import Detalle, { DETALLE_WIDTH, DETALLE_HEIGHT } from "@/src/blocks/detalle/desktop/Detalle";
 import DetalleMobile, { DETALLE_MOBILE_WIDTH, DETALLE_MOBILE_HEIGHT } from "@/src/blocks/detalle/mobile/DetalleMobile";
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
-import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/dimensions";
+import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT, SIDEBAR_COLLAPSED_WIDTH } from "@/src/blocks/sidebar/desktop/dimensions";
 import AppHeader from "@/src/blocks/header/desktop/Header";
 import { HEADER_HEIGHT } from "@/src/blocks/header/desktop/dimensions";
 import type { DetalleVariant } from "@/src/blocks/detalle/pills";
@@ -13,6 +13,7 @@ import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_com
 
 const COMBINED_WIDTH = SIDEBAR_WIDTH + DETALLE_WIDTH;
 const COMBINED_HEIGHT = Math.max(SIDEBAR_HEIGHT, HEADER_HEIGHT + DETALLE_HEIGHT);
+const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
 const VARIANTS: { value: DetalleVariant; label: string }[] = [
   { value: "live", label: "En vivo" },
   { value: "negotiable", label: "Negociable" },
@@ -40,6 +41,14 @@ export default function DetalleViewer({ files }: { files: BlockFile[] }): JSX.El
   const [tab, setTab] = useState(0);
   const variant = VARIANTS[tab].value;
 
+  // Al colapsar el sidebar, el contenido de la derecha se escala (proporcional)
+  // para llenar el espacio libre, manteniendo el ancho total del canvas.
+  const [collapsed, setCollapsed] = useState(false);
+  const fillW = COMBINED_WIDTH - (collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH); // ancho a cubrir
+  const OVERSCAN = 2;                                 // px que el contenido mete BAJO el sidebar
+  const scale = (fillW + OVERSCAN) / DETALLE_WIDTH;
+  const canvasH = Math.max(COMBINED_HEIGHT, (HEADER_HEIGHT + DETALLE_HEIGHT) * scale);
+
   // Tabs «En vivo / Negociable» — cambian la variante del DetailCard,
   // AuctionStatus, CardViewer y los ConditionPills (en desktop y mobile).
   const controls = (
@@ -55,12 +64,19 @@ export default function DetalleViewer({ files }: { files: BlockFile[] }): JSX.El
     </div>
   );
 
+  // Contenido PEGADO A LA DERECHA (right:0) y escalado desde la esquina sup-der
+  // (transform-origin: top right) → el borde derecho es el PIVOTE: nunca se mueve.
+  // El borde izquierdo es el que se mueve (sigue al sidebar). El sidebar va
+  // ENCIMA (se pinta después) y tapa los px que el contenido mete por debajo,
+  // así el seam queda perfecto sin micro-desfases. Solo cambia el height.
   const canvas = (
-    <div style={{ display: "flex", alignItems: "flex-start", width: COMBINED_WIDTH, height: COMBINED_HEIGHT, background: "#ffffff" }}>
-      <Sidebar height={COMBINED_HEIGHT} />
-      <div style={{ display: "flex", flexDirection: "column", flexShrink: 0 }}>
-        <AppHeader />
+    <div style={{ position: "relative", width: COMBINED_WIDTH, height: canvasH, background: VAULT_PREVIEW_BG, overflow: "hidden", transition: `height 0.28s ${EASE}` }}>
+      <div style={{ position: "absolute", right: 0, top: 0, width: DETALLE_WIDTH, display: "flex", flexDirection: "column", transformOrigin: "top right", transform: `scale(${scale})`, transition: `transform 0.28s ${EASE}` }}>
+        <AppHeader width={DETALLE_WIDTH} />
         <Detalle variant={variant} />
+      </div>
+      <div style={{ position: "absolute", left: 0, top: 0 }}>
+        <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed} height={canvasH} />
       </div>
     </div>
   );

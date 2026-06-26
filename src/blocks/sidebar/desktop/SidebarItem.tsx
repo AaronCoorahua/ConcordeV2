@@ -31,10 +31,21 @@ const STYLES = `
   user-select: none;
   outline: none;
   border: 1.5px solid transparent;
+  /* Glass fill (paint0: white 0.28 → 0.1 → 0.04) sobre base oscura #0A002E (simula
+     el "behind transparent areas" de Figma: la sombra se ve a través del glass) +
+     borde VYStrokes3 (white 0.1 → 0 @55%) */
   background:
-    linear-gradient(165deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.10) 40%, rgba(255,255,255,0.04) 100%) padding-box,
-    linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 100%) border-box;
-  box-shadow: 0 8px 32px -4px rgba(10,0,46,0.55);
+    linear-gradient(105deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.10) 40%, rgba(255,255,255,0.04) 100%) padding-box,
+    linear-gradient(rgba(10,0,46,0.34), rgba(10,0,46,0.34)) padding-box,
+    linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 55%) border-box;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  /* Drop #0A002E (0,12,36,-4) reforzado + inner top white 22% + inner bottom black 30% */
+  box-shadow:
+    0px 12px 36px -4px rgba(10,0,46,0.7),
+    0px 4px 14px -2px rgba(10,0,46,0.5),
+    inset 0px 1px 0px rgba(255,255,255,0.22),
+    inset 0px -1px 6px rgba(0,0,0,0.3);
   transition: box-shadow 0.15s, background 0.12s, border-color 0.12s, padding 0.28s cubic-bezier(0.4,0,0.2,1), gap 0.28s cubic-bezier(0.4,0,0.2,1);
 }
 .sbi-item--collapsed {
@@ -42,17 +53,27 @@ const STYLES = `
   gap: 0;
   justify-content: center;
 }
+/* Hover — fill #8460E5 38% (sobre base oscura) + borde white 44% + drop #0A0026 55%
+   (0,6,18,-6) + inner top white 60% (0,1,4) */
 .sbi-item--hover {
   border: 1px solid rgba(255,255,255,0.44);
-  background: rgba(132,96,229,0.38);
-  box-shadow: 0 4px 18px -6px rgba(10,0,38,0.45);
+  background:
+    rgba(132,96,229,0.38) padding-box,
+    linear-gradient(rgba(10,0,38,0.32), rgba(10,0,38,0.32)) padding-box;
+  box-shadow:
+    0px 6px 18px -6px rgba(10,0,38,0.55),
+    inset 0px 1px 4px rgba(255,255,255,0.6);
 }
+/* Pressed/Active — VYGradientOrange1 + borde gradiente + drop #ED8936 (0,2,25,-2)
+   + background blur 10 */
 .sbi-item--active {
   border: 1.5px solid transparent;
   background:
     linear-gradient(180deg, #FF9639 0%, #EF852E 40%, #BE3D00 100%) padding-box,
-    linear-gradient(86deg, #FFFFFF 0%, #F4AC59 22.1%, #8460E5 74.5%, #FFFFFF 100%) border-box;
-  box-shadow: 0 2px 25px 0 rgba(237,137,54,0.38);
+    linear-gradient(143deg, #FFFFFF 0%, #F4AC59 22.1%, #8460E5 74.5%, #FFFFFF 100%) border-box;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0px 2px 25px -2px rgba(237,137,54,0.55);
 }
 .sbi-item:focus-visible {
   outline: 2px solid rgba(255,255,255,0.5);

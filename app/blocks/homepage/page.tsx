@@ -1,20 +1,14 @@
 import type { JSX } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import Homepage, { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/homepage/desktop/Homepage";
-import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
-import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/dimensions";
-import AppHeader from "@/src/blocks/header/desktop/Header";
-import { HEADER_HEIGHT } from "@/src/blocks/header/desktop/dimensions";
-import HomepageMobile, { HOMEPAGE_MOBILE_WIDTH, HOMEPAGE_MOBILE_HEIGHT } from "@/src/blocks/homepage/mobile/HomepageMobile";
 import Header from "@/app/_components/Header";
-import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_components/BlockViewer";
+import { type BlockFile } from "@/app/blocks/_components/BlockViewer";
 import RequiredComponents, { type RequiredItem } from "@/app/blocks/_components/RequiredComponents";
+import HomepageViewer from "./HomepageViewer";
 
 /**
- * /blocks/homepage — Visor del bloque Homepage (estilo shadcn).
- * Se compone con el Sidebar pegado a la izquierda; el Homepage arranca a la
- * altura del bottom del header del sidebar (60px).
+ * /blocks/homepage — Visor del bloque Homepage (desktop + mobile).
+ * El estado (colapsar sidebar → escalar contenido) lo maneja HomepageViewer.
  */
 
 function readSrc(rel: string): string {
@@ -73,35 +67,11 @@ const HEADER_FILES: BlockFile[] = [
 
 const FILES: BlockFile[] = [...BLOCK_FILES, ...COMPONENT_FILES, ...SIDEBAR_FILES, ...HEADER_FILES];
 
-// ── Composición: Sidebar (izq) + [Header arriba + Homepage] (col. derecha) ──
-const COMBINED_WIDTH = SIDEBAR_WIDTH + HOMEPAGE_WIDTH;
-const COMBINED_HEIGHT = Math.max(SIDEBAR_HEIGHT, HEADER_HEIGHT + HOMEPAGE_HEIGHT);
-
-// Layout flex: al colapsar el Sidebar su width se anima y la columna lo sigue (queda pegada).
-const CANVAS = (
-  <div style={{ display: "flex", alignItems: "flex-start", width: COMBINED_WIDTH, height: COMBINED_HEIGHT, background: "#ffffff" }}>
-    <Sidebar height={COMBINED_HEIGHT} />
-    <div style={{ display: "flex", flexDirection: "column", flexShrink: 0 }}>
-      <AppHeader />
-      <Homepage />
-    </div>
-  </div>
-);
-
 export default function HomepageBlockPage(): JSX.Element {
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff", color: "#09090b", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
       <Header active="blocks" />
-      <BlockViewer
-        id="homepage"
-        description="Página de inicio: banners, subastador y categorías."
-        width={COMBINED_WIDTH}
-        height={COMBINED_HEIGHT}
-        canvas={CANVAS}
-        canvasForViewport={{ mobile: { node: <HomepageMobile />, width: HOMEPAGE_MOBILE_WIDTH, height: HOMEPAGE_MOBILE_HEIGHT } }}
-        files={FILES}
-        previewBg={VAULT_PREVIEW_BG}
-      />
+      <HomepageViewer files={FILES} />
       <RequiredComponents items={REQUIRED} />
     </div>
   );

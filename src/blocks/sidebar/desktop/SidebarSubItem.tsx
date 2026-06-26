@@ -38,14 +38,16 @@ const STYLES = `
   user-select: none;
   outline: none;
   position: relative;
-  background: rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.10);
   transition: box-shadow 0.15s;
 }
+/* Hover — borde VYGradientOrange0 (::before) + drop #0A002E 60% (0,6,20,-4) */
 .sbsi-item--hover {
-  box-shadow: 0 6px 20px -4px rgba(10,0,46,0.6);
+  box-shadow: 0px 6px 20px -4px rgba(10,0,46,0.6);
 }
+/* Press/Active — borde VYStrokes1 (::before) + drop #0A002E 60% (0,12,36,-4) */
 .sbsi-item--active {
-  box-shadow: 0 12px 36px -4px rgba(10,0,46,0.6);
+  box-shadow: 0px 12px 36px -4px rgba(10,0,46,0.6);
 }
 /* Anillo de borde gradiente — solo visible en la franja del borde */
 .sbsi-item--hover::before,
@@ -58,7 +60,8 @@ const STYLES = `
 }
 .sbsi-item--hover::before {
   padding: 1px;
-  background: linear-gradient(150deg, #FF9639 0%, #EF852E 50%, #BE3D00 100%);
+  /* VYGradientOrange0 — dirección exacta del SVG (vector 94.42,127.15 → 143deg) */
+  background: linear-gradient(143deg, #FF9639 0%, #EF852E 50%, #BE3D00 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -66,7 +69,8 @@ const STYLES = `
 }
 .sbsi-item--active::before {
   padding: 1.5px;
-  background: linear-gradient(86deg, #FFFFFF 0%, #F4AC59 22.1%, #8460E5 74.5%, #FFFFFF 100%);
+  /* VYStrokes1 — dirección exacta del SVG (vector 94.42,127.15 → 143deg) */
+  background: linear-gradient(143deg, #FFFFFF 0%, #F4AC59 22.1%, #8460E5 74.5%, #FFFFFF 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
