@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "businessicon",
+  "type": "registry:component",
+  "title": "BusinessIcon",
+  "description": "Componente Concorde BusinessIcon — un solo archivo, BusinessIcon.tsx.",
+  "dependencies": [
+    "react"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/BusinessIcon.tsx",
+      "type": "registry:file",
+      "target": "components/BusinessIcon.tsx",
+      "content": "\"use client\";\n\nimport { useId, useState } from \"react\";\nimport type { JSX } from \"react\";\n\nexport interface BusinessIconProps {\n  size?: number;\n  /** Controlled visual state — omit to let the icon track its own hover/active */\n  state?: \"default\" | \"hover\" | \"active\";\n  title?: string;\n  className?: string;\n}\n\nexport default function BusinessIcon({ size = 24, state: controlled, title, className = \"\" }: BusinessIconProps): JSX.Element {\n  const uid = useId().replace(/:/g, \"-\");\n  const [hovered, setHovered] = useState(false);\n  const [pressed,  setPressed]  = useState(false);\n\n  const resolved = controlled ?? (pressed ? \"active\" : hovered ? \"hover\" : \"default\");\n  const isActive = resolved === \"active\";\n  const isHover  = resolved === \"hover\";\n  const paint    = isActive ? \"white\" : `url(#${uid}g)`;\n\n  const handlers = controlled ? {} : {\n    onMouseEnter: () => setHovered(true),\n    onMouseLeave: () => { setHovered(false); setPressed(false); },\n    onMouseDown:  () => setPressed(true),\n    onMouseUp:    () => setPressed(false),\n  };\n\n  return (\n    <svg\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      xmlns=\"http://www.w3.org/2000/svg\"\n      className={className}\n      role={title ? \"img\" : undefined}\n      aria-hidden={title ? undefined : true}\n      style={{ flexShrink: 0 }}\n      {...handlers}\n    >\n      {title && <title>{title}</title>}\n\n      {!isActive && (\n        <defs>\n          {isHover ? (\n            <linearGradient id={`${uid}g`} x1=\"12\" y1=\"1\" x2=\"12\" y2=\"21\" gradientUnits=\"userSpaceOnUse\">\n              <stop stopColor=\"#FF9639\"/>\n              <stop offset=\"0.4\" stopColor=\"#EF852E\"/>\n              <stop offset=\"1\" stopColor=\"#BE3D00\"/>\n            </linearGradient>\n          ) : (\n            <linearGradient id={`${uid}g`} x1=\"6.87209\" y1=\"-8.40656\" x2=\"26.7061\" y2=\"-3.26306\" gradientUnits=\"userSpaceOnUse\">\n              <stop stopColor=\"#CFBAFF\"/>\n              <stop offset=\"0.35\" stopColor=\"white\"/>\n              <stop offset=\"0.65\" stopColor=\"#AE8EFF\"/>\n              <stop offset=\"1\" stopColor=\"#CFBAFF\"/>\n            </linearGradient>\n          )}\n        </defs>\n      )}\n\n      {/* Building — stroke-based icon */}\n      <path\n        d=\"M3.91406 21H20.4141M4.66406 3H19.6641M5.41406 3V21M18.9141 3V21M9.16406 6.75H10.6641M9.16406 9.75H10.6641M9.16406 12.75H10.6641M13.6641 6.75H15.1641M13.6641 9.75H15.1641M13.6641 12.75H15.1641M9.16406 21V17.625C9.16406 17.004 9.66806 16.5 10.2891 16.5H14.0391C14.6601 16.5 15.1641 17.004 15.1641 17.625V21\"\n        stroke={paint}\n        strokeWidth=\"1.5\"\n        strokeLinecap=\"round\"\n        strokeLinejoin=\"round\"\n      />\n    </svg>\n  );\n}\n"
+    }
+  ]
+}

@@ -51,6 +51,12 @@
       "url": "https://concorde-v2-theta.vercel.app/r/bidproposal.json"
     },
     {
+      "name": "businessicon",
+      "type": "registry:component",
+      "title": "BusinessIcon",
+      "url": "https://concorde-v2-theta.vercel.app/r/businessicon.json"
+    },
+    {
       "name": "button",
       "type": "registry:component",
       "title": "Button",
@@ -73,6 +79,12 @@
       "type": "registry:component",
       "title": "CategoryCard",
       "url": "https://concorde-v2-theta.vercel.app/r/categorycard.json"
+    },
+    {
+      "name": "categoryicon",
+      "type": "registry:component",
+      "title": "CategoryIcon",
+      "url": "https://concorde-v2-theta.vercel.app/r/categoryicon.json"
     },
     {
       "name": "checkicon",
@@ -117,6 +129,12 @@
       "url": "https://concorde-v2-theta.vercel.app/r/offercard.json"
     },
     {
+      "name": "offericon",
+      "type": "registry:component",
+      "title": "OfferIcon",
+      "url": "https://concorde-v2-theta.vercel.app/r/offericon.json"
+    },
+    {
       "name": "offertype",
       "type": "registry:component",
       "title": "OfferType",
@@ -159,10 +177,10 @@
       "url": "https://concorde-v2-theta.vercel.app/r/sendbidicon.json"
     },
     {
-      "name": "statpill",
+      "name": "servicecentericon",
       "type": "registry:component",
-      "title": "StatPill",
-      "url": "https://concorde-v2-theta.vercel.app/r/statpill.json"
+      "title": "ServiceCenterIcon",
+      "url": "https://concorde-v2-theta.vercel.app/r/servicecentericon.json"
     },
     {
       "name": "signal",
@@ -175,6 +193,12 @@
       "type": "registry:component",
       "title": "StarIcon",
       "url": "https://concorde-v2-theta.vercel.app/r/staricon.json"
+    },
+    {
+      "name": "statpill",
+      "type": "registry:component",
+      "title": "StatPill",
+      "url": "https://concorde-v2-theta.vercel.app/r/statpill.json"
     },
     {
       "name": "table",
@@ -201,19 +225,40 @@
       "url": "https://concorde-v2-theta.vercel.app/r/timericon.json"
     },
     {
+      "name": "todayicon",
+      "type": "registry:component",
+      "title": "TodayIcon",
+      "url": "https://concorde-v2-theta.vercel.app/r/todayicon.json"
+    },
+    {
       "name": "detalle",
       "type": "registry:block",
-      "title": "Detalle",
+      "title": "detalle",
       "url": "https://concorde-v2-theta.vercel.app/r/detalle.json",
       "components": [
         "auctionstatus",
-        "cardviewer"
+        "cardviewer",
+        "accordion",
+        "detailcard",
+        "conditionpill",
+        "button",
+        "cardtitle",
+        "offercard"
+      ]
+    },
+    {
+      "name": "header",
+      "type": "registry:block",
+      "title": "header",
+      "url": "https://concorde-v2-theta.vercel.app/r/header.json",
+      "components": [
+        "button"
       ]
     },
     {
       "name": "homepage",
       "type": "registry:block",
-      "title": "Homepage",
+      "title": "homepage",
       "url": "https://concorde-v2-theta.vercel.app/r/homepage.json",
       "components": [
         "offercard",
@@ -227,7 +272,7 @@
     {
       "name": "sala",
       "type": "registry:block",
-      "title": "Sala",
+      "title": "sala",
       "url": "https://concorde-v2-theta.vercel.app/r/sala.json",
       "components": [
         "bidproposal",
@@ -239,11 +284,23 @@
         "badgestatus",
         "signal",
         "priceicon",
+        "statpill",
         "salastatus",
         "cardviewer",
-        "bidposition",
-        "sendbidicon",
-        "statpill"
+        "bidposition"
+      ]
+    },
+    {
+      "name": "sidebar",
+      "type": "registry:block",
+      "title": "sidebar",
+      "url": "https://concorde-v2-theta.vercel.app/r/sidebar.json",
+      "components": [
+        "todayicon",
+        "offericon",
+        "categoryicon",
+        "businessicon",
+        "servicecentericon"
       ]
     }
   ]

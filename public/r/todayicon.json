@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "todayicon",
+  "type": "registry:component",
+  "title": "TodayIcon",
+  "description": "Componente Concorde TodayIcon — un solo archivo, TodayIcon.tsx.",
+  "dependencies": [
+    "react"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/TodayIcon.tsx",
+      "type": "registry:file",
+      "target": "components/TodayIcon.tsx",
+      "content": "\"use client\";\n\nimport { useId, useState } from \"react\";\nimport type { JSX } from \"react\";\n\nexport interface TodayIconProps {\n  size?: number;\n  /** Controlled visual state — omit to let the icon track its own hover/active */\n  state?: \"default\" | \"hover\" | \"active\";\n  title?: string;\n  className?: string;\n}\n\nexport default function TodayIcon({ size = 24, state: controlled, title, className = \"\" }: TodayIconProps): JSX.Element {\n  const uid = useId().replace(/:/g, \"-\");\n  const [hovered, setHovered] = useState(false);\n  const [pressed,  setPressed]  = useState(false);\n\n  const resolved = controlled ?? (pressed ? \"active\" : hovered ? \"hover\" : \"default\");\n  const isActive = resolved === \"active\";\n  const isHover  = resolved === \"hover\";\n  const paint    = isActive ? \"white\" : `url(#${uid}g)`;\n\n  const handlers = controlled ? {} : {\n    onMouseEnter: () => setHovered(true),\n    onMouseLeave: () => { setHovered(false); setPressed(false); },\n    onMouseDown:  () => setPressed(true),\n    onMouseUp:    () => setPressed(false),\n  };\n\n  return (\n    <svg\n      width={size}\n      height={size}\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      xmlns=\"http://www.w3.org/2000/svg\"\n      className={className}\n      role={title ? \"img\" : undefined}\n      aria-hidden={title ? undefined : true}\n      style={{ flexShrink: 0 }}\n      {...handlers}\n    >\n      {title && <title>{title}</title>}\n\n      {!isActive && (\n        <defs>\n          {isHover ? (\n            <linearGradient id={`${uid}g`} x1=\"12\" y1=\"1\" x2=\"12\" y2=\"21\" gradientUnits=\"userSpaceOnUse\">\n              <stop stopColor=\"#FF9639\"/>\n              <stop offset=\"0.4\" stopColor=\"#EF852E\"/>\n              <stop offset=\"1\" stopColor=\"#BE3D00\"/>\n            </linearGradient>\n          ) : (\n            <linearGradient id={`${uid}g`} x1=\"5.58549\" y1=\"-11.674\" x2=\"29.3422\" y2=\"-4.95314\" gradientUnits=\"userSpaceOnUse\">\n              <stop stopColor=\"#CFBAFF\"/>\n              <stop offset=\"0.35\" stopColor=\"white\"/>\n              <stop offset=\"0.65\" stopColor=\"#AE8EFF\"/>\n              <stop offset=\"1\" stopColor=\"#CFBAFF\"/>\n            </linearGradient>\n          )}\n        </defs>\n      )}\n\n      <path\n        d=\"M9 1V3H15V1H17V3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9ZM20 11H4V19H20V11ZM11 13V17H6V13H11ZM7 5H4V9H20V5H17V7H15V5H9V7H7V5Z\"\n        fill={paint}\n      />\n    </svg>\n  );\n}\n"
+    }
+  ]
+}

@@ -20,6 +20,9 @@ export type OfferCardVariant = "live" | "negotiable";
 export interface OfferCardProps {
   /** Variante â€” determina barra inferior y fila de precio */
   variant: OfferCardVariant;
+  /** TamaÃ±o. "short" = card compacta 134Ã—170 (solo imagen + tÃ­tulo/aÃ±o + barra,
+   *  con el precio y el like como overlays sobre la imagen). Default "full". */
+  size?: "full" | "short";
   /** Nombre del vehÃ­culo */
   name: string;
   /** AÃ±o */
@@ -301,6 +304,68 @@ const OFFERCARD_STYLES = `
 .pcard--static .pcard-like:hover { transform: none; box-shadow: rgba(132, 96, 229, 0.14) 0px 2px 8px; }
 .pcard--static .pcard-like:active { transform: none; }
 
+/* â”€â”€ Short variant (134Ã—170) â€” imagen 134Ã—112 + tÃ­tulo/aÃ±o 134Ã—50 + barra 134Ã—8.
+   Precio (99Ã—24) y like (24Ã—24) van como overlays SOBRE la imagen. â”€â”€ */
+.pcard--short { width: 134px; height: 170px; }
+.pcard--short .pcard__img { height: 112px; }
+.pcard__body--short {
+  height: 50px;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+}
+.pcard--short .pcard__name { font-size: 15px; line-height: 18px; }
+.pcard--short .pcard__year { font-size: 10px; line-height: 14px; }
+
+/* Precio como badge (99Ã—24) â€” arriba a la izquierda de la imagen */
+.pcard__price-badge {
+  position: absolute;
+  top: 8px;
+  left: 7px;
+  height: 24px;
+  box-sizing: border-box;
+  padding: 0 10px 0 3px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid transparent;
+  background-image:
+    linear-gradient(135deg, #8460e5 0%, #3b1782 100%),
+    linear-gradient(135deg, #8776ff 0%, rgba(255,255,255,0.4) 38%, #532bc7 68%, #8776ff 100%);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: rgba(32, 0, 104, 0.5) 0px 2px 6px;
+  z-index: 2;
+}
+.pcard__price-badge::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+  pointer-events: none;
+}
+.pcard__price-badge-gem { width: 20px; height: 22px; display: inline-flex; position: relative; z-index: 1; flex-shrink: 0; }
+.pcard__price-badge-text {
+  position: relative;
+  z-index: 1;
+  font-family: var(--vmc-font-mono, 'Roboto Mono', monospace);
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Like (24Ã—24) â€” abajo a la derecha de la imagen */
+.pcard__img-like { position: absolute; bottom: 8px; right: 9px; z-index: 2; }
+.pcard--short .pcard__img-like .pcard-like { width: 22px; height: 22px; }
+.pcard--short .pcard__img-like .pcard-like svg { width: 12px; height: 12px; }
+
 /* â”€â”€ Reduced motion â”€â”€ */
 @media (prefers-reduced-motion: reduce) {
   .pcard, .pcard-like { transition: none; }
@@ -323,6 +388,7 @@ const SHOW_PRICE: Record<OfferCardVariant, boolean> = {
 
 export default function OfferCard({
   variant,
+  size = "full",
   name,
   year,
   price,
@@ -371,6 +437,7 @@ export default function OfferCard({
   const cardClasses = [
     "pcard",
     `pcard--${variant}`,
+    size === "short" ? "pcard--short" : "",
     interactive ? "" : "pcard--static",
     elevated ? "pcard--elevated" : "",
     className,
@@ -407,6 +474,67 @@ export default function OfferCard({
       </svg>
     </button>
   );
+
+  // Gema del precio (diamante de subasta) â€” reutilizada en la fila (full) y en el badge (short)
+  const PriceGem = ({ w, h }: { w: number; h: number }): JSX.Element => (
+    <svg width={w} height={h} viewBox="30 199 28 30" fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient id={`${uid}-d`} gradientUnits="userSpaceOnUse" x1="32" y1="215.5" x2="55.12" y2="228.11">
+          <stop stopColor="#00A7A8" /><stop offset="0.4" stopColor="#86A4E4" /><stop offset="0.75" stopColor="#4C1EBC" /><stop offset="1" stopColor="#300089" />
+        </linearGradient>
+        <linearGradient id={`${uid}-ds`} gradientUnits="userSpaceOnUse" x1="32" y1="215.5" x2="55.12" y2="228.11">
+          <stop stopColor="#73DFDF" /><stop offset="0.28" stopColor="#ffffff" stopOpacity="0.9" /><stop offset="0.875" stopColor="#452AA2" stopOpacity="0.6" />
+        </linearGradient>
+        <linearGradient id={`${uid}-c`} gradientUnits="userSpaceOnUse" x1="36.01" y1="199.59" x2="51.99" y2="222.41">
+          <stop stopColor="#00ABAD" /><stop offset="0.4" stopColor="#86A4E4" /><stop offset="0.75" stopColor="#4C1EBC" /><stop offset="1" stopColor="#31008A" />
+        </linearGradient>
+        <linearGradient id={`${uid}-cg`} gradientUnits="userSpaceOnUse" x1="44" y1="203" x2="44" y2="219">
+          <stop stopColor="#ffffff" stopOpacity="0.45" /><stop offset="0.5" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id={`${uid}-cb`} gradientUnits="userSpaceOnUse" x1="36.01" y1="199.59" x2="51.99" y2="222.41">
+          <stop stopColor="#44D6D6" /><stop offset="0.207" stopColor="#E4EEFF" stopOpacity="0.5" /><stop offset="0.495" stopColor="#567CD3" /><stop offset="1" stopColor="#3D0D9E" />
+        </linearGradient>
+      </defs>
+      <path d="M44 215.5L56 221L44 226.5L32 221L44 215.5Z" fill={`url(#${uid}-d)`} />
+      <path d="M44 215.5L56 221L44 226.5L32 221L44 215.5" stroke={`url(#${uid}-ds)`} strokeWidth="2" strokeLinejoin="round" />
+      <rect x="34" y="201" width="20" height="20" rx="10" fill={`url(#${uid}-c)`} />
+      <rect x="36" y="203" width="16" height="16" rx="8" fill={`url(#${uid}-cg)`} />
+      <rect x="35" y="202" width="18" height="18" rx="9" stroke={`url(#${uid}-cb)`} strokeWidth="2" />
+      <path d="M44 206.417V215.583" stroke="#ffffff" strokeOpacity="0.92" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M46.0833 208.083H42.9583C42.1535 208.083 41.5 208.737 41.5 209.542C41.5 210.347 42.1535 211 42.9583 211H45.0417C45.8465 211 46.5 211.653 46.5 212.458C46.5 213.263 45.8465 213.917 45.0417 213.917H41.5" stroke="#ffffff" strokeOpacity="0.92" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+
+  // â”€â”€ Short variant: imagen con precio + like overlay, luego tÃ­tulo/aÃ±o, barra por ::after â”€â”€
+  if (size === "short") {
+    return (
+      <>
+        <style id={`${STYLE_ID}-ssr`} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: OFFERCARD_STYLES }} />
+        <article
+          className={cardClasses}
+          onClick={onClick}
+          aria-label={ariaLabel ?? name}
+          role={onClick ? "button" : undefined}
+          tabIndex={onClick ? 0 : undefined}
+        >
+          <div className="pcard__img">
+            {imageSrc && <img src={imageSrc} alt={imageAlt ?? name} loading="lazy" />}
+            {showPriceRow && (
+              <div className="pcard__price-badge">
+                <span className="pcard__price-badge-gem"><PriceGem w={20} h={22} /></span>
+                <span className="pcard__price-badge-text">{price}</span>
+              </div>
+            )}
+            <div className="pcard__img-like">{LikeBtn}</div>
+          </div>
+          <div className="pcard__body--short">
+            <h3 className="pcard__name">{name}</h3>
+            <p className="pcard__year">{String(year)}</p>
+          </div>
+        </article>
+      </>
+    );
+  }
 
   return (
     <>
@@ -447,44 +575,7 @@ export default function OfferCard({
             <div className="pcard__price-row">
               <div className="pcard__price-left">
                 <div className="pcard-pprice" aria-hidden="true">
-                  <svg width="30" height="32" viewBox="30 199 28 30" fill="none" aria-hidden="true">
-                    <defs>
-                      <linearGradient id={`${uid}-d`} gradientUnits="userSpaceOnUse" x1="32" y1="215.5" x2="55.12" y2="228.11">
-                        <stop stopColor="#00A7A8" />
-                        <stop offset="0.4" stopColor="#86A4E4" />
-                        <stop offset="0.75" stopColor="#4C1EBC" />
-                        <stop offset="1" stopColor="#300089" />
-                      </linearGradient>
-                      <linearGradient id={`${uid}-ds`} gradientUnits="userSpaceOnUse" x1="32" y1="215.5" x2="55.12" y2="228.11">
-                        <stop stopColor="#73DFDF" />
-                        <stop offset="0.28" stopColor="#ffffff" stopOpacity="0.9" />
-                        <stop offset="0.875" stopColor="#452AA2" stopOpacity="0.6" />
-                      </linearGradient>
-                      <linearGradient id={`${uid}-c`} gradientUnits="userSpaceOnUse" x1="36.01" y1="199.59" x2="51.99" y2="222.41">
-                        <stop stopColor="#00ABAD" />
-                        <stop offset="0.4" stopColor="#86A4E4" />
-                        <stop offset="0.75" stopColor="#4C1EBC" />
-                        <stop offset="1" stopColor="#31008A" />
-                      </linearGradient>
-                      <linearGradient id={`${uid}-cg`} gradientUnits="userSpaceOnUse" x1="44" y1="203" x2="44" y2="219">
-                        <stop stopColor="#ffffff" stopOpacity="0.45" />
-                        <stop offset="0.5" stopColor="#ffffff" stopOpacity="0" />
-                      </linearGradient>
-                      <linearGradient id={`${uid}-cb`} gradientUnits="userSpaceOnUse" x1="36.01" y1="199.59" x2="51.99" y2="222.41">
-                        <stop stopColor="#44D6D6" />
-                        <stop offset="0.207" stopColor="#E4EEFF" stopOpacity="0.5" />
-                        <stop offset="0.495" stopColor="#567CD3" />
-                        <stop offset="1" stopColor="#3D0D9E" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M44 215.5L56 221L44 226.5L32 221L44 215.5Z" fill={`url(#${uid}-d)`} />
-                    <path d="M44 215.5L56 221L44 226.5L32 221L44 215.5" stroke={`url(#${uid}-ds)`} strokeWidth="2" strokeLinejoin="round" />
-                    <rect x="34" y="201" width="20" height="20" rx="10" fill={`url(#${uid}-c)`} />
-                    <rect x="36" y="203" width="16" height="16" rx="8" fill={`url(#${uid}-cg)`} />
-                    <rect x="35" y="202" width="18" height="18" rx="9" stroke={`url(#${uid}-cb)`} strokeWidth="2" />
-                    <path d="M44 206.417V215.583" stroke="#ffffff" strokeOpacity="0.92" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M46.0833 208.083H42.9583C42.1535 208.083 41.5 208.737 41.5 209.542C41.5 210.347 42.1535 211 42.9583 211H45.0417C45.8465 211 46.5 211.653 46.5 212.458C46.5 213.263 45.8465 213.917 45.0417 213.917H41.5" stroke="#ffffff" strokeOpacity="0.92" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  <PriceGem w={30} h={32} />
                 </div>
                 <span className="pcard__price-text">{price}</span>
               </div>

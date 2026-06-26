@@ -43,29 +43,37 @@ function rewrite(content) {
   return content;
 }
 
-// Archivos .tsx de un dir (excluye *Handoff.tsx e index.ts — no se distribuyen).
-// `prefix` = "components/" o "bloques/<Block>/".
-function gatherFiles(dir, prefix) {
+// Archivos .ts/.tsx de un dir, RECURSIVO (los bloques viven en subcarpetas
+// desktop/ y mobile/). Excluye *Handoff.tsx e index.ts — no se distribuyen.
+// `prefix` = "components/" o "bloques/<Block>/". `sub` acumula la subruta.
+function gatherFiles(dir, prefix, sub = "") {
   const out = [];
   for (const name of readdirSync(dir)) {
     const full = join(dir, name);
-    if (!statSync(full).isFile()) continue;
+    if (statSync(full).isDirectory()) {
+      out.push(...gatherFiles(full, prefix, `${sub}${name}/`));
+      continue;
+    }
     if (!/\.tsx?$/.test(name)) continue;
     if (/Handoff\.tsx$/.test(name)) continue;
     if (name === "index.ts") continue;
-    const target = `${prefix}${name}`;
+    const target = `${prefix}${sub}${name}`;
     const raw = readFileSync(full, "utf8");
     out.push({ name, target, raw, content: rewrite(raw) });
   }
   return out;
 }
 
-// Componentes referenciados en un archivo (@/src/components/X/)
+// Componentes referenciados en un archivo. Detecta DOS estilos de import:
+//   · alias:    @/src/components/X            (con o sin /sub-path)
+//   · relativo: ../../../components/X          (el que usan los bloques)
 function compDepsOf(raw) {
   const set = new Set();
-  const re = /@\/src\/components\/([\w-]+)\//g;
+  const reAlias = /@\/src\/components\/([\w-]+)/g;
+  const reRel = /["'](?:\.\.\/)+components\/([\w-]+)/g;
   let m;
-  while ((m = re.exec(raw)) !== null) set.add(m[1]);
+  while ((m = reAlias.exec(raw)) !== null) set.add(m[1]);
+  while ((m = reRel.exec(raw)) !== null) set.add(m[1]);
   return [...set];
 }
 
@@ -83,8 +91,26 @@ function blockFileDepsOf(raw) {
 const compRoot = join(SRC, "components");
 const components = {}; // Name -> { Name, name, files, deps }
 
-for (const Name of listDirs(compRoot)) {
-  const files = gatherFiles(join(compRoot, Name), "components/");
+// Los componentes pueden ser ARCHIVOS PLANOS (src/components/X.tsx — el caso
+// actual) o SUBCARPETAS (src/components/X/X.tsx). Soportamos ambos.
+for (const entry of readdirSync(compRoot)) {
+  const full = join(compRoot, entry);
+  const st = statSync(full);
+
+  let Name, files;
+  if (st.isDirectory()) {
+    Name = entry;
+    files = gatherFiles(full, "components/");
+  } else {
+    if (!/\.tsx?$/.test(entry)) continue;
+    if (/Handoff\.tsx$/.test(entry)) continue;
+    if (entry === "index.ts") continue;
+    Name = entry.replace(/\.tsx?$/, "");
+    const raw = readFileSync(full, "utf8");
+    files = [{ name: entry, target: `components/${entry}`, raw, content: rewrite(raw) }];
+  }
+  if (files.length === 0) continue;
+
   const deps = [...new Set(files.flatMap(function d(f) { return compDepsOf(f.raw); }))].filter(function self(d) { return d !== Name; });
   components[Name] = { Name, name: Name.toLowerCase(), files, deps };
 }

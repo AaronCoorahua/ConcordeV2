@@ -4,6 +4,8 @@ import { join } from "node:path";
 import Homepage, { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/homepage/desktop/Homepage";
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/dimensions";
+import AppHeader from "@/src/blocks/header/desktop/Header";
+import { HEADER_HEIGHT } from "@/src/blocks/header/desktop/dimensions";
 import Header from "@/app/_components/Header";
 import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_components/BlockViewer";
 import RequiredComponents, { type RequiredItem } from "@/app/blocks/_components/RequiredComponents";
@@ -61,18 +63,24 @@ const SIDEBAR_FILES: BlockFile[] = [
   }),
 ];
 
-const FILES: BlockFile[] = [...BLOCK_FILES, ...COMPONENT_FILES, ...SIDEBAR_FILES];
+// El bloque Header (barra superior) → su código también aparece en /code
+const HEADER_FILES: BlockFile[] = [
+  { path: "src/blocks/header/desktop/Header.tsx", code: readSrc("src/blocks/header/desktop/Header.tsx") },
+  { path: "src/components/Button.tsx", code: readSrc("src/components/Button.tsx") },
+];
 
-// ── Composición: Sidebar (izq) + Homepage (arranca bajo el header del sidebar) ──
-const SIDEBAR_HEADER_H = 60;
+const FILES: BlockFile[] = [...BLOCK_FILES, ...COMPONENT_FILES, ...SIDEBAR_FILES, ...HEADER_FILES];
+
+// ── Composición: Sidebar (izq) + [Header arriba + Homepage] (col. derecha) ──
 const COMBINED_WIDTH = SIDEBAR_WIDTH + HOMEPAGE_WIDTH;
-const COMBINED_HEIGHT = Math.max(SIDEBAR_HEIGHT, SIDEBAR_HEADER_H + HOMEPAGE_HEIGHT);
+const COMBINED_HEIGHT = Math.max(SIDEBAR_HEIGHT, HEADER_HEIGHT + HOMEPAGE_HEIGHT);
 
-// Layout flex: al colapsar el Sidebar su width se anima y el Homepage lo sigue (queda pegado).
+// Layout flex: al colapsar el Sidebar su width se anima y la columna lo sigue (queda pegada).
 const CANVAS = (
   <div style={{ display: "flex", alignItems: "flex-start", width: COMBINED_WIDTH, height: COMBINED_HEIGHT, background: "#ffffff" }}>
-    <Sidebar />
-    <div style={{ marginTop: SIDEBAR_HEADER_H, flexShrink: 0 }}>
+    <Sidebar height={COMBINED_HEIGHT} />
+    <div style={{ display: "flex", flexDirection: "column", flexShrink: 0 }}>
+      <AppHeader />
       <Homepage />
     </div>
   </div>
