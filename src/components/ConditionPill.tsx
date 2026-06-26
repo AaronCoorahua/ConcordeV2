@@ -17,6 +17,9 @@ import type { JSX, ReactNode } from "react";
 export interface ConditionPillProps {
   /** Texto dentro de la píldora (editable) */
   children?: ReactNode;
+  /** "filled" = lila (condición activa, p.ej. «Con…»). "outline" = blanca con
+   *  texto gris (condición no incluida, p.ej. «Sin…»). Default "filled". */
+  variant?: "filled" | "outline";
   className?: string;
 }
 
@@ -64,13 +67,22 @@ const CONDITIONPILL_STYLES = `
   position: relative;
   z-index: 1;
 }
+/* Variante outline: blanca, texto gris, sombra suave (condición NO incluida) */
+.pcondpill--outline {
+  background-image: none;
+  background-color: #ffffff;
+  color: #9AA1AC;
+  text-shadow: none;
+  box-shadow: rgba(153,161,175,0.3) 0px 4px 8px;
+}
+.pcondpill--outline::before { display: none; }
 `;
 
 let _stylesInjected = false;
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function ConditionPill({ children = "Etiqueta", className = "" }: ConditionPillProps): JSX.Element {
+export default function ConditionPill({ children = "Etiqueta", variant = "filled", className = "" }: ConditionPillProps): JSX.Element {
   if (typeof document !== "undefined" && !_stylesInjected) {
     if (!document.getElementById(STYLE_ID)) {
       const el = document.createElement("style");
@@ -84,7 +96,7 @@ export default function ConditionPill({ children = "Etiqueta", className = "" }:
   return (
     <>
       <style id={`${STYLE_ID}-ssr`} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: CONDITIONPILL_STYLES }} />
-      <span className={["pcondpill", className].filter(Boolean).join(" ")}>
+      <span className={["pcondpill", variant === "outline" ? "pcondpill--outline" : "", className].filter(Boolean).join(" ")}>
         <span className="pcondpill__text">{children}</span>
       </span>
     </>

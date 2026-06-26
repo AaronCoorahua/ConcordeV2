@@ -77,12 +77,16 @@ function compDepsOf(raw) {
   return [...set];
 }
 
-// Archivos de bloque referenciados (@/src/blocks/B/file) — para deps cross-bloque.
-function blockFileDepsOf(raw) {
+// Otros BLOQUES referenciados por un archivo (cross-bloque). Detecta alias
+// (@/src/blocks/B/...) y relativo (../../B/sub/...). Devuelve nombres de bloque;
+// el llamador filtra los que existan e incluye TODOS sus archivos.
+function blockRefsOf(raw) {
   const set = new Set();
-  const re = /@\/src\/blocks\/([\w-]+)\/([\w-]+)/g;
+  const reAlias = /@\/src\/blocks\/([\w-]+)\//g;
+  const reRel = /["'](?:\.\.\/)+([\w-]+)\//g;
   let m;
-  while ((m = re.exec(raw)) !== null) set.add(`${m[1]}/${m[2]}`);
+  while ((m = reAlias.exec(raw)) !== null) set.add(m[1]);
+  while ((m = reRel.exec(raw)) !== null) set.add(m[1]);
   return [...set];
 }
 
@@ -179,15 +183,19 @@ for (const BlockName of listDirs(blockRoot)) {
   const compDeps = [...new Set(blockFiles.flatMap(function d(f) { return compDepsOf(f.raw); }))];
   for (const [k, v] of collectComponents(compDeps)) merged.set(k, v);
 
-  // Archivos de OTROS bloques referenciados (ej. SalaMobile → Sala/StatPill),
-  // incluyendo los componentes que ESOS archivos usen (ej. StatPill → SendBidIcon).
+  // OTROS bloques referenciados (ej. DetalleMobile → bloque Header). Incluimos
+  // TODOS los archivos del bloque referido + el cierre de componentes que usen,
+  // así el bloque distribuido trae sus dependencias cross-bloque completas.
+  const refBlocks = new Set();
   for (const f of blockFiles) {
-    for (const ref of blockFileDepsOf(f.raw)) {
-      if (ref.startsWith(`${BlockName}/`)) continue; // mismo bloque, ya incluido
-      const dep = allBlockFiles.get(ref);
-      if (!dep) continue;
-      merged.set(dep.target, dep);
-      for (const [k, v] of collectComponents(compDepsOf(dep.raw))) merged.set(k, v);
+    for (const rb of blockRefsOf(f.raw)) {
+      if (rb !== BlockName && blockGathered[rb]) refBlocks.add(rb);
+    }
+  }
+  for (const rb of refBlocks) {
+    for (const df of blockGathered[rb]) {
+      merged.set(df.target, df);
+      for (const [k, v] of collectComponents(compDepsOf(df.raw))) merged.set(k, v);
     }
   }
 

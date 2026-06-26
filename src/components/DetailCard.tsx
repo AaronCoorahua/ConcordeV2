@@ -280,6 +280,14 @@ function GroupIcon(): JSX.Element {
   );
 }
 
+function MessageIcon(): JSX.Element {
+  return (
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path d="M18 7.12C18 6.78052 17.8703 6.45495 17.6395 6.2149C17.4087 5.97486 17.0957 5.84 16.7692 5.84H14.3077V3.28C14.3077 2.94052 14.178 2.61495 13.9472 2.3749C13.7164 2.13486 13.4033 2 13.0769 2H3.23077C2.90435 2 2.5913 2.13486 2.36048 2.3749C2.12967 2.61495 2 2.94052 2 3.28V13.52C2.00036 13.6404 2.03337 13.7583 2.09525 13.86C2.15712 13.9618 2.24534 14.0434 2.34978 14.0953C2.45422 14.1473 2.57063 14.1676 2.68565 14.1538C2.80067 14.1401 2.90962 14.0929 3 14.0176L5.69231 11.76V14.16C5.69231 14.4995 5.82198 14.825 6.05279 15.0651C6.28361 15.3051 6.59666 15.44 6.92308 15.44H14.1223L17 17.8576C17.1089 17.9492 17.2446 17.9994 17.3846 18C17.5478 18 17.7044 17.9326 17.8198 17.8125C17.9352 17.6925 18 17.5297 18 17.36V7.12ZM14.7269 14.3024C14.618 14.2108 14.4824 14.1606 14.3423 14.16H6.92308V11.6H13.0769C13.4033 11.6 13.7164 11.4651 13.9472 11.2251C14.178 10.9851 14.3077 10.6595 14.3077 10.32V7.12H16.7692V16.02L14.7269 14.3024Z" />
+    </svg>
+  );
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function DetailCard({
@@ -291,20 +299,26 @@ export default function DetailCard({
   views = 11,
   likes = 11,
   participants = 11,
-  title = "¡Oportunidad para el que sabe!",
+  title,
   priceLabel = "Precio Base:",
   price = "US$ 12,999",
-  commission = "Comisión: 7.5% del valor de compra o mínimo >S< 50",
+  commission,
   liked,
   onLikeChange,
-  ctaLabel = "Participa",
+  ctaLabel,
   onParticipate,
   className = "",
 }: DetailCardProps): JSX.Element {
   useId();
 
-  const resolvedStartLabel = startLabel ?? (variant === "negotiable" ? "Cierra" : "Inicia");
-  const resolvedBanner = bannerText ?? (variant === "negotiable" ? "¡Aprende a negociar con Subastin!" : "");
+  // Defaults por variante. En negotiable el cuerpo es más corto (sin fila de
+  // precio) pero lleva banner teal → el alto total queda igual que en live.
+  const isNeg = variant === "negotiable";
+  const resolvedStartLabel = startLabel ?? (isNeg ? "Cierra" : "Inicia");
+  const resolvedBanner = bannerText ?? (isNeg ? "¡Aprende a negociar con Subastin!" : "");
+  const resolvedTitle = title ?? (isNeg ? "Aprovecha esta oportunidad y haz una propuesta al vendedor." : "¡Oportunidad para el que sabe!");
+  const resolvedCta = ctaLabel ?? (isNeg ? "Negocia ahora" : "Participa");
+  const resolvedCommission = commission ?? (isNeg ? "Comisión >S< 0" : "Comisión: 7.5% del valor de compra o mínimo >S< 50");
 
   if (typeof document !== "undefined" && !_stylesInjected) {
     if (!document.getElementById(STYLE_ID)) {
@@ -337,7 +351,7 @@ export default function DetailCard({
           <div className="pdetail__stats">
             <span className="pdetail__stat"><b>{views}</b><span className="pdetail__statico"><EyeIcon /></span></span>
             <span className="pdetail__stat"><b>{likes}</b></span>
-            <span className="pdetail__stat"><span className="pdetail__statico"><GroupIcon /></span><b>{participants}</b></span>
+            <span className="pdetail__stat"><span className="pdetail__statico">{isNeg ? <MessageIcon /> : <GroupIcon />}</span><b>{participants}</b></span>
           </div>
         </div>
 
@@ -346,13 +360,15 @@ export default function DetailCard({
 
         {/* Body */}
         <div className="pdetail__body">
-          <p className="pdetail__title">{title}</p>
-          <button type="button" className="pdetail__cta" onClick={onParticipate}>{ctaLabel}</button>
-          <div className="pdetail__price">
-            <PriceIcon size="md" title="Precio base" />
-            <span>{priceLabel} <b>{price}</b></span>
-          </div>
-          <p className="pdetail__commission">{commission}</p>
+          <p className="pdetail__title">{resolvedTitle}</p>
+          <button type="button" className="pdetail__cta" onClick={onParticipate}>{resolvedCta}</button>
+          {!isNeg && (
+            <div className="pdetail__price">
+              <PriceIcon size="md" title="Precio base" />
+              <span>{priceLabel} <b>{price}</b></span>
+            </div>
+          )}
+          <p className="pdetail__commission">{resolvedCommission}</p>
         </div>
       </div>
     </>

@@ -14,6 +14,7 @@ import ConditionPill from "../../../components/ConditionPill";
 import Button, { CalendarIcon } from "../../../components/Button";
 import CardTitle from "../../../components/CardTitle";
 import OfferCard from "../../../components/OfferCard";
+import { DETALLE_PILLS, type DetalleVariant } from "../pills";
 
 // Título del accordion VISITAS · dot verde + texto (CardTitle acepta nodos)
 const VISITAS_TITLE = (
@@ -27,18 +28,24 @@ const VISITAS_TITLE = (
 // lateral 10px y texto 12px/14px para que las etiquetas largas (p.ej. «Cuota
 // mínima de 2 participantes») entren en ese ancho. `.pcondpill.dt-pill` gana en
 // especificidad al `.pcondpill` base.
-const DETALLE_PILL_STYLES = `.pcondpill.dt-pill { width: 136px; box-sizing: border-box; padding-left: 10px; padding-right: 10px; font-size: 12px; line-height: 14px; }`;
+const DETALLE_PILL_STYLES = `
+.pcondpill.dt-pill { width: 136px; box-sizing: border-box; padding-left: 10px; padding-right: 10px; font-size: 12px; line-height: 14px; }
+/* Pill solitaria en fila impar (3 pills) → centrada */
+.pcondpill.dt-pill.dt-pill-c { grid-column: 1 / -1; justify-self: center; }
+`;
 
 const DETALLE_IMAGES = Array.from({ length: 8 }, function img() { return "/demo/bronco.jpg"; });
 
 export interface DetalleProps {
+  /** Variante de la oferta — controla AuctionStatus/CardViewer/DetailCard y los pills. */
+  variant?: DetalleVariant;
   className?: string;
 }
 
 export const DETALLE_WIDTH = 799;
 export const DETALLE_HEIGHT = 1483;
 
-export default function Detalle({ className = "" }: DetalleProps): JSX.Element {
+export default function Detalle({ variant = "live", className = "" }: DetalleProps): JSX.Element {
   return (
     <div
       className={className}
@@ -71,8 +78,8 @@ export default function Detalle({ className = "" }: DetalleProps): JSX.Element {
         <div style={{ display: "flex", flexDirection: "column", gap: 16, width: 443 }}>
           {/* AuctionStatus pegado encima del CardViewer (sin gap) */}
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <AuctionStatus />
-            <CardViewer images={DETALLE_IMAGES} />
+            <AuctionStatus variant={variant} />
+            <CardViewer images={DETALLE_IMAGES} variant={variant} />
           </div>
           <Accordion title="INFORMACIÓN GENERAL" />
           <Accordion title="CONDICIONES DE OFRECIMIENTO" />
@@ -80,9 +87,9 @@ export default function Detalle({ className = "" }: DetalleProps): JSX.Element {
 
         {/* Columna derecha */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16, width: 311 }}>
-          <DetailCard variant="live" />
+          <DetailCard variant={variant} />
 
-          {/* Card de fondo (311×132) con las 4 ConditionPills en grid 2×2, cada una 136×46 */}
+          {/* Card de fondo (311×132) con las ConditionPills (cambian según variante) */}
           <div
             style={{
               width: 311,
@@ -97,10 +104,10 @@ export default function Detalle({ className = "" }: DetalleProps): JSX.Element {
               rowGap: 16,
             }}
           >
-            <ConditionPill className="dt-pill">Con Precio Reserva</ConditionPill>
-            <ConditionPill className="dt-pill">Con Opción a Visitas</ConditionPill>
-            <ConditionPill className="dt-pill">Con Comisión</ConditionPill>
-            <ConditionPill className="dt-pill">Cuota mínima de 2 participantes</ConditionPill>
+            {DETALLE_PILLS[variant].map(function renderPill(p, i, arr) {
+              const lone = arr.length % 2 === 1 && i === arr.length - 1;
+              return <ConditionPill key={i} className={`dt-pill${lone ? " dt-pill-c" : ""}`} variant={p.tone}>{p.label}</ConditionPill>;
+            })}
           </div>
 
           {/* Subascoins Banner · placeholder 311 × 112 */}
