@@ -56,13 +56,14 @@ const DEFAULT_SECONDARY: SidebarNavItem[] = [
 const STYLE_ID = "concorde-sidebar-styles";
 const STYLES = `
 .sb-root {
-  transition: width 0.28s ${EASE};
+  transition: width 0.28s ${EASE}, height 0.28s ${EASE};
 }
 .sb-content-frame {
   border: 1.5px solid transparent;
+  /* Borde VYStrokes1 — dirección exacta del SVG (paint20: vector 283.9,21.1 → 94deg) */
   background:
     linear-gradient(#2E0F70, #2E0F70) padding-box,
-    linear-gradient(86deg, #FFFFFF 0%, #F4AC59 22.1%, #8460E5 74.5%, #FFFFFF 100%) border-box;
+    linear-gradient(94deg, #FFFFFF 0%, #F4AC59 22.1%, #8460E5 74.5%, #FFFFFF 100%) border-box;
   transition: width 0.28s ${EASE};
 }
 .sb-banner {
@@ -97,6 +98,10 @@ export interface SidebarProps {
   /** Alto del sidebar. Por defecto SIDEBAR_HEIGHT; pásale el alto del canvas
    *  cuando el contenido a la derecha sea más alto, para que crezca con él. */
   height?: number | string;
+  /** Colapsado (controlado). Si se omite, el Sidebar maneja su estado interno. */
+  collapsed?: boolean;
+  /** Callback al alternar el colapsado (para reaccionar desde el contenedor). */
+  onCollapsedChange?: (collapsed: boolean) => void;
   onItemClick?: (id: string) => void;
   onBannerCta?: () => void;
 }
@@ -107,11 +112,20 @@ export default function Sidebar({
   secondaryItems = DEFAULT_SECONDARY,
   defaultActiveId,
   height = SIDEBAR_HEIGHT,
+  collapsed: collapsedProp,
+  onCollapsedChange,
   onItemClick,
   onBannerCta,
 }: SidebarProps): JSX.Element {
-  const [collapsed, setCollapsed] = useState(false);
+  const [internalCollapsed, setInternalCollapsed] = useState(false);
+  const collapsed = collapsedProp ?? internalCollapsed;
   const [activeId,  setActiveId]  = useState(defaultActiveId);
+
+  function toggleCollapsed(): void {
+    const next = !collapsed;
+    if (collapsedProp === undefined) setInternalCollapsed(next);
+    onCollapsedChange?.(next);
+  }
 
   if (typeof document !== "undefined" && !_injected) {
     if (!document.getElementById(STYLE_ID)) {
@@ -160,7 +174,7 @@ export default function Sidebar({
         <SidebarHeader
           logo={logo}
           collapsed={collapsed}
-          onToggle={() => setCollapsed(c => !c)}
+          onToggle={toggleCollapsed}
         />
 
         {/* Área de contenido 216×935 — borde VYStrokes1 */}
@@ -179,7 +193,7 @@ export default function Sidebar({
           {/* Nav items */}
           <nav
             aria-label="Navegación principal"
-            style={{ padding: "8px 0 0", display: "flex", flexDirection: "column", gap: 6 }}
+            style={{ padding: 0, display: "flex", flexDirection: "column", gap: 6 }}
           >
             {primaryItems.map((item) => (
               <SidebarItem
