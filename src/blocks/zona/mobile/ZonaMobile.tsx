@@ -19,9 +19,12 @@ import InfoIcon from "../../../components/InfoIcon";
 import ProfileButton from "../../../components/ProfileButton";
 import WalletBalanceCard from "../../../components/WalletBalanceCard";
 import ActivityCard from "../../../components/ActivityCard";
+import CardTitle from "../../../components/CardTitle";
+import OfferCard from "../../../components/OfferCard";
+import BadgeStatus from "../../../components/BadgeStatus";
 
 export const ZONA_MOBILE_WIDTH = 420;
-export const ZONA_MOBILE_HEIGHT = 823;
+export const ZONA_MOBILE_HEIGHT = 2059;
 
 const ZM_STYLES = `
 /* WalletBalanceCard — override mobile (388×206, botón morado) */
@@ -70,6 +73,23 @@ const ZM_STYLES = `
   font-weight: 700;
   color: #3B1782;
   margin-top: 2px;
+}
+/* Mobile OfferShelf — 388px wide, grid 2×2 de OfferCards 170×232 */
+.zm-shelf {
+  width: 388px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 8px 4px rgba(0,0,0,0.08);
+  padding: 20px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.zm-shelf__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 `;
 
@@ -173,6 +193,53 @@ export default function ZonaMobile({ username = "ZAEX5G", className = "" }: Zona
           }}
         >
           SECONDARY BANNER
+        </div>
+
+        {/* OfferShelf mobile — RECOMENDADOS (2×2 grid) */}
+        <div className="zm-shelf">
+          <header style={{ padding: "0 8px" }}>
+            <CardTitle title="RECOMENDADOS" subtitle="4 Ofertas" titleSize={16} subtitleSize={14} />
+          </header>
+          <div className="zm-shelf__grid">
+            <OfferCard variant="live" name="Audi Q3" year={2026} price="US$ 9,999" imageSrc="/demo/bronco.jpg" elevated />
+            <OfferCard variant="live" name="Audi Q3" year={2026} price="US$ 9,999" imageSrc="/demo/bronco.jpg" badge={<BadgeStatus variant="live" />} elevated />
+            <OfferCard variant="negotiable" name="Audi Q3" year={2026} imageSrc="/demo/bronco.jpg" elevated />
+            <OfferCard variant="live" name="Audi Q3" year={2026} price="US$ 9,999" imageSrc="/demo/bronco.jpg" elevated />
+          </div>
+        </div>
+
+        {/* OfferShelf mobile — ME INTERESA (2×2 grid) */}
+        <div className="zm-shelf">
+          <header style={{ padding: "0 8px" }}>
+            <CardTitle title="ME INTERESA" subtitle="4 Ofertas" titleSize={16} subtitleSize={14} />
+          </header>
+          <div className="zm-shelf__grid">
+            <OfferCard variant="live" name="Audi Q3" year={2026} price="US$ 9,999" imageSrc="/demo/bronco.jpg" elevated />
+            <OfferCard variant="live" name="Audi Q3" year={2026} price="US$ 9,999" imageSrc="/demo/bronco.jpg" badge={<BadgeStatus variant="live" />} elevated />
+            <OfferCard variant="negotiable" name="Audi Q3" year={2026} imageSrc="/demo/bronco.jpg" elevated />
+            <OfferCard variant="live" name="Audi Q3" year={2026} price="US$ 9,999" imageSrc="/demo/bronco.jpg" elevated />
+          </div>
+        </div>
+
+        {/* CENTRO DE AYUDA — 388×116 */}
+        <div
+          data-slot="help-banner"
+          style={{
+            width: 388,
+            height: 116,
+            boxSizing: "border-box",
+            borderRadius: 8,
+            background: "#E9EAEC",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "monospace",
+            fontSize: 12,
+            letterSpacing: "0.08em",
+            color: "#9AA1AC",
+          }}
+        >
+          CENTRO DE AYUDA
         </div>
 
       </div>
