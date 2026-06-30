@@ -7,6 +7,8 @@
  *   · Header 420×64 logueado → «Bienvenido, ZAEX5G»
  *   · UserProfileCard mobile 388×132 (2 filas: saludo + stats)
  *   · WalletBalanceCard mobile 388×206 (botón CTA morado)
+ *   · ActivityCard mobile 388×221 (grid 2×2 de pills)
+ *   · Banner secundario 388×120
  */
 
 import type { JSX } from "react";
@@ -16,13 +18,16 @@ import StarIcon from "../../../components/StarIcon";
 import InfoIcon from "../../../components/InfoIcon";
 import ProfileButton from "../../../components/ProfileButton";
 import WalletBalanceCard from "../../../components/WalletBalanceCard";
+import ActivityCard from "../../../components/ActivityCard";
 
 export const ZONA_MOBILE_WIDTH = 420;
-export const ZONA_MOBILE_HEIGHT = 450;
+export const ZONA_MOBILE_HEIGHT = 823;
 
 const ZM_STYLES = `
 /* WalletBalanceCard — override mobile (388×206, botón morado) */
 .zm-wallet.wbc { width: 388px; height: 206px; border-radius: 8px; }
+/* ActivityCard — override mobile (388×221) */
+.zm-activity.actcard { width: 388px; border-radius: 8px; }
 .zm-wallet .wbc__acquire {
   background-image:
     linear-gradient(159deg, #8460E5 0%, #3B1782 100%),
@@ -145,6 +150,30 @@ export default function ZonaMobile({ username = "ZAEX5G", className = "" }: Zona
 
         {/* WalletBalanceCard mobile — 388×206, botón CTA morado */}
         <WalletBalanceCard className="zm-wallet" />
+
+        {/* ActivityCard mobile — 388×221, mismo grid 2×2 de pills */}
+        <ActivityCard className="zm-activity" />
+
+        {/* Banner secundario — 388×120 */}
+        <div
+          data-slot="secondary-banner"
+          style={{
+            width: 388,
+            height: 120,
+            boxSizing: "border-box",
+            borderRadius: 8,
+            background: "#E9EAEC",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "monospace",
+            fontSize: 12,
+            letterSpacing: "0.08em",
+            color: "#9AA1AC",
+          }}
+        >
+          SECONDARY BANNER
+        </div>
 
       </div>
     </div>
