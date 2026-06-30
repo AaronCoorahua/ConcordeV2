@@ -23,8 +23,8 @@ import CardTitle from "../../../components/CardTitle";
 import OfferCard from "../../../components/OfferCard";
 import BadgeStatus from "../../../components/BadgeStatus";
 
-export const ZONA_MOBILE_WIDTH = 420;
-export const ZONA_MOBILE_HEIGHT = 2059;
+import { ZONA_MOBILE_WIDTH, ZONA_MOBILE_HEIGHT } from "./dimensions";
+export { ZONA_MOBILE_WIDTH, ZONA_MOBILE_HEIGHT } from "./dimensions";
 
 const ZM_STYLES = `
 /* WalletBalanceCard — override mobile (388×206, botón morado) */

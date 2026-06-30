@@ -42,8 +42,8 @@ export interface DetalleProps {
   className?: string;
 }
 
-export const DETALLE_WIDTH = 799;
-export const DETALLE_HEIGHT = 1483;
+import { DETALLE_WIDTH, DETALLE_HEIGHT } from "./dimensions";
+export { DETALLE_WIDTH, DETALLE_HEIGHT } from "./dimensions";
 
 export default function Detalle({ variant = "live", className = "" }: DetalleProps): JSX.Element {
   return (

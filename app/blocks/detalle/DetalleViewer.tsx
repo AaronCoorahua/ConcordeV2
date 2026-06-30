@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import type { JSX, CSSProperties } from "react";
-import Detalle, { DETALLE_WIDTH, DETALLE_HEIGHT } from "@/src/blocks/detalle/desktop/Detalle";
-import DetalleMobile, { DETALLE_MOBILE_WIDTH, DETALLE_MOBILE_HEIGHT } from "@/src/blocks/detalle/mobile/DetalleMobile";
+import Detalle from "@/src/blocks/detalle/desktop/Detalle";
+import { DETALLE_WIDTH, DETALLE_HEIGHT } from "@/src/blocks/detalle/desktop/dimensions";
+import DetalleMobile from "@/src/blocks/detalle/mobile/DetalleMobile";
+import { DETALLE_MOBILE_WIDTH, DETALLE_MOBILE_HEIGHT } from "@/src/blocks/detalle/mobile/dimensions";
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT, SIDEBAR_COLLAPSED_WIDTH } from "@/src/blocks/sidebar/desktop/dimensions";
 import AppHeader from "@/src/blocks/header/desktop/Header";

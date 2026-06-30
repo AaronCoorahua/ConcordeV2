@@ -227,9 +227,80 @@ These enforce consistency across generated components:
 
 ---
 
+## Block Architecture — Estructura canónica
+
+Los bloques son composiciones de componentes que representan páginas o secciones completas.
+
+### Estructura de carpetas
+
+```
+src/blocks/{nombre}/
+  desktop/
+    {NombreBloque}.tsx        ← componente principal ("use client" si tiene estado)
+    dimensions.ts             ← OBLIGATORIO: módulo plano, sin "use client"
+    {Sub}.tsx                 ← sub-componentes opcionales
+  mobile/                     ← solo si existe variante mobile
+    {NombreBloque}Mobile.tsx  ← componente mobile
+    dimensions.ts             ← OBLIGATORIO cuando hay mobile
+  shared/                     ← datos compartidos desktop↔mobile (opcional)
+    {archivo}.ts              ← e.g. pills.ts, liveData.ts
+
+app/blocks/{nombre}/
+  page.tsx                    ← Server Component: readFileSync + RequiredComponents
+  {NombreBloque}Viewer.tsx    ← "use client": SOLO si necesita estado (tabs, controles…)
+```
+
+### Regla de `dimensions.ts`
+
+`dimensions.ts` es un módulo **plano** (sin `"use client"`). Permite que Server Components y Viewers importen dimensiones sin cruzar la barrera cliente (evita `undefined → NaN`).
+
+```ts
+// desktop/dimensions.ts — sin "use client"
+export const NOMBRE_WIDTH  = 798;
+export const NOMBRE_HEIGHT = 1104;
+```
+
+```tsx
+// desktop/NombreBloque.tsx — importa Y re-exporta
+import { NOMBRE_WIDTH, NOMBRE_HEIGHT } from "./dimensions";
+export { NOMBRE_WIDTH, NOMBRE_HEIGHT } from "./dimensions";
+```
+
+```ts
+// Viewer — importa desde dimensions.ts, NO desde el componente
+import NombreBloque from "@/src/blocks/nombre/desktop/NombreBloque";
+import { NOMBRE_WIDTH, NOMBRE_HEIGHT } from "@/src/blocks/nombre/desktop/dimensions";
+```
+
+### Bloques existentes y estado
+
+| Bloque     | Desktop           | Mobile                     | Shared        |
+|------------|-------------------|----------------------------|---------------|
+| `header`   | `dimensions.ts` ✓ | —                          | —             |
+| `sidebar`  | `dimensions.ts` ✓ | —                          | —             |
+| `homepage` | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | —             |
+| `zona`     | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | —             |
+| `detalle`  | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | `pills.ts`    |
+| `sala`     | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | `liveData.ts` |
+
+> Para crear o registrar un bloque: `/block NombreBloque`
+
+---
+
+## Skills disponibles
+
+| Comando          | Descripción |
+|------------------|-------------|
+| `/concorde`      | Genera un componente desde preview Voyager + Figma (5-agent pipeline) |
+| `/concorde-sync` | Sincroniza un componente contra la verdad visual de Figma |
+| `/publish`       | Registra un componente en el catálogo (`/handoff` + REGISTRY) |
+| `/block`         | Crea o registra un bloque de página con arquitectura canónica |
+
+---
+
 ## Useful References
 
 - **Voyager DS preview**: https://voyager-ds.vercel.app/preview/components/pase1 (source of truth for styles & animations)
-- **Concorde skill docs**: `.claude/skills/concorde/SKILL.md` (full 5-agent pipeline spec)
+- **Skill docs**: `.claude/skills/` — un SKILL.md por cada comando
 - **Component catalog**: `http://localhost:3000` (local development)
 - **AGENTS.md**: Read before writing custom code — Next.js version has breaking changes

@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import type { JSX } from "react";
-import Homepage, { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/homepage/desktop/Homepage";
-import HomepageMobile, { HOMEPAGE_MOBILE_WIDTH, HOMEPAGE_MOBILE_HEIGHT } from "@/src/blocks/homepage/mobile/HomepageMobile";
+import Homepage from "@/src/blocks/homepage/desktop/Homepage";
+import { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/homepage/desktop/dimensions";
+import HomepageMobile from "@/src/blocks/homepage/mobile/HomepageMobile";
+import { HOMEPAGE_MOBILE_WIDTH, HOMEPAGE_MOBILE_HEIGHT } from "@/src/blocks/homepage/mobile/dimensions";
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT, SIDEBAR_COLLAPSED_WIDTH } from "@/src/blocks/sidebar/desktop/dimensions";
 import AppHeader from "@/src/blocks/header/desktop/Header";

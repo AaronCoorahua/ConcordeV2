@@ -24,8 +24,8 @@ import OfferCard from "../../../components/OfferCard";
 import Button, { CalendarIcon } from "../../../components/Button";
 import { DETALLE_PILLS, type DetalleVariant } from "../pills";
 
-export const DETALLE_MOBILE_WIDTH = 420;
-export const DETALLE_MOBILE_HEIGHT = 2230;
+import { DETALLE_MOBILE_WIDTH, DETALLE_MOBILE_HEIGHT } from "./dimensions";
+export { DETALLE_MOBILE_WIDTH, DETALLE_MOBILE_HEIGHT } from "./dimensions";
 
 const DETALLE_IMAGES = Array.from({ length: 8 }, function img() { return "/demo/bronco.jpg"; });
 

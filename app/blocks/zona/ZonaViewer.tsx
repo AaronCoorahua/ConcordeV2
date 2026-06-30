@@ -3,7 +3,8 @@
 import { useState } from "react";
 import type { JSX } from "react";
 import Zona, { ZONA_WIDTH, ZONA_HEIGHT } from "@/src/blocks/zona/desktop/Zona";
-import ZonaMobile, { ZONA_MOBILE_WIDTH, ZONA_MOBILE_HEIGHT } from "@/src/blocks/zona/mobile/ZonaMobile";
+import ZonaMobile from "@/src/blocks/zona/mobile/ZonaMobile";
+import { ZONA_MOBILE_WIDTH, ZONA_MOBILE_HEIGHT } from "@/src/blocks/zona/mobile/dimensions";
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT, SIDEBAR_COLLAPSED_WIDTH } from "@/src/blocks/sidebar/desktop/dimensions";
 import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_components/BlockViewer";
