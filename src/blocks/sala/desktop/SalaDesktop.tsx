@@ -22,8 +22,8 @@ export interface SalaProps {
   flashMode?: "bulb" | "spin" | "explode" | "pulse" | "combo" | "shine";
 }
 
-export const SALA_WIDTH = 1023;
-export const SALA_HEIGHT = 1042;
+import { SALA_WIDTH, SALA_HEIGHT } from "./dimensions";
+export { SALA_WIDTH, SALA_HEIGHT } from "./dimensions";
 
 const SALA_IMAGES = ["/demo/bronco.jpg", "/demo/bronco.jpg", "/demo/bronco.jpg", "/demo/bronco.jpg"];
 

@@ -61,9 +61,8 @@ const CTA_STYLES = `
 }
 `;
 
-export const SALAMOBILE_WIDTH = 420;
-export const SALAMOBILE_HEIGHT = 844;
-export const SALAMOBILE_BG = "linear-gradient(116deg, #5F3ED8 0%, #340091 50%, #140046 100%)";
+import { SALAMOBILE_WIDTH, SALAMOBILE_HEIGHT, SALAMOBILE_BG } from "./dimensions";
+export { SALAMOBILE_WIDTH, SALAMOBILE_HEIGHT, SALAMOBILE_BG } from "./dimensions";
 
 export default function SalaMobile({ className = "", live = false, flashColors, flashMode = "bulb" }: SalaMobileProps): JSX.Element {
   const [phase, setPhase] = useState<Phase>("idle");

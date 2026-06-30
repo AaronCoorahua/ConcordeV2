@@ -13,8 +13,8 @@ export interface HomepageProps {
   className?: string;
 }
 
-export const HOMEPAGE_WIDTH = 798;
-export const HOMEPAGE_HEIGHT = 1104;
+import { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "./dimensions";
+export { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "./dimensions";
 
 export default function Homepage({ className = "" }: HomepageProps): JSX.Element {
   return (

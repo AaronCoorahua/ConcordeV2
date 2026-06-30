@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import type { JSX, CSSProperties } from "react";
-import SalaDesktop, { SALA_WIDTH, SALA_HEIGHT } from "@/src/blocks/sala/desktop/SalaDesktop";
-import SalaMobile, { SALAMOBILE_WIDTH, SALAMOBILE_HEIGHT } from "@/src/blocks/sala/mobile/SalaMobile";
+import SalaDesktop from "@/src/blocks/sala/desktop/SalaDesktop";
+import { SALA_WIDTH, SALA_HEIGHT } from "@/src/blocks/sala/desktop/dimensions";
+import SalaMobile from "@/src/blocks/sala/mobile/SalaMobile";
+import { SALAMOBILE_WIDTH, SALAMOBILE_HEIGHT } from "@/src/blocks/sala/mobile/dimensions";
 import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_components/BlockViewer";
 
 const PALETTES: { name: string; colors: string[] }[] = [

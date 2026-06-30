@@ -18,8 +18,8 @@ import OfferCard from "../../../components/OfferCard";
 import BadgeStatus from "../../../components/BadgeStatus";
 import ProfileButton from "../../../components/ProfileButton";
 
-export const HOMEPAGE_MOBILE_WIDTH = 420;
-export const HOMEPAGE_MOBILE_HEIGHT = 1800;
+import { HOMEPAGE_MOBILE_WIDTH, HOMEPAGE_MOBILE_HEIGHT } from "./dimensions";
+export { HOMEPAGE_MOBILE_WIDTH, HOMEPAGE_MOBILE_HEIGHT } from "./dimensions";
 
 // Card blanca de sección (388 de ancho, sombra estándar del homepage)
 const SECTION_CARD = {
