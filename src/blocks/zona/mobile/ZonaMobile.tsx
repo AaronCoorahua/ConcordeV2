@@ -6,6 +6,7 @@
  * Zona de usuario · mobile (420 de ancho):
  *   · Header 420×64 logueado → «Bienvenido, ZAEX5G»
  *   · UserProfileCard mobile 388×132 (2 filas: saludo + stats)
+ *   · WalletBalanceCard mobile 388×206 (botón CTA morado)
  */
 
 import type { JSX } from "react";
@@ -14,11 +15,23 @@ import AvatarZone from "../../../components/AvatarZone";
 import StarIcon from "../../../components/StarIcon";
 import InfoIcon from "../../../components/InfoIcon";
 import ProfileButton from "../../../components/ProfileButton";
+import WalletBalanceCard from "../../../components/WalletBalanceCard";
 
 export const ZONA_MOBILE_WIDTH = 420;
-export const ZONA_MOBILE_HEIGHT = 228;
+export const ZONA_MOBILE_HEIGHT = 450;
 
 const ZM_STYLES = `
+/* WalletBalanceCard — override mobile (388×206, botón morado) */
+.zm-wallet.wbc { width: 388px; height: 206px; border-radius: 8px; }
+.zm-wallet .wbc__acquire {
+  background-image:
+    linear-gradient(159deg, #8460E5 0%, #3B1782 100%),
+    linear-gradient(135deg, #CFBAFF 0%, #FFFFFF 35%, #AE8EFF 65%, #CFBAFF 100%);
+  box-shadow: rgba(255,255,255,0.22) 0 1px 0 2px inset, rgba(132,96,229,0.3) 0 2px 8px;
+}
+.zm-wallet .wbc__acquire:hover {
+  box-shadow: rgba(255,255,255,0.2) 0 1px 0 2px inset, rgba(132,96,229,0.4) 0 8px 24px, rgba(132,96,229,0.25) 0 4px 10px;
+}
 /* Texto degradado "¡Hola, {username}!" */
 .zm-greeting {
   background: linear-gradient(90deg, #ED8936 0%, #ED8936 40%, #8460E5 100%);
@@ -129,6 +142,9 @@ export default function ZonaMobile({ username = "ZAEX5G", className = "" }: Zona
             <ProfileButton>Historial</ProfileButton>
           </div>
         </div>
+
+        {/* WalletBalanceCard mobile — 388×206, botón CTA morado */}
+        <WalletBalanceCard className="zm-wallet" />
 
       </div>
     </div>
