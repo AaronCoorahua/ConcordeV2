@@ -14,7 +14,6 @@
 import type { JSX, MouseEventHandler } from "react";
 import CardTitle from "@/src/components/CardTitle";
 import ProfileButton from "@/src/components/ProfileButton";
-import Button from "@/src/components/Button";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -86,19 +85,57 @@ const STYLES = `
   justify-content: center;
   padding-bottom: 4px;
 }
-/* El CTA usa el Button sm-guest a ancho fijo del diseño (250) con el texto
-   (14px) centrado y el círculo anclado a la izquierda. */
-.wbc__cta .pvbtn-sm {
-  width: 250px;
+/* Botón CTA autónomo — mismo look que sm-guest, texto realmente centrado */
+.wbc__acquire {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
   position: relative;
+  width: 250px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  overflow: hidden;
+  font-family: var(--vmc-font-display, "Plus Jakarta Sans", sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: rgba(0,0,0,0.2) 0 1px 2px;
+  background-image:
+    linear-gradient(135deg, #ED8936 0%, #ED8936 40%, #8460e5 100%),
+    linear-gradient(135deg, #ffffff 0%, #fbc47d 25%, #ae8eff 75%, #ffffff 100%);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: rgba(255,255,255,0.25) 0 1px 0 2px inset, rgba(237,137,54,0.25) 0 2px 6px;
+  transition: transform 0.2s cubic-bezier(0.25,0.8,0.25,1), box-shadow 0.25s;
 }
-.wbc__cta .pvbtn-sm .pvbtn-icon {
+.wbc__acquire::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: linear-gradient(rgba(255,255,255,0.15) 0%, transparent 55%);
+  pointer-events: none;
+}
+.wbc__acquire-circle {
   position: absolute;
   left: 4px;
-  top: 50%;
-  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
 }
+.wbc__acquire:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: rgba(255,255,255,0.2) 0 1px 0 2px inset, rgba(132,96,229,0.3) 0 6px 18px, rgba(237,137,54,0.35) 0 3px 8px;
+}
+.wbc__acquire:active {
+  transform: scale(0.97) translateY(1px);
+  box-shadow: rgba(0,0,0,0.22) 0 2px 4px 2px inset;
+}
+@media (prefers-reduced-motion: reduce) { .wbc__acquire { transition: none; } }
 `;
 
 let _stylesInjected = false;
@@ -152,9 +189,10 @@ export default function WalletBalanceCard({
           </div>
 
           <div className="wbc__cta">
-            <Button variant="sm-guest" icon={<span aria-hidden="true" />} onClick={onAcquire}>
+            <button className="wbc__acquire" type="button" onClick={onAcquire}>
+              <span className="wbc__acquire-circle" aria-hidden="true" />
               Adquiere SubasCoins
-            </Button>
+            </button>
           </div>
         </div>
       </section>

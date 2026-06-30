@@ -37,6 +37,7 @@ const REQUIRED: RequiredItem[] = [
 const BLOCK_FILES: BlockFile[] = [
   { path: "src/blocks/zona/desktop/Zona.tsx", code: readSrc("src/blocks/zona/desktop/Zona.tsx") },
   { path: "src/blocks/zona/desktop/dimensions.ts", code: readSrc("src/blocks/zona/desktop/dimensions.ts") },
+  { path: "src/blocks/zona/mobile/ZonaMobile.tsx", code: readSrc("src/blocks/zona/mobile/ZonaMobile.tsx") },
 ];
 
 // Componentes que usa el bloque (UserProfileCard + sus dependencias transitivas)

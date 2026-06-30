@@ -60,13 +60,13 @@ const STYLES = `
   row-gap: 28px;
   align-content: center;
 }
-/* ── Pill de actividad — badge translúcido + label sobre gradiente ── */
+/* ── Pill de actividad — badge absoluto izquierda + label centrado ── */
 .actpill {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
   height: 40px;
-  padding: 0 8px 0 4px;
+  padding: 0 8px;
   border-radius: 9999px;
   border: 2px solid transparent;
   position: relative;
@@ -86,7 +86,10 @@ const STYLES = `
     linear-gradient(135deg, #CFBAFF 0%, #FFFFFF 35%, #AE8EFF 65%, #CFBAFF 100%) border-box;
   box-shadow: 0 4px 10px rgba(59,23,130,0.32), inset 0 1px 0 rgba(255,255,255,0.22);
 }
+/* Badge absoluto — no ocupa espacio flex, siempre pegado a la izquierda */
 .actpill__badge {
+  position: absolute;
+  left: 4px;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -94,19 +97,17 @@ const STYLES = `
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
   font-size: 15px;
   font-weight: 600;
   color: #ffffff;
 }
+/* Label centrado respecto al ancho total del pill */
 .actpill__label {
-  flex: 1;
-  text-align: center;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.15;
   letter-spacing: -0.01em;
-  min-width: 0;
+  text-align: center;
 }
 `;
 
