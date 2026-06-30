@@ -64,9 +64,8 @@ const STYLES = `
 .actpill {
   display: flex;
   align-items: center;
-  justify-content: center;
   height: 40px;
-  padding: 0 8px;
+  padding: 0 8px 0 40px;
   border-radius: 9999px;
   border: 2px solid transparent;
   position: relative;
@@ -90,6 +89,7 @@ const STYLES = `
 .actpill__badge {
   position: absolute;
   left: 4px;
+  top: 4px;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -103,6 +103,8 @@ const STYLES = `
 }
 /* Label centrado respecto al ancho total del pill */
 .actpill__label {
+  flex: 1;
+  min-width: 0;
   font-size: 12px;
   font-weight: 400;
   line-height: 1.15;
