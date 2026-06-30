@@ -1,6 +1,7 @@
 import type { JSX, ReactNode } from "react";
 import Homepage, { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/homepage/desktop/Homepage";
 import Detalle, { DETALLE_WIDTH, DETALLE_HEIGHT } from "@/src/blocks/detalle/desktop/Detalle";
+import Zona, { ZONA_WIDTH, ZONA_HEIGHT } from "@/src/blocks/zona/desktop/Zona";
 import SalaDesktop, { SALA_WIDTH, SALA_HEIGHT } from "@/src/blocks/sala/desktop/SalaDesktop";
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/dimensions";
@@ -35,9 +36,20 @@ const HOMEPAGE_COMBINED = (
   </div>
 );
 
+// Zona se compone con el Sidebar pegado a la izquierda (la Zona ya trae su header)
+const ZONA_COMBINED_W = SIDEBAR_WIDTH + ZONA_WIDTH;
+const ZONA_COMBINED_H = Math.max(SIDEBAR_HEIGHT, ZONA_HEIGHT);
+const ZONA_COMBINED = (
+  <div style={{ display: "flex", alignItems: "flex-start", width: ZONA_COMBINED_W, height: ZONA_COMBINED_H, background: "#ffffff" }}>
+    <Sidebar height={ZONA_COMBINED_H} />
+    <Zona />
+  </div>
+);
+
 const BLOCKS: BlockEntry[] = [
   { id: "homepage", name: "Homepage", width: HP_COMBINED_W, height: HP_COMBINED_H, node: HOMEPAGE_COMBINED },
   { id: "detalle",  name: "Detalle",  width: DETALLE_WIDTH,  height: DETALLE_HEIGHT,  node: <Detalle /> },
+  { id: "zona",     name: "Zona",     width: ZONA_COMBINED_W, height: ZONA_COMBINED_H, node: ZONA_COMBINED },
   { id: "sala",     name: "Sala",     width: SALA_WIDTH,     height: SALA_HEIGHT,     node: <SalaDesktop /> },
   { id: "sidebar",  name: "Sidebar",  width: SIDEBAR_WIDTH,  height: SIDEBAR_HEIGHT,
     /* El sidebar mide 226×1042 → scale normal ≈ 0.22 → 49px ancho (invisible).

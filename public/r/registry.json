@@ -9,6 +9,12 @@
       "url": "https://concorde-v2-theta.vercel.app/r/accordion.json"
     },
     {
+      "name": "activitycard",
+      "type": "registry:component",
+      "title": "ActivityCard",
+      "url": "https://concorde-v2-theta.vercel.app/r/activitycard.json"
+    },
+    {
       "name": "amountoptiongroup",
       "type": "registry:component",
       "title": "AmountOptionGroup",
@@ -111,6 +117,12 @@
       "url": "https://concorde-v2-theta.vercel.app/r/docbutton.json"
     },
     {
+      "name": "infoicon",
+      "type": "registry:component",
+      "title": "InfoIcon",
+      "url": "https://concorde-v2-theta.vercel.app/r/infoicon.json"
+    },
+    {
       "name": "input",
       "type": "registry:component",
       "title": "Input",
@@ -133,6 +145,12 @@
       "type": "registry:component",
       "title": "OfferIcon",
       "url": "https://concorde-v2-theta.vercel.app/r/offericon.json"
+    },
+    {
+      "name": "offershelf",
+      "type": "registry:component",
+      "title": "OfferShelf",
+      "url": "https://concorde-v2-theta.vercel.app/r/offershelf.json"
     },
     {
       "name": "offertype",
@@ -231,6 +249,18 @@
       "url": "https://concorde-v2-theta.vercel.app/r/todayicon.json"
     },
     {
+      "name": "userprofilecard",
+      "type": "registry:component",
+      "title": "UserProfileCard",
+      "url": "https://concorde-v2-theta.vercel.app/r/userprofilecard.json"
+    },
+    {
+      "name": "walletbalancecard",
+      "type": "registry:component",
+      "title": "WalletBalanceCard",
+      "url": "https://concorde-v2-theta.vercel.app/r/walletbalancecard.json"
+    },
+    {
       "name": "detalle",
       "type": "registry:block",
       "title": "detalle",
@@ -301,6 +331,18 @@
         "categoryicon",
         "businessicon",
         "servicecentericon"
+      ]
+    },
+    {
+      "name": "zona",
+      "type": "registry:block",
+      "title": "zona",
+      "url": "https://concorde-v2-theta.vercel.app/r/zona.json",
+      "components": [
+        "userprofilecard",
+        "walletbalancecard",
+        "activitycard",
+        "offershelf"
       ]
     }
   ]

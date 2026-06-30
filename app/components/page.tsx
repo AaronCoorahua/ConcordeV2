@@ -12,6 +12,11 @@ import PriceIcon from "@/src/components/PriceIcon";
 import StarIcon from "@/src/components/StarIcon";
 import AvatarZone from "@/src/components/AvatarZone";
 import ProfileButton from "@/src/components/ProfileButton";
+import UserProfileCard from "@/src/components/UserProfileCard";
+import WalletBalanceCard from "@/src/components/WalletBalanceCard";
+import ActivityCard from "@/src/components/ActivityCard";
+import OfferShelf from "@/src/components/OfferShelf";
+import InfoIcon from "@/src/components/InfoIcon";
 import CardTitle from "@/src/components/CardTitle";
 import Input from "@/src/components/Input";
 import TabSelector from "@/src/components/TabSelector";
@@ -486,6 +491,66 @@ const REGISTRY: ComponentEntry[] = [
         <OfferIcon size={22} state="default" />
         <OfferIcon size={22} state="hover" />
         <OfferIcon size={22} state="active" />
+      </div>
+    ),
+  },
+  {
+    id: "userprofilecard",
+    name: "UserProfileCard",
+    handoffPath: "/handoff/userprofilecard",
+    preview: (
+      <div style={{ width: 300, height: 56, position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ transform: "scale(0.36)" }}>
+          <UserProfileCard />
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "infoicon",
+    name: "InfoIcon",
+    handoffPath: "/handoff/infoicon",
+    preview: (
+      <div style={{ display: "flex", gap: 18, alignItems: "center", justifyContent: "center" }}>
+        <InfoIcon size={20} />
+        <InfoIcon size={28} />
+        <InfoIcon size={36} />
+      </div>
+    ),
+  },
+  {
+    id: "walletbalancecard",
+    name: "WalletBalanceCard",
+    handoffPath: "/handoff/walletbalancecard",
+    preview: (
+      <div style={{ width: 230, height: 134, position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ transform: "scale(0.54)" }}>
+          <WalletBalanceCard />
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "activitycard",
+    name: "ActivityCard",
+    handoffPath: "/handoff/activitycard",
+    preview: (
+      <div style={{ width: 230, height: 134, position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ transform: "scale(0.54)" }}>
+          <ActivityCard />
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "offershelf",
+    name: "OfferShelf",
+    handoffPath: "/handoff/offershelf",
+    preview: (
+      <div style={{ width: 260, height: 140, position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ transform: "scale(0.32)" }}>
+          <OfferShelf />
+        </div>
       </div>
     ),
   },
