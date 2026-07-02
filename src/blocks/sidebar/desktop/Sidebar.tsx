@@ -98,6 +98,13 @@ export interface SidebarProps {
   /** Alto del sidebar. Por defecto SIDEBAR_HEIGHT; pásale el alto del canvas
    *  cuando el contenido a la derecha sea más alto, para que crezca con él. */
   height?: number | string;
+  /** Alto del bloque interno fijo (header + nav + banner). Por defecto
+   *  SIDEBAR_HEIGHT (igual que siempre: si `height` es mayor, el sobrante
+   *  queda como relleno morado plano debajo, sin estirar nav/banner).
+   *  Edítalo SOLO cuando el contenido de al lado sea más CORTO que el
+   *  sidebar — pásale ese mismo alto (igual a `height`) para que el spacer
+   *  interno se comprima y el sidebar no sobre por debajo del contenido. */
+  contentHeight?: number;
   /** Colapsado (controlado). Si se omite, el Sidebar maneja su estado interno. */
   collapsed?: boolean;
   /** Callback al alternar el colapsado (para reaccionar desde el contenedor). */
@@ -112,6 +119,7 @@ export default function Sidebar({
   secondaryItems = DEFAULT_SECONDARY,
   defaultActiveId,
   height = SIDEBAR_HEIGHT,
+  contentHeight = SIDEBAR_HEIGHT,
   collapsed: collapsedProp,
   onCollapsedChange,
   onItemClick,
@@ -160,12 +168,13 @@ export default function Sidebar({
           overflow:      "hidden",
         }}
       >
-        {/* Bloque interno de tamaño FIJO (SIDEBAR_HEIGHT): header + frame. Si el
-            sidebar crece (prop height), sólo se alarga el relleno morado de abajo;
-            lo interno (nav + banner) queda igual, no se estira. */}
+        {/* Bloque interno de tamaño fijo (contentHeight, por defecto SIDEBAR_HEIGHT):
+            header + frame. Si el sidebar crece (prop height > contentHeight), sólo se
+            alarga el relleno morado de abajo; lo interno (nav + banner) queda igual,
+            no se estira. Para achicarlo sin recortar el banner, sube contentHeight. */}
         <div
           style={{
-            height:        SIDEBAR_HEIGHT,
+            height:        contentHeight,
             flexShrink:    0,
             display:       "flex",
             flexDirection: "column",
