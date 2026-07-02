@@ -2,6 +2,10 @@ import type { JSX, ReactNode } from "react";
 import Homepage, { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/homepage/desktop/Homepage";
 import Detalle, { DETALLE_WIDTH, DETALLE_HEIGHT } from "@/src/blocks/detalle/desktop/Detalle";
 import Zona, { ZONA_WIDTH, ZONA_HEIGHT } from "@/src/blocks/zona/desktop/Zona";
+import Login from "@/src/blocks/login/desktop/Login";
+import { LOGIN_WIDTH, LOGIN_HEIGHT } from "@/src/blocks/login/desktop/dimensions";
+import Register from "@/src/blocks/register/desktop/Register";
+import { REGISTER_WIDTH, REGISTER_HEIGHT } from "@/src/blocks/register/desktop/dimensions";
 import SalaDesktop, { SALA_WIDTH, SALA_HEIGHT } from "@/src/blocks/sala/desktop/SalaDesktop";
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/dimensions";
@@ -46,10 +50,35 @@ const ZONA_COMBINED = (
   </div>
 );
 
+// Login se compone con el Sidebar pegado a la izquierda (el Login ya trae su header).
+// A diferencia de los demás bloques, el Login es más corto que el Sidebar (837 vs
+// 1171): NO usamos Math.max — el sidebar debe cortar justo donde acaba el Login.
+const LOGIN_COMBINED_W = SIDEBAR_WIDTH + LOGIN_WIDTH;
+const LOGIN_COMBINED_H = LOGIN_HEIGHT;
+const LOGIN_COMBINED = (
+  <div style={{ display: "flex", alignItems: "flex-start", width: LOGIN_COMBINED_W, height: LOGIN_COMBINED_H, background: "#ffffff" }}>
+    <Sidebar height={LOGIN_COMBINED_H} contentHeight={LOGIN_COMBINED_H} />
+    <Login />
+  </div>
+);
+
+// Register se compone con el Sidebar pegado a la izquierda (el Register ya trae su
+// header). Igual que Login: NO usamos Math.max — el sidebar corta donde acaba el contenido.
+const REGISTER_COMBINED_W = SIDEBAR_WIDTH + REGISTER_WIDTH;
+const REGISTER_COMBINED_H = REGISTER_HEIGHT;
+const REGISTER_COMBINED = (
+  <div style={{ display: "flex", alignItems: "flex-start", width: REGISTER_COMBINED_W, height: REGISTER_COMBINED_H, background: "#ffffff" }}>
+    <Sidebar height={REGISTER_COMBINED_H} contentHeight={REGISTER_COMBINED_H} />
+    <Register />
+  </div>
+);
+
 const BLOCKS: BlockEntry[] = [
   { id: "homepage", name: "Homepage", width: HP_COMBINED_W, height: HP_COMBINED_H, node: HOMEPAGE_COMBINED },
   { id: "detalle",  name: "Detalle",  width: DETALLE_WIDTH,  height: DETALLE_HEIGHT,  node: <Detalle /> },
   { id: "zona",     name: "Zona",     width: ZONA_COMBINED_W, height: ZONA_COMBINED_H, node: ZONA_COMBINED },
+  { id: "login",    name: "Login",    width: LOGIN_COMBINED_W, height: LOGIN_COMBINED_H, node: LOGIN_COMBINED },
+  { id: "register", name: "Register", width: REGISTER_COMBINED_W, height: REGISTER_COMBINED_H, node: REGISTER_COMBINED },
   { id: "sala",     name: "Sala",     width: SALA_WIDTH,     height: SALA_HEIGHT,     node: <SalaDesktop /> },
   { id: "sidebar",  name: "Sidebar",  width: SIDEBAR_WIDTH,  height: SIDEBAR_HEIGHT,
     /* El sidebar mide 226×1042 → scale normal ≈ 0.22 → 49px ancho (invisible).

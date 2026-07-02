@@ -6,7 +6,7 @@
  * MobileChatPanel (render).
  */
 
-export type Phase = "idle" | "welcome" | "extended" | "streaming";
+export type Phase = "idle" | "welcome" | "extended" | "streaming" | "processing" | "result" | "activity";
 
 export interface LiveMsg {
   kind: "proposal" | "closes" | "vmc";
@@ -26,6 +26,11 @@ export const STEP = 79;
 
 export function fmtMoney(n: number): string {
   return "US$ " + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+/** Formatea un número a 2 dígitos (para el contador "INICIA EN"). */
+export function pad(n: number): string {
+  return String(Math.max(0, n)).padStart(2, "0");
 }
 
 interface RawSpec {
@@ -72,7 +77,8 @@ const RAW: RawSpec[] = [
   { kind: "proposal", side: "sent" },
   { kind: "closes", side: "received" },
   { kind: "proposal", side: "received" },
-  { kind: "closes", side: "received" }, // cierra sobre la última puja antes del remate
+  { kind: "proposal", side: "sent" }, // ← mi puja gana: última puja antes del remate (naranja)
+  { kind: "closes", side: "received" }, // cierra sobre mi puja antes del remate
   { kind: "vmc", side: "received", text: "A la una", slow: true },
   { kind: "vmc", side: "received", text: "A las dos", slow: true },
   { kind: "vmc", side: "received", text: "A las tres", slow: true },
@@ -120,3 +126,29 @@ export const EXTENDED_MS = 3000;
 export const RESTART_PAUSE = 1400;
 export const START_COUNT = 3; // cada fase (recibiendo / extendido) dura 3s
 export const PARTICIPANTS_TARGET = 18;
+
+// ── Final: "Procesando" → "Tabla de posiciones" → "Actividad" (gano yo) ──
+export const PROCESSING_MS = 2200; // "Un momento por favor" antes de la tabla
+export const RESULT_MS = 5000; // la tabla de posiciones se ve 5s, luego "Actividad"
+
+// Monto ganador = último proposal del stream (es MÍO). Las siguientes posiciones
+// bajan un paso por fila.
+const WINNING_BID = (function last(): number {
+  const props = STREAM.filter((m) => m.kind === "proposal");
+  return props.length ? (props[props.length - 1].amount ?? BASE) : BASE;
+})();
+
+export interface Standing {
+  rank: number;
+  user: string;
+  amount: number;
+  mine: boolean;
+  note: string; // texto de la 3ª columna (ej. "En consulta")
+}
+
+// Podio: 1° YO (ganador, borde live + estrella llena + "En consulta");
+// 2° otro postor (borde normal, rango vault, estrella media, tiempo).
+export const STANDINGS: Standing[] = [
+  { rank: 1, user: ME, amount: WINNING_BID, mine: true, note: "En consulta" },
+  { rank: 2, user: "ZAE389", amount: WINNING_BID - STEP, mine: false, note: "02:27:12" },
+];

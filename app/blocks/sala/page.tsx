@@ -41,7 +41,6 @@ const BLOCK_FILES: BlockFile[] = [
   { path: "src/blocks/sala/desktop/ConsoleHeader.tsx", code: readSrc("src/blocks/sala/desktop/ConsoleHeader.tsx") },
   { path: "src/blocks/sala/desktop/PriceBase.tsx", code: readSrc("src/blocks/sala/desktop/PriceBase.tsx") },
   { path: "src/blocks/sala/desktop/BidChat.tsx", code: readSrc("src/blocks/sala/desktop/BidChat.tsx") },
-  { path: "src/blocks/sala/desktop/ChatArea.tsx", code: readSrc("src/blocks/sala/desktop/ChatArea.tsx") },
   { path: "src/blocks/sala/mobile/SalaMobile.tsx", code: readSrc("src/blocks/sala/mobile/SalaMobile.tsx") },
   { path: "src/blocks/sala/mobile/MobileHeader.tsx", code: readSrc("src/blocks/sala/mobile/MobileHeader.tsx") },
   { path: "src/blocks/sala/mobile/MobileChatPanel.tsx", code: readSrc("src/blocks/sala/mobile/MobileChatPanel.tsx") },

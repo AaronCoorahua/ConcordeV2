@@ -117,6 +117,12 @@
       "url": "https://concorde-v2-theta.vercel.app/r/docbutton.json"
     },
     {
+      "name": "eyeicon",
+      "type": "registry:component",
+      "title": "EyeIcon",
+      "url": "https://concorde-v2-theta.vercel.app/r/eyeicon.json"
+    },
+    {
       "name": "infoicon",
       "type": "registry:component",
       "title": "InfoIcon",
@@ -300,6 +306,30 @@
       ]
     },
     {
+      "name": "login",
+      "type": "registry:block",
+      "title": "login",
+      "url": "https://concorde-v2-theta.vercel.app/r/login.json",
+      "components": [
+        "button",
+        "input",
+        "eyeicon"
+      ]
+    },
+    {
+      "name": "register",
+      "type": "registry:block",
+      "title": "register",
+      "url": "https://concorde-v2-theta.vercel.app/r/register.json",
+      "components": [
+        "tabselector",
+        "input",
+        "eyeicon",
+        "button",
+        "termsselector"
+      ]
+    },
+    {
       "name": "sala",
       "type": "registry:block",
       "title": "sala",
@@ -342,7 +372,14 @@
         "userprofilecard",
         "walletbalancecard",
         "activitycard",
-        "offershelf"
+        "offershelf",
+        "avatarzone",
+        "staricon",
+        "infoicon",
+        "profilebutton",
+        "cardtitle",
+        "offercard",
+        "badgestatus"
       ]
     }
   ]

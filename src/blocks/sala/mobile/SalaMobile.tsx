@@ -8,35 +8,21 @@
  *   3. Streaming de pujas: cada puja sube el bid actual; si es MÍA (sent/live) el
  *      botón se anima presionado y suben "mis bids" + "bid totales"; si es de otro,
  *      solo "bid totales". El ProgressBar (rainbow) está vacío y solo se llena en el
- *      remate "A la una/dos/tres". Al terminar se reinicia (sin "ganaste").
- *   El CTA muestra el siguiente bid (bid actual + paso).
+ *      remate "A la una/dos/tres". La última puja es MÍA → gano.
+ *   4. Procesando (2s) → "Tabla de posiciones" (1° YO, naranja + estrella). Se queda.
+ *   El CTA muestra el siguiente bid (bid actual + paso) y se oculta al terminar.
  */
 
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import type { JSX } from "react";
 import MobileHeader, { MOBILEHEADER_HEIGHT } from "./MobileHeader";
 import MobileChatPanel from "./MobileChatPanel";
 import Button from "../../../components/Button";
 import type { ProgressBarVariant } from "../../../components/ProgressBar";
-import type { Phase } from "../liveData";
-import {
-  STREAM,
-  REVEAL_AT,
-  TOTAL_STREAM,
-  VMC_START,
-  VMC_FILL,
-  WELCOME_MS,
-  EXTENDED_MS,
-  RESTART_PAUSE,
-  START_COUNT,
-  PARTICIPANTS_TARGET,
-  BASE,
-  STEP,
-  ME,
-  fmtMoney,
-} from "../liveData";
+import { STEP, ME, fmtMoney } from "../liveData";
+import { useLiveAuction } from "../useSala";
 
 export interface SalaMobileProps {
   className?: string;
@@ -65,123 +51,16 @@ import { SALAMOBILE_WIDTH, SALAMOBILE_HEIGHT, SALAMOBILE_BG } from "./dimensions
 export { SALAMOBILE_WIDTH, SALAMOBILE_HEIGHT, SALAMOBILE_BG } from "./dimensions";
 
 export default function SalaMobile({ className = "", live = false, flashColors, flashMode = "bulb" }: SalaMobileProps): JSX.Element {
-  const [phase, setPhase] = useState<Phase>("idle");
-  const [shown, setShown] = useState(0);
-  const [prog, setProg] = useState(40);
-  const [count, setCount] = useState(START_COUNT);
-  const [participants, setParticipants] = useState(0);
-  const [myBids, setMyBids] = useState(0);
-  const [totalBids, setTotalBids] = useState(0);
-  const [bidAmount, setBidAmount] = useState(BASE);
-  const [bidder, setBidder] = useState("ZAE389");
-  const [pressed, setPressed] = useState(false);
-  const [flash, setFlash] = useState(0); // dispara la animación de nuevo bid
-  const [idleBid, setIdleBid] = useState(6559); // bid actual en idle (interactivo con "Bidear")
+  const {
+    phase, shown, prog, count, participants, myBids, totalBids, bidAmount, bidder, pressed, flash,
+  } = useLiveAuction(live);
+
+  // Estado del bid actual en idle (interactivo con el botón "Bidear")
+  const [idleBid, setIdleBid] = useState(6559);
   const [idleBidder, setIdleBidder] = useState("ZAE389");
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const [idleFlash, setIdleFlash] = useState(0);
 
-  useEffect(
-    function runLive() {
-      function clearAll(): void {
-        timers.current.forEach((id) => {
-          clearTimeout(id);
-          clearInterval(id);
-        });
-        timers.current = [];
-      }
-
-      if (!live) {
-        clearAll();
-        setPhase("idle");
-        setShown(0);
-        setProg(40);
-        setPressed(false);
-        return;
-      }
-
-      let cancelled = false;
-
-      function cycle(): void {
-        if (cancelled) return;
-        clearAll();
-        // (1)+(2) Recibiendo / Inicio extendido — barra BLANCA full · cuenta de 3s
-        setPhase("welcome");
-        setShown(0);
-        setProg(100);
-        setCount(START_COUNT);
-        setParticipants(0);
-        setMyBids(0);
-        setTotalBids(0);
-        setBidAmount(BASE);
-        setBidder("—");
-
-        timers.current.push(setInterval(() => setParticipants((p) => (p < PARTICIPANTS_TARGET ? p + 1 : p)), 300));
-        timers.current.push(setInterval(() => setCount((c) => (c > 1 ? c - 1 : 1)), 1000));
-        timers.current.push(
-          setTimeout(() => {
-            setPhase("extended");
-            setCount(START_COUNT); // reinicia la cuenta de 3s para "inicio extendido"
-          }, WELCOME_MS),
-        );
-
-        timers.current.push(
-          setTimeout(function toStreaming() {
-            clearAll();
-            // (3) Streaming — barra rainbow VACÍA hasta el remate
-            setPhase("streaming");
-            setShown(0);
-            setProg(0);
-
-            STREAM.forEach(function schedule(m, i) {
-              timers.current.push(
-                setTimeout(function reveal() {
-                  setShown(i + 1);
-                  if (m.kind === "proposal") {
-                    setBidAmount(m.amount ?? BASE);
-                    setBidder(m.bidder ?? "—");
-                    setFlash((f) => f + 1); // anima el bid actual con cada puja
-                    if (m.mine) {
-                      setMyBids((x) => x + 1);
-                      setTotalBids((x) => x + 1);
-                      setPressed(true);
-                      timers.current.push(setTimeout(() => setPressed(false), 200));
-                    } else {
-                      setTotalBids((x) => x + 1);
-                    }
-                  }
-                }, REVEAL_AT[i]),
-              );
-            });
-
-            // El ProgressBar solo se llena durante el remate (A la una/dos/tres)
-            timers.current.push(
-              setTimeout(function startFill() {
-                const s = Date.now();
-                const iv = setInterval(() => {
-                  const p = Math.min(100, ((Date.now() - s) / VMC_FILL) * 100);
-                  setProg(p);
-                  if (p >= 100) clearInterval(iv);
-                }, 100);
-                timers.current.push(iv);
-              }, VMC_START),
-            );
-
-            // Reinicia (sin "ganaste")
-            timers.current.push(setTimeout(cycle, TOTAL_STREAM + RESTART_PAUSE));
-          }, WELCOME_MS + EXTENDED_MS),
-        );
-      }
-
-      cycle();
-      return function cleanup() {
-        cancelled = true;
-        clearAll();
-      };
-    },
-    [live],
-  );
-
-  const progVariant: ProgressBarVariant = live ? (phase === "streaming" ? "rainbow" : "white") : "rainbow";
+  const progVariant: ProgressBarVariant = live ? (phase === "streaming" || phase === "result" || phase === "activity" ? "rainbow" : "white") : "rainbow";
   const ctaAmount = (live ? bidAmount : idleBid) + STEP; // CTA = siguiente bid (un poco mayor)
 
   // Click en "Bidear" (idle): pujo yo → sube mi bid + anima el bid actual
@@ -189,7 +68,7 @@ export default function SalaMobile({ className = "", live = false, flashColors, 
     if (live) return;
     setIdleBid((b) => b + STEP);
     setIdleBidder(ME);
-    setFlash((f) => f + 1);
+    setIdleFlash((f) => f + 1);
   }
 
   return (
@@ -213,10 +92,11 @@ export default function SalaMobile({ className = "", live = false, flashColors, 
         />
       </div>
 
-      {/* Panel glass del chat 420×670 */}
+      {/* Panel glass del chat — llega hasta abajo (cubre la zona del botón con su
+          borde live); el botón flota encima, en su espacio reservado */}
       <div style={{ position: "absolute", top: MOBILEHEADER_HEIGHT, left: 0 }}>
         <MobileChatPanel
-          height={670}
+          height={SALAMOBILE_HEIGHT - MOBILEHEADER_HEIGHT}
           live={live}
           phase={phase}
           shown={shown}
@@ -225,20 +105,23 @@ export default function SalaMobile({ className = "", live = false, flashColors, 
           count={count}
           bidAmount={live ? bidAmount : idleBid}
           bidder={live ? bidder : idleBidder}
-          flash={flash}
+          flash={live ? flash : idleFlash}
           flashColors={flashColors}
           flashMode={flashMode}
         />
       </div>
 
-      {/* CTA primary 320×48 — siguiente bid (bid actual + paso); se "presiona" con mi puja */}
+      {/* CTA primary 320×48 — siguiente bid (bid actual + paso); se "presiona" con mi
+          puja. Se oculta al terminar la subasta (Procesando / Tabla de posiciones). */}
       <style suppressHydrationWarning dangerouslySetInnerHTML={{ __html: CTA_STYLES }} />
-      <div
-        className={`salamobile-cta${pressed ? " salamobile-cta--pressed" : ""}`}
-        style={{ position: "absolute", left: "50%", bottom: 16, transform: "translateX(-50%)" }}
-      >
-        <Button variant="primary" onClick={handleBid}>{fmtMoney(ctaAmount)}</Button>
-      </div>
+      {phase === "processing" || phase === "result" || phase === "activity" ? null : (
+        <div
+          className={`salamobile-cta${pressed ? " salamobile-cta--pressed" : ""}`}
+          style={{ position: "absolute", left: "50%", bottom: 16, transform: "translateX(-50%)" }}
+        >
+          <Button variant="primary" onClick={handleBid}>{fmtMoney(ctaAmount)}</Button>
+        </div>
+      )}
     </div>
   );
 }

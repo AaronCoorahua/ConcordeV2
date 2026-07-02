@@ -99,7 +99,7 @@ export default function SalaViewer({ files }: { files: BlockFile[] }): JSX.Eleme
       description="Sala de subasta en vivo — desktop y mobile."
       width={SALA_WIDTH}
       height={SALA_HEIGHT}
-      canvas={<SalaDesktop flashColors={PALETTES[pal].colors} flashMode={mode} />}
+      canvas={<SalaDesktop live={live} flashColors={PALETTES[pal].colors} flashMode={mode} />}
       canvasForViewport={{
         mobile: {
           node: <SalaMobile live={live} flashColors={PALETTES[pal].colors} flashMode={mode} />,
