@@ -55,10 +55,45 @@ const GROUP_LABEL: CSSProperties = {
   marginRight: 2,
 };
 
+// Marco de teléfono genérico (Android-style) para previsualizar el mobile.
+// SIN notch/isla arriba. Bezel uniforme + botones a los lados (volumen izq,
+// power der); la pantalla recorta el contenido con radios internos.
+const PHONE_BEZEL = 12; // grosor del marco
+const PHONE_RADIUS = 44; // radio exterior
+
+function PhoneFrame({ width, height, children }: { width: number; height: number; children: JSX.Element }): JSX.Element {
+  const btn = { position: "absolute" as const, borderRadius: 3, background: "linear-gradient(180deg, #3a3a3f, #202024)" };
+  return (
+    <div
+      style={{
+        position: "relative",
+        boxSizing: "content-box",
+        width,
+        height,
+        padding: PHONE_BEZEL,
+        borderRadius: PHONE_RADIUS,
+        background: "linear-gradient(155deg, #2a2a2e 0%, #0c0c0e 55%, #1a1a1d 100%)",
+        boxShadow: "0 1px 0 rgba(255,255,255,0.22) inset, 0 0 0 2px #000, 0 30px 60px -12px rgba(0,0,0,0.55)",
+      }}
+    >
+      {/* Botón de volumen (izquierda, doble) y power (derecha) */}
+      <span style={{ ...btn, left: -3, top: 150, width: 3, height: 52 }} />
+      <span style={{ ...btn, left: -3, top: 214, width: 3, height: 52 }} />
+      <span style={{ ...btn, right: -3, top: 190, width: 3, height: 80 }} />
+
+      {/* Pantalla */}
+      <div style={{ position: "relative", width, height, borderRadius: PHONE_RADIUS - PHONE_BEZEL, overflow: "hidden", background: "#000" }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export default function SalaViewer({ files }: { files: BlockFile[] }): JSX.Element {
   const [pal, setPal] = useState(0);
   const [mode, setMode] = useState<FlashMode>("bulb");
   const [live, setLive] = useState(false);
+  const [frame, setFrame] = useState(false);
 
   const controls = (
     <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center" }}>
@@ -68,6 +103,9 @@ export default function SalaViewer({ files }: { files: BlockFile[] }): JSX.Eleme
         style={{ ...CHIP_BASE, border: "none", color: "#ffffff", fontWeight: 700, background: live ? "#FF0066" : "linear-gradient(120deg, #5F3ED8 0%, #340091 100%)", boxShadow: "0 2px 8px rgba(20,0,69,0.25)" }}
       >
         {live ? "■ Detener" : "▶ Ver live"}
+      </button>
+      <button type="button" onClick={function toggleFrame() { setFrame(function flip(v) { return !v; }); }} style={chipStyle(frame)}>
+        📱 Marco
       </button>
       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
         <span style={GROUP_LABEL}>Luz</span>
@@ -102,9 +140,15 @@ export default function SalaViewer({ files }: { files: BlockFile[] }): JSX.Eleme
       canvas={<SalaDesktop live={live} flashColors={PALETTES[pal].colors} flashMode={mode} />}
       canvasForViewport={{
         mobile: {
-          node: <SalaMobile live={live} flashColors={PALETTES[pal].colors} flashMode={mode} />,
-          width: SALAMOBILE_WIDTH,
-          height: SALAMOBILE_HEIGHT,
+          node: frame ? (
+            <PhoneFrame width={SALAMOBILE_WIDTH} height={SALAMOBILE_HEIGHT}>
+              <SalaMobile live={live} flashColors={PALETTES[pal].colors} flashMode={mode} />
+            </PhoneFrame>
+          ) : (
+            <SalaMobile live={live} flashColors={PALETTES[pal].colors} flashMode={mode} />
+          ),
+          width: frame ? SALAMOBILE_WIDTH + PHONE_BEZEL * 2 : SALAMOBILE_WIDTH,
+          height: frame ? SALAMOBILE_HEIGHT + PHONE_BEZEL * 2 : SALAMOBILE_HEIGHT,
         },
       }}
       files={files}
