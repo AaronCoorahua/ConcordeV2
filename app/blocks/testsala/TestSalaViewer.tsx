@@ -2,11 +2,15 @@
 
 import { useState } from "react";
 import type { JSX, CSSProperties } from "react";
-import SalaDesktop from "@/src/blocks/sala/desktop/SalaDesktop";
-import { SALA_WIDTH, SALA_HEIGHT } from "@/src/blocks/sala/desktop/dimensions";
-import SalaMobile from "@/src/blocks/sala/mobile/SalaMobile";
-import { SALAMOBILE_WIDTH, SALAMOBILE_HEIGHT } from "@/src/blocks/sala/mobile/dimensions";
+import SalaMobile from "@/src/blocks/testsala/mobile/SalaMobile";
+import { SALAMOBILE_WIDTH, SALAMOBILE_HEIGHT } from "@/src/blocks/testsala/mobile/dimensions";
 import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_components/BlockViewer";
+
+/**
+ * TestSalaViewer — Visor del bloque de pruebas TestSala (copia del mobile de Sala,
+ * con todo su flujo "Ver live"). Solo mobile; sirve para experimentar sin tocar
+ * el bloque Sala original.
+ */
 
 const PALETTES: { name: string; colors: string[] }[] = [
   { name: "Primary", colors: ["#F4AC59", "#8460E5", "#ffffff"] },
@@ -56,8 +60,6 @@ const GROUP_LABEL: CSSProperties = {
 };
 
 // Marco de teléfono genérico (Android-style) para previsualizar el mobile.
-// SIN notch/isla arriba. Bezel uniforme + botones a los lados (volumen izq,
-// power der); la pantalla recorta el contenido con radios internos.
 const PHONE_BEZEL = 12; // grosor del marco
 const PHONE_RADIUS = 44; // radio exterior
 
@@ -89,13 +91,23 @@ function PhoneFrame({ width, height, children }: { width: number; height: number
   );
 }
 
-export default function SalaViewer({ files }: { files: BlockFile[] }): JSX.Element {
+export default function TestSalaViewer({ files }: { files: BlockFile[] }): JSX.Element {
   const [pal, setPal] = useState(0);
   const [mode, setMode] = useState<FlashMode>("bulb");
   const [live, setLive] = useState(false);
   const [noReserve, setNoReserve] = useState(false);
   // El marco del teléfono va siempre activo (default), sin chip toggle.
   const frame = true;
+
+  const framed = (
+    <PhoneFrame width={SALAMOBILE_WIDTH} height={SALAMOBILE_HEIGHT}>
+      <SalaMobile live={live} noReserve={noReserve} flashColors={PALETTES[pal].colors} flashMode={mode} />
+    </PhoneFrame>
+  );
+  const bare = <SalaMobile live={live} noReserve={noReserve} flashColors={PALETTES[pal].colors} flashMode={mode} />;
+  const node = frame ? framed : bare;
+  const w = frame ? SALAMOBILE_WIDTH + PHONE_BEZEL * 2 : SALAMOBILE_WIDTH;
+  const h = frame ? SALAMOBILE_HEIGHT + PHONE_BEZEL * 2 : SALAMOBILE_HEIGHT;
 
   const controls = (
     <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center" }}>
@@ -109,7 +121,7 @@ export default function SalaViewer({ files }: { files: BlockFile[] }): JSX.Eleme
       <button
         type="button"
         onClick={function toggleReserve() { setNoReserve(function flip(v) { return !v; }); }}
-        title="Con precio reserva: tras el remate y 'procesando' muestra la pantalla 'Revisa tu historial / 48 horas' (la propuesta debe ser aceptada por el vendedor)."
+        title="Con precio reserva: tras el remate y 'procesando' muestra el sub-flujo 'Mejor postor / ¿Deseas mejorarlo?' → ingresar monto → confirmar → 48 horas."
         style={chipStyle(noReserve)}
       >
         {noReserve ? "☑" : "☐"} Con precio reserva
@@ -140,24 +152,12 @@ export default function SalaViewer({ files }: { files: BlockFile[] }): JSX.Eleme
 
   return (
     <BlockViewer
-      id="sala"
-      description="Sala de subasta en vivo — desktop y mobile."
-      width={SALA_WIDTH}
-      height={SALA_HEIGHT}
-      canvas={<SalaDesktop live={live} noReserve={noReserve} flashColors={PALETTES[pal].colors} flashMode={mode} />}
-      canvasForViewport={{
-        mobile: {
-          node: frame ? (
-            <PhoneFrame width={SALAMOBILE_WIDTH} height={SALAMOBILE_HEIGHT}>
-              <SalaMobile live={live} noReserve={noReserve} flashColors={PALETTES[pal].colors} flashMode={mode} />
-            </PhoneFrame>
-          ) : (
-            <SalaMobile live={live} noReserve={noReserve} flashColors={PALETTES[pal].colors} flashMode={mode} />
-          ),
-          width: frame ? SALAMOBILE_WIDTH + PHONE_BEZEL * 2 : SALAMOBILE_WIDTH,
-          height: frame ? SALAMOBILE_HEIGHT + PHONE_BEZEL * 2 : SALAMOBILE_HEIGHT,
-        },
-      }}
+      id="testsala"
+      description="Bloque de pruebas — copia del mobile de Sala con todo su flujo 'Ver live'."
+      width={w}
+      height={h}
+      canvas={node}
+      canvasForViewport={{ mobile: { node, width: w, height: h } }}
       files={files}
       controls={controls}
       previewBg={VAULT_PREVIEW_BG}

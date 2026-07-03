@@ -47,6 +47,9 @@ export interface SalaProps {
   className?: string;
   /** Modo en vivo — anima la llegada en el BidChat (botón "Ver live"). */
   live?: boolean;
+  /** Sin precio reserva — el remate no supera la reserva: tras "procesando" muestra
+   *  la pantalla "Revisa tu historial / 48 horas" (sin tabla ni actividad). */
+  noReserve?: boolean;
   /** Colores del efecto de luz del bid actual (editable). Default: primary. */
   flashColors?: string[];
   /** Tipo de efecto de luz: "bulb" (bombilla) o "spin" (gira). Default "bulb". */
@@ -58,8 +61,8 @@ export { SALA_WIDTH, SALA_HEIGHT } from "./dimensions";
 
 const SALA_IMAGES = ["/demo/bronco.jpg", "/demo/bronco.jpg", "/demo/bronco.jpg", "/demo/bronco.jpg"];
 
-export default function SalaDesktop({ className = "", live = false, flashColors, flashMode = "bulb" }: SalaProps): JSX.Element {
-  const live$ = useLiveAuction(live);
+export default function SalaDesktop({ className = "", live = false, noReserve = false, flashColors, flashMode = "bulb" }: SalaProps): JSX.Element {
+  const live$ = useLiveAuction(live, noReserve);
   const { phase, count, participants, myBids, totalBids } = live$;
   // Posiciones: en live salen "..." hasta la 1ª puja y luego se apilan/reordenan.
   const positions = live ? livePositions(live$.shown) : undefined;

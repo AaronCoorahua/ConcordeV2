@@ -255,8 +255,8 @@ export default function BidChat({
 
   const isArrival = live && (phase === "welcome" || phase === "extended");
   const isStreaming = live && phase === "streaming";
-  // Pantallas finales (procesando/tabla/actividad): overlays full-panel (sin botón)
-  const isFinalPhase = live && (phase === "processing" || phase === "result" || phase === "activity");
+  // Pantallas finales (procesando/tabla/actividad/reserve/improve): overlays full-panel (sin botón)
+  const isFinalPhase = live && (phase === "processing" || phase === "result" || phase === "activity" || phase === "bestbid");
   const ctaAmount = bidAmount + LIVE_STEP;
 
   if (typeof document !== "undefined" && !_stylesInjected) {
@@ -434,13 +434,14 @@ export default function BidChat({
           phase={phase}
           shown={shown}
           progress={prog}
-          progressVariant={phase === "result" || phase === "activity" ? "rainbow" : "white"}
+          progressVariant={phase === "result" || phase === "activity" || phase === "bestbid" ? "rainbow" : "white"}
           count={count}
           bidAmount={bidAmount}
           bidder={bidder}
           flash={liveFlash}
           flashColors={flashColors}
           flashMode={flashMode}
+          reservePill={phase === "bestbid"}
         />
       ) : null}
     </div>

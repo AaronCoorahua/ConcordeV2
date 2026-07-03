@@ -14,11 +14,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { ChangeEvent, JSX } from "react";
+import type { ChangeEvent, CSSProperties, JSX } from "react";
 import ProgressBar, { type ProgressBarVariant } from "../../../components/ProgressBar";
 import BidProposal from "../../../components/BidProposal";
 import BidMessage from "../../../components/BidMessage";
-import { STREAM, STATIC, STANDINGS, fmtMoney, IMPROVE_PLACEHOLDER, BESTBID_SECONDS, type LiveMsg, type Phase } from "../liveData";
+import { STREAM, STATIC, STANDINGS, fmtMoney, IMPROVE_PLACEHOLDER, BESTBID_SECONDS, ME, MY_FLASH_COLORS, type LiveMsg, type Phase } from "../liveData";
 
 export const MOBILECHATPANEL_WIDTH = 420;
 
@@ -188,7 +188,7 @@ function EmailIcon(): JSX.Element {
   );
 }
 
-const STYLE_ID = "concorde-smchatpanel-styles";
+const STYLE_ID = "concorde-testsmchatpanel-styles";
 
 const SMCHATPANEL_STYLES = `
 .smchatpanel {
@@ -697,8 +697,240 @@ const SMCHATPANEL_STYLES = `
   background: linear-gradient(155deg, #5A35C2 0%, #AE8EFF 100%);
 }
 
+/* ═══════════════ GAMIFICACIÓN — animaciones "gambler" por fase ═══════════════ */
+
+/* Keyframes genéricos */
+@keyframes smchat-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+/* Variante para elementos centrados con translateX(-50%) (notas/timer/next) */
+@keyframes smchat-rise-center { from { opacity: 0; transform: translate(-50%, 18px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes smchat-tick { 0% { transform: scale(1); } 45% { transform: scale(1.14); } 100% { transform: scale(1); } }
+
+/* Cada pantalla de estado entra con un fade suave (transición entre fases) */
+.smchat__status { animation: smchat-status-in 380ms ease both; }
+@keyframes smchat-status-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── Welcome / Inicio extendido ── */
+/* Título con glow "respirando" */
+.smchat__rp--breathe { animation: smchat-breathe 2.6s ease-in-out infinite; }
+@keyframes smchat-breathe {
+  0%, 100% { filter: drop-shadow(0 0 10px rgba(132,96,229,0.55)) drop-shadow(0 0 24px rgba(82,52,189,0.4)); }
+  50% { filter: drop-shadow(0 0 18px rgba(174,142,255,0.95)) drop-shadow(0 0 38px rgba(82,52,189,0.7)); }
+}
+/* Caja "Inicia en" entra con pop elástico */
+.smchat__box { animation: smchat-pop-in 550ms 200ms cubic-bezier(0.34,1.56,0.64,1) both; }
+@keyframes smchat-pop-in { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+/* Ícono (reloj ↔ +) hace pop al cambiar de fase */
+.smchat__box-icon { display: inline-flex; animation: smchat-icon-in 450ms cubic-bezier(0.34,1.56,0.64,1) both; }
+@keyframes smchat-icon-in { from { opacity: 0; transform: scale(0.4) rotate(-90deg); } to { opacity: 1; transform: none; } }
+/* Dígitos del contador hacen tick cada segundo (re-monta con key={count}) */
+.smchat__box-time--tick { animation: smchat-tick 300ms cubic-bezier(0.34,1.56,0.64,1); }
+/* "Inicio extendido" cae como sello + latido de brillo */
+.smchat__ext {
+  animation: smchat-ext-in 450ms cubic-bezier(0.34,1.56,0.64,1) both, smchat-ext-glow 1.6s 500ms ease-in-out infinite;
+}
+@keyframes smchat-ext-in { from { opacity: 0; transform: scale(1.6); } to { opacity: 1; transform: scale(1); } }
+@keyframes smchat-ext-glow { 0%, 100% { text-shadow: 0 0 8px rgba(255,255,255,0.25); } 50% { text-shadow: 0 0 18px rgba(255,255,255,0.75); } }
+
+/* ── Streaming: MI puja ≠ puja de otros ── */
+/* Mi burbuja live es MÁS GRANDE (solo en el stream) */
+.smchat__stream .smchat__msg--mine .pbidmsg { font-size: 15px; padding: 10px 20px; }
+/* Entrada "slam": llega grande desde la derecha, aplasta y deja un halo naranja */
+.smchat__msg--mine { transform-origin: right bottom; animation: smchat-slam 500ms cubic-bezier(0.22,1,0.36,1) both; }
+@keyframes smchat-slam {
+  0% { opacity: 0; transform: translateX(70px) scale(1.4); filter: drop-shadow(0 0 0 rgba(255,150,57,0)); }
+  55% { opacity: 1; transform: translateX(-4px) scale(1.06); filter: drop-shadow(0 0 18px rgba(255,150,57,0.9)); }
+  100% { opacity: 1; transform: none; filter: drop-shadow(0 0 6px rgba(255,150,57,0.35)); }
+}
+/* Banda de luz que barre mi burbuja al aterrizar */
+.smchat__msg--mine .pbidmsg { position: relative; overflow: hidden; }
+.smchat__msg--mine .pbidmsg::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 60%; pointer-events: none;
+  background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.5) 50%, transparent 100%);
+  transform: translateX(-180%) skewX(-18deg);
+  animation: smchat-bubble-shine 700ms 350ms ease-out both;
+}
+@keyframes smchat-bubble-shine { from { transform: translateX(-180%) skewX(-18deg); } to { transform: translateX(320%) skewX(-18deg); } }
+/* Flash de pantalla (wash naranja desde mi esquina) cuando bideo YO */
+.smchat__myflash {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 108px; z-index: 2; pointer-events: none; opacity: 0;
+  background: radial-gradient(120% 100% at 80% 92%, rgba(255,150,57,0.5) 0%, rgba(255,106,0,0.18) 40%, transparent 72%);
+  mix-blend-mode: screen;
+  animation: smchat-myflash 700ms ease-out both;
+}
+@keyframes smchat-myflash { 0% { opacity: 0; } 25% { opacity: 1; } 100% { opacity: 0; } }
+/* "Cierra en" entra con un wobble corto (tensión de remate) */
+.smchat__msg--closes { animation: smchat-in-wobble 480ms cubic-bezier(0.22,1,0.36,1) both; }
+@keyframes smchat-in-wobble {
+  0% { opacity: 0; transform: translateX(-60px) rotate(-3deg); }
+  60% { opacity: 1; transform: translateX(4px) rotate(1.5deg); }
+  100% { opacity: 1; transform: none; }
+}
+/* "A la una / dos / tres" — sello que cae, cada vez más fuerte; la tercera sacude */
+.smchat__msg--vmc { transform-origin: left bottom; }
+.smchat__msg--vmc1 { animation: smchat-stamp1 480ms cubic-bezier(0.22,1,0.36,1) both; }
+.smchat__msg--vmc2 { animation: smchat-stamp2 520ms cubic-bezier(0.22,1,0.36,1) both; }
+.smchat__msg--vmc3 { animation: smchat-stamp3 560ms cubic-bezier(0.22,1,0.36,1) both, smchat-shake 320ms 560ms linear; }
+@keyframes smchat-stamp1 {
+  0% { opacity: 0; transform: scale(1.45); filter: drop-shadow(0 0 0 rgba(174,142,255,0)); }
+  55% { opacity: 1; transform: scale(0.97); filter: drop-shadow(0 0 14px rgba(174,142,255,0.8)); }
+  100% { opacity: 1; transform: scale(1); filter: none; }
+}
+@keyframes smchat-stamp2 {
+  0% { opacity: 0; transform: scale(1.8); filter: drop-shadow(0 0 0 rgba(174,142,255,0)); }
+  55% { opacity: 1; transform: scale(0.95); filter: drop-shadow(0 0 20px rgba(174,142,255,0.95)); }
+  100% { opacity: 1; transform: scale(1); filter: none; }
+}
+@keyframes smchat-stamp3 {
+  0% { opacity: 0; transform: scale(2.2); filter: drop-shadow(0 0 0 rgba(255,150,57,0)); }
+  50% { opacity: 1; transform: scale(0.93); filter: drop-shadow(0 0 26px rgba(255,150,57,1)); }
+  100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 10px rgba(255,150,57,0.45)); }
+}
+@keyframes smchat-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); } 40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); } 80% { transform: translateX(3px); }
+}
+
+/* ── Barra: chispa en el borde del relleno + modo "urgente" cerca del final ── */
+.smchat__barwrap { position: absolute; left: 0; right: 0; bottom: 80px; z-index: 5; }
+.smchat__spark {
+  position: absolute; top: 50%; left: 0; width: 16px; height: 16px; margin: -8px 0 0 -8px;
+  border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, #ffffff 0%, rgba(255,255,255,0.75) 35%, transparent 70%);
+  filter: drop-shadow(0 0 6px #ffffff) drop-shadow(0 0 14px #CC00FF) drop-shadow(0 0 24px #FF0066);
+  transition: left 150ms linear;
+  animation: smchat-spark-idle 1.4s ease-in-out infinite;
+}
+@keyframes smchat-spark-idle { 0%, 100% { transform: scale(0.85); } 50% { transform: scale(1.15); } }
+.smchat__barwrap--hot .pprogbar__fill { animation: smchat-bar-throb 500ms ease-in-out infinite; }
+.smchat__barwrap--hot .smchat__spark { animation: smchat-spark-hot 300ms ease-in-out infinite; }
+@keyframes smchat-bar-throb { 0%, 100% { filter: brightness(1) saturate(1); } 50% { filter: brightness(1.55) saturate(1.4); } }
+@keyframes smchat-spark-hot { 0%, 100% { transform: scale(0.9); } 50% { transform: scale(1.55); } }
+
+/* ── Processing: shimmer que recorre el texto gradiente ── */
+.smchat__rp--shimmer { background-size: 220% 100%; animation: smchat-shimmer 1.6s linear infinite; }
+@keyframes smchat-shimmer { 0% { background-position: 0% 0; } 100% { background-position: -220% 0; } }
+
+/* ── Tabla de posiciones: reveal escalonado (título → 2° → 1° con fanfarria) ── */
+.smchat__result-title { animation: smchat-rise 500ms cubic-bezier(0.22,1,0.36,1) both; }
+.smchat__rows { position: relative; }
+.smchat__row--in2 { animation: smchat-row-in 550ms 500ms cubic-bezier(0.22,1,0.36,1) both; }
+@keyframes smchat-row-in { from { opacity: 0; transform: translateY(24px) scale(0.94); } to { opacity: 1; transform: none; } }
+/* El GANADOR cae desde arriba con rebote + ráfaga dorada; conserva un aura suave */
+.smchat__row--in1 { animation: smchat-win-in 720ms 1300ms cubic-bezier(0.34,1.56,0.64,1) both; }
+@keyframes smchat-win-in {
+  0% { opacity: 0; transform: translateY(-30px) scale(0.7); }
+  55% { opacity: 1; transform: translateY(4px) scale(1.07);
+        box-shadow: rgba(20,0,69,0.3) 0px 6px 16px -2px, 0 0 24px rgba(255,180,102,0.9), 0 0 48px rgba(237,137,54,0.6); }
+  100% { opacity: 1; transform: none;
+         box-shadow: rgba(20,0,69,0.3) 0px 6px 16px -2px, inset 0 1px 0 rgba(255,255,255,0.18), 0 0 14px rgba(237,137,54,0.28); }
+}
+/* Brillo que barre la fila del ganador en loop (empieza al aterrizar) */
+.smchat__row--mine { overflow: hidden; }
+.smchat__row--mine::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 55%; z-index: 1; pointer-events: none;
+  background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%);
+  transform: translateX(-220%) skewX(-18deg);
+}
+.smchat__row--in1::before { animation: smchat-row-sheen 3s 2.2s ease-in-out infinite; }
+@keyframes smchat-row-sheen { 0% { transform: translateX(-220%) skewX(-18deg); } 30%, 100% { transform: translateX(420%) skewX(-18deg); } }
+/* La estrella llena del ganador hace pop girando (después de aterrizar) */
+.smchat__row--in1 .smchat__user svg { animation: smchat-star-pop 550ms 1950ms cubic-bezier(0.34,1.56,0.64,1) both; }
+@keyframes smchat-star-pop { 0% { opacity: 0; transform: scale(0) rotate(-120deg); } 100% { opacity: 1; transform: none; } }
+/* Chispas doradas que estallan desde la fila del ganador */
+.smchat__win-sparks { position: absolute; left: 50%; width: 0; height: 0; z-index: 2; pointer-events: none; }
+.smchat__win-spark {
+  position: absolute; left: 0; top: 0; width: 8px; height: 8px; margin: -4px;
+  border-radius: 50%; opacity: 0;
+  background: radial-gradient(circle, #ffffff 0%, #FFB566 60%, transparent 100%);
+  filter: drop-shadow(0 0 6px rgba(255,150,57,0.9));
+  animation: smchat-win-spark 800ms 1700ms cubic-bezier(0.2,0.7,0.3,1) both;
+}
+@keyframes smchat-win-spark {
+  0% { opacity: 0; transform: rotate(var(--ang)) translateX(10px) scale(0.4); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--ang)) translateX(var(--dist, 120px)) scale(1); }
+}
+/* Nota "próximas ofertas": en la tabla espera a la fanfarria; en actividad entra antes */
+.smchat__next { animation: smchat-rise-center 550ms 700ms cubic-bezier(0.22,1,0.36,1) both; }
+.smchat__next--late { animation: smchat-rise-center 650ms 2400ms cubic-bezier(0.22,1,0.36,1) both; }
+
+/* ── Cascadas de entrada (actividad / 48 horas / bestbid / improve / confirm) ── */
+.smchat__act > *, .smchat__reserve > *, .smchat__best > *, .smchat__improve > *, .smchat__confirm > * {
+  animation: smchat-rise 520ms cubic-bezier(0.22,1,0.36,1) both;
+}
+.smchat__act > *:nth-child(2), .smchat__reserve > *:nth-child(2), .smchat__best > *:nth-child(2),
+.smchat__improve > *:nth-child(2), .smchat__confirm > *:nth-child(2) { animation-delay: 160ms; }
+.smchat__act > *:nth-child(3), .smchat__best > *:nth-child(3), .smchat__improve > *:nth-child(3) { animation-delay: 320ms; }
+.smchat__act > *:nth-child(4), .smchat__best > *:nth-child(4) { animation-delay: 480ms; }
+.smchat__act > *:nth-child(5), .smchat__best > *:nth-child(5) { animation-delay: 640ms; }
+
+/* ── Actividad (Ganado la Oferta): título con burst + ícono flotando + card con aura ── */
+.smchat__act > .smchat__act-title { animation: smchat-title-in 700ms 320ms cubic-bezier(0.34,1.56,0.64,1) both; }
+@keyframes smchat-title-in {
+  0% { opacity: 0; transform: scale(0.5); }
+  60% { opacity: 1; transform: scale(1.12); filter: drop-shadow(0 0 24px rgba(237,137,54,0.9)) drop-shadow(0 0 48px rgba(132,96,229,0.7)); }
+  100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 53px rgba(49,0,138,0.4)) drop-shadow(0 0 32px rgba(82,52,188,0.5)); }
+}
+.smchat__act-icon svg { animation: smchat-float 3.2s 1.1s ease-in-out infinite; }
+@keyframes smchat-float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-7px) rotate(3deg); } }
+.smchat__act > .pbid {
+  animation: smchat-rise 520ms 640ms cubic-bezier(0.22,1,0.36,1) both, smchat-won-glow 2.6s 1.7s ease-in-out infinite;
+}
+@keyframes smchat-won-glow {
+  0%, 100% { box-shadow: rgba(20,0,69,0.3) 0px 8px 24px -2px; }
+  50% { box-shadow: rgba(20,0,69,0.3) 0px 8px 24px -2px, 0 0 18px rgba(255,180,102,0.5), 0 0 36px rgba(132,96,229,0.45); }
+}
+
+/* ── 48 horas: reloj que hace tic-tac + "48 horas" late con glow ── */
+.smchat__reserve-icon svg { animation: smchat-clock-tick 2.2s 900ms ease-in-out infinite; transform-origin: 50% 55%; }
+@keyframes smchat-clock-tick { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+.smchat__reserve-hours {
+  display: inline-block;
+  animation: smchat-hours-in 650ms 420ms cubic-bezier(0.34,1.56,0.64,1) both, smchat-breathe 2.6s 1.3s ease-in-out infinite;
+}
+@keyframes smchat-hours-in { 0% { opacity: 0; transform: scale(0.5); } 60% { opacity: 1; transform: scale(1.12); } 100% { opacity: 1; transform: scale(1); } }
+
+/* ── Bestbid: "¿Deseas mejorarlo?" late + countdown con tick (rojo al final) ── */
+.smchat__best > .smchat__best-ask {
+  animation: smchat-rise 520ms 480ms cubic-bezier(0.22,1,0.36,1) both, smchat-ask-pulse 1.8s 1.4s ease-in-out infinite;
+}
+@keyframes smchat-ask-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+.smchat__best-count { display: inline-block; }
+.smchat__best-count--tick { animation: smchat-tick 320ms cubic-bezier(0.34,1.56,0.64,1); }
+.smchat__best-count--hot {
+  color: #FF3B5C; text-shadow: 0 0 10px rgba(255,59,92,0.8);
+  animation: smchat-count-hot 320ms cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes smchat-count-hot { 0% { transform: scale(1.6); } 100% { transform: scale(1); } }
+.smchat__best-timer--hot > span:first-child { animation: smchat-blink 700ms ease-in-out infinite; }
+@keyframes smchat-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+/* Notas y timer sobre la barra entran después del contenido */
+.smchat__reserve-note, .smchat__improve-note, .smchat__best-timer {
+  animation: smchat-rise-center 550ms 700ms cubic-bezier(0.22,1,0.36,1) both;
+}
+
+/* Input de improve: glow al enfocar */
+.smchat__improve-input:focus-within {
+  box-shadow: rgba(20,0,69,0.3) 0 8px 24px -2px, 0 0 16px rgba(174,142,255,0.55);
+}
+
+/* Shimmer "atractor" automático en los botones glass (sin esperar hover) */
+.smchat__confirm-btn::after { animation: gambler-idle 3.2s 1s ease-in-out infinite; }
+@keyframes gambler-idle {
+  0% { transform: translateX(-220%) skewX(-18deg); }
+  38% { transform: translateX(400%) skewX(-18deg); }
+  100% { transform: translateX(400%) skewX(-18deg); }
+}
+
+/* Cartelito "Con Precio Reserva" (versión panel): baja desde detrás del borde superior */
+.smchat__reserve-pill { animation: smchat-pill-drop 700ms 120ms cubic-bezier(0.34,1.56,0.64,1) both; }
+@keyframes smchat-pill-drop { from { transform: translate(-50%, -110%); } to { transform: translate(-50%, 0); } }
+
 @media (prefers-reduced-motion: reduce) {
-  .smchat__msg--received, .smchat__msg--sent, .smchat__rdots span { animation: none; }
+  .smchatpanel *, .smchatpanel *::before, .smchatpanel *::after { animation: none !important; transition: none !important; }
+  .smchat__myflash, .smchat__win-spark, .smchat__spark { display: none; }
 }
 `;
 
@@ -707,6 +939,15 @@ let _stylesInjected = false;
 function pad(n: number): string {
   return String(Math.max(0, n)).padStart(2, "0");
 }
+
+/** Nivel del remate para el efecto "sello": A la una (1) → A las dos (2) → A las tres (3). */
+function vmcLevel(text?: string): 1 | 2 | 3 {
+  if (text?.includes("tres")) return 3;
+  if (text?.includes("dos")) return 2;
+  return 1;
+}
+
+const WIN_SPARKS = 12;
 
 export interface MobileChatPanelProps {
   height?: number;
@@ -824,6 +1065,17 @@ export default function MobileChatPanel({
   // Barra del countdown en "bestbid": baja de 100% (23s) a 0% (0s).
   const bestbidProg = (countdown / BESTBID_SECONDS) * 100;
 
+  // ── Gamificación ──
+  // ¿El último mensaje del stream es una puja MÍA? → dispara el flash de pantalla.
+  const lastStreamMsg = shown > 0 ? STREAM[Math.min(shown, STREAM.length) - 1] : undefined;
+  const lastMine = lastStreamMsg?.kind === "proposal" && lastStreamMsg.mine === true;
+  // La luz del BidProposal cambia cuando la puja actual es MÍA (naranja + combo).
+  const proposalMine = bidder === ME;
+  // Valor único de la barra + estados de urgencia/chispa.
+  const barValue = showBestbid ? bestbidProg : showResult || showActivity || showReserve || showImprove || showConfirm ? 100 : showProcessing ? 0 : progress;
+  const barHot = (showStream && progress >= 70) || (showBestbid && countdown <= 5);
+  const sparkOn = (showStream || showBestbid) && barValue > 1 && barValue < 100;
+
   return (
     <>
       <style id={`${STYLE_ID}-ssr`} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: SMCHATPANEL_STYLES }} />
@@ -854,21 +1106,31 @@ export default function MobileChatPanel({
           </div>
         ) : null}
 
-        {/* streaming: mensajes entrando (slide horizontal + suben) */}
+        {/* streaming: mensajes entrando (slide horizontal + suben). Mi puja entra
+            con "slam" + shine; "Cierra en" con wobble; el remate con sellos. */}
         {showStream ? (
           <div className="smchat__stream">
-            {STREAM.slice(0, shown).map((m, i) => (
-              <div key={i} className={`smchat__msg smchat__msg--${m.side === "sent" ? "sent" : "received"}`}>
-                <Bubble m={m} />
-              </div>
-            ))}
+            {STREAM.slice(0, shown).map((m, i) => {
+              const cls = ["smchat__msg", `smchat__msg--${m.side === "sent" ? "sent" : "received"}`];
+              if (m.kind === "proposal" && m.mine) cls.push("smchat__msg--mine");
+              if (m.kind === "closes") cls.push("smchat__msg--closes");
+              if (m.kind === "vmc" && m.slow) cls.push("smchat__msg--vmc", `smchat__msg--vmc${vmcLevel(m.text)}`);
+              return (
+                <div key={i} className={cls.join(" ")}>
+                  <Bubble m={m} />
+                </div>
+              );
+            })}
           </div>
         ) : null}
+
+        {/* Flash de pantalla cuando la última puja del stream es MÍA */}
+        {showStream && lastMine ? <div key={shown} className="smchat__myflash" aria-hidden="true" /> : null}
 
         {/* status: recibiendo participantes / inicio extendido */}
         {showStatus ? (
           <div className="smchat__status">
-            <div className="smchat__rp">
+            <div className="smchat__rp smchat__rp--breathe">
               Recibiendo
               <br />
               participantes
@@ -882,8 +1144,12 @@ export default function MobileChatPanel({
             <div className="smchat__box">
               <span className="smchat__box-label">Inicia en:</span>
               <div className="smchat__box-row">
-                {phase === "extended" ? <PlusIcon /> : <ClockIcon />}
-                <span className="smchat__box-time">00:00:{pad(count)}</span>
+                <span key={phase} className="smchat__box-icon">
+                  {phase === "extended" ? <PlusIcon /> : <ClockIcon />}
+                </span>
+                <span key={count} className="smchat__box-time smchat__box-time--tick">
+                  00:00:{pad(count)}
+                </span>
               </div>
             </div>
           </div>
@@ -894,8 +1160,8 @@ export default function MobileChatPanel({
         {showProcessing ? (
           <div className="smchat__status">
             <div className="smchat__proc-lines">
-              <div className="smchat__rp smchat__rp--16">Procesando</div>
-              <div className="smchat__rp smchat__rp--20">Un momento por favor</div>
+              <div className="smchat__rp smchat__rp--16 smchat__rp--shimmer">Procesando</div>
+              <div className="smchat__rp smchat__rp--20 smchat__rp--shimmer">Un momento por favor</div>
             </div>
             <div className="smchat__rdots">
               <span />
@@ -905,13 +1171,24 @@ export default function MobileChatPanel({
           </div>
         ) : null}
 
-        {/* Tabla de posiciones — título + filas del podio (1° ganador, 2° …) */}
+        {/* Tabla de posiciones — reveal escalonado: título → 2° sube → 1° (GANADOR)
+            cae con rebote, ráfaga dorada, chispas, estrella pop y shine en loop. */}
         {showResult ? (
           <div className="smchat__status">
-            <div className="smchat__rp smchat__rp--20">Tabla de posiciones</div>
+            <div className="smchat__rp smchat__rp--20 smchat__result-title">Tabla de posiciones</div>
             <div className="smchat__rows">
+              {/* Chispas del ganador (fila 1 → centro y=32px), estallan al aterrizar */}
+              <div className="smchat__win-sparks" style={{ top: 32 }} aria-hidden="true">
+                {Array.from({ length: WIN_SPARKS }).map((_, i) => (
+                  <span
+                    key={i}
+                    className="smchat__win-spark"
+                    style={{ "--ang": `${(360 / WIN_SPARKS) * i}deg`, "--dist": `${96 + (i % 3) * 28}px` } as CSSProperties}
+                  />
+                ))}
+              </div>
               {STANDINGS.map((s) => (
-                <div key={s.rank} className={`smchat__row${s.mine ? " smchat__row--mine" : ""}`}>
+                <div key={s.rank} className={`smchat__row${s.mine ? " smchat__row--mine smchat__row--in1" : " smchat__row--in2"}`}>
                   <div className="smchat__rank">
                     <b>{s.rank}</b>
                     <i>°</i>
@@ -1015,9 +1292,11 @@ export default function MobileChatPanel({
                 </div>
               </div>
             </div>
-            <div className="smchat__best-timer">
+            <div className={`smchat__best-timer${countdown <= 5 ? " smchat__best-timer--hot" : ""}`}>
               <span>Te queda poco tiempo. ¡Mejora el monto ahora!</span>
-              <span className="smchat__best-count">{countdown}</span>
+              <span key={countdown} className={`smchat__best-count ${countdown <= 5 ? "smchat__best-count--hot" : "smchat__best-count--tick"}`}>
+                {countdown}
+              </span>
             </div>
           </>
         ) : null}
@@ -1095,16 +1374,23 @@ export default function MobileChatPanel({
           </>
         ) : null}
 
-        {/* Bid actual (glass) — arriba al centro, en idle y streaming */}
+        {/* Bid actual (glass) — arriba al centro, en idle y streaming. Si la puja
+            es MÍA la luz cambia a naranja "combo" (distinta a la de los demás). */}
         {showProposal ? (
           <div style={{ position: "absolute", top: 14, left: 0, right: 0, display: "flex", justifyContent: "center", zIndex: 3 }}>
-            <BidProposal amount={fmtMoney(bidAmount)} label={`ENVIADO POR ${bidder}`} flash={flash} flashColors={flashColors} flashMode={flashMode} />
+            <BidProposal
+              amount={fmtMoney(bidAmount)}
+              label={`ENVIADO POR ${bidder}`}
+              flash={flash}
+              flashColors={proposalMine ? MY_FLASH_COLORS : flashColors}
+              flashMode={proposalMine ? "combo" : flashMode}
+            />
           </div>
         ) : null}
 
         {/* Arriba de la barra: ícono + mensaje. Cambian entre "result" y "activity". */}
         {showResult || showActivity ? (
-          <div className="smchat__next">
+          <div className={`smchat__next${showResult ? " smchat__next--late" : ""}`}>
             <span className="smchat__next-icon">{isActivity ? <EmailIcon /> : <MoneyBagIcon />}</span>
             {isActivity ? (
               <span>
@@ -1126,14 +1412,22 @@ export default function MobileChatPanel({
 
         {/* ProgressBar sobre la zona del botón (deja 80px abajo). En result/activity/
             reserve/improve/confirm 100% (llena); en bestbid baja con el countdown;
-            en processing 0% (vacía). */}
-        <div style={{ position: "absolute", left: 0, right: 0, bottom: 80, zIndex: 5 }}>
+            en processing 0% (vacía). Chispa en el borde del relleno + throb urgente
+            cuando el remate está por terminar (o el countdown de bestbid ≤ 5s). */}
+        <div className={`smchat__barwrap${barHot ? " smchat__barwrap--hot" : ""}`}>
           <ProgressBar
             variant={progressVariant}
-            value={showBestbid ? bestbidProg : showResult || showActivity || showReserve || showImprove || showConfirm ? 100 : showProcessing ? 0 : progress}
+            value={barValue}
             transitionMs={showBestbid ? 1000 : undefined}
             aria-label="Tiempo de bid"
           />
+          {sparkOn ? (
+            <span
+              className="smchat__spark"
+              style={{ left: `${barValue}%`, ...(showBestbid ? { transitionDuration: "1000ms" } : {}) }}
+              aria-hidden="true"
+            />
+          ) : null}
         </div>
       </div>
     </>

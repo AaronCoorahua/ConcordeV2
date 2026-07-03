@@ -14,5 +14,6 @@ export const BLOCKS_NAV: BlockNavItem[] = [
   { id: "login",    name: "Login" },
   { id: "register", name: "Register" },
   { id: "sala",     name: "Sala" },
+  { id: "testsala", name: "Test Sala" },
   { id: "sidebar",  name: "Sidebar" },
 ];

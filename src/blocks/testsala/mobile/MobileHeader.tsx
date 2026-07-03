@@ -31,7 +31,7 @@ const LIVE_FILL = "linear-gradient(180deg, #FF9639 0%, #EF852E 40%, #BE3D00 100%
 const LIVE_BORDER = "linear-gradient(140deg, #FFBC83 0%, rgba(255,255,255,0.45) 40%, #DA6C1E 75%, #FFBC83 100%)";
 
 // Placa glass 54×22 (paint13 fill + paint15 borde lila) · glass real vía máscara
-const PLATE_STYLE_ID = "concorde-mh-plate-styles";
+const PLATE_STYLE_ID = "concorde-testmh-plate-styles";
 const PLATE_STYLES = `
 .mh-plate {
   position: relative;
@@ -64,13 +64,21 @@ const PLATE_STYLES = `
 }
 /* Pill "Con Precio Reserva" (VYSecondaryHover) — cuelga bajo el header
    (199×33, esquinas inferiores 16px). Gradiente #AE8EFF→#5A35C2 + sombra card
-   (0 0 16 spread 4, #000 10%). Sin glow morado. */
-.mh-reserve {
+   (0 0 16 spread 4, #000 10%). Sin glow morado.
+   El clip-wrapper recorta por arriba al ras del header: el pill BAJA desde
+   detrás del header (translateY -105% → 0 con rebote), como un cartel colgante. */
+.mh-reserve-clip {
   position: absolute;
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 6;
+  overflow: hidden;
+  padding: 0 24px 24px;
+  pointer-events: none;
+}
+.mh-reserve {
+  position: relative;
   box-sizing: border-box;
   height: 33px;
   padding: 0 22px;
@@ -83,6 +91,17 @@ const PLATE_STYLES = `
   font-weight: 600;
   color: #ffffff;
   background: linear-gradient(155deg, #5A35C2 0%, #AE8EFF 100%);
+  animation: mh-reserve-drop 700ms 120ms cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes mh-reserve-drop {
+  from { transform: translateY(-105%); }
+  to { transform: translateY(0); }
+}
+/* Pop de las pills de estadística cuando cambia su valor (re-monta con key) */
+.mh-vpop { display: inline-flex; animation: mh-vpop 300ms cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes mh-vpop { 0% { transform: scale(1); } 45% { transform: scale(1.22); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .mh-reserve, .mh-vpop { animation: none; }
 }
 `;
 let _plateInjected = false;
@@ -168,7 +187,7 @@ export default function MobileHeader({
       <style id={`${PLATE_STYLE_ID}-ssr`} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: PLATE_STYLES }} />
       <div
         className={className}
-        data-block-section="mobile-header"
+        data-block-section="testmobile-header"
         style={{
           position: "relative",
           width: MOBILEHEADER_WIDTH,
@@ -248,9 +267,15 @@ export default function MobileHeader({
           <div style={{ marginTop: 10, display: "flex", alignItems: "center", width: MOBILEHEADER_WIDTH }}>
             {/* Sub-fila izquierda dentro de la tarjeta 310 */}
             <div style={{ display: "flex", alignItems: "center", gap: 9, width: INFO_WIDTH, boxSizing: "border-box", padding: "0 14px" }}>
-              <StatPill variant="glass" label="" value={myBids} icon={<ArrowGlyph />} />
-              <StatPill variant="glass" label="" value={totalBids} icon={<ArrowGlyph />} />
-              <StatPill variant="glass" label="" value={people} icon={<PeopleGlyph />} />
+              <span key={`mb-${myBids}`} className="mh-vpop">
+                <StatPill variant="glass" label="" value={myBids} icon={<ArrowGlyph />} />
+              </span>
+              <span key={`tb-${totalBids}`} className="mh-vpop">
+                <StatPill variant="glass" label="" value={totalBids} icon={<ArrowGlyph />} />
+              </span>
+              <span key={`pp-${people}`} className="mh-vpop">
+                <StatPill variant="glass" label="" value={people} icon={<PeopleGlyph />} />
+              </span>
               <span
                 style={{
                   boxSizing: "border-box",
@@ -281,8 +306,12 @@ export default function MobileHeader({
           </div>
         </div>
 
-        {/* Pill "Con Precio Reserva" — cuelga bajo el header, centrado */}
-        {reservePill ? <span className="mh-reserve">Con Precio Reserva</span> : null}
+        {/* Pill "Con Precio Reserva" — baja desde detrás del header (clip + drop) */}
+        {reservePill ? (
+          <span className="mh-reserve-clip">
+            <span className="mh-reserve">Con Precio Reserva</span>
+          </span>
+        ) : null}
       </div>
     </>
   );
