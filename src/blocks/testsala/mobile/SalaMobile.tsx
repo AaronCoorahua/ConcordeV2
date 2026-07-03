@@ -37,7 +37,8 @@ export interface SalaMobileProps {
   flashMode?: "bulb" | "spin" | "explode" | "pulse" | "combo" | "shine";
 }
 
-// CTA primary 320×48 + estado "presionado" (réplica de .pvbtn:active)
+// CTA primary 320×48 + estado "presionado" (réplica de .pvbtn:active) +
+// anillo expansivo naranja que estalla con cada puja MÍA (live o idle).
 const CTA_STYLES = `
 .salamobile-cta .pvbtn { width: 320px; padding: 0; }
 .salamobile-cta--pressed .pvbtn {
@@ -47,6 +48,22 @@ const CTA_STYLES = `
   color: #d1d5dc;
   transform: scale(0.97) translateY(1px);
   box-shadow: rgba(0,0,0,0.22) 0 2px 5px 2px inset, rgba(0,0,0,0.12) 0 1px 3px;
+}
+.salamobile-cta-ring {
+  position: absolute;
+  inset: -5px;
+  border-radius: 9999px;
+  pointer-events: none;
+  border: 2.5px solid rgba(255,150,57,0.9);
+  box-shadow: 0 0 18px rgba(255,120,26,0.8), inset 0 0 12px rgba(255,150,57,0.5);
+  animation: salamobile-ring 550ms ease-out forwards;
+}
+@keyframes salamobile-ring {
+  0% { opacity: 0.95; transform: scale(0.92); }
+  100% { opacity: 0; transform: scale(1.28); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .salamobile-cta-ring { animation: none; opacity: 0; }
 }
 `;
 
@@ -65,6 +82,8 @@ export default function SalaMobile({ className = "", live = false, noReserve = f
 
   const progVariant: ProgressBarVariant = live ? (phase === "streaming" || phase === "result" || phase === "activity" || phase === "bestbid" ? "rainbow" : "white") : "rainbow";
   const ctaAmount = (live ? bidAmount : idleBid) + STEP; // CTA = siguiente bid (un poco mayor)
+  // Anillo del CTA: estalla con cada puja mía (live → myBids; idle → idleFlash)
+  const ringKey = live ? myBids : idleFlash;
 
   // Click en "Bidear" (idle): pujo yo → sube mi bid + anima el bid actual
   function handleBid(): void {
@@ -77,7 +96,7 @@ export default function SalaMobile({ className = "", live = false, noReserve = f
   return (
     <div
       className={className}
-      data-block="sala-mobile"
+      data-block="testsala-mobile"
       style={{
         position: "relative",
         width: SALAMOBILE_WIDTH,
@@ -123,6 +142,7 @@ export default function SalaMobile({ className = "", live = false, noReserve = f
           className={`salamobile-cta${pressed ? " salamobile-cta--pressed" : ""}`}
           style={{ position: "absolute", left: "50%", bottom: 16, transform: "translateX(-50%)" }}
         >
+          {ringKey > 0 ? <span key={ringKey} className="salamobile-cta-ring" aria-hidden="true" /> : null}
           <Button variant="primary" onClick={handleBid}>{fmtMoney(ctaAmount)}</Button>
         </div>
       )}

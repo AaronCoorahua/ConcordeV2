@@ -7,6 +7,8 @@ import { LOGIN_WIDTH, LOGIN_HEIGHT } from "@/src/blocks/login/desktop/dimensions
 import Register from "@/src/blocks/register/desktop/Register";
 import { REGISTER_WIDTH, REGISTER_HEIGHT } from "@/src/blocks/register/desktop/dimensions";
 import SalaDesktop, { SALA_WIDTH, SALA_HEIGHT } from "@/src/blocks/sala/desktop/SalaDesktop";
+import TestSalaMobile from "@/src/blocks/testsala/mobile/SalaMobile";
+import { SALAMOBILE_WIDTH as TESTSALA_W, SALAMOBILE_HEIGHT as TESTSALA_H } from "@/src/blocks/testsala/mobile/dimensions";
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/dimensions";
 import Header from "@/app/_components/Header";
@@ -80,6 +82,7 @@ const BLOCKS: BlockEntry[] = [
   { id: "login",    name: "Login",    width: LOGIN_COMBINED_W, height: LOGIN_COMBINED_H, node: LOGIN_COMBINED },
   { id: "register", name: "Register", width: REGISTER_COMBINED_W, height: REGISTER_COMBINED_H, node: REGISTER_COMBINED },
   { id: "sala",     name: "Sala",     width: SALA_WIDTH,     height: SALA_HEIGHT,     node: <SalaDesktop /> },
+  { id: "testsala", name: "Test Sala", width: TESTSALA_W,    height: TESTSALA_H,      node: <TestSalaMobile /> },
   { id: "sidebar",  name: "Sidebar",  width: SIDEBAR_WIDTH,  height: SIDEBAR_HEIGHT,
     /* El sidebar mide 226×1042 → scale normal ≈ 0.22 → 49px ancho (invisible).
        Con thumbHeight 214 el scale sube a ~1.06 → thumbnail 240×227px mostrando header + nav items */

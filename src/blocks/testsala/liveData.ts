@@ -21,6 +21,10 @@ export interface LiveMsg {
 
 export const ME = "KAHTH4"; // mis pujas (los "live" / sent)
 const OTHERS = ["ZAE389", "RAZER21", "MEND99", "LUC88", "VKR55", "TORO_7"];
+
+// Luz del BidProposal cuando la puja es MÍA — naranja "live" (distinta a la de
+// los demás, que usan la paleta elegida en el visor).
+export const MY_FLASH_COLORS = ["#FFB566", "#FF6A00", "#FFFFFF"];
 export const BASE = 5000;
 export const STEP = 79;
 
@@ -129,7 +133,7 @@ export const PARTICIPANTS_TARGET = 18;
 
 // ── Final: "Procesando" → "Tabla de posiciones" → "Actividad" (gano yo) ──
 export const PROCESSING_MS = 2200; // "Un momento por favor" antes de la tabla
-export const RESULT_MS = 5000; // la tabla de posiciones se ve 5s, luego "Actividad"
+export const RESULT_MS = 6500; // tabla de posiciones: reveal escalonado (2° → 1° con brillo) + lectura, luego "Actividad"
 
 // ── Con precio reserva: sub-flujo "Mejor postor" → (Ingresa monto → Confirmar) → 48 horas ──
 export const RESERVE_MS = 5000; // reservado (transiciones internas)
