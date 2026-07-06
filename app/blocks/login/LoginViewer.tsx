@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { JSX } from "react";
 import Login, { LOGIN_WIDTH, LOGIN_HEIGHT } from "@/src/blocks/login/desktop/Login";
 import LoginMobile from "@/src/blocks/login/mobile/LoginMobile";
-import { LOGIN_MOBILE_WIDTH, LOGIN_MOBILE_HEIGHT } from "@/src/blocks/login/mobile/dimensions";
+import { LOGIN_MOBILE_WIDTH } from "@/src/blocks/login/mobile/dimensions";
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_COLLAPSED_WIDTH } from "@/src/blocks/sidebar/desktop/dimensions";
 import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_components/BlockViewer";
@@ -20,6 +20,7 @@ const COMBINED_WIDTH = SIDEBAR_WIDTH + LOGIN_WIDTH;
 // justo donde termina el contenido del Login, no sobrar relleno morado debajo.
 const COMBINED_HEIGHT = LOGIN_HEIGHT;
 const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
+const MOBILE_FRAME_H = 780;
 
 export default function LoginViewer({ files }: { files: BlockFile[] }): JSX.Element {
   const [collapsed, setCollapsed] = useState(false);
@@ -46,7 +47,7 @@ export default function LoginViewer({ files }: { files: BlockFile[] }): JSX.Elem
       width={COMBINED_WIDTH}
       height={COMBINED_HEIGHT}
       canvas={canvas}
-      canvasForViewport={{ mobile: { node: <LoginMobile />, width: LOGIN_MOBILE_WIDTH, height: LOGIN_MOBILE_HEIGHT } }}
+      canvasForViewport={{ mobile: { node: <LoginMobile frameHeight={MOBILE_FRAME_H} />, width: LOGIN_MOBILE_WIDTH, height: MOBILE_FRAME_H } }}
       files={files}
       previewBg={VAULT_PREVIEW_BG}
     />

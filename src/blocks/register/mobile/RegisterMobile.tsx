@@ -13,17 +13,22 @@
  * Falta: banners placeholder + TermsAcceptance (se agregan después).
  */
 
+import { useState } from "react";
 import type { JSX } from "react";
 import AppHeader from "../../header/desktop/Header";
 import PersonalDataCard from "../desktop/PersonalDataCard";
 import BillingCard from "../desktop/BillingCard";
 import { ImportantNotice } from "../desktop/Register";
+import SidebarMobile, { SidebarMenuButton } from "../../sidebar/mobile/SidebarMobile";
 import { REGISTER_MOBILE_WIDTH, REGISTER_MOBILE_HEIGHT } from "./dimensions";
 
 export { REGISTER_MOBILE_WIDTH, REGISTER_MOBILE_HEIGHT } from "./dimensions";
 
+
 export interface RegisterMobileProps {
   className?: string;
+  /** Alto del marco para previsualizaciones (px). En producción se omite. Ver `SidebarMobile`. */
+  frameHeight?: number;
 }
 
 // Heading del Register en mobile — texto real (colores sólidos, no gradiente
@@ -42,8 +47,10 @@ function RegisterHeadingMobile(): JSX.Element {
   );
 }
 
-export default function RegisterMobile({ className = "" }: RegisterMobileProps): JSX.Element {
-  return (
+export default function RegisterMobile({ className = "", frameHeight }: RegisterMobileProps): JSX.Element {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const page = (
     <div
       className={className}
       data-block="register-mobile"
@@ -58,7 +65,12 @@ export default function RegisterMobile({ className = "" }: RegisterMobileProps):
     >
       <AppHeader
         width={REGISTER_MOBILE_WIDTH}
-        logo={<img src="/logo-preview.png" alt="VMC Subastas" style={{ height: 26, width: "auto", display: "block" }} />}
+        logo={
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <SidebarMenuButton onClick={() => setMenuOpen(true)} expanded={menuOpen} />
+            <img src="/logo-preview.png" alt="VMC Subastas" style={{ height: 26, width: "auto", display: "block" }} />
+          </div>
+        }
       />
 
       <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: 16 }}>
@@ -71,5 +83,11 @@ export default function RegisterMobile({ className = "" }: RegisterMobileProps):
         <ImportantNotice />
       </div>
     </div>
+  );
+
+  return (
+    <SidebarMobile open={menuOpen} onOpenChange={setMenuOpen} defaultActiveId="hoy" frameHeight={frameHeight}>
+      {page}
+    </SidebarMobile>
   );
 }

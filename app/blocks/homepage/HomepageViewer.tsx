@@ -5,7 +5,7 @@ import type { JSX } from "react";
 import Homepage from "@/src/blocks/homepage/desktop/Homepage";
 import { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/homepage/desktop/dimensions";
 import HomepageMobile from "@/src/blocks/homepage/mobile/HomepageMobile";
-import { HOMEPAGE_MOBILE_WIDTH, HOMEPAGE_MOBILE_HEIGHT } from "@/src/blocks/homepage/mobile/dimensions";
+import { HOMEPAGE_MOBILE_WIDTH } from "@/src/blocks/homepage/mobile/dimensions";
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT, SIDEBAR_COLLAPSED_WIDTH } from "@/src/blocks/sidebar/desktop/dimensions";
 import AppHeader from "@/src/blocks/header/desktop/Header";
@@ -15,6 +15,9 @@ import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_com
 const COMBINED_WIDTH = SIDEBAR_WIDTH + HOMEPAGE_WIDTH;
 const COMBINED_HEIGHT = Math.max(SIDEBAR_HEIGHT, HEADER_HEIGHT + HOMEPAGE_HEIGHT);
 const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
+// Alto del "marco de teléfono" del preview mobile: simula la altura visible de un
+// móvil (con scroll interno del contenido) y ancla el sidebar-drawer fixed dentro.
+const MOBILE_FRAME_H = 780;
 
 export default function HomepageViewer({ files }: { files: BlockFile[] }): JSX.Element {
   // Al colapsar el sidebar, el contenido de la derecha se escala (proporcional)
@@ -49,7 +52,7 @@ export default function HomepageViewer({ files }: { files: BlockFile[] }): JSX.E
       width={COMBINED_WIDTH}
       height={COMBINED_HEIGHT}
       canvas={canvas}
-      canvasForViewport={{ mobile: { node: <HomepageMobile />, width: HOMEPAGE_MOBILE_WIDTH, height: HOMEPAGE_MOBILE_HEIGHT } }}
+      canvasForViewport={{ mobile: { node: <HomepageMobile frameHeight={MOBILE_FRAME_H} />, width: HOMEPAGE_MOBILE_WIDTH, height: MOBILE_FRAME_H } }}
       files={files}
       previewBg={VAULT_PREVIEW_BG}
     />

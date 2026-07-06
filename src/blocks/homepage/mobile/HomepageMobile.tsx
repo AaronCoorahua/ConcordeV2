@@ -9,6 +9,7 @@
 
 "use client";
 
+import { useState } from "react";
 import type { JSX } from "react";
 import AppHeader from "../../header/desktop/Header";
 import CardTitle from "../../../components/CardTitle";
@@ -17,6 +18,7 @@ import CategoryCard from "../../../components/CategoryCard";
 import OfferCard from "../../../components/OfferCard";
 import BadgeStatus from "../../../components/BadgeStatus";
 import ProfileButton from "../../../components/ProfileButton";
+import SidebarMobile, { SidebarMenuButton } from "../../sidebar/mobile/SidebarMobile";
 
 import { HOMEPAGE_MOBILE_WIDTH, HOMEPAGE_MOBILE_HEIGHT } from "./dimensions";
 export { HOMEPAGE_MOBILE_WIDTH, HOMEPAGE_MOBILE_HEIGHT } from "./dimensions";
@@ -40,10 +42,14 @@ const HM_STYLES = `
 
 export interface HomepageMobileProps {
   className?: string;
+  /** Alto del marco para previsualizaciones (px). En producción se omite. Ver `SidebarMobile`. */
+  frameHeight?: number;
 }
 
-export default function HomepageMobile({ className = "" }: HomepageMobileProps): JSX.Element {
-  return (
+export default function HomepageMobile({ className = "", frameHeight }: HomepageMobileProps): JSX.Element {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const page = (
     <div
       className={className}
       data-block="homepage-mobile"
@@ -56,10 +62,15 @@ export default function HomepageMobile({ className = "" }: HomepageMobileProps):
         fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)",
       }}
     >
-      {/* Header 420×64 con el logo de la marca a la izquierda */}
+      {/* Header 420×64 · hamburguesa + logo de la marca a la izquierda */}
       <AppHeader
         width={HOMEPAGE_MOBILE_WIDTH}
-        logo={<img src="/logo-preview.png" alt="VMC Subastas" style={{ height: 26, width: "auto", display: "block" }} />}
+        logo={
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <SidebarMenuButton onClick={() => setMenuOpen(true)} expanded={menuOpen} />
+            <img src="/logo-preview.png" alt="VMC Subastas" style={{ height: 26, width: "auto", display: "block" }} />
+          </div>
+        }
       />
 
       <style suppressHydrationWarning dangerouslySetInnerHTML={{ __html: HM_STYLES }} />
@@ -143,5 +154,11 @@ export default function HomepageMobile({ className = "" }: HomepageMobileProps):
         </div>
       </div>
     </div>
+  );
+
+  return (
+    <SidebarMobile open={menuOpen} onOpenChange={setMenuOpen} defaultActiveId="hoy" frameHeight={frameHeight}>
+      {page}
+    </SidebarMobile>
   );
 }

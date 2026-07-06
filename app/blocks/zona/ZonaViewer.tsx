@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { JSX } from "react";
 import Zona, { ZONA_WIDTH, ZONA_HEIGHT } from "@/src/blocks/zona/desktop/Zona";
 import ZonaMobile from "@/src/blocks/zona/mobile/ZonaMobile";
-import { ZONA_MOBILE_WIDTH, ZONA_MOBILE_HEIGHT } from "@/src/blocks/zona/mobile/dimensions";
+import { ZONA_MOBILE_WIDTH } from "@/src/blocks/zona/mobile/dimensions";
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT, SIDEBAR_COLLAPSED_WIDTH } from "@/src/blocks/sidebar/desktop/dimensions";
 import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_components/BlockViewer";
@@ -18,6 +18,7 @@ import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_com
 const COMBINED_WIDTH = SIDEBAR_WIDTH + ZONA_WIDTH;
 const COMBINED_HEIGHT = Math.max(SIDEBAR_HEIGHT, ZONA_HEIGHT);
 const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
+const MOBILE_FRAME_H = 780;
 
 export default function ZonaViewer({ files }: { files: BlockFile[] }): JSX.Element {
   // Al colapsar el sidebar, el contenido de la derecha se escala (proporcional)
@@ -50,7 +51,7 @@ export default function ZonaViewer({ files }: { files: BlockFile[] }): JSX.Eleme
       width={COMBINED_WIDTH}
       height={COMBINED_HEIGHT}
       canvas={canvas}
-      canvasForViewport={{ mobile: { node: <ZonaMobile />, width: ZONA_MOBILE_WIDTH, height: ZONA_MOBILE_HEIGHT } }}
+      canvasForViewport={{ mobile: { node: <ZonaMobile frameHeight={MOBILE_FRAME_H} />, width: ZONA_MOBILE_WIDTH, height: MOBILE_FRAME_H } }}
       files={files}
       previewBg={VAULT_PREVIEW_BG}
     />

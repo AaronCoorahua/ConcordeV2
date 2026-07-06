@@ -1,6 +1,8 @@
 import type { JSX } from "react";
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/dimensions";
+import SidebarMobile from "@/src/blocks/sidebar/mobile/SidebarMobile";
+import { SIDEBAR_MOBILE_WIDTH, SIDEBAR_MOBILE_HEIGHT } from "@/src/blocks/sidebar/mobile/dimensions";
 import Header from "@/app/_components/Header";
 import BlockViewer, { type BlockFile } from "@/app/blocks/_components/BlockViewer";
 import { readFileSync } from "node:fs";
@@ -21,6 +23,10 @@ const BLOCK_FILES: BlockFile[] = [
   { path: "src/blocks/sidebar/desktop/SidebarSubItem.tsx", code: readSrc("src/blocks/sidebar/desktop/SidebarSubItem.tsx") },
   { path: "src/blocks/sidebar/desktop/SidebarHeader.tsx",  code: readSrc("src/blocks/sidebar/desktop/SidebarHeader.tsx") },
   { path: "src/blocks/sidebar/desktop/SidebarBanner.tsx",  code: readSrc("src/blocks/sidebar/desktop/SidebarBanner.tsx") },
+  { path: "src/blocks/sidebar/desktop/dimensions.ts",      code: readSrc("src/blocks/sidebar/desktop/dimensions.ts") },
+  // Variante mobile — drawer overlay que reutiliza el Sidebar desktop
+  { path: "src/blocks/sidebar/mobile/SidebarMobile.tsx",   code: readSrc("src/blocks/sidebar/mobile/SidebarMobile.tsx") },
+  { path: "src/blocks/sidebar/mobile/dimensions.ts",       code: readSrc("src/blocks/sidebar/mobile/dimensions.ts") },
 ];
 
 // Componentes que usa el bloque (iconos de navegación) → aparecen bajo src/components/
@@ -38,10 +44,36 @@ export default function SidebarBlockPage(): JSX.Element {
       <Header active="blocks" />
       <BlockViewer
         id="sidebar"
-        description="Sidebar de navegación lateral del dashboard."
+        description="Sidebar de navegación lateral del dashboard. En mobile se abre como drawer overlay que oscurece el fondo."
         width={SIDEBAR_WIDTH}
         height={SIDEBAR_HEIGHT}
         canvas={<Sidebar />}
+        canvasForViewport={{
+          mobile: {
+            node: (
+              <SidebarMobile showTrigger frameHeight={SIDEBAR_MOBILE_HEIGHT} defaultActiveId="hoy">
+                <div
+                  style={{
+                    width: SIDEBAR_MOBILE_WIDTH,
+                    height: SIDEBAR_MOBILE_HEIGHT,
+                    background: "#f4f4f7",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontFamily: "monospace",
+                    fontSize: 12,
+                    letterSpacing: "0.08em",
+                    color: "#9AA1AC",
+                  }}
+                >
+                  CONTENIDO · pulsa ☰ para abrir el menú
+                </div>
+              </SidebarMobile>
+            ),
+            width: SIDEBAR_MOBILE_WIDTH,
+            height: SIDEBAR_MOBILE_HEIGHT,
+          },
+        }}
         files={FILES}
       />
     </div>
