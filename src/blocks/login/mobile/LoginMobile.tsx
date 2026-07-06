@@ -11,15 +11,19 @@
  *   · Centro de ayuda banner (placeholder, 388×120)
  */
 
+import { useState } from "react";
 import type { CSSProperties, JSX } from "react";
 import AppHeader from "../../header/desktop/Header";
 import { LoginForm } from "../desktop/Login";
+import SidebarMobile, { SidebarMenuButton } from "../../sidebar/mobile/SidebarMobile";
 import { LOGIN_MOBILE_WIDTH, LOGIN_MOBILE_HEIGHT } from "./dimensions";
 
 export { LOGIN_MOBILE_WIDTH, LOGIN_MOBILE_HEIGHT } from "./dimensions";
 
 export interface LoginMobileProps {
   className?: string;
+  /** Alto del marco para previsualizaciones (px). En producción se omite. Ver `SidebarMobile`. */
+  frameHeight?: number;
 }
 
 const PLACEHOLDER_BANNER: CSSProperties = {
@@ -54,7 +58,9 @@ const CARD_STYLES = `
 
 let _stylesInjected = false;
 
-export default function LoginMobile({ className = "" }: LoginMobileProps): JSX.Element {
+export default function LoginMobile({ className = "", frameHeight }: LoginMobileProps): JSX.Element {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   if (typeof document !== "undefined" && !_stylesInjected) {
     if (!document.getElementById(STYLE_ID)) {
       const el = document.createElement("style");
@@ -65,7 +71,7 @@ export default function LoginMobile({ className = "" }: LoginMobileProps): JSX.E
     _stylesInjected = true;
   }
 
-  return (
+  const page = (
     <div
       className={className}
       data-block="login-mobile"
@@ -82,7 +88,12 @@ export default function LoginMobile({ className = "" }: LoginMobileProps): JSX.E
 
       <AppHeader
         width={LOGIN_MOBILE_WIDTH}
-        logo={<img src="/logo-preview.png" alt="VMC Subastas" style={{ height: 26, width: "auto", display: "block" }} />}
+        logo={
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <SidebarMenuButton onClick={() => setMenuOpen(true)} expanded={menuOpen} />
+            <img src="/logo-preview.png" alt="VMC Subastas" style={{ height: 26, width: "auto", display: "block" }} />
+          </div>
+        }
       />
 
       <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: 16 }}>
@@ -97,5 +108,11 @@ export default function LoginMobile({ className = "" }: LoginMobileProps): JSX.E
         <div data-slot="help-banner" style={PLACEHOLDER_BANNER}>CENTRO DE AYUDA</div>
       </div>
     </div>
+  );
+
+  return (
+    <SidebarMobile open={menuOpen} onOpenChange={setMenuOpen} defaultActiveId="hoy" frameHeight={frameHeight}>
+      {page}
+    </SidebarMobile>
   );
 }

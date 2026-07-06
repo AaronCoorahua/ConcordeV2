@@ -12,6 +12,7 @@
 
 "use client";
 
+import { useState } from "react";
 import type { JSX } from "react";
 import AppHeader from "../../header/desktop/Header";
 import AuctionStatus from "../../../components/AuctionStatus";
@@ -22,6 +23,7 @@ import Accordion from "../../../components/Accordion";
 import CardTitle from "../../../components/CardTitle";
 import OfferCard from "../../../components/OfferCard";
 import Button, { CalendarIcon } from "../../../components/Button";
+import SidebarMobile, { SidebarMenuButton } from "../../sidebar/mobile/SidebarMobile";
 import { DETALLE_PILLS, type DetalleVariant } from "../pills";
 
 import { DETALLE_MOBILE_WIDTH, DETALLE_MOBILE_HEIGHT } from "./dimensions";
@@ -51,10 +53,14 @@ export interface DetalleMobileProps {
   /** Variante de la oferta — controla AuctionStatus/CardViewer/DetailCard y los pills. */
   variant?: DetalleVariant;
   className?: string;
+  /** Alto del marco para previsualizaciones (px). En producción se omite. Ver `SidebarMobile`. */
+  frameHeight?: number;
 }
 
-export default function DetalleMobile({ variant = "live", className = "" }: DetalleMobileProps): JSX.Element {
-  return (
+export default function DetalleMobile({ variant = "live", className = "", frameHeight }: DetalleMobileProps): JSX.Element {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const page = (
     <div
       className={className}
       data-block="detalle-mobile"
@@ -69,10 +75,15 @@ export default function DetalleMobile({ variant = "live", className = "" }: Deta
     >
       <style suppressHydrationWarning dangerouslySetInnerHTML={{ __html: MOBILE_STYLES }} />
 
-      {/* Header 420×64 con el logo de la marca a la izquierda */}
+      {/* Header 420×64 · hamburguesa + logo de la marca a la izquierda */}
       <AppHeader
         width={DETALLE_MOBILE_WIDTH}
-        logo={<img src="/logo-preview.png" alt="VMC Subastas" style={{ height: 26, width: "auto", display: "block" }} />}
+        logo={
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <SidebarMenuButton onClick={() => setMenuOpen(true)} expanded={menuOpen} />
+            <img src="/logo-preview.png" alt="VMC Subastas" style={{ height: 26, width: "auto", display: "block" }} />
+          </div>
+        }
       />
 
       {/* AuctionStatus + CardViewer · a todo el ancho (carro + filmstrip) */}
@@ -171,5 +182,11 @@ export default function DetalleMobile({ variant = "live", className = "" }: Deta
         </div>
       </div>
     </div>
+  );
+
+  return (
+    <SidebarMobile open={menuOpen} onOpenChange={setMenuOpen} defaultActiveId="hoy" frameHeight={frameHeight}>
+      {page}
+    </SidebarMobile>
   );
 }

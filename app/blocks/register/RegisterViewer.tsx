@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { JSX } from "react";
 import Register, { REGISTER_WIDTH, REGISTER_HEIGHT } from "@/src/blocks/register/desktop/Register";
 import RegisterMobile from "@/src/blocks/register/mobile/RegisterMobile";
-import { REGISTER_MOBILE_WIDTH, REGISTER_MOBILE_HEIGHT } from "@/src/blocks/register/mobile/dimensions";
+import { REGISTER_MOBILE_WIDTH } from "@/src/blocks/register/mobile/dimensions";
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_COLLAPSED_WIDTH } from "@/src/blocks/sidebar/desktop/dimensions";
 import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_components/BlockViewer";
@@ -20,6 +20,7 @@ const COMBINED_WIDTH = SIDEBAR_WIDTH + REGISTER_WIDTH;
 // Math.max(SIDEBAR_HEIGHT, ...) — el sidebar corta justo donde acaba el contenido.
 const COMBINED_HEIGHT = REGISTER_HEIGHT;
 const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
+const MOBILE_FRAME_H = 780;
 
 export default function RegisterViewer({ files }: { files: BlockFile[] }): JSX.Element {
   const [collapsed, setCollapsed] = useState(false);
@@ -46,7 +47,7 @@ export default function RegisterViewer({ files }: { files: BlockFile[] }): JSX.E
       width={COMBINED_WIDTH}
       height={COMBINED_HEIGHT}
       canvas={canvas}
-      canvasForViewport={{ mobile: { node: <RegisterMobile />, width: REGISTER_MOBILE_WIDTH, height: REGISTER_MOBILE_HEIGHT } }}
+      canvasForViewport={{ mobile: { node: <RegisterMobile frameHeight={MOBILE_FRAME_H} />, width: REGISTER_MOBILE_WIDTH, height: MOBILE_FRAME_H } }}
       files={files}
       previewBg={VAULT_PREVIEW_BG}
     />

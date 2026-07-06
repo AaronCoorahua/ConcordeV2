@@ -12,6 +12,7 @@
  */
 
 import type { JSX } from "react";
+import { useState } from "react";
 import AppHeader from "../../header/desktop/Header";
 import AvatarZone from "../../../components/AvatarZone";
 import StarIcon from "../../../components/StarIcon";
@@ -22,6 +23,7 @@ import ActivityCard from "../../../components/ActivityCard";
 import CardTitle from "../../../components/CardTitle";
 import OfferCard from "../../../components/OfferCard";
 import BadgeStatus from "../../../components/BadgeStatus";
+import SidebarMobile, { SidebarMenuButton } from "../../sidebar/mobile/SidebarMobile";
 
 import { ZONA_MOBILE_WIDTH, ZONA_MOBILE_HEIGHT } from "./dimensions";
 export { ZONA_MOBILE_WIDTH, ZONA_MOBILE_HEIGHT } from "./dimensions";
@@ -96,10 +98,14 @@ const ZM_STYLES = `
 export interface ZonaMobileProps {
   username?: string;
   className?: string;
+  /** Alto del marco para previsualizaciones (px). En producción se omite. Ver `SidebarMobile`. */
+  frameHeight?: number;
 }
 
-export default function ZonaMobile({ username = "ZAEX5G", className = "" }: ZonaMobileProps): JSX.Element {
-  return (
+export default function ZonaMobile({ username = "ZAEX5G", className = "", frameHeight }: ZonaMobileProps): JSX.Element {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const page = (
     <div
       className={className}
       data-block="zona-mobile"
@@ -117,7 +123,12 @@ export default function ZonaMobile({ username = "ZAEX5G", className = "" }: Zona
       <AppHeader
         width={ZONA_MOBILE_WIDTH}
         username={username}
-        logo={<img src="/logo-preview.png" alt="VMC Subastas" style={{ height: 26, width: "auto", display: "block" }} />}
+        logo={
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <SidebarMenuButton onClick={() => setMenuOpen(true)} expanded={menuOpen} />
+            <img src="/logo-preview.png" alt="VMC Subastas" style={{ height: 26, width: "auto", display: "block" }} />
+          </div>
+        }
       />
 
       {/* Contenido a 16px de margen */}
@@ -244,5 +255,11 @@ export default function ZonaMobile({ username = "ZAEX5G", className = "" }: Zona
 
       </div>
     </div>
+  );
+
+  return (
+    <SidebarMobile open={menuOpen} onOpenChange={setMenuOpen} defaultActiveId="hoy" frameHeight={frameHeight}>
+      {page}
+    </SidebarMobile>
   );
 }

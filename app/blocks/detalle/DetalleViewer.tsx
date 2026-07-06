@@ -5,7 +5,7 @@ import type { JSX, CSSProperties } from "react";
 import Detalle from "@/src/blocks/detalle/desktop/Detalle";
 import { DETALLE_WIDTH, DETALLE_HEIGHT } from "@/src/blocks/detalle/desktop/dimensions";
 import DetalleMobile from "@/src/blocks/detalle/mobile/DetalleMobile";
-import { DETALLE_MOBILE_WIDTH, DETALLE_MOBILE_HEIGHT } from "@/src/blocks/detalle/mobile/dimensions";
+import { DETALLE_MOBILE_WIDTH } from "@/src/blocks/detalle/mobile/dimensions";
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT, SIDEBAR_COLLAPSED_WIDTH } from "@/src/blocks/sidebar/desktop/dimensions";
 import AppHeader from "@/src/blocks/header/desktop/Header";
@@ -15,6 +15,7 @@ import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_com
 
 const COMBINED_WIDTH = SIDEBAR_WIDTH + DETALLE_WIDTH;
 const COMBINED_HEIGHT = Math.max(SIDEBAR_HEIGHT, HEADER_HEIGHT + DETALLE_HEIGHT);
+const MOBILE_FRAME_H = 780;
 const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
 const VARIANTS: { value: DetalleVariant; label: string }[] = [
   { value: "live", label: "En vivo" },
@@ -90,7 +91,7 @@ export default function DetalleViewer({ files }: { files: BlockFile[] }): JSX.El
       width={COMBINED_WIDTH}
       height={COMBINED_HEIGHT}
       canvas={canvas}
-      canvasForViewport={{ mobile: { node: <DetalleMobile variant={variant} />, width: DETALLE_MOBILE_WIDTH, height: DETALLE_MOBILE_HEIGHT } }}
+      canvasForViewport={{ mobile: { node: <DetalleMobile variant={variant} frameHeight={MOBILE_FRAME_H} />, width: DETALLE_MOBILE_WIDTH, height: MOBILE_FRAME_H } }}
       files={files}
       controls={controls}
       previewBg={VAULT_PREVIEW_BG}
