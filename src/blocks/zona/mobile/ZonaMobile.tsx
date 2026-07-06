@@ -258,7 +258,7 @@ export default function ZonaMobile({ username = "ZAEX5G", className = "", frameH
   );
 
   return (
-    <SidebarMobile open={menuOpen} onOpenChange={setMenuOpen} defaultActiveId="hoy" frameHeight={frameHeight}>
+    <SidebarMobile open={menuOpen} onOpenChange={setMenuOpen} frameHeight={frameHeight}>
       {page}
     </SidebarMobile>
   );

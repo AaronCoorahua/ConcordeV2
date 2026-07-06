@@ -157,7 +157,7 @@ export default function HomepageMobile({ className = "", frameHeight }: Homepage
   );
 
   return (
-    <SidebarMobile open={menuOpen} onOpenChange={setMenuOpen} defaultActiveId="hoy" frameHeight={frameHeight}>
+    <SidebarMobile open={menuOpen} onOpenChange={setMenuOpen} frameHeight={frameHeight}>
       {page}
     </SidebarMobile>
   );

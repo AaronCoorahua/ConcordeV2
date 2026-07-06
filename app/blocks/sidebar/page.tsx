@@ -51,7 +51,7 @@ export default function SidebarBlockPage(): JSX.Element {
         canvasForViewport={{
           mobile: {
             node: (
-              <SidebarMobile showTrigger frameHeight={SIDEBAR_MOBILE_HEIGHT} defaultActiveId="hoy">
+              <SidebarMobile showTrigger frameHeight={SIDEBAR_MOBILE_HEIGHT}>
                 <div
                   style={{
                     width: SIDEBAR_MOBILE_WIDTH,
