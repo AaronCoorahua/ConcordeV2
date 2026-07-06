@@ -86,7 +86,7 @@ export default function RegisterMobile({ className = "", frameHeight }: Register
   );
 
   return (
-    <SidebarMobile open={menuOpen} onOpenChange={setMenuOpen} defaultActiveId="hoy" frameHeight={frameHeight}>
+    <SidebarMobile open={menuOpen} onOpenChange={setMenuOpen} frameHeight={frameHeight}>
       {page}
     </SidebarMobile>
   );

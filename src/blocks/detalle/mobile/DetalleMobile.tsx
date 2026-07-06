@@ -185,7 +185,7 @@ export default function DetalleMobile({ variant = "live", className = "", frameH
   );
 
   return (
-    <SidebarMobile open={menuOpen} onOpenChange={setMenuOpen} defaultActiveId="hoy" frameHeight={frameHeight}>
+    <SidebarMobile open={menuOpen} onOpenChange={setMenuOpen} frameHeight={frameHeight}>
       {page}
     </SidebarMobile>
   );
