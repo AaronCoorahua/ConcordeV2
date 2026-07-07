@@ -267,6 +267,16 @@
       "url": "https://concorde-v2-theta.vercel.app/r/walletbalancecard.json"
     },
     {
+      "name": "agregar-subascoins",
+      "type": "registry:block",
+      "title": "agregar-subascoins",
+      "url": "https://concorde-v2-theta.vercel.app/r/agregar-subascoins.json",
+      "components": [
+        "amountoptiongroup",
+        "button"
+      ]
+    },
+    {
       "name": "detalle",
       "type": "registry:block",
       "title": "detalle",
@@ -361,6 +371,46 @@
         "categoryicon",
         "businessicon",
         "servicecentericon"
+      ]
+    },
+    {
+      "name": "testsala",
+      "type": "registry:block",
+      "title": "testsala",
+      "url": "https://concorde-v2-theta.vercel.app/r/testsala.json",
+      "components": [
+        "progressbar",
+        "bidproposal",
+        "bidmessage",
+        "signal",
+        "statpill",
+        "button"
+      ]
+    },
+    {
+      "name": "testsala2",
+      "type": "registry:block",
+      "title": "testsala2",
+      "url": "https://concorde-v2-theta.vercel.app/r/testsala2.json",
+      "components": [
+        "progressbar",
+        "bidproposal",
+        "bidmessage",
+        "signal",
+        "statpill",
+        "button"
+      ]
+    },
+    {
+      "name": "tu-perfil",
+      "type": "registry:block",
+      "title": "tu-perfil",
+      "url": "https://concorde-v2-theta.vercel.app/r/tu-perfil.json",
+      "components": [
+        "input",
+        "button",
+        "staricon",
+        "infoicon"
       ]
     },
     {
