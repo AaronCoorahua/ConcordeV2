@@ -84,6 +84,42 @@ export function ChevronV({ width = 240, color = "rgba(59,23,130,0.55)", strokeWi
   );
 }
 
+// ─── SubasCoin grande (gema del OfferCard, escalable) ─────────────────────────
+// IDs de gradiente fijos: si hay varias instancias, los defs colisionan pero son
+// idénticos, así que el render es el mismo.
+
+export function BigGem({ size = 96, style }: { size?: number; style?: CSSProperties }): JSX.Element {
+  const h = (size * 30) / 28;
+  return (
+    <svg width={size} height={h} viewBox="30 199 28 30" fill="none" aria-hidden="true" style={ABS(style)}>
+      <defs>
+        <linearGradient id="bgem-d" gradientUnits="userSpaceOnUse" x1="32" y1="215.5" x2="55.12" y2="228.11">
+          <stop stopColor="#00A7A8" /><stop offset="0.4" stopColor="#86A4E4" /><stop offset="0.75" stopColor="#4C1EBC" /><stop offset="1" stopColor="#300089" />
+        </linearGradient>
+        <linearGradient id="bgem-ds" gradientUnits="userSpaceOnUse" x1="32" y1="215.5" x2="55.12" y2="228.11">
+          <stop stopColor="#73DFDF" /><stop offset="0.28" stopColor="#ffffff" stopOpacity="0.9" /><stop offset="0.875" stopColor="#452AA2" stopOpacity="0.6" />
+        </linearGradient>
+        <linearGradient id="bgem-c" gradientUnits="userSpaceOnUse" x1="36.01" y1="199.59" x2="51.99" y2="222.41">
+          <stop stopColor="#00ABAD" /><stop offset="0.4" stopColor="#86A4E4" /><stop offset="0.75" stopColor="#4C1EBC" /><stop offset="1" stopColor="#31008A" />
+        </linearGradient>
+        <linearGradient id="bgem-cg" gradientUnits="userSpaceOnUse" x1="44" y1="203" x2="44" y2="219">
+          <stop stopColor="#ffffff" stopOpacity="0.45" /><stop offset="0.5" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="bgem-cb" gradientUnits="userSpaceOnUse" x1="36.01" y1="199.59" x2="51.99" y2="222.41">
+          <stop stopColor="#44D6D6" /><stop offset="0.207" stopColor="#E4EEFF" stopOpacity="0.5" /><stop offset="0.495" stopColor="#567CD3" /><stop offset="1" stopColor="#3D0D9E" />
+        </linearGradient>
+      </defs>
+      <path d="M44 215.5L56 221L44 226.5L32 221L44 215.5Z" fill="url(#bgem-d)" />
+      <path d="M44 215.5L56 221L44 226.5L32 221L44 215.5" stroke="url(#bgem-ds)" strokeWidth="2" strokeLinejoin="round" />
+      <rect x="34" y="201" width="20" height="20" rx="10" fill="url(#bgem-c)" />
+      <rect x="36" y="203" width="16" height="16" rx="8" fill="url(#bgem-cg)" />
+      <rect x="35" y="202" width="18" height="18" rx="9" stroke="url(#bgem-cb)" strokeWidth="2" />
+      <path d="M44 206.417V215.583" stroke="#ffffff" strokeOpacity="0.92" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M46.0833 208.083H42.9583C42.1535 208.083 41.5 208.737 41.5 209.542C41.5 210.347 42.1535 211 42.9583 211H45.0417C45.8465 211 46.5 211.653 46.5 212.458C46.5 213.263 45.8465 213.917 45.0417 213.917H41.5" stroke="#ffffff" strokeOpacity="0.92" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 // ─── Iconos de pill / chip ────────────────────────────────────────────────────
 
 /** Apretón de manos (pill EN VIVO / NEGOCIABLE) — glifo limpio estilo Lucide */

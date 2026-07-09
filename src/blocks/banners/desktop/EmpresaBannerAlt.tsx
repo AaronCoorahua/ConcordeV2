@@ -15,7 +15,7 @@ import { BANNER_WIDTH, BANNER_HEIGHT } from "./dimensions";
 
 export { BANNER_WIDTH, BANNER_HEIGHT } from "./dimensions";
 
-export type EmpresaAltLayout = "logo-left" | "stats-bottom" | "panel";
+export type EmpresaAltLayout = "logo-left" | "stats-bottom" | "panel" | "photo";
 
 export interface EmpresaBannerAltProps {
   nombre: string;
@@ -169,6 +169,79 @@ export default function EmpresaBannerAlt({
   className = "",
 }: EmpresaBannerAltProps): JSX.Element {
   const logo = logoText ?? nombre;
+
+  // ── "photo" — placeholder de imagen + gradiente de opacidad morado ──
+  if (layout === "photo") {
+    return (
+      <div data-slot="empresa-banner-alt" className={className} style={{ ...shell, background: "#E9EAEC" }}>
+        {/* Placeholder de imagen (visible por la derecha) */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            paddingRight: 96,
+            gap: 12,
+            color: "#9AA1AC",
+            background: "repeating-linear-gradient(45deg, #E9EAEC 0px, #E9EAEC 22px, #E2E4E7 22px, #E2E4E7 44px)",
+          }}
+        >
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#9AA1AC" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="9" cy="9" r="2" />
+            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+          </svg>
+          <span style={{ fontFamily: "monospace", fontSize: 13, fontWeight: 600, letterSpacing: "0.08em" }}>IMAGEN</span>
+        </div>
+        {/* Gradiente de opacidad morado (marca) de izquierda a transparente */}
+        <div
+          aria-hidden="true"
+          style={{ position: "absolute", inset: 0, background: "linear-gradient(95deg, rgba(46,15,112,1) 0%, rgba(46,15,112,0.92) 36%, rgba(46,15,112,0.55) 54%, rgba(46,15,112,0) 76%)" }}
+        />
+        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, display: "flex", alignItems: "center", gap: 18, padding: "0 32px" }}>
+          <div
+            style={{
+              width: 88,
+              height: 88,
+              borderRadius: "50%",
+              background: "#FFFFFF",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              color: "#3B1782",
+              fontSize: 13,
+              fontWeight: 800,
+              lineHeight: 1.15,
+              padding: 10,
+              boxSizing: "border-box",
+              flexShrink: 0,
+              boxShadow: "rgba(20,0,70,0.35) 0 6px 18px",
+            }}
+          >
+            {logo}
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", maxWidth: 330 }}>
+            <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.01em", textShadow: "rgba(20,0,70,0.3) 0 1px 3px" }}>{nombre}</h3>
+            <div style={{ display: "flex", alignItems: "center", gap: 7, marginTop: 6, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 14, fontWeight: 800, color: "#FFFFFF" }}>{rating}</span>
+              <StarIcon size={17} />
+              <span style={{ fontSize: 13.5, fontWeight: 700, color: "#FFFFFF" }}>{ratingLabel}</span>
+              <span style={{ color: "rgba(255,255,255,0.5)", fontWeight: 700 }}>·</span>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "#d8d2ec" }}>{opiniones}</span>
+            </div>
+            <div style={{ display: "flex", gap: 20, marginTop: 10 }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF" }}>Ventas <b style={{ fontSize: 17 }}>{ventas}</b></span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF" }}>Participantes <b style={{ fontSize: 17 }}>{participantes}</b></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // ── "panel" — fondo morado del header DetailCard + StatPill reales ──
   if (layout === "panel") {

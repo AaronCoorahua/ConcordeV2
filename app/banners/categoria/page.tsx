@@ -26,10 +26,16 @@ const TEMPLATES: BannerTemplate[] = [
     node: <LayoutBanner tone="teal" layout="panel" pillText="NEGOCIABLE" pillIcon count={7} title="Explora esta categoría" timer="Cierra hoy · 6:01 PM" chip={{ label: "Categoría / Subcategoría" }} />,
   },
   {
+    id: "photo",
+    name: "Con imagen (placeholder)",
+    description: "Placeholder de imagen detrás + gradiente de opacidad — para el banner de categoría con foto real de los lotes.",
+    node: <LayoutBanner tone="naranja" layout="photo" pillText="EN VIVO" pillIcon count={13} title="Vehículos livianos en subasta" chip={{ label: "Vehicular / Liviano", icon: "car" }} />,
+  },
+  {
     id: "big-number",
     name: "Número gigante",
-    description: "Contador protagonista + chip de ruta con icono de auto (Vehicular / Seminuevo).",
-    node: <LayoutBanner tone="naranja" layout="big-number" pillText="EN VIVO" pillIcon count={17} title="Vehicular · Seminuevo" subtitle="Puja en tiempo real" chip={{ label: "Vehicular / Seminuevo", icon: "car" }} />,
+    description: "Contador protagonista con borde gradiente live + chip de ruta con icono de auto (Vehicular / Seminuevo).",
+    node: <LayoutBanner tone="naranja" layout="big-number" pillText="EN VIVO" pillIcon count={17} title="Vehicular · Seminuevo" chip={{ label: "Vehicular / Seminuevo", icon: "car" }} />,
   },
   {
     id: "legacy",

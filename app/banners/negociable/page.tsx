@@ -27,9 +27,21 @@ const TEMPLATES: BannerTemplate[] = [
     node: <LayoutBanner tone="teal" layout="panel" pillText="NEGOCIABLE" pillIcon count={13} title="Negocia tu precio" timer="Propuestas hasta 6:01 PM" />,
   },
   {
+    id: "primary",
+    name: "Fondo negotiable + SubasCoins",
+    description: "Todo el fondo con el fill del Button negotiable (#00aeb1→#8460e5) y las SubasCoins grandes del OfferCard flotando.",
+    node: <LayoutBanner tone="teal" layout="primary" pillText="NEGOCIABLE" pillIcon count={11} title={TITLE} timer="Cierra hoy · 6:01 PM" />,
+  },
+  {
+    id: "photo",
+    name: "Con imagen (placeholder)",
+    description: "Placeholder de imagen detrás + gradiente de opacidad del tono encima — para banners con foto del lote/campaña.",
+    node: <LayoutBanner tone="teal" layout="photo" pillText="NEGOCIABLE" pillIcon count={11} title={TITLE} />,
+  },
+  {
     id: "big-number",
     name: "Número gigante a la izquierda",
-    description: "El contador domina a la izquierda; pill gradiente y título a la derecha, gema SubasCoin de acento.",
+    description: "El contador domina a la izquierda con borde gradiente negotiable (#00aeb1→#8460e5); pill gradiente y título a la derecha.",
     node: <LayoutBanner tone="teal" layout="big-number" pillText="NEGOCIABLE" pillIcon count={11} title="Negocia autos, maquinaria y equipos" subtitle="Propón tu precio" />,
   },
   {
