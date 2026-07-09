@@ -19,6 +19,8 @@ import ProgressBar, { type ProgressBarVariant } from "../../../components/Progre
 import BidProposal from "../../../components/BidProposal";
 import BidMessage from "../../../components/BidMessage";
 import { STREAM, STATIC, STANDINGS, fmtMoney, IMPROVE_PLACEHOLDER, BESTBID_SECONDS, ME, MY_FLASH_COLORS, type LiveMsg, type Phase } from "../liveData";
+import { useSpring } from "../../../hooks/useSpring";
+import { useAuroraSpring } from "../../../hooks/useAuroraSpring";
 
 export const MOBILECHATPANEL_WIDTH = 420;
 
@@ -191,7 +193,14 @@ function EmailIcon(): JSX.Element {
 const STYLE_ID = "concorde-testsmchatpanel-styles";
 
 const SMCHATPANEL_STYLES = `
+/* ── Luz consistente (principio PBR): una sola fuente arriba-izquierda para todo
+   el panel. --sm-glow-* son la intensidad "reposo"; los eventos (ganador, remate,
+   flash) multiplican brillo/blur sin reorientar la luz — ver skill light-consistent. */
 .smchatpanel {
+  --sm-light-angle: 135deg;
+  --sm-glow-soft: 0 0 10px rgba(174,142,255,0.55), 0 0 24px rgba(82,52,189,0.4);
+  --sm-glow-strong: 0 0 18px rgba(174,142,255,0.95), 0 0 38px rgba(82,52,189,0.7);
+  --sm-glow-win: 0 0 20px rgba(255,180,102,0.9), 0 0 42px rgba(237,137,54,0.6);
   position: relative;
   width: ${MOBILECHATPANEL_WIDTH}px;
   border-radius: 0;
@@ -214,6 +223,96 @@ const SMCHATPANEL_STYLES = `
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+}
+/* ── Fondo "flagship PBR": aurora de blobs difusos flotando detrás del chat
+   (mismo lenguaje que el fondo óptico de la referencia — glow orgánico, lento,
+   paleta de marca). Elemento propio (.smchat__aurora, NO pseudo-elemento del
+   panel): un ::after en .smchatpanel queda debajo del propio backdrop-filter
+   del panel y el blur lo apaga casi por completo — con nodo propio se ve.
+   El movimiento lo maneja useAuroraSpring (mass-spring-damper) escribiendo
+   --mx/--my (grupo A: naranjas) y --mx2/--my2 (grupo B: lilas) directo al style. */
+.smchat__aurora {
+  position: absolute;
+  inset: -25%;
+  z-index: 0;
+  pointer-events: none;
+  --mx: 0vmax; --my: 0vmax; --mx2: 0vmax; --my2: 0vmax;
+}
+.smchat__aurora-a, .smchat__aurora-b {
+  position: absolute;
+  inset: 0;
+  filter: blur(52px) saturate(1.25);
+  opacity: 0.85;
+  will-change: transform;
+}
+/* Grupo A — blobs naranjas (esquinas opuestas), siguen --mx/--my */
+.smchat__aurora-a {
+  background:
+    radial-gradient(36% 28% at 16% 12%, rgba(255,158,66,0.55) 0%, transparent 68%),
+    radial-gradient(32% 26% at 80% 85%, rgba(255,140,60,0.45) 0%, transparent 68%);
+  transform: translate(var(--mx), var(--my));
+}
+/* Grupo B — blobs lilas (esquinas opuestas), siguen --mx2/--my2 (deriva distinta) */
+.smchat__aurora-b {
+  background:
+    radial-gradient(40% 32% at 88% 18%, rgba(150,110,255,0.6) 0%, transparent 70%),
+    radial-gradient(44% 36% at 26% 90%, rgba(190,160,255,0.5) 0%, transparent 68%);
+  transform: translate(var(--mx2), var(--my2));
+}
+/* ── "Seda óptica": grandes pliegues curvos con highlight especular (Fresnel) y
+   sombra profunda, muy difuminados — el look sedoso/vidrio de la referencia, no
+   ondas de línea duras. Gradientes cónicos = simulan una superficie 3D curva
+   iluminada desde arriba-izquierda; blur fuerte los vuelve volumétricos. Cada
+   capa deriva y respira lento (spring vía --sx/--sy + keyframe de rotación). */
+.smchat__silk {
+  position: absolute;
+  inset: -35%;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  --sx: 0vmax; --sy: 0vmax;
+}
+.smchat__silk-fold {
+  position: absolute;
+  inset: 0;
+  filter: blur(46px) saturate(1.35) contrast(1.05);
+  will-change: transform;
+}
+/* Pliegue 1 — lila/vidrio: highlight arriba-izq, cae a sombra abajo-der */
+.smchat__silk-fold--1 {
+  background:
+    conic-gradient(from 210deg at 32% 30%,
+      rgba(190,160,255,0) 0deg,
+      rgba(150,110,255,0.30) 70deg,
+      rgba(207,186,255,0.60) 140deg,
+      rgba(120,80,220,0.15) 210deg,
+      rgba(60,30,120,0) 300deg,
+      rgba(190,160,255,0) 360deg);
+  animation: smchat-silk-1 34s ease-in-out infinite alternate;
+}
+/* Pliegue 2 — naranja cálido: segundo foco de luz, cruza al primero */
+.smchat__silk-fold--2 {
+  background:
+    conic-gradient(from 40deg at 74% 68%,
+      rgba(255,158,66,0) 0deg,
+      rgba(255,140,60,0.22) 60deg,
+      rgba(255,190,120,0.45) 130deg,
+      rgba(200,90,30,0.12) 200deg,
+      rgba(120,40,10,0) 290deg,
+      rgba(255,158,66,0) 360deg);
+  animation: smchat-silk-2 44s ease-in-out infinite alternate;
+}
+@keyframes smchat-silk-1 {
+  0%   { transform: translate(var(--sx), var(--sy)) rotate(-8deg) scale(1.05); }
+  100% { transform: translate(var(--sx), var(--sy)) rotate(10deg) scale(1.18); }
+}
+@keyframes smchat-silk-2 {
+  0%   { transform: translate(calc(var(--sx) * -0.6), calc(var(--sy) * -0.6)) rotate(6deg) scale(1.12); }
+  100% { transform: translate(calc(var(--sx) * -0.6), calc(var(--sy) * -0.6)) rotate(-9deg) scale(1.0); }
+}
+.smchat__list, .smchat__stream { z-index: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .smchat__silk-fold--1, .smchat__silk-fold--2 { animation: none; }
 }
 .smchat__list, .smchat__stream { scrollbar-width: none; -ms-overflow-style: none; }
 .smchat__list::-webkit-scrollbar, .smchat__stream::-webkit-scrollbar { width: 0; height: 0; display: none; }
@@ -705,15 +804,16 @@ const SMCHATPANEL_STYLES = `
 @keyframes smchat-rise-center { from { opacity: 0; transform: translate(-50%, 18px); } to { opacity: 1; transform: translate(-50%, 0); } }
 @keyframes smchat-tick { 0% { transform: scale(1); } 45% { transform: scale(1.14); } 100% { transform: scale(1); } }
 
-/* Cada pantalla de estado entra con un fade suave (transición entre fases) */
-.smchat__status { animation: smchat-status-in 380ms ease both; }
-@keyframes smchat-status-in { from { opacity: 0; } to { opacity: 1; } }
+/* Cada pantalla de estado entra con fade + leve settle (antes era un fade plano;
+   el resto del panel usa curvas con overshoot — esto lo alinea con ese lenguaje). */
+.smchat__status { animation: smchat-status-in 420ms cubic-bezier(0.22,1,0.36,1) both; }
+@keyframes smchat-status-in { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: none; } }
 
 /* ── Welcome / Inicio extendido ── */
 /* Título con glow "respirando" */
 .smchat__rp--breathe { animation: smchat-breathe 2.6s ease-in-out infinite; }
 @keyframes smchat-breathe {
-  0%, 100% { filter: drop-shadow(0 0 10px rgba(132,96,229,0.55)) drop-shadow(0 0 24px rgba(82,52,189,0.4)); }
+  0%, 100% { filter: drop-shadow(0 0 10px rgba(174,142,255,0.55)) drop-shadow(0 0 24px rgba(82,52,189,0.4)); }
   50% { filter: drop-shadow(0 0 18px rgba(174,142,255,0.95)) drop-shadow(0 0 38px rgba(82,52,189,0.7)); }
 }
 /* Caja "Inicia en" entra con pop elástico */
@@ -821,7 +921,7 @@ const SMCHATPANEL_STYLES = `
 @keyframes smchat-win-in {
   0% { opacity: 0; transform: translateY(-30px) scale(0.7); }
   55% { opacity: 1; transform: translateY(4px) scale(1.07);
-        box-shadow: rgba(20,0,69,0.3) 0px 6px 16px -2px, 0 0 24px rgba(255,180,102,0.9), 0 0 48px rgba(237,137,54,0.6); }
+        box-shadow: rgba(20,0,69,0.3) 0px 6px 16px -2px, var(--sm-glow-win); }
   100% { opacity: 1; transform: none;
          box-shadow: rgba(20,0,69,0.3) 0px 6px 16px -2px, inset 0 1px 0 rgba(255,255,255,0.18), 0 0 14px rgba(237,137,54,0.28); }
 }
@@ -993,6 +1093,10 @@ export default function MobileChatPanel({
   flashMode = "bulb",
   reservePill = false,
 }: MobileChatPanelProps): JSX.Element {
+  // Fondo aurora + seda: física mass-spring-damper que escribe CSS vars vía ref.
+  const { ref: auroraRef } = useAuroraSpring<HTMLDivElement>();
+  const { ref: silkRef } = useAuroraSpring<HTMLDivElement>({ vars: ["--sx", "--sy", "--sx2", "--sy2"], amplitude: 20 });
+
   if (typeof document !== "undefined" && !_stylesInjected) {
     if (!document.getElementById(STYLE_ID)) {
       const el = document.createElement("style");
@@ -1071,8 +1175,14 @@ export default function MobileChatPanel({
   const lastMine = lastStreamMsg?.kind === "proposal" && lastStreamMsg.mine === true;
   // La luz del BidProposal cambia cuando la puja actual es MÍA (naranja + combo).
   const proposalMine = bidder === ME;
-  // Valor único de la barra + estados de urgencia/chispa.
-  const barValue = showBestbid ? bestbidProg : showResult || showActivity || showReserve || showImprove || showConfirm ? 100 : showProcessing ? 0 : progress;
+  // Valor único de la barra + estados de urgencia/chispa. Persigue su objetivo con
+  // inercia (decaimiento exponencial): el relleno "acelera y frena" en vez de saltar
+  // en los cambios de fase (p. ej. streaming→processing 100%→0%), y sigue el remate
+  // con más peso físico que una transición CSS lineal.
+  const barTarget = showBestbid ? bestbidProg : showResult || showActivity || showReserve || showImprove || showConfirm ? 100 : showProcessing ? 0 : progress;
+  // Barra con spring subamortiguado (mass-spring-damper): "acelera y frena" con un
+  // leve rebote al asentarse. Damping alto (ζ≈0.7) → rebote suave, sin pasarse feo.
+  const barValue = Math.max(0, Math.min(100, useSpring(barTarget, { stiffness: 90, damping: 17 })));
   const barHot = (showStream && progress >= 70) || (showBestbid && countdown <= 5);
   const sparkOn = (showStream || showBestbid) && barValue > 1 && barValue < 100;
 
@@ -1080,6 +1190,18 @@ export default function MobileChatPanel({
     <>
       <style id={`${STYLE_ID}-ssr`} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: SMCHATPANEL_STYLES }} />
       <div className={`smchatpanel${width < MOBILECHATPANEL_WIDTH ? " smchatpanel--narrow" : ""} ${className}`.trim()} style={{ height, width }}>
+        {/* Fondo aurora "flagship PBR" — blobs difusos con física mass-spring-damper
+            (useAuroraSpring escribe --mx/--my/--mx2/--my2 vía ref, sin re-render) */}
+        <div className="smchat__aurora" ref={auroraRef} aria-hidden="true">
+          <div className="smchat__aurora-a" />
+          <div className="smchat__aurora-b" />
+        </div>
+        {/* "Seda óptica" — pliegues curvos con highlight especular, muy difuminados
+            (look sedoso/vidrio de la referencia). Deriva con el mismo spring. */}
+        <div className="smchat__silk" ref={silkRef} aria-hidden="true">
+          <div className="smchat__silk-fold smchat__silk-fold--1" />
+          <div className="smchat__silk-fold smchat__silk-fold--2" />
+        </div>
         {/* idle: lista estática */}
         {showStatic ? (
           <div
@@ -1418,15 +1540,11 @@ export default function MobileChatPanel({
           <ProgressBar
             variant={progressVariant}
             value={barValue}
-            transitionMs={showBestbid ? 1000 : undefined}
+            transitionMs={0}
             aria-label="Tiempo de bid"
           />
           {sparkOn ? (
-            <span
-              className="smchat__spark"
-              style={{ left: `${barValue}%`, ...(showBestbid ? { transitionDuration: "1000ms" } : {}) }}
-              aria-hidden="true"
-            />
+            <span className="smchat__spark" style={{ left: `${barValue}%`, transitionDuration: "0ms" }} aria-hidden="true" />
           ) : null}
         </div>
       </div>

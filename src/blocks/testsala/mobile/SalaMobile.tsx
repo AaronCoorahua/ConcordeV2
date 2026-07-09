@@ -23,6 +23,7 @@ import Button from "../../../components/Button";
 import type { ProgressBarVariant } from "../../../components/ProgressBar";
 import { STEP, ME, fmtMoney } from "../liveData";
 import { useLiveAuction } from "../useSala";
+import { useSpring } from "../../../hooks/useSpring";
 
 export interface SalaMobileProps {
   className?: string;
@@ -33,7 +34,7 @@ export interface SalaMobileProps {
   noReserve?: boolean;
   /** Colores del efecto de luz del bid actual (editable). Default: primary. */
   flashColors?: string[];
-  /** Tipo de efecto de luz: "bulb" (bombilla) o "spin" (gira). Default "bulb". */
+  /** Tipo de efecto de luz: "bulb" (bombilla) o "spin" (gira). Default "spin". */
   flashMode?: "bulb" | "spin" | "explode" | "pulse" | "combo" | "shine";
 }
 
@@ -70,7 +71,7 @@ const CTA_STYLES = `
 import { SALAMOBILE_WIDTH, SALAMOBILE_HEIGHT, SALAMOBILE_BG } from "./dimensions";
 export { SALAMOBILE_WIDTH, SALAMOBILE_HEIGHT, SALAMOBILE_BG } from "./dimensions";
 
-export default function SalaMobile({ className = "", live = false, noReserve = false, flashColors, flashMode = "bulb" }: SalaMobileProps): JSX.Element {
+export default function SalaMobile({ className = "", live = false, noReserve = false, flashColors, flashMode = "spin" }: SalaMobileProps): JSX.Element {
   const {
     phase, shown, prog, count, participants, myBids, totalBids, bidAmount, bidder, pressed, flash,
   } = useLiveAuction(live, noReserve);
@@ -81,7 +82,10 @@ export default function SalaMobile({ className = "", live = false, noReserve = f
   const [idleFlash, setIdleFlash] = useState(0);
 
   const progVariant: ProgressBarVariant = live ? (phase === "streaming" || phase === "result" || phase === "activity" || phase === "bestbid" ? "rainbow" : "white") : "rainbow";
-  const ctaAmount = (live ? bidAmount : idleBid) + STEP; // CTA = siguiente bid (un poco mayor)
+  const ctaAmountTarget = (live ? bidAmount : idleBid) + STEP; // CTA = siguiente bid (un poco mayor)
+  // El monto del CTA persigue su objetivo con física mass-spring-damper: acelera y
+  // sobrepasa un pelo el valor final antes de asentarse (overshoot "rubbery").
+  const ctaAmount = Math.round(useSpring(ctaAmountTarget, { stiffness: 120, damping: 20 }));
   // Anillo del CTA: estalla con cada puja mía (live → myBids; idle → idleFlash)
   const ringKey = live ? myBids : idleFlash;
 
@@ -105,12 +109,14 @@ export default function SalaMobile({ className = "", live = false, noReserve = f
         overflow: "hidden",
       }}
     >
-      {/* Header 420×95 — pills dinámicas: mis bids (live) · bid totales · participantes */}
+      {/* Header 420×95 — pills dinámicas: mis bids (live) · bid totales · participantes.
+          Cada valor persigue su objetivo con inercia (decaimiento exponencial) en vez
+          de saltar — se sienten "vivas" en vez de tickear discretas. */}
       <div style={{ position: "absolute", top: 0, left: 0 }}>
         <MobileHeader
-          myBids={live ? String(myBids) : "11"}
-          totalBids={live ? String(totalBids) : "111"}
-          people={live ? String(participants) : "18"}
+          myBids={live ? myBids : 11}
+          totalBids={live ? totalBids : 111}
+          people={live ? participants : 18}
           reservePill={phase === "bestbid"}
         />
       </div>
