@@ -17,6 +17,7 @@
 import type { JSX } from "react";
 import Signal from "../../../components/Signal";
 import StatPill from "../../../components/StatPill";
+import { useSpring } from "../../../hooks/useSpring";
 
 export const MOBILEHEADER_WIDTH = 420;
 export const MOBILEHEADER_HEIGHT = 95;
@@ -97,9 +98,10 @@ const PLATE_STYLES = `
   from { transform: translateY(-105%); }
   to { transform: translateY(0); }
 }
-/* Pop de las pills de estadística cuando cambia su valor (re-monta con key) */
-.mh-vpop { display: inline-flex; animation: mh-vpop 300ms cubic-bezier(0.34,1.56,0.64,1); }
-@keyframes mh-vpop { 0% { transform: scale(1); } 45% { transform: scale(1.22); } 100% { transform: scale(1); } }
+/* Pop de las pills de estadística cuando cambia su valor (re-monta con key) —
+   spring más marcado, a tono con el resto de "pops" del panel del chat. */
+.mh-vpop { display: inline-flex; animation: mh-vpop 380ms cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes mh-vpop { 0% { transform: scale(1); } 40% { transform: scale(1.32) translateY(-2px); } 100% { transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) {
   .mh-reserve, .mh-vpop { animation: none; }
 }
@@ -119,12 +121,12 @@ export interface MobileHeaderProps {
   carSrc?: string;
   /** Placa (default "ABC123") */
   plate?: string;
-  /** Bids del usuario (default "11") */
-  myBids?: string;
-  /** Bids totales (default "111") */
-  totalBids?: string;
-  /** Participantes (default "18") */
-  people?: string;
+  /** Bids del usuario (default 11). Anima con inercia al cambiar. */
+  myBids?: number | string;
+  /** Bids totales (default 111). Anima con inercia al cambiar. */
+  totalBids?: number | string;
+  /** Participantes (default 18). Anima con inercia al cambiar. */
+  people?: number | string;
   /** Código de la subasta para la pill naranja (default "47292") */
   liveCode?: string;
   /** Muestra el pill "Con Precio Reserva" colgando bajo el header */
@@ -165,13 +167,20 @@ export default function MobileHeader({
   seller = "Autoland",
   carSrc = "/demo/bronco.jpg",
   plate = "ABC123",
-  myBids = "11",
-  totalBids = "111",
-  people = "18",
+  myBids = 11,
+  totalBids = 111,
+  people = 18,
   liveCode = "47292",
   reservePill = false,
   className = "",
 }: MobileHeaderProps): JSX.Element {
+  // Cada pill persigue su valor con física mass-spring-damper: sube con un leve
+  // overshoot elástico en vez de saltar al número final — se sienten "vivas".
+  const SPRING = { stiffness: 130, damping: 21 };
+  const myBidsShown = Math.round(useSpring(Number(myBids), SPRING));
+  const totalBidsShown = Math.round(useSpring(Number(totalBids), SPRING));
+  const peopleShown = Math.round(useSpring(Number(people), SPRING));
+
   if (typeof document !== "undefined" && !_plateInjected) {
     if (!document.getElementById(PLATE_STYLE_ID)) {
       const el = document.createElement("style");
@@ -268,13 +277,13 @@ export default function MobileHeader({
             {/* Sub-fila izquierda dentro de la tarjeta 310 */}
             <div style={{ display: "flex", alignItems: "center", gap: 9, width: INFO_WIDTH, boxSizing: "border-box", padding: "0 14px" }}>
               <span key={`mb-${myBids}`} className="mh-vpop">
-                <StatPill variant="glass" label="" value={myBids} icon={<ArrowGlyph />} />
+                <StatPill variant="glass" label="" value={String(myBidsShown)} icon={<ArrowGlyph />} />
               </span>
               <span key={`tb-${totalBids}`} className="mh-vpop">
-                <StatPill variant="glass" label="" value={totalBids} icon={<ArrowGlyph />} />
+                <StatPill variant="glass" label="" value={String(totalBidsShown)} icon={<ArrowGlyph />} />
               </span>
               <span key={`pp-${people}`} className="mh-vpop">
-                <StatPill variant="glass" label="" value={people} icon={<PeopleGlyph />} />
+                <StatPill variant="glass" label="" value={String(peopleShown)} icon={<PeopleGlyph />} />
               </span>
               <span
                 style={{

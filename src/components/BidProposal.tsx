@@ -120,27 +120,27 @@ const BIDPROPOSAL_STYLES = `
 @keyframes pbid-bulb { 0% { opacity: 0; } 28% { opacity: 1; } 100% { opacity: 0; } }
 @keyframes pbid-onoff { 0% { opacity: 0; } 28% { opacity: 1; } 100% { opacity: 0; } }
 
-/* ===== Modo SPIN (haz/cometa que gira una vez) ===== */
+/* ===== Modo SPIN (haz/cometa que gira alrededor del borde) ===== */
 .pbid--spin .pbid__light {
   inset: -45%;
   background: conic-gradient(from 0deg, transparent 0deg, var(--pbid-c1, #F4AC59) 60deg, var(--pbid-c2, #8460E5) 150deg, var(--pbid-c3, #ffffff) 230deg, transparent 330deg);
 }
-.pbid--spin.pbid--flash .pbid__light { animation: pbid-spin-light 600ms ease-in-out; }
+.pbid--spin.pbid--flash .pbid__light { animation: pbid-spin-light 900ms ease-in-out; }
 .pbid--spin::after {
-  background: conic-gradient(from var(--pbid-spin), transparent 0 280deg, var(--pbid-c1, #F4AC59) 320deg, var(--pbid-c2, #8460E5) 345deg, var(--pbid-c3, #ffffff) 358deg, transparent 360deg);
+  background: conic-gradient(from var(--pbid-spin), transparent 0 270deg, var(--pbid-c1, #F4AC59) 315deg, var(--pbid-c2, #8460E5) 340deg, var(--pbid-c3, #ffffff) 356deg, transparent 360deg);
 }
-.pbid--spin.pbid--flash::after { animation: pbid-arc 650ms ease-in-out; }
+.pbid--spin.pbid--flash::after { animation: pbid-arc 950ms ease-in-out; }
 @keyframes pbid-spin-light {
   0%   { opacity: 0; transform: rotate(0deg) scale(1.2); }
-  22%  { opacity: 1; }
-  62%  { opacity: 1; }
-  100% { opacity: 0; transform: rotate(360deg) scale(1.2); }
+  16%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; transform: rotate(540deg) scale(1.2); }
 }
 @keyframes pbid-arc {
   0%   { opacity: 0; --pbid-spin: 0deg; }
-  18%  { opacity: 1; }
-  82%  { opacity: 1; }
-  100% { opacity: 0; --pbid-spin: 360deg; }
+  12%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { opacity: 0; --pbid-spin: 540deg; }
 }
 
 /* ===== Modo EXPLODE (estallido: flash central + chispas hacia afuera) ===== */
@@ -319,6 +319,17 @@ export default function BidProposal({
     _stylesInjected = true;
   }
 
+  // Duración de cada modo (debe ser >= la animación CSS más larga de ese modo,
+  // o la clase "pbid--flash" se quita a medio ciclo y el efecto se corta).
+  const FLASH_MS: Record<BidProposalFlashMode, number> = {
+    bulb: 650,
+    spin: 1000,
+    explode: 650,
+    pulse: 750,
+    combo: 850,
+    shine: 850,
+  };
+
   useEffect(
     function onFlash() {
       if (flash === prevFlash.current) return;
@@ -326,13 +337,13 @@ export default function BidProposal({
       // reinicia la animación (quita y vuelve a poner la clase)
       setFlashing(false);
       const raf = requestAnimationFrame(() => requestAnimationFrame(() => setFlashing(true)));
-      const t = setTimeout(() => setFlashing(false), 850);
+      const t = setTimeout(() => setFlashing(false), FLASH_MS[flashMode]);
       return () => {
         cancelAnimationFrame(raf);
         clearTimeout(t);
       };
     },
-    [flash],
+    [flash, flashMode],
   );
 
   return (

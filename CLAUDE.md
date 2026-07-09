@@ -295,6 +295,10 @@ import { NOMBRE_WIDTH, NOMBRE_HEIGHT } from "@/src/blocks/nombre/desktop/dimensi
 | `/concorde-sync` | Sincroniza un componente contra la verdad visual de Figma |
 | `/publish`       | Registra un componente en el catálogo (`/handoff` + REGISTRY) |
 | `/block`         | Crea o registra un bloque de página con arquitectura canónica |
+| `/research-format` | Reformatea un documento técnico/de investigación aplastado en Markdown limpio (fórmulas, diagramas, tablas, código) |
+| `/anim-decay`     | Hook de animación frame-rate-independent (decaimiento exponencial) para valores que persiguen un target en movimiento |
+| `/comp-slots`     | Refactoriza props de variante crecientes en un patrón de slots (layout vs. contenido intercambiable) |
+| `/light-consistent` | Sistema de luz/sombra CSS consistente entre superficies elevadas, basado en el principio PBR |
 
 ---
 
