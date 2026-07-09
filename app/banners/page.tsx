@@ -1,28 +1,20 @@
 import type { JSX, ReactNode } from "react";
 import Header from "@/app/_components/Header";
-import BannerPrincipal from "@/src/blocks/banners/desktop/BannerPrincipal";
-import BannerSecundario from "@/src/blocks/banners/desktop/BannerSecundario";
-import BannerSidebar from "@/src/blocks/banners/desktop/BannerSidebar";
-import {
-  BANNER_PRINCIPAL_WIDTH,
-  BANNER_PRINCIPAL_HEIGHT,
-  BANNER_SECUNDARIO_WIDTH,
-  BANNER_SECUNDARIO_HEIGHT,
-  BANNER_SIDEBAR_WIDTH,
-  BANNER_SIDEBAR_HEIGHT,
-} from "@/src/blocks/banners/desktop/dimensions";
+import AssetBanner, { ASSET_HEIGHT } from "@/src/blocks/banners/desktop/AssetBanner";
+import LayoutBanner from "@/src/blocks/banners/desktop/LayoutBanner";
+import EmpresaBanner, { EMPRESA_HEIGHT } from "@/src/blocks/banners/desktop/EmpresaBanner";
+import EmpresaBannerAlt from "@/src/blocks/banners/desktop/EmpresaBannerAlt";
+import { BANNER_WIDTH, BANNER_HEIGHT } from "@/src/blocks/banners/desktop/dimensions";
 
 /**
- * /banners — Catálogo de plantillas de banners de navegación
- * (tema claro, mismo estilo que /components y /blocks).
- * Cada card es un formato de banner; dentro, sus plantillas.
+ * /banners — Catálogo de banners 766×272. Cada card es una categoría; dentro,
+ * el asset real de producción y variantes de layout sin personaje.
  */
 
-interface BannerFormatEntry {
+interface BannerCategoryEntry {
   id: string;
   name: string;
-  format: string;
-  templateCount: number;
+  variantCount: number;
   width: number;
   height: number;
   node: ReactNode;
@@ -30,63 +22,43 @@ interface BannerFormatEntry {
 
 const GAP = 16;
 
-// Previews compuestos — muestran varias plantillas del formato apiladas
-const PRINCIPAL_PREVIEW_H = BANNER_PRINCIPAL_HEIGHT * 2 + GAP;
-const PRINCIPAL_PREVIEW = (
-  <div style={{ display: "flex", flexDirection: "column", gap: GAP, width: BANNER_PRINCIPAL_WIDTH }}>
-    <BannerPrincipal variant="negociable" />
-    <BannerPrincipal variant="categorias" />
+const ENVIVO_PREVIEW = (
+  <div style={{ display: "flex", flexDirection: "column", gap: GAP, width: BANNER_WIDTH }}>
+    <AssetBanner kind="en-vivo" count={23} />
+    <LayoutBanner tone="naranja" layout="big-number" pillText="EN VIVO" pillIcon count={38} title="Subastas de autos en vivo" subtitle="Puja en tiempo real" />
   </div>
 );
 
-const SECUNDARIO_PREVIEW_H = BANNER_SECUNDARIO_HEIGHT * 5 + GAP * 4;
-const SECUNDARIO_PREVIEW = (
-  <div style={{ display: "flex", flexDirection: "column", gap: GAP, width: BANNER_SECUNDARIO_WIDTH }}>
-    <BannerSecundario variant="negociable" />
-    <BannerSecundario variant="en-vivo" />
-    <BannerSecundario variant="categoria" />
-    <BannerSecundario variant="empresas" />
-    <BannerSecundario variant="subaspass" />
+const NEGOCIABLE_PREVIEW = (
+  <div style={{ display: "flex", flexDirection: "column", gap: GAP, width: BANNER_WIDTH }}>
+    <AssetBanner kind="negociable" count={11} />
+    <LayoutBanner tone="teal" layout="split-left" pillText="NEGOCIABLE" pillIcon count={5} title="Subasta negociable" subtitle="Autos, maquinaria y más" />
   </div>
 );
 
-const SIDEBAR_PREVIEW_W = BANNER_SIDEBAR_WIDTH * 3 + GAP * 2;
-const SIDEBAR_PREVIEW = (
-  <div style={{ display: "flex", gap: GAP, width: SIDEBAR_PREVIEW_W }}>
-    <BannerSidebar variant="subaspass" />
-    <BannerSidebar variant="vende-tu-auto" />
-    <BannerSidebar variant="centro-ayuda" />
+const CATEGORIA_PREVIEW = (
+  <div style={{ display: "flex", flexDirection: "column", gap: GAP, width: BANNER_WIDTH }}>
+    <AssetBanner kind="categoria" count={13} chip={{ label: "Vehicular / Liviano", icon: "car" }} />
+    <LayoutBanner tone="naranja" layout="big-number" pillText="EN VIVO" pillIcon count={13} title="Vehículos livianos" chip={{ label: "Vehicular / Liviano", icon: "car" }} />
   </div>
 );
 
-const FORMATS: BannerFormatEntry[] = [
-  {
-    id: "principal",
-    name: "Banner Principal",
-    format: `${BANNER_PRINCIPAL_WIDTH} × ${BANNER_PRINCIPAL_HEIGHT}`,
-    templateCount: 4,
-    width: BANNER_PRINCIPAL_WIDTH,
-    height: PRINCIPAL_PREVIEW_H,
-    node: PRINCIPAL_PREVIEW,
-  },
-  {
-    id: "secundario",
-    name: "Banner Secundario",
-    format: `${BANNER_SECUNDARIO_WIDTH} × ${BANNER_SECUNDARIO_HEIGHT}`,
-    templateCount: 5,
-    width: BANNER_SECUNDARIO_WIDTH,
-    height: SECUNDARIO_PREVIEW_H,
-    node: SECUNDARIO_PREVIEW,
-  },
-  {
-    id: "sidebar",
-    name: "Banner Sidebar",
-    format: `${BANNER_SIDEBAR_WIDTH} × ${BANNER_SIDEBAR_HEIGHT}`,
-    templateCount: 3,
-    width: SIDEBAR_PREVIEW_W,
-    height: BANNER_SIDEBAR_HEIGHT,
-    node: SIDEBAR_PREVIEW,
-  },
+const EMPRESAS_PREVIEW = (
+  <div style={{ display: "flex", flexDirection: "column", gap: GAP, width: BANNER_WIDTH }}>
+    <EmpresaBanner nombre="Maquisistema" logoText="Maquisistema" rating="3.8" ratingLabel="Buen Vendedor" opiniones="44 opiniones" descripcion="Una de las principales administradoras de Fondos Colectivos del país, con 28 años en el mercado." ventas="365" participantes="3,245" />
+    <EmpresaBannerAlt nombre="Maquisistema" logoText="Maquisistema" rating="3.8" ratingLabel="Buen Vendedor" opiniones="44 opiniones" descripcion="Una de las principales administradoras de Fondos Colectivos del país." ventas="365" participantes="3,245" layout="stats-bottom" />
+  </div>
+);
+
+// Los previews apilan un asset (192) + un layout/alt (272) con GAP en medio.
+const ASSET_PLUS_LAYOUT = ASSET_HEIGHT + GAP + BANNER_HEIGHT;
+const EMPRESA_PREVIEW_H = EMPRESA_HEIGHT + GAP + BANNER_HEIGHT;
+
+const CATEGORIES: BannerCategoryEntry[] = [
+  { id: "en-vivo",    name: "En Vivo",    variantCount: 5, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: ENVIVO_PREVIEW },
+  { id: "negociable", name: "Negociable", variantCount: 5, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: NEGOCIABLE_PREVIEW },
+  { id: "categoria",  name: "Categoría",  variantCount: 4, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: CATEGORIA_PREVIEW },
+  { id: "empresas",   name: "Empresas",   variantCount: 3, width: BANNER_WIDTH, height: EMPRESA_PREVIEW_H,  node: EMPRESAS_PREVIEW },
 ];
 
 const THUMB_H = 260;
@@ -99,31 +71,30 @@ export default function BannersPage(): JSX.Element {
       <main style={{ maxWidth: 1120, margin: "0 auto", padding: "40px 40px 80px" }}>
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
           <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>Banners</h1>
-          <span style={{ fontSize: 13, color: "#94a3b8", fontWeight: 500 }}>{FORMATS.length} formatos</span>
+          <span style={{ fontSize: 13, color: "#94a3b8", fontWeight: 500 }}>{CATEGORIES.length} categorías · 766 × 272</span>
         </div>
-        <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 24px", maxWidth: 640 }}>
-          Plantillas de banners de navegación — categorías, tipo de oferta, empresas y promos.
-          Cada formato usa las medidas reales de su slot en los bloques.
+        <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 24px", maxWidth: 680 }}>
+          Banners de navegación 766×272: En Vivo, Negociable, Categoría y Empresas. Cada categoría
+          trae el asset real de producción y variantes de layout sin personaje — distintas
+          posiciones y tratamientos tipográficos. Estáticos, sin efectos.
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
-          {FORMATS.map(function renderFormat(f) {
-            const scale = Math.min((THUMB_H - 32) / f.height, 260 / f.width);
+          {CATEGORIES.map(function renderCategory(c) {
+            const scale = Math.min((THUMB_H - 32) / c.height, 260 / c.width);
             return (
-              <a key={f.id} href={`/banners/${f.id}`} className="bnr-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", borderRadius: 12, overflow: "hidden", background: "#ffffff", border: "1px solid #e2e8f0", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
+              <a key={c.id} href={`/banners/${c.id}`} className="bnr-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", borderRadius: 12, overflow: "hidden", background: "#ffffff", border: "1px solid #e2e8f0", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
                 <div style={{ height: THUMB_H, display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
-                  <div style={{ width: f.width * scale, height: f.height * scale, position: "relative", overflow: "hidden", borderRadius: 4 }}>
-                    <div style={{ position: "absolute", top: 0, left: 0, width: f.width, height: f.height, transform: `scale(${scale})`, transformOrigin: "top left" }}>
-                      {f.node}
+                  <div style={{ width: c.width * scale, height: c.height * scale, position: "relative", overflow: "hidden", borderRadius: 4, boxShadow: "0 6px 18px rgba(15,23,42,0.12)", outline: "1px solid #e2e8f0" }}>
+                    <div style={{ position: "absolute", top: 0, left: 0, width: c.width, height: c.height, transform: `scale(${scale})`, transformOrigin: "top left" }}>
+                      {c.node}
                     </div>
                   </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px" }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    <span className="bnr-name" style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", letterSpacing: "-0.01em" }}>{f.name}</span>
-                    <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>
-                      {f.format} · {f.templateCount} plantillas
-                    </span>
+                    <span className="bnr-name" style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", letterSpacing: "-0.01em" }}>{c.name}</span>
+                    <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>766 × 272 · {c.variantCount} variantes</span>
                   </div>
                   <span className="bnr-arrow" aria-hidden="true" style={{ fontSize: 15, color: "#cbd5e1" }}>→</span>
                 </div>
