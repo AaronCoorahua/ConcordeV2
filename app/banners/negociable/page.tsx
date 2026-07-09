@@ -6,42 +6,49 @@ import LayoutBanner from "@/src/blocks/banners/desktop/LayoutBanner";
 import { BANNER_WIDTH, BANNER_HEIGHT } from "@/src/blocks/banners/desktop/dimensions";
 
 /**
- * /banners/negociable — banner 766×272 de la página Negociable (teal).
- * 01 = asset real de producción; 02+ = variantes de LAYOUT sin personaje.
+ * /banners/negociable — banner 766×192 de la página Negociable (sistema teal).
+ * Variantes modernas con los ESTILOS del DS (gradiente del Button negotiable en
+ * la pill, borde/glass del StatPill en el contador) — sin botones. Legacy al final.
  */
 
 const TITLE = "Subasta negociable de autos, maquinaria y más";
 
 const TEMPLATES: BannerTemplate[] = [
   {
-    id: "asset",
-    name: "Asset de producción",
-    description: "Banner real de vmcsubastas (personaje con lentes, monedas, pill «NEGOCIABLE» y «Ofertas» ya vienen en el PNG). Solo se sobrepone el número de ofertas.",
-    node: <AssetBanner kind="negociable" count={11} />,
+    id: "hero",
+    name: "Hero — número a la derecha",
+    description: "Pill «NEGOCIABLE» con el gradiente del Button negotiable (anillo teal + fill #00aeb1→#8460e5), chip de horario con TimerIcon y el número gigante a la derecha.",
+    node: <LayoutBanner tone="teal" layout="hero" pillText="NEGOCIABLE" pillIcon count={11} title={TITLE} timer="Cierra hoy · 6:01 PM" />,
+  },
+  {
+    id: "panel-morado",
+    name: "Panel morado",
+    description: "Fondo con el gradiente del header de DetailCard + contador con los estilos del StatPill (dark glass + borde VYStrokes).",
+    node: <LayoutBanner tone="teal" layout="panel" pillText="NEGOCIABLE" pillIcon count={13} title="Negocia tu precio" timer="Propuestas hasta 6:01 PM" />,
   },
   {
     id: "big-number",
-    name: "Número gigante",
-    description: "Sin personaje. El contador domina a la izquierda; pill y título a la derecha.",
+    name: "Número gigante a la izquierda",
+    description: "El contador domina a la izquierda; pill gradiente y título a la derecha, gema SubasCoin de acento.",
     node: <LayoutBanner tone="teal" layout="big-number" pillText="NEGOCIABLE" pillIcon count={11} title="Negocia autos, maquinaria y equipos" subtitle="Propón tu precio" />,
-  },
-  {
-    id: "split-left",
-    name: "Contador en tarjeta",
-    description: "Texto a la izquierda, contador «Ofertas N» en una tarjeta glass a la derecha.",
-    node: <LayoutBanner tone="teal" layout="split-left" pillText="NEGOCIABLE" pillIcon count={5} title="Subasta negociable" subtitle="Autos, maquinaria, equipos y más" />,
   },
   {
     id: "centered",
     name: "Centrado",
-    description: "Composición simétrica: pill + título centrados y «N ofertas disponibles» debajo.",
-    node: <LayoutBanner tone="teal" layout="centered" pillText="NEGOCIABLE" pillIcon count={13} title="Subasta negociable" />,
+    description: "Composición simétrica: pill gradiente + título a un lado, separador y contador «OFERTAS N» gigante al otro.",
+    node: <LayoutBanner tone="teal" layout="centered" pillText="NEGOCIABLE" pillIcon count={5} title="Subasta negociable" />,
   },
   {
-    id: "ticket",
-    name: "Cinta",
-    description: "La pill se vuelve cinta diagonal; el número aparece en contorno a la derecha.",
-    node: <LayoutBanner tone="teal" layout="ticket" pillText="NEGOCIABLE" count={7} title="Subasta negociable" />,
+    id: "outline-number",
+    name: "Número contorno de fondo",
+    description: "El número gigante en contorno detrás del contenido — efecto tipográfico sobre el gradiente negotiable.",
+    node: <LayoutBanner tone="teal" layout="outline-number" pillText="NEGOCIABLE" pillIcon count={13} title="Subasta negociable" />,
+  },
+  {
+    id: "legacy",
+    name: "Asset de producción (legacy)",
+    description: "Referencia del banner actual en vmcsubastas — estilo con ilustraciones que ya no se usa.",
+    node: <AssetBanner kind="negociable" count={11} />,
   },
 ];
 
@@ -53,7 +60,7 @@ export default function BannerNegociablePage(): JSX.Element {
         title="Banner Negociable"
         format={`${BANNER_WIDTH} × ${BANNER_HEIGHT}`}
         slot="Página Tipo de oferta → Negociable"
-        description="Banner hero de la página de ofertas negociables (teal). La primera es el asset real de producción; el resto son variantes de layout sin personaje — solo contenido, con distintas posiciones y tratamientos tipográficos. Estático, sin efectos."
+        description="Banner hero de la página de ofertas negociables, con la nueva propuesta del design system: gradiente negotiable de OfferType, pill con los colores del Button negotiable, contador con los estilos del StatPill, TimerIcon y gema SubasCoin. La referencia legacy (ilustraciones) va al final. Estático, sin efectos."
         templates={TEMPLATES}
       />
     </div>

@@ -6,9 +6,9 @@ import EmpresaBannerAlt from "@/src/blocks/banners/desktop/EmpresaBannerAlt";
 import { BANNER_WIDTH, BANNER_HEIGHT } from "@/src/blocks/banners/desktop/dimensions";
 
 /**
- * /banners/empresas — banner 766×272 de la página de empresa/vendedor.
- * 01 = asset real de producción (header_empresa); 02+ = variantes de layout
- * sin personaje (solo logo, rating, reseña y stats en distintas posiciones).
+ * /banners/empresas — banner 766×192 de la página de empresa/vendedor.
+ * Variantes modernas con los componentes reales (StatPill, StarIcon,
+ * BusinessIcon, bordes gradiente); la referencia legacy va al final.
  */
 
 const DEMO = {
@@ -23,22 +23,28 @@ const DEMO = {
 
 const TEMPLATES: BannerTemplate[] = [
   {
-    id: "asset",
-    name: "Maquisistema (asset)",
-    description: "Banner real de vmcsubastas (personaje, círculo del logo y cajas Ventas/Participantes ya vienen en el PNG). Se sobreponen logo, nombre, rating, reseña y los valores de stats.",
-    node: <EmpresaBanner {...DEMO} logoText="Maquisistema" />,
+    id: "panel-morado",
+    name: "Panel morado",
+    description: "Fondo con el gradiente del header de DetailCard, logo circular blanco y las stats con los estilos del StatPill del bloque Sala (dark glass + borde VYStrokes).",
+    node: <EmpresaBannerAlt {...DEMO} logoText="Maquisistema" layout="panel" />,
   },
   {
     id: "logo-left",
     name: "Logo grande a la izquierda",
-    description: "Sin personaje. Logo circular grande a la izquierda, datos al centro y stats en fila a la derecha.",
+    description: "Fondo claro: logo con gradiente de marca, rating con StarIcon del DS y cajas de stats con borde gradiente estilo CategoryCard.",
     node: <EmpresaBannerAlt {...DEMO} logoText="Maquisistema" layout="logo-left" />,
   },
   {
     id: "stats-bottom",
     name: "Stats en franja inferior",
-    description: "Sin personaje. Nombre y rating arriba a la izquierda; las stats ocupan una franja inferior de ancho completo.",
+    description: "Nombre y rating arriba con BusinessIcon del sidebar; las stats ocupan una franja inferior de ancho completo.",
     node: <EmpresaBannerAlt {...DEMO} logoText="Maquisistema" layout="stats-bottom" />,
+  },
+  {
+    id: "legacy",
+    name: "Maquisistema (legacy)",
+    description: "Referencia del banner actual en vmcsubastas — estilo con ilustraciones que ya no se usa.",
+    node: <EmpresaBanner {...DEMO} logoText="Maquisistema" />,
   },
 ];
 
@@ -50,7 +56,7 @@ export default function BannerEmpresasPage(): JSX.Element {
         title="Banner Empresas"
         format={`${BANNER_WIDTH} × ${BANNER_HEIGHT}`}
         slot="Página de empresa / vendedor"
-        description="Banner hero de la página de una empresa vendedora: logo, rating con opiniones, reseña y stats de Ventas y Participantes. La primera usa el asset real de producción; el resto son variantes de layout sin personaje. Estático, sin efectos."
+        description="Banner hero de la página de una empresa vendedora, con la nueva propuesta del design system: stats con los estilos del StatPill del bloque Sala, StarIcon, BusinessIcon y bordes gradiente. La referencia legacy (ilustraciones) va al final. Estático, sin efectos."
         templates={TEMPLATES}
       />
     </div>
