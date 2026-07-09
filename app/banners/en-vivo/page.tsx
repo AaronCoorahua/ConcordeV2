@@ -46,8 +46,14 @@ const TEMPLATES: BannerTemplate[] = [
     node: <LayoutBanner tone="naranja" layout="big-number" pillText="EN VIVO" pillIcon count={23} title={TITLE} subtitle="Puja en tiempo real" />,
   },
   {
+    id: "centered-stack",
+    name: "Centrado simple",
+    description: "Solo los títulos, todo apilado y bien centrado: pill gradiente, título y «N ofertas disponibles».",
+    node: <LayoutBanner tone="naranja" layout="centered-stack" pillText="EN VIVO" pillIcon count={38} title={TITLE} />,
+  },
+  {
     id: "centered",
-    name: "Centrado",
+    name: "Centrado con separador",
     description: "Composición simétrica: pill gradiente + título a un lado, separador y el contador «OFERTAS N» gigante al otro.",
     node: <LayoutBanner tone="naranja" layout="centered" pillText="EN VIVO" pillIcon count={38} title={TITLE} />,
   },

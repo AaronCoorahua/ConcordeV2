@@ -45,8 +45,14 @@ const TEMPLATES: BannerTemplate[] = [
     node: <LayoutBanner tone="teal" layout="big-number" pillText="NEGOCIABLE" pillIcon count={11} title="Negocia autos, maquinaria y equipos" subtitle="Propón tu precio" />,
   },
   {
+    id: "centered-stack",
+    name: "Centrado simple",
+    description: "Solo los títulos, todo apilado y bien centrado: pill gradiente, título y «N ofertas disponibles».",
+    node: <LayoutBanner tone="teal" layout="centered-stack" pillText="NEGOCIABLE" pillIcon count={5} title="Subasta negociable" />,
+  },
+  {
     id: "centered",
-    name: "Centrado",
+    name: "Centrado con separador",
     description: "Composición simétrica: pill gradiente + título a un lado, separador y contador «OFERTAS N» gigante al otro.",
     node: <LayoutBanner tone="teal" layout="centered" pillText="NEGOCIABLE" pillIcon count={5} title="Subasta negociable" />,
   },
