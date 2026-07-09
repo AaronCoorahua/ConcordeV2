@@ -9,10 +9,10 @@
  */
 
 import type { JSX } from "react";
-import { BANNER_WIDTH } from "./dimensions";
+import { BANNER_WIDTH, BANNER_HEIGHT } from "./dimensions";
 
-export const EMPRESA_WIDTH = BANNER_WIDTH;   // 766
-export const EMPRESA_HEIGHT = 192;           // alto natural del asset a ancho 766
+export const EMPRESA_WIDTH = BANNER_WIDTH;    // 766
+export const EMPRESA_HEIGHT = BANNER_HEIGHT;  // 192 — alto natural del asset
 
 export interface EmpresaBannerProps {
   nombre: string;
@@ -105,10 +105,10 @@ export default function EmpresaBanner({
 
       {/* Valores de stats — dentro de las cajas del asset
           (Ventas centro y≈65, Participantes centro y≈138 · x centro ≈ 680) */}
-      <span style={{ position: "absolute", right: 40, top: 60, width: 148, textAlign: "center", fontSize: 19, fontWeight: 800, color: "#3B1782" }}>
+      <span style={{ position: "absolute", right: 40, top: 58, width: 148, textAlign: "center", fontSize: 18, fontWeight: 800, color: "#3B1782" }}>
         {ventas}
       </span>
-      <span style={{ position: "absolute", right: 40, top: 134, width: 148, textAlign: "center", fontSize: 19, fontWeight: 800, color: "#3B1782" }}>
+      <span style={{ position: "absolute", right: 40, top: 128, width: 148, textAlign: "center", fontSize: 18, fontWeight: 800, color: "#3B1782" }}>
         {participantes}
       </span>
     </div>

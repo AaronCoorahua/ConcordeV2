@@ -10,10 +10,10 @@
 
 import type { JSX } from "react";
 import { CarIcon } from "./decor";
-import { BANNER_WIDTH } from "./dimensions";
+import { BANNER_WIDTH, BANNER_HEIGHT } from "./dimensions";
 
-export const ASSET_WIDTH = BANNER_WIDTH;   // 766
-export const ASSET_HEIGHT = 192;           // alto natural del asset a ancho 766
+export const ASSET_WIDTH = BANNER_WIDTH;    // 766
+export const ASSET_HEIGHT = BANNER_HEIGHT;  // 192 — alto natural del asset
 
 export type AssetBannerKind = "en-vivo" | "negociable" | "categoria";
 

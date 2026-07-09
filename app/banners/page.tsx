@@ -50,7 +50,7 @@ const EMPRESAS_PREVIEW = (
   </div>
 );
 
-// Los previews apilan un asset (192) + un layout/alt (272) con GAP en medio.
+// Los previews apilan dos banners del mismo alto (192) con GAP en medio.
 const ASSET_PLUS_LAYOUT = ASSET_HEIGHT + GAP + BANNER_HEIGHT;
 const EMPRESA_PREVIEW_H = EMPRESA_HEIGHT + GAP + BANNER_HEIGHT;
 
@@ -71,10 +71,10 @@ export default function BannersPage(): JSX.Element {
       <main style={{ maxWidth: 1120, margin: "0 auto", padding: "40px 40px 80px" }}>
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
           <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>Banners</h1>
-          <span style={{ fontSize: 13, color: "#94a3b8", fontWeight: 500 }}>{CATEGORIES.length} categorías · 766 × 272</span>
+          <span style={{ fontSize: 13, color: "#94a3b8", fontWeight: 500 }}>{CATEGORIES.length} categorías · {BANNER_WIDTH} × {BANNER_HEIGHT}</span>
         </div>
         <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 24px", maxWidth: 680 }}>
-          Banners de navegación 766×272: En Vivo, Negociable, Categoría y Empresas. Cada categoría
+          Banners de navegación {BANNER_WIDTH}×{BANNER_HEIGHT}: En Vivo, Negociable, Categoría y Empresas. Cada categoría
           trae el asset real de producción y variantes de layout sin personaje — distintas
           posiciones y tratamientos tipográficos. Estáticos, sin efectos.
         </p>
@@ -94,7 +94,7 @@ export default function BannersPage(): JSX.Element {
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px" }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                     <span className="bnr-name" style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", letterSpacing: "-0.01em" }}>{c.name}</span>
-                    <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>766 × 272 · {c.variantCount} variantes</span>
+                    <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>{BANNER_WIDTH} × {BANNER_HEIGHT} · {c.variantCount} variantes</span>
                   </div>
                   <span className="bnr-arrow" aria-hidden="true" style={{ fontSize: 15, color: "#cbd5e1" }}>→</span>
                 </div>
