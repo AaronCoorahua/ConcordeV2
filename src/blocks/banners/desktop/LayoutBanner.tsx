@@ -146,20 +146,20 @@ export default function LayoutBanner({
   if (layout === "big-number") {
     return (
       <div data-slot="layout-banner" className={className} style={shell(t.bg)}>
-        <ChevronV width={220} color={t.chevron} style={{ right: -30, top: -46 }} />
-        <Coin size={40} variant={t.coinOutline} style={{ right: 210, bottom: 28 }} />
-        <Sparkle size={15} color={t.sparkle} style={{ right: 300, top: 40 }} />
-        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", padding: "0 44px", gap: 32 }}>
-          <span style={{ fontSize: 150, fontWeight: 800, lineHeight: 0.9, letterSpacing: "-0.04em", color: t.accent, textShadow: "rgba(255,255,255,0.35) 0 2px 0" }}>
+        <ChevronV width={170} color={t.chevron} style={{ right: -24, top: -34 }} />
+        <Coin size={34} variant={t.coinOutline} style={{ right: 180, bottom: 20 }} />
+        <Sparkle size={14} color={t.sparkle} style={{ right: 258, top: 28 }} />
+        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", padding: "0 40px", gap: 26 }}>
+          <span style={{ fontSize: 108, fontWeight: 800, lineHeight: 0.9, letterSpacing: "-0.04em", color: t.accent, textShadow: "rgba(255,255,255,0.35) 0 2px 0" }}>
             {count}
           </span>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
             <Pill t={t} text={pillText} icon={pillIcon} />
-            <span style={{ fontSize: 30, fontWeight: 800, color: t.ink, letterSpacing: "-0.02em", lineHeight: 1.1, maxWidth: 340 }}>{title}</span>
-            {subtitle && <span style={{ fontSize: 14, fontWeight: 600, color: t.ink, opacity: 0.9 }}>{subtitle}</span>}
+            <span style={{ fontSize: 25, fontWeight: 800, color: t.ink, letterSpacing: "-0.02em", lineHeight: 1.1, maxWidth: 320 }}>{title}</span>
+            {subtitle && <span style={{ fontSize: 13, fontWeight: 600, color: t.ink, opacity: 0.9 }}>{subtitle}</span>}
           </div>
         </div>
-        {chip && <div style={{ position: "absolute", right: 26, bottom: 24 }}><Chip t={t} chip={chip} /></div>}
+        {chip && <div style={{ position: "absolute", right: 20, bottom: 16 }}><Chip t={t} chip={chip} /></div>}
       </div>
     );
   }
@@ -168,21 +168,20 @@ export default function LayoutBanner({
   if (layout === "centered") {
     return (
       <div data-slot="layout-banner" className={className} style={shell(t.bg)}>
-        <ChevronV width={200} color={t.chevron} style={{ left: -60, top: -40 }} />
-        <ChevronV width={200} color={t.chevron} style={{ right: -60, bottom: -40 }} />
-        <Coin size={44} variant={t.coinOutline} style={{ left: 70, top: 40 }} />
-        <Coin size={34} variant={t.coinOutline} style={{ right: 84, bottom: 40 }} />
-        <Sparkle size={16} color={t.sparkle} style={{ left: 150, bottom: 54 }} />
-        <Sparkle size={14} color={t.sparkle} style={{ right: 170, top: 44 }} />
-        <Diamond size={9} color={t.accent} style={{ left: 120, top: 120 }} />
-        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, textAlign: "center", padding: "0 60px" }}>
+        <ChevronV width={160} color={t.chevron} style={{ left: -50, top: -32 }} />
+        <ChevronV width={160} color={t.chevron} style={{ right: -50, bottom: -32 }} />
+        <Coin size={38} variant={t.coinOutline} style={{ left: 60, top: 26 }} />
+        <Coin size={30} variant={t.coinOutline} style={{ right: 72, bottom: 26 }} />
+        <Sparkle size={15} color={t.sparkle} style={{ left: 132, bottom: 38 }} />
+        <Sparkle size={13} color={t.sparkle} style={{ right: 150, top: 30 }} />
+        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 9, textAlign: "center", padding: "0 60px" }}>
           <Pill t={t} text={pillText} icon={pillIcon} />
-          <span style={{ fontSize: 34, fontWeight: 800, color: t.ink, letterSpacing: "-0.02em", lineHeight: 1.12, textShadow: "rgba(46,15,112,0.18) 0 1px 0" }}>{title}</span>
-          <span style={{ display: "inline-flex", alignItems: "baseline", gap: 8, fontSize: 17, fontWeight: 700, color: t.ink }}>
-            <b style={{ fontSize: 24, color: t.accent }}>{count}</b> ofertas disponibles
+          <span style={{ fontSize: 28, fontWeight: 800, color: t.ink, letterSpacing: "-0.02em", lineHeight: 1.12, textShadow: "rgba(46,15,112,0.18) 0 1px 0" }}>{title}</span>
+          <span style={{ display: "inline-flex", alignItems: "baseline", gap: 8, fontSize: 16, fontWeight: 700, color: t.ink }}>
+            <b style={{ fontSize: 22, color: t.accent }}>{count}</b> ofertas disponibles
           </span>
         </div>
-        {chip && <div style={{ position: "absolute", right: 26, bottom: 22 }}><Chip t={t} chip={chip} /></div>}
+        {chip && <div style={{ position: "absolute", right: 20, bottom: 16 }}><Chip t={t} chip={chip} /></div>}
       </div>
     );
   }
@@ -191,19 +190,19 @@ export default function LayoutBanner({
   if (layout === "split-left") {
     return (
       <div data-slot="layout-banner" className={className} style={shell(t.bg)}>
-        <ChevronV width={180} color={t.chevron} style={{ left: 300, top: -34 }} />
-        <Coin size={30} variant={t.coinOutline} style={{ left: 300, bottom: 30 }} />
-        <Sparkle size={14} color={t.sparkle} style={{ left: 360, top: 60 }} />
-        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 470, display: "flex", flexDirection: "column", justifyContent: "center", gap: 14, padding: "0 44px" }}>
+        <ChevronV width={150} color={t.chevron} style={{ left: 300, top: -26 }} />
+        <Coin size={26} variant={t.coinOutline} style={{ left: 300, bottom: 22 }} />
+        <Sparkle size={13} color={t.sparkle} style={{ left: 356, top: 44 }} />
+        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 460, display: "flex", flexDirection: "column", justifyContent: "center", gap: 10, padding: "0 40px" }}>
           <Pill t={t} text={pillText} icon={pillIcon} />
-          <span style={{ fontSize: 32, fontWeight: 800, color: t.ink, letterSpacing: "-0.02em", lineHeight: 1.12 }}>{title}</span>
-          {subtitle && <span style={{ fontSize: 14, fontWeight: 600, color: t.ink, opacity: 0.92, maxWidth: 360 }}>{subtitle}</span>}
+          <span style={{ fontSize: 26, fontWeight: 800, color: t.ink, letterSpacing: "-0.02em", lineHeight: 1.12 }}>{title}</span>
+          {subtitle && <span style={{ fontSize: 13, fontWeight: 600, color: t.ink, opacity: 0.92, maxWidth: 340 }}>{subtitle}</span>}
         </div>
-        <div style={{ position: "absolute", right: 40, top: "50%", transform: "translateY(-50%)", width: 190, background: "rgba(255,255,255,0.16)", border: "2px solid rgba(255,255,255,0.5)", borderRadius: 16, padding: "18px 10px", textAlign: "center" }}>
-          <div style={{ fontSize: 15, fontWeight: 700, color: t.ink, letterSpacing: "0.04em", textTransform: "uppercase" }}>Ofertas</div>
-          <div style={{ fontSize: 68, fontWeight: 800, lineHeight: 1, color: t.ink, letterSpacing: "-0.02em" }}>{count}</div>
+        <div style={{ position: "absolute", right: 32, top: "50%", transform: "translateY(-50%)", width: 168, background: "rgba(255,255,255,0.16)", border: "2px solid rgba(255,255,255,0.5)", borderRadius: 14, padding: "12px 10px", textAlign: "center" }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: t.ink, letterSpacing: "0.04em", textTransform: "uppercase" }}>Ofertas</div>
+          <div style={{ fontSize: 52, fontWeight: 800, lineHeight: 1, color: t.ink, letterSpacing: "-0.02em" }}>{count}</div>
         </div>
-        {chip && <div style={{ position: "absolute", right: 26, bottom: 20 }}><Chip t={t} chip={chip} /></div>}
+        {chip && <div style={{ position: "absolute", right: 20, bottom: 14 }}><Chip t={t} chip={chip} /></div>}
       </div>
     );
   }
@@ -213,20 +212,20 @@ export default function LayoutBanner({
     return (
       <div data-slot="layout-banner" className={className} style={shell(t.bg)}>
         {/* Cinta diagonal */}
-        <div style={{ position: "absolute", left: -60, top: 30, transform: "rotate(-8deg)", background: t.pillBg, color: t.pillColor, padding: "8px 80px", fontSize: 15, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", boxShadow: "rgba(46,15,112,0.25) 0 4px 12px" }}>
+        <div style={{ position: "absolute", left: -60, top: 22, transform: "rotate(-8deg)", background: t.pillBg, color: t.pillColor, padding: "7px 80px", fontSize: 14, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", boxShadow: "rgba(46,15,112,0.25) 0 4px 12px" }}>
           {pillText}
         </div>
-        <Coin size={40} variant={t.coinOutline} style={{ left: 120, bottom: 34 }} />
-        <Sparkle size={16} color={t.sparkle} style={{ left: 60, bottom: 60 }} />
-        <ChevronV width={200} color={t.chevron} style={{ right: -40, top: -30 }} />
-        <div style={{ position: "absolute", right: 44, top: "50%", transform: "translateY(-50%)", textAlign: "right" }}>
-          <div style={{ fontSize: 20, fontWeight: 700, color: t.ink, marginBottom: 2 }}>{title}</div>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 10, justifyContent: "flex-end" }}>
-            <span style={{ fontSize: 22, fontWeight: 800, color: t.ink }}>Ofertas</span>
-            <span style={{ fontSize: 92, fontWeight: 800, lineHeight: 0.9, color: "transparent", letterSpacing: "-0.02em", WebkitTextStroke: `3px ${t.accent}` }}>{count}</span>
+        <Coin size={34} variant={t.coinOutline} style={{ left: 110, bottom: 22 }} />
+        <Sparkle size={15} color={t.sparkle} style={{ left: 54, bottom: 44 }} />
+        <ChevronV width={160} color={t.chevron} style={{ right: -32, top: -24 }} />
+        <div style={{ position: "absolute", right: 40, top: "50%", transform: "translateY(-50%)", textAlign: "right" }}>
+          <div style={{ fontSize: 17, fontWeight: 700, color: t.ink, marginBottom: 2 }}>{title}</div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8, justifyContent: "flex-end" }}>
+            <span style={{ fontSize: 19, fontWeight: 800, color: t.ink }}>Ofertas</span>
+            <span style={{ fontSize: 68, fontWeight: 800, lineHeight: 0.9, color: "transparent", letterSpacing: "-0.02em", WebkitTextStroke: `3px ${t.accent}` }}>{count}</span>
           </div>
         </div>
-        {chip && <div style={{ position: "absolute", left: 26, bottom: 20 }}><Chip t={t} chip={chip} /></div>}
+        {chip && <div style={{ position: "absolute", left: 20, bottom: 14 }}><Chip t={t} chip={chip} /></div>}
       </div>
     );
   }
@@ -234,19 +233,19 @@ export default function LayoutBanner({
   // ── Layout: número en contorno gigante de fondo + texto encima ──
   return (
     <div data-slot="layout-banner" className={className} style={shell(t.bg)}>
-      <span style={{ position: "absolute", right: 30, top: "50%", transform: "translateY(-52%)", fontSize: 230, fontWeight: 800, lineHeight: 0.8, color: "transparent", WebkitTextStroke: `2px ${tone === "naranja" ? "rgba(255,255,255,0.45)" : "rgba(46,15,112,0.28)"}`, letterSpacing: "-0.04em", pointerEvents: "none" }}>
+      <span style={{ position: "absolute", right: 24, top: "50%", transform: "translateY(-52%)", fontSize: 168, fontWeight: 800, lineHeight: 0.8, color: "transparent", WebkitTextStroke: `2px ${tone === "naranja" ? "rgba(255,255,255,0.45)" : "rgba(46,15,112,0.28)"}`, letterSpacing: "-0.04em", pointerEvents: "none" }}>
         {count}
       </span>
-      <Coin size={36} variant={t.coinOutline} style={{ right: 220, top: 40 }} />
-      <Sparkle size={15} color={t.sparkle} style={{ left: 40, bottom: 50 }} />
-      <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: 14, padding: "0 48px", maxWidth: 470 }}>
+      <Coin size={30} variant={t.coinOutline} style={{ right: 190, top: 26 }} />
+      <Sparkle size={14} color={t.sparkle} style={{ left: 36, bottom: 36 }} />
+      <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: 9, padding: "0 44px", maxWidth: 460 }}>
         <Pill t={t} text={pillText} icon={pillIcon} />
-        <span style={{ fontSize: 36, fontWeight: 800, color: t.ink, letterSpacing: "-0.02em", lineHeight: 1.1 }}>{title}</span>
-        <span style={{ display: "inline-flex", alignItems: "baseline", gap: 8, fontSize: 16, fontWeight: 700, color: t.ink }}>
-          <b style={{ fontSize: 22, color: t.accent }}>{count}</b> ofertas activas
+        <span style={{ fontSize: 28, fontWeight: 800, color: t.ink, letterSpacing: "-0.02em", lineHeight: 1.1 }}>{title}</span>
+        <span style={{ display: "inline-flex", alignItems: "baseline", gap: 8, fontSize: 15, fontWeight: 700, color: t.ink }}>
+          <b style={{ fontSize: 21, color: t.accent }}>{count}</b> ofertas activas
         </span>
       </div>
-      {chip && <div style={{ position: "absolute", right: 26, bottom: 22 }}><Chip t={t} chip={chip} /></div>}
+      {chip && <div style={{ position: "absolute", right: 20, bottom: 16 }}><Chip t={t} chip={chip} /></div>}
     </div>
   );
 }

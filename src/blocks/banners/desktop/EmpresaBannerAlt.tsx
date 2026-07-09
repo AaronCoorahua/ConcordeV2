@@ -113,26 +113,26 @@ export default function EmpresaBannerAlt({
   if (layout === "stats-bottom") {
     return (
       <div data-slot="empresa-banner-alt" className={className} style={shell}>
-        <Sparkle size={18} color="#3B1782" outline style={{ position: "absolute", right: 40, top: 26 }} />
+        <Sparkle size={16} color="#3B1782" outline style={{ position: "absolute", right: 40, top: 18 }} />
         {/* Cabecera: logo + nombre + rating + reseña */}
-        <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: 168, display: "flex", alignItems: "center", gap: 20, padding: "0 32px", boxSizing: "border-box" }}>
-          <LogoCircle text={logo} size={96} />
+        <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: 122, display: "flex", alignItems: "center", gap: 18, padding: "0 32px", boxSizing: "border-box" }}>
+          <LogoCircle text={logo} size={84} />
           <div style={{ flex: 1, minWidth: 0 }}>
-            <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, color: "#241A3F", letterSpacing: "-0.01em" }}>{nombre}</h3>
-            <div style={{ marginTop: 6 }}><Rating rating={rating} ratingLabel={ratingLabel} opiniones={opiniones} /></div>
-            <p style={{ margin: "8px 0 0", fontSize: 12.5, fontWeight: 500, lineHeight: 1.5, color: "#6B6180" }}>{descripcion}</p>
+            <h3 style={{ margin: 0, fontSize: 19, fontWeight: 800, color: "#241A3F", letterSpacing: "-0.01em" }}>{nombre}</h3>
+            <div style={{ marginTop: 5 }}><Rating rating={rating} ratingLabel={ratingLabel} opiniones={opiniones} /></div>
+            <p style={{ margin: "6px 0 0", fontSize: 11.5, fontWeight: 500, lineHeight: 1.45, color: "#6B6180" }}>{descripcion}</p>
           </div>
         </div>
         {/* Franja de stats inferior */}
-        <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 104, background: "#F4F1FB", display: "flex", alignItems: "center", justifyContent: "center", gap: 48 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: "#6B6180", textTransform: "uppercase", letterSpacing: "0.04em" }}>Ventas</span>
-            <span style={{ fontSize: 32, fontWeight: 800, color: "#3B1782" }}>{ventas}</span>
+        <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 70, background: "#F4F1FB", display: "flex", alignItems: "center", justifyContent: "center", gap: 44 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#6B6180", textTransform: "uppercase", letterSpacing: "0.04em" }}>Ventas</span>
+            <span style={{ fontSize: 26, fontWeight: 800, color: "#3B1782" }}>{ventas}</span>
           </div>
-          <div style={{ width: 1, height: 44, background: "#D8CEF0" }} />
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: "#6B6180", textTransform: "uppercase", letterSpacing: "0.04em" }}>Participantes</span>
-            <span style={{ fontSize: 32, fontWeight: 800, color: "#3B1782" }}>{participantes}</span>
+          <div style={{ width: 1, height: 36, background: "#D8CEF0" }} />
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#6B6180", textTransform: "uppercase", letterSpacing: "0.04em" }}>Participantes</span>
+            <span style={{ fontSize: 26, fontWeight: 800, color: "#3B1782" }}>{participantes}</span>
           </div>
         </div>
       </div>
@@ -141,15 +141,15 @@ export default function EmpresaBannerAlt({
 
   // logo-left
   return (
-    <div data-slot="empresa-banner-alt" className={className} style={{ ...shell, display: "flex", alignItems: "center", gap: 24, padding: "0 32px" }}>
-      <Sparkle size={18} color="#3B1782" outline style={{ position: "absolute", left: 128, top: 40 }} />
-      <LogoCircle text={logo} size={116} />
+    <div data-slot="empresa-banner-alt" className={className} style={{ ...shell, display: "flex", alignItems: "center", gap: 20, padding: "0 28px" }}>
+      <Sparkle size={16} color="#3B1782" outline style={{ position: "absolute", left: 110, top: 28 }} />
+      <LogoCircle text={logo} size={98} />
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <h3 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: "#241A3F", letterSpacing: "-0.01em" }}>{nombre}</h3>
-        <div style={{ marginTop: 8 }}><Rating rating={rating} ratingLabel={ratingLabel} opiniones={opiniones} /></div>
-        <p style={{ margin: "12px 0 0", fontSize: 12.5, fontWeight: 500, lineHeight: 1.5, color: "#6B6180", maxWidth: 320 }}>{descripcion}</p>
+        <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "#241A3F", letterSpacing: "-0.01em" }}>{nombre}</h3>
+        <div style={{ marginTop: 6 }}><Rating rating={rating} ratingLabel={ratingLabel} opiniones={opiniones} /></div>
+        <p style={{ margin: "8px 0 0", fontSize: 11.5, fontWeight: 500, lineHeight: 1.45, color: "#6B6180", maxWidth: 300 }}>{descripcion}</p>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 18, flexShrink: 0 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12, flexShrink: 0 }}>
         <StatPill label="Ventas" value={ventas} />
         <StatPill label="Participantes" value={participantes} />
       </div>
