@@ -266,7 +266,7 @@ function Chip({ chip }: { chip: { label: string; icon?: "car" } }): JSX.Element 
 
 // ─── Layouts ──────────────────────────────────────────────────────────────────
 
-export type BannerLayout = "hero" | "panel" | "primary" | "photo" | "big-number" | "centered" | "outline-number";
+export type BannerLayout = "hero" | "panel" | "primary" | "photo" | "big-number" | "centered" | "centered-stack" | "outline-number";
 
 export interface LayoutBannerProps {
   tone: BannerTone;
@@ -452,6 +452,27 @@ export default function LayoutBanner({
         <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", padding: "0 40px", gap: 22 }}>
           <GradientNumber value={count} fontSize={100} fill="#2E0F70" from={t.numFrom} to={t.numTo} />
           <ContentColumn t={t} pillText={pillText} pillIcon={pillIcon} title={title} timer={timer} subtitle={subtitle} chip={chip} maxWidth={330} />
+        </div>
+      </div>
+    );
+  }
+
+  // ── "centered-stack" — solo títulos, todo apilado y centrado ──
+  if (layout === "centered-stack") {
+    return (
+      <div data-slot="layout-banner" className={className} style={shell(t.bg)}>
+        <Glass />
+        <ChevronV width={160} color={t.chevron} style={{ left: -50, top: "50%", transform: "translateY(-50%)" }} />
+        <ChevronV width={160} color={t.chevron} style={{ right: -50, top: "50%", transform: "translateY(-50%)" }} />
+        <Gem left={64} top={26} size="sm" />
+        <Gem right={72} bottom={24} size="sm" />
+        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, textAlign: "center", padding: "0 90px" }}>
+          <GradientPill t={t} text={pillText} icon={pillIcon} />
+          <span style={{ fontSize: 28, fontWeight: 800, color: t.ink, letterSpacing: "-0.02em", lineHeight: 1.1, textShadow: "rgba(20,0,70,0.22) 0 1px 3px" }}>{title}</span>
+          <span style={{ display: "inline-flex", alignItems: "baseline", gap: 8, fontSize: 16, fontWeight: 700, color: t.ink }}>
+            <b style={{ fontSize: 23, color: t.accent }}>{count}</b> ofertas disponibles
+          </span>
+          {chip && <Chip chip={chip} />}
         </div>
       </div>
     );

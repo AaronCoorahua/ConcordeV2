@@ -38,6 +38,12 @@ const TEMPLATES: BannerTemplate[] = [
     node: <LayoutBanner tone="naranja" layout="big-number" pillText="EN VIVO" pillIcon count={17} title="Vehicular · Seminuevo" chip={{ label: "Vehicular / Seminuevo", icon: "car" }} />,
   },
   {
+    id: "centered-stack",
+    name: "Centrado simple",
+    description: "Solo los títulos, todo apilado y centrado, con el chip de ruta debajo.",
+    node: <LayoutBanner tone="teal" layout="centered-stack" pillText="NEGOCIABLE" pillIcon count={7} title="Explora esta categoría" chip={{ label: "Categoría / Subcategoría" }} />,
+  },
+  {
     id: "legacy",
     name: "Vehicular / Liviano (legacy)",
     description: "Referencia del banner actual en vmcsubastas — estilo con ilustraciones que ya no se usa.",
