@@ -86,15 +86,15 @@ export function ChevronV({ width = 240, color = "rgba(59,23,130,0.55)", strokeWi
 
 // ─── Iconos de pill / chip ────────────────────────────────────────────────────
 
-/** Apretón de manos simplificado (pill EN VIVO / NEGOCIABLE) */
+/** Apretón de manos (pill EN VIVO / NEGOCIABLE) — glifo limpio estilo Lucide */
 export function HandshakeIcon({ size = 18, color = "#FFFFFF" }: { size?: number; color?: string }): JSX.Element {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M2 10.5 L6.5 7 L10.5 8.5" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M22 10.5 L17.5 7 L13.5 9 L10 12 L12 14 L14.5 12.5" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M6 11 L9 14.5 L11 16 L13.5 17.5" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M14.5 12.5 L16.5 14.5" stroke={color} strokeWidth="1.9" strokeLinecap="round" />
-      <path d="M12 14 L13 15.8" stroke={color} strokeWidth="1.9" strokeLinecap="round" />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="m11 17 2 2a1 1 0 1 0 3-3" />
+      <path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4" />
+      <path d="m21 3 1 11h-2" />
+      <path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3" />
+      <path d="M3 4h8" />
     </svg>
   );
 }

@@ -6,36 +6,36 @@ import LayoutBanner from "@/src/blocks/banners/desktop/LayoutBanner";
 import { BANNER_WIDTH, BANNER_HEIGHT } from "@/src/blocks/banners/desktop/dimensions";
 
 /**
- * /banners/categoria — banner 766×272 de las páginas de categoría.
- * 01 = asset real de producción con el chip de ruta; 02+ = variantes de LAYOUT
- * sin personaje, con el chip de categoría. Como las categorías son muchas, la
- * plantilla usa un chip genérico «Categoría / Subcategoría».
+ * /banners/categoria — banner 766×192 de las páginas de categoría.
+ * Como En Vivo/Negociable + chip de ruta (estilo CategoryCard). Las categorías
+ * son muchas: hay chip genérico «Categoría / Subcategoría» y uno con nombre.
+ * La referencia legacy va al final.
  */
 
 const TEMPLATES: BannerTemplate[] = [
   {
-    id: "asset",
-    name: "Vehicular / Liviano (asset)",
-    description: "Banner real de vmcsubastas (personaje llama, monedas, pill «EN VIVO») con el número de ofertas y el chip de ruta «Vehicular / Liviano» sobrepuestos.",
-    node: <AssetBanner kind="categoria" count={13} chip={{ label: "Vehicular / Liviano", icon: "car" }} />,
+    id: "hero",
+    name: "Hero — número a la derecha",
+    description: "Vehicular / Liviano en sistema live: pill gradiente del Button primary, TimerIcon, número gigante a la derecha y chip de ruta estilo CategoryCard (borde gradiente lila).",
+    node: <LayoutBanner tone="naranja" layout="hero" pillText="EN VIVO" pillIcon count={13} title="Vehículos livianos en subasta" timer="Hoy · 6:01 PM" chip={{ label: "Vehicular / Liviano", icon: "car" }} />,
+  },
+  {
+    id: "panel-morado",
+    name: "Panel morado",
+    description: "Plantilla genérica para cualquier nodo del árbol: fondo DetailCard + contador con estilos del StatPill + chip «Categoría / Subcategoría».",
+    node: <LayoutBanner tone="teal" layout="panel" pillText="NEGOCIABLE" pillIcon count={7} title="Explora esta categoría" timer="Cierra hoy · 6:01 PM" chip={{ label: "Categoría / Subcategoría" }} />,
   },
   {
     id: "big-number",
     name: "Número gigante",
-    description: "Sin personaje. Contador dominante a la izquierda, pill+título a la derecha y chip de ruta abajo.",
-    node: <LayoutBanner tone="naranja" layout="big-number" pillText="EN VIVO" pillIcon count={13} title="Vehículos livianos en subasta" chip={{ label: "Vehicular / Liviano", icon: "car" }} />,
+    description: "Contador protagonista + chip de ruta con icono de auto (Vehicular / Seminuevo).",
+    node: <LayoutBanner tone="naranja" layout="big-number" pillText="EN VIVO" pillIcon count={17} title="Vehicular · Seminuevo" subtitle="Puja en tiempo real" chip={{ label: "Vehicular / Seminuevo", icon: "car" }} />,
   },
   {
-    id: "split-left",
-    name: "Contador en tarjeta",
-    description: "Texto a la izquierda, contador en tarjeta glass a la derecha, chip de ruta abajo. Plantilla genérica para cualquier categoría del árbol.",
-    node: <LayoutBanner tone="teal" layout="split-left" pillText="NEGOCIABLE" pillIcon count={7} title="Explora esta categoría" chip={{ label: "Categoría / Subcategoría" }} />,
-  },
-  {
-    id: "centered",
-    name: "Centrado",
-    description: "Pill + título centrados, «N ofertas» debajo y chip de ruta en la esquina.",
-    node: <LayoutBanner tone="naranja" layout="centered" pillText="EN VIVO" pillIcon count={17} title="Vehicular · Seminuevo" chip={{ label: "Vehicular / Seminuevo", icon: "car" }} />,
+    id: "legacy",
+    name: "Vehicular / Liviano (legacy)",
+    description: "Referencia del banner actual en vmcsubastas — estilo con ilustraciones que ya no se usa.",
+    node: <AssetBanner kind="categoria" count={13} chip={{ label: "Vehicular / Liviano", icon: "car" }} />,
   },
 ];
 
@@ -47,7 +47,7 @@ export default function BannerCategoriaPage(): JSX.Element {
         title="Banner Categoría"
         format={`${BANNER_WIDTH} × ${BANNER_HEIGHT}`}
         slot="Página de categoría (árbol del sidebar)"
-        description="Banner hero de las páginas de categoría: como En Vivo/Negociable más el chip de ruta inferior derecha con la categoría y subcategoría (Vehicular → Liviano/Pesado, Equipos diversos, Materiales…). La primera es el asset real; el resto, variantes de layout sin personaje. Estático, sin efectos."
+        description="Banner hero de las páginas de categoría: la nueva propuesta del design system (pills con gradientes del Button, contador con estilos del StatPill, TimerIcon) más el chip de ruta estilo CategoryCard con la categoría y subcategoría (Vehicular → Liviano/Pesado, Equipos diversos, Materiales…). La referencia legacy va al final. Estático, sin efectos."
         templates={TEMPLATES}
       />
     </div>

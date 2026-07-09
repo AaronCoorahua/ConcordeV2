@@ -1,16 +1,21 @@
 /**
- * EmpresaBannerAlt — 766×272 · variantes de banner de empresa SIN personaje.
- * Mismo contenido (logo, rating, reseña, stats) en distintas posiciones.
- * Fondo blanco con acentos morados. Estático, sin efectos.
+ * EmpresaBannerAlt — 766×192 · variantes MODERNAS del banner de empresa,
+ * sin ilustraciones. Usan el design system actual de los componentes:
+ *   · rating con StarIcon (la estrella real del DS)
+ *   · logo circular con gradiente morado de marca (header de DetailCard)
+ *   · cajas de stats con borde gradiente lila estilo CategoryCard
+ *   · icono BusinessIcon del sidebar como marca de sección
+ * Estático, sin efectos.
  */
 
 import type { CSSProperties, JSX } from "react";
-import { Sparkle } from "./decor";
+import StarIcon from "@/src/components/StarIcon";
+import BusinessIcon from "@/src/components/BusinessIcon";
 import { BANNER_WIDTH, BANNER_HEIGHT } from "./dimensions";
 
 export { BANNER_WIDTH, BANNER_HEIGHT } from "./dimensions";
 
-export type EmpresaAltLayout = "logo-left" | "stats-bottom";
+export type EmpresaAltLayout = "logo-left" | "stats-bottom" | "panel";
 
 export interface EmpresaBannerAltProps {
   nombre: string;
@@ -25,34 +30,35 @@ export interface EmpresaBannerAltProps {
   className?: string;
 }
 
-function Star(): JSX.Element {
-  return (
-    <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true" style={{ flexShrink: 0 }}>
-      <path d="M12 1.8 L15.1 8.3 L22.2 9.2 L17 14.1 L18.3 21.2 L12 17.7 L5.7 21.2 L7 14.1 L1.8 9.2 L8.9 8.3 Z" fill="#F5B01E" />
-    </svg>
-  );
-}
+/** Borde gradiente lila estilo CategoryCard (fondo claro) */
+const GRADIENT_BORDER: CSSProperties = {
+  border: "1px solid transparent",
+  backgroundImage:
+    "linear-gradient(160deg, #ffffff 0%, #f4f5f9 100%), linear-gradient(135deg, #9c96f8 0%, rgba(255,255,255,0.65) 38%, #7364de 70%, #9c96f8 100%)",
+  backgroundOrigin: "padding-box, border-box",
+  backgroundClip: "padding-box, border-box",
+};
 
-function LogoCircle({ text, size = 108 }: { text: string; size?: number }): JSX.Element {
+function LogoCircle({ text, size = 96 }: { text: string; size?: number }): JSX.Element {
   return (
     <div
       style={{
         width: size,
         height: size,
         borderRadius: "50%",
-        background: "#3B1782",
+        background: "linear-gradient(157deg, #5F3ED8 0%, #340091 50%, #140046 100%)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         textAlign: "center",
         color: "#FFFFFF",
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: 800,
         lineHeight: 1.15,
         padding: 12,
         boxSizing: "border-box",
         flexShrink: 0,
-        boxShadow: "rgba(46,15,112,0.18) 0 4px 12px",
+        boxShadow: "rgba(255,255,255,0.22) 0 1px 0 0 inset, rgba(32,0,104,0.22) 0 6px 16px",
       }}
     >
       {text}
@@ -64,7 +70,7 @@ function Rating({ rating, ratingLabel, opiniones }: { rating: string; ratingLabe
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap" }}>
       <span style={{ fontSize: 15, fontWeight: 800, color: "#241A3F" }}>{rating}</span>
-      <Star />
+      <StarIcon size={18} />
       <span style={{ fontSize: 14, fontWeight: 700, color: "#241A3F" }}>{ratingLabel}</span>
       <span style={{ color: "#B9B0CC", fontWeight: 700 }}>·</span>
       <span style={{ fontSize: 13.5, fontWeight: 600, color: "#6B6180" }}>{opiniones}</span>
@@ -72,13 +78,67 @@ function Rating({ rating, ratingLabel, opiniones }: { rating: string; ratingLabe
   );
 }
 
-function StatPill({ label, value, wide = false }: { label: string; value: string; wide?: boolean }): JSX.Element {
+/** Stat con los ESTILOS del StatPill del bloque Sala (dark glass + VYStrokes) */
+function GlassStat({ label, value }: { label: string; value: string }): JSX.Element {
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: wide ? 200 : 148 }}>
-      <span style={{ position: "relative", zIndex: 1, background: "#3B1782", color: "#FFFFFF", borderRadius: 9999, padding: "7px 24px", fontSize: 12.5, fontWeight: 700, whiteSpace: "nowrap" }}>
+    <div
+      style={{
+        boxSizing: "border-box",
+        width: 168,
+        borderRadius: 16,
+        border: "1.5px solid transparent",
+        backgroundImage:
+          "linear-gradient(127deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.07) 45%, rgba(255,255,255,0.03) 100%), linear-gradient(160deg, rgba(28,13,82,0.93) 0%, rgba(14,3,56,0.95) 100%), linear-gradient(125deg, rgba(255,255,255,0.9) 0%, rgba(244,172,89,0.7) 22%, rgba(132,96,229,0.7) 74.5%, rgba(255,255,255,0.9) 100%)",
+        backgroundOrigin: "border-box",
+        backgroundClip: "padding-box, padding-box, border-box",
+        boxShadow: "rgba(10,0,46,0.6) 0px 12px 36px -4px, inset 0 1px 0 rgba(255,255,255,0.22)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 2,
+        padding: "9px 14px",
+      }}
+    >
+      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.05em", lineHeight: 1, color: "#ffffff", textTransform: "uppercase" }}>{label}</span>
+      <span style={{ fontSize: 22, fontWeight: 800, lineHeight: 1, color: "#ffffff", fontVariantNumeric: "tabular-nums" }}>{value}</span>
+    </div>
+  );
+}
+
+function StatCard({ label, value }: { label: string; value: string }): JSX.Element {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 148 }}>
+      <span
+        style={{
+          position: "relative",
+          zIndex: 1,
+          background: "linear-gradient(157deg, #5F3ED8 0%, #340091 100%)",
+          color: "#FFFFFF",
+          borderRadius: 9999,
+          padding: "7px 24px",
+          fontSize: 12.5,
+          fontWeight: 700,
+          whiteSpace: "nowrap",
+          boxShadow: "rgba(255,255,255,0.25) 0 1px 0 0 inset, rgba(32,0,104,0.20) 0 2px 8px",
+        }}
+      >
         {label}
       </span>
-      <div style={{ marginTop: -13, width: "100%", background: "#FFFFFF", border: "2px solid #3B1782", borderRadius: 12, padding: "18px 10px 10px", textAlign: "center", fontSize: 18, fontWeight: 800, color: "#3B1782" }}>
+      <div
+        style={{
+          ...GRADIENT_BORDER,
+          marginTop: -13,
+          width: "100%",
+          boxSizing: "border-box",
+          borderRadius: 12,
+          padding: "18px 10px 10px",
+          textAlign: "center",
+          fontSize: 18,
+          fontWeight: 800,
+          color: "#3B1782",
+          boxShadow: "rgba(32,0,104,0.10) 0 3px 10px",
+        }}
+      >
         {value}
       </div>
     </div>
@@ -89,7 +149,7 @@ const shell: CSSProperties = {
   position: "relative",
   width: BANNER_WIDTH,
   height: BANNER_HEIGHT,
-  background: "#FFFFFF",
+  background: "linear-gradient(160deg, #ffffff 0%, #f4f5f9 100%)",
   overflow: "hidden",
   fontFamily: 'var(--vmc-font-display, "Plus Jakarta Sans", -apple-system, sans-serif)',
   flexShrink: 0,
@@ -110,10 +170,86 @@ export default function EmpresaBannerAlt({
 }: EmpresaBannerAltProps): JSX.Element {
   const logo = logoText ?? nombre;
 
+  // ── "panel" — fondo morado del header DetailCard + StatPill reales ──
+  if (layout === "panel") {
+    return (
+      <div
+        data-slot="empresa-banner-alt"
+        className={className}
+        style={{
+          ...shell,
+          background: "linear-gradient(157deg, #5F3ED8 0%, #340091 50%, #140046 100%)",
+          display: "flex",
+          alignItems: "center",
+          gap: 22,
+          padding: "0 32px",
+        }}
+      >
+        {/* glass superior */}
+        <div aria-hidden="true" style={{ position: "absolute", top: 0, left: 0, right: 0, height: 44, background: "linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 100%)", pointerEvents: "none" }} />
+        {/* logo circular blanco */}
+        <div
+          style={{
+            width: 96,
+            height: 96,
+            borderRadius: "50%",
+            background: "#FFFFFF",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            color: "#3B1782",
+            fontSize: 14,
+            fontWeight: 800,
+            lineHeight: 1.15,
+            padding: 12,
+            boxSizing: "border-box",
+            flexShrink: 0,
+            boxShadow: "rgba(20,0,70,0.35) 0 6px 18px",
+          }}
+        >
+          {logo}
+        </div>
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.01em" }}>{nombre}</h3>
+          <div style={{ display: "flex", alignItems: "center", gap: 7, marginTop: 7, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 15, fontWeight: 800, color: "#FFFFFF" }}>{rating}</span>
+            <StarIcon size={18} />
+            <span style={{ fontSize: 14, fontWeight: 700, color: "#FFFFFF" }}>{ratingLabel}</span>
+            <span style={{ color: "rgba(255,255,255,0.5)", fontWeight: 700 }}>·</span>
+            <span style={{ fontSize: 13.5, fontWeight: 600, color: "#d8d2ec" }}>{opiniones}</span>
+          </div>
+          <p style={{ margin: "9px 0 0", fontSize: 12, fontWeight: 500, lineHeight: 1.5, color: "#d8d2ec", maxWidth: 340 }}>{descripcion}</p>
+        </div>
+        {/* stats con los ESTILOS del StatPill (dark glass + borde VYStrokes) */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, flexShrink: 0 }}>
+          <GlassStat label="Ventas" value={ventas} />
+          <GlassStat label="Participantes" value={participantes} />
+        </div>
+      </div>
+    );
+  }
+
   if (layout === "stats-bottom") {
     return (
       <div data-slot="empresa-banner-alt" className={className} style={shell}>
-        <Sparkle size={16} color="#3B1782" outline style={{ position: "absolute", right: 40, top: 18 }} />
+        <span
+          style={{
+            position: "absolute",
+            right: 32,
+            top: 16,
+            width: 40,
+            height: 40,
+            borderRadius: 10,
+            background: "#2E0F70",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "rgba(255,255,255,0.22) 0 1px 0 0 inset, rgba(32,0,104,0.20) 0 3px 10px",
+          }}
+        >
+          <BusinessIcon size={24} state="default" />
+        </span>
         {/* Cabecera: logo + nombre + rating + reseña */}
         <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: 122, display: "flex", alignItems: "center", gap: 18, padding: "0 32px", boxSizing: "border-box" }}>
           <LogoCircle text={logo} size={84} />
@@ -124,7 +260,21 @@ export default function EmpresaBannerAlt({
           </div>
         </div>
         {/* Franja de stats inferior */}
-        <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 70, background: "#F4F1FB", display: "flex", alignItems: "center", justifyContent: "center", gap: 44 }}>
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 70,
+            background: "#F4F1FB",
+            borderTop: "1px solid #E7E1F7",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 44,
+          }}
+        >
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <span style={{ fontSize: 12, fontWeight: 700, color: "#6B6180", textTransform: "uppercase", letterSpacing: "0.04em" }}>Ventas</span>
             <span style={{ fontSize: 26, fontWeight: 800, color: "#3B1782" }}>{ventas}</span>
@@ -142,7 +292,6 @@ export default function EmpresaBannerAlt({
   // logo-left
   return (
     <div data-slot="empresa-banner-alt" className={className} style={{ ...shell, display: "flex", alignItems: "center", gap: 20, padding: "0 28px" }}>
-      <Sparkle size={16} color="#3B1782" outline style={{ position: "absolute", left: 110, top: 28 }} />
       <LogoCircle text={logo} size={98} />
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "#241A3F", letterSpacing: "-0.01em" }}>{nombre}</h3>
@@ -150,8 +299,8 @@ export default function EmpresaBannerAlt({
         <p style={{ margin: "8px 0 0", fontSize: 11.5, fontWeight: 500, lineHeight: 1.45, color: "#6B6180", maxWidth: 300 }}>{descripcion}</p>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 12, flexShrink: 0 }}>
-        <StatPill label="Ventas" value={ventas} />
-        <StatPill label="Participantes" value={participantes} />
+        <StatCard label="Ventas" value={ventas} />
+        <StatCard label="Participantes" value={participantes} />
       </div>
     </div>
   );

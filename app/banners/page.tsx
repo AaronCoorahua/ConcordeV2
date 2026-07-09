@@ -24,29 +24,29 @@ const GAP = 16;
 
 const ENVIVO_PREVIEW = (
   <div style={{ display: "flex", flexDirection: "column", gap: GAP, width: BANNER_WIDTH }}>
-    <AssetBanner kind="en-vivo" count={23} />
-    <LayoutBanner tone="naranja" layout="big-number" pillText="EN VIVO" pillIcon count={38} title="Subastas de autos en vivo" subtitle="Puja en tiempo real" />
+    <LayoutBanner tone="naranja" layout="hero" pillText="EN VIVO" pillIcon count={23} title="Subastas de autos en vivo" timer="Hoy · 6:01 PM" />
+    <LayoutBanner tone="naranja" layout="panel" pillText="EN VIVO" pillIcon count={38} title="Subastas de autos en vivo" timer="Hoy · 6:01 PM" />
   </div>
 );
 
 const NEGOCIABLE_PREVIEW = (
   <div style={{ display: "flex", flexDirection: "column", gap: GAP, width: BANNER_WIDTH }}>
-    <AssetBanner kind="negociable" count={11} />
-    <LayoutBanner tone="teal" layout="split-left" pillText="NEGOCIABLE" pillIcon count={5} title="Subasta negociable" subtitle="Autos, maquinaria y más" />
+    <LayoutBanner tone="teal" layout="hero" pillText="NEGOCIABLE" pillIcon count={11} title="Subasta negociable de autos, maquinaria y más" timer="Cierra hoy · 6:01 PM" />
+    <LayoutBanner tone="teal" layout="panel" pillText="NEGOCIABLE" pillIcon count={13} title="Negocia tu precio" timer="Propuestas hasta 6:01 PM" />
   </div>
 );
 
 const CATEGORIA_PREVIEW = (
   <div style={{ display: "flex", flexDirection: "column", gap: GAP, width: BANNER_WIDTH }}>
-    <AssetBanner kind="categoria" count={13} chip={{ label: "Vehicular / Liviano", icon: "car" }} />
-    <LayoutBanner tone="naranja" layout="big-number" pillText="EN VIVO" pillIcon count={13} title="Vehículos livianos" chip={{ label: "Vehicular / Liviano", icon: "car" }} />
+    <LayoutBanner tone="naranja" layout="hero" pillText="EN VIVO" pillIcon count={13} title="Vehículos livianos en subasta" timer="Hoy · 6:01 PM" chip={{ label: "Vehicular / Liviano", icon: "car" }} />
+    <LayoutBanner tone="naranja" layout="big-number" pillText="EN VIVO" pillIcon count={17} title="Vehicular · Seminuevo" subtitle="Puja en tiempo real" chip={{ label: "Vehicular / Seminuevo", icon: "car" }} />
   </div>
 );
 
 const EMPRESAS_PREVIEW = (
   <div style={{ display: "flex", flexDirection: "column", gap: GAP, width: BANNER_WIDTH }}>
-    <EmpresaBanner nombre="Maquisistema" logoText="Maquisistema" rating="3.8" ratingLabel="Buen Vendedor" opiniones="44 opiniones" descripcion="Una de las principales administradoras de Fondos Colectivos del país, con 28 años en el mercado." ventas="365" participantes="3,245" />
-    <EmpresaBannerAlt nombre="Maquisistema" logoText="Maquisistema" rating="3.8" ratingLabel="Buen Vendedor" opiniones="44 opiniones" descripcion="Una de las principales administradoras de Fondos Colectivos del país." ventas="365" participantes="3,245" layout="stats-bottom" />
+    <EmpresaBannerAlt nombre="Maquisistema" logoText="Maquisistema" rating="3.8" ratingLabel="Buen Vendedor" opiniones="44 opiniones" descripcion="Una de las principales administradoras de Fondos Colectivos del país." ventas="365" participantes="3,245" layout="panel" />
+    <EmpresaBannerAlt nombre="Maquisistema" logoText="Maquisistema" rating="3.8" ratingLabel="Buen Vendedor" opiniones="44 opiniones" descripcion="Una de las principales administradoras de Fondos Colectivos del país." ventas="365" participantes="3,245" layout="logo-left" />
   </div>
 );
 
@@ -55,10 +55,10 @@ const ASSET_PLUS_LAYOUT = ASSET_HEIGHT + GAP + BANNER_HEIGHT;
 const EMPRESA_PREVIEW_H = EMPRESA_HEIGHT + GAP + BANNER_HEIGHT;
 
 const CATEGORIES: BannerCategoryEntry[] = [
-  { id: "en-vivo",    name: "En Vivo",    variantCount: 5, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: ENVIVO_PREVIEW },
-  { id: "negociable", name: "Negociable", variantCount: 5, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: NEGOCIABLE_PREVIEW },
+  { id: "en-vivo",    name: "En Vivo",    variantCount: 6, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: ENVIVO_PREVIEW },
+  { id: "negociable", name: "Negociable", variantCount: 6, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: NEGOCIABLE_PREVIEW },
   { id: "categoria",  name: "Categoría",  variantCount: 4, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: CATEGORIA_PREVIEW },
-  { id: "empresas",   name: "Empresas",   variantCount: 3, width: BANNER_WIDTH, height: EMPRESA_PREVIEW_H,  node: EMPRESAS_PREVIEW },
+  { id: "empresas",   name: "Empresas",   variantCount: 4, width: BANNER_WIDTH, height: EMPRESA_PREVIEW_H,  node: EMPRESAS_PREVIEW },
 ];
 
 const THUMB_H = 260;
@@ -74,9 +74,9 @@ export default function BannersPage(): JSX.Element {
           <span style={{ fontSize: 13, color: "#94a3b8", fontWeight: 500 }}>{CATEGORIES.length} categorías · {BANNER_WIDTH} × {BANNER_HEIGHT}</span>
         </div>
         <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 24px", maxWidth: 680 }}>
-          Banners de navegación {BANNER_WIDTH}×{BANNER_HEIGHT}: En Vivo, Negociable, Categoría y Empresas. Cada categoría
-          trae el asset real de producción y variantes de layout sin personaje — distintas
-          posiciones y tratamientos tipográficos. Estáticos, sin efectos.
+          Banners de navegación {BANNER_WIDTH}×{BANNER_HEIGHT}: En Vivo, Negociable, Categoría y Empresas. Variantes
+          modernas con los estilos e iconos del design system (gradientes OfferType, gema SubasCoin,
+          chips CategoryCard) + el asset de producción como referencia legacy. Estáticos, sin efectos.
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
