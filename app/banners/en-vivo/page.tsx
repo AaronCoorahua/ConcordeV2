@@ -28,9 +28,21 @@ const TEMPLATES: BannerTemplate[] = [
     node: <LayoutBanner tone="naranja" layout="panel" pillText="EN VIVO" pillIcon count={38} title={TITLE} timer="Hoy · 6:01 PM" />,
   },
   {
+    id: "primary",
+    name: "Fondo primary + SubasCoins",
+    description: "Todo el fondo con el fill del Button primary (#ed8936→#8460e5) y las SubasCoins grandes del OfferCard flotando.",
+    node: <LayoutBanner tone="naranja" layout="primary" pillText="EN VIVO" pillIcon count={23} title={TITLE} timer="Hoy · 6:01 PM" />,
+  },
+  {
+    id: "photo",
+    name: "Con imagen (placeholder)",
+    description: "Placeholder de imagen detrás + gradiente de opacidad del tono encima — para banners con foto del lote/campaña.",
+    node: <LayoutBanner tone="naranja" layout="photo" pillText="EN VIVO" pillIcon count={23} title={TITLE} />,
+  },
+  {
     id: "big-number",
     name: "Número gigante a la izquierda",
-    description: "El contador domina a la izquierda en morado vault; pill gradiente y título a la derecha, gema SubasCoin de acento.",
+    description: "El contador domina a la izquierda con borde gradiente live (#ed8936→#8460e5); pill gradiente y título a la derecha.",
     node: <LayoutBanner tone="naranja" layout="big-number" pillText="EN VIVO" pillIcon count={23} title={TITLE} subtitle="Puja en tiempo real" />,
   },
   {

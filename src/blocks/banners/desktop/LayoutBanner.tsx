@@ -1,19 +1,20 @@
 /**
  * LayoutBanner — 766×192 · variantes MODERNAS de banner (nueva propuesta DS).
- * Sin botones ni componentes literales: se REUTILIZAN los estilos del DS —
- *   · pill EN VIVO/NEGOCIABLE = colores del Button (fill #ed8936→#8460e5 /
- *     #00aeb1→#8460e5 + anillo gradiente + inset highlight)
- *   · contador = ESTILOS del StatPill (dark glass + borde VYStrokes + inset)
- *     en un contenedor propio, sin el componente
- *   · chip horario = TimerIcon en glass pill · gema = PriceIcon
- *   · fondos = gradientes de OfferType (live/negotiable) y header DetailCard
- * El protagonista es el número gigante. Estático, sin efectos.
+ * Reutiliza ESTILOS del design system (no componentes de acción):
+ *   · pill EN VIVO/NEGOCIABLE = colores del Button (fill + anillo gradiente)
+ *   · contador = estilos del StatPill (dark glass + borde VYStrokes)
+ *   · número gigante con borde gradiente live/negotiable (SVG stroke)
+ *   · SubasCoins = PriceIcon (chica) y BigGem del OfferCard (grande)
+ *   · fondos = gradientes de OfferType, header DetailCard y fill del Button
+ *   · layout "photo": placeholder de imagen + gradiente de opacidad encima
+ * El chip de categoría SIEMPRE va en el flujo (no se superpone a nada).
+ * Estático, sin efectos.
  */
 
-import type { CSSProperties, JSX, ReactNode } from "react";
+import type { CSSProperties, JSX } from "react";
 import PriceIcon from "@/src/components/PriceIcon";
 import TimerIcon from "@/src/components/TimerIcon";
-import { ChevronV, HandshakeIcon, CarIcon } from "./decor";
+import { ChevronV, HandshakeIcon, CarIcon, BigGem } from "./decor";
 import { BANNER_WIDTH, BANNER_HEIGHT } from "./dimensions";
 
 export { BANNER_WIDTH, BANNER_HEIGHT } from "./dimensions";
@@ -25,18 +26,22 @@ export type BannerTone = "naranja" | "teal";
 interface Tone {
   bg: string;
   ink: string;
-  /** Color del número protagonista sobre el fondo del tono */
   accent: string;
   chevron: string;
-  /** Fill de la pill — colores del Button primary / negotiable */
+  /** Fill + anillo de la pill — colores del Button primary / negotiable */
   pillFill: string;
-  /** Anillo gradiente de la pill — borde del Button primary / negotiable */
   pillRing: string;
   pillGlow: string;
+  /** Gradiente para el borde del número gigante */
+  numFrom: string;
+  numTo: string;
+  /** Fondo "primary" (fill del Button a todo el banner) */
+  primaryBg: string;
+  /** Color base del overlay del layout "photo" */
+  photoBase: string;
 }
 
 const TONES: Record<BannerTone, Tone> = {
-  // OfferType live · Button primary
   naranja: {
     bg: "linear-gradient(120deg, #FF9639 0%, #EF852E 45%, #BE3D00 100%)",
     ink: "#FFFFFF",
@@ -45,8 +50,11 @@ const TONES: Record<BannerTone, Tone> = {
     pillFill: "linear-gradient(135deg, #ed8936 0%, #ed8936 30%, #8460e5 100%)",
     pillRing: "linear-gradient(135deg, #ffffff 0%, #fbc47d 25%, #ae8eff 75%, #ffffff 100%)",
     pillGlow: "rgba(237,137,54,0.35)",
+    numFrom: "#ed8936",
+    numTo: "#8460e5",
+    primaryBg: "linear-gradient(135deg, #ed8936 0%, #ed8936 30%, #8460e5 100%)",
+    photoBase: "190,61,0",
   },
-  // OfferType negotiable · Button negotiable
   teal: {
     bg: "linear-gradient(100deg, #00EDEE 0%, #00D2D3 45%, #009597 100%)",
     ink: "#FFFFFF",
@@ -55,6 +63,10 @@ const TONES: Record<BannerTone, Tone> = {
     pillFill: "linear-gradient(135deg, #00aeb1 0%, #00aeb1 30%, #8460e5 100%)",
     pillRing: "linear-gradient(135deg, #ffffff 0%, #4ddcdc 25%, #6445df 75%, #ffffff 100%)",
     pillGlow: "rgba(0,174,177,0.35)",
+    numFrom: "#00aeb1",
+    numTo: "#8460e5",
+    primaryBg: "linear-gradient(135deg, #00aeb1 0%, #00aeb1 30%, #8460e5 100%)",
+    photoBase: "0,125,127",
   },
 };
 
@@ -112,6 +124,66 @@ function GradientPill({ t, text, icon }: { t: Tone; text: string; icon?: boolean
   );
 }
 
+/** Pill sólida (para fondos que ya llevan el gradiente del Button) */
+function DarkPill({ text, icon }: { text: string; icon?: boolean }): JSX.Element {
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 9,
+        background: "#2E0F70",
+        color: "#FFFFFF",
+        borderRadius: 9999,
+        padding: "8px 18px",
+        fontSize: 14,
+        fontWeight: 800,
+        letterSpacing: "0.03em",
+        whiteSpace: "nowrap",
+        boxShadow: "rgba(255,255,255,0.28) 0 1px 0 0 inset, rgba(20,0,70,0.30) 0 2px 8px",
+      }}
+    >
+      {icon && <HandshakeIcon size={17} color="#FFFFFF" />}
+      {text}
+    </span>
+  );
+}
+
+/** Número gigante con BORDE gradiente (live/negotiable) — SVG text stroke */
+function GradientNumber({ value, fontSize = 104, fill = "#2E0F70", from, to }: { value: number | string; fontSize?: number; fill?: string; from: string; to: string }): JSX.Element {
+  const text = String(value);
+  const gid = `gnum-${from.slice(1)}-${to.slice(1)}`;
+  const width = Math.ceil(text.length * fontSize * 0.68) + 28;
+  const height = Math.ceil(fontSize * 1.14);
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
+      <defs>
+        <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor={from} />
+          <stop offset="1" stopColor={to} />
+        </linearGradient>
+      </defs>
+      <text
+        x={width / 2}
+        y={height / 2}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontFamily="'Plus Jakarta Sans', -apple-system, sans-serif"
+        fontWeight="800"
+        fontSize={fontSize}
+        letterSpacing="-0.04em"
+        fill={fill}
+        stroke={`url(#${gid})`}
+        strokeWidth="5"
+        strokeLinejoin="round"
+        paintOrder="stroke"
+      >
+        {text}
+      </text>
+    </svg>
+  );
+}
+
 /** Contador con los ESTILOS del StatPill: dark glass + borde VYStrokes + inset */
 function GlassCounter({ label, value, big = false }: { label: string; value: string; big?: boolean }): JSX.Element {
   return (
@@ -131,6 +203,7 @@ function GlassCounter({ label, value, big = false }: { label: string; value: str
         justifyContent: "center",
         gap: 2,
         padding: big ? "16px 34px" : "12px 26px",
+        flexShrink: 0,
       }}
     >
       <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", lineHeight: 1, color: "#ffffff", textTransform: "uppercase" }}>{label}</span>
@@ -139,7 +212,6 @@ function GlassCounter({ label, value, big = false }: { label: string; value: str
   );
 }
 
-/** Chip glass con TimerIcon (horario de cierre) */
 function TimerChip({ text }: { text: string }): JSX.Element {
   return (
     <span
@@ -179,22 +251,22 @@ function Chip({ chip }: { chip: { label: string; icon?: "car" } }): JSX.Element 
         backgroundClip: "padding-box, border-box",
         color: "#3b1782",
         borderRadius: 10,
-        padding: "9px 18px",
-        fontSize: 14,
+        padding: "8px 16px",
+        fontSize: 13.5,
         fontWeight: 700,
         whiteSpace: "nowrap",
         boxShadow: "rgba(32,0,104,0.14) 0 2px 10px, rgba(32,0,104,0.08) 0 1px 3px",
       }}
     >
       {chip.label}
-      {chip.icon === "car" && <CarIcon size={22} color="#3b1782" />}
+      {chip.icon === "car" && <CarIcon size={20} color="#3b1782" />}
     </span>
   );
 }
 
 // ─── Layouts ──────────────────────────────────────────────────────────────────
 
-export type BannerLayout = "hero" | "panel" | "big-number" | "centered" | "outline-number";
+export type BannerLayout = "hero" | "panel" | "primary" | "photo" | "big-number" | "centered" | "outline-number";
 
 export interface LayoutBannerProps {
   tone: BannerTone;
@@ -220,8 +292,36 @@ const shell = (bg: string): CSSProperties => ({
   flexShrink: 0,
 });
 
-function ChipSlot({ children, side = "right" }: { children: ReactNode; side?: "left" | "right" }): JSX.Element {
-  return <div style={{ position: "absolute", bottom: 14, ...(side === "right" ? { right: 20 } : { left: 20 }) }}>{children}</div>;
+/** Columna de contenido en flujo: pill → título → (timer|sub) → (chip) — nunca se superpone */
+function ContentColumn({
+  t,
+  pillText,
+  pillIcon,
+  title,
+  timer,
+  subtitle,
+  chip,
+  darkPill = false,
+  maxWidth = 400,
+}: {
+  t: Tone;
+  pillText: string;
+  pillIcon?: boolean;
+  title: string;
+  timer?: string;
+  subtitle?: string;
+  chip?: { label: string; icon?: "car" };
+  darkPill?: boolean;
+  maxWidth?: number;
+}): JSX.Element {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 9, maxWidth }}>
+      {darkPill ? <DarkPill text={pillText} icon={pillIcon} /> : <GradientPill t={t} text={pillText} icon={pillIcon} />}
+      <span style={{ fontSize: 26, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.02em", lineHeight: 1.1, textShadow: "rgba(20,0,70,0.22) 0 1px 3px" }}>{title}</span>
+      {timer ? <TimerChip text={timer} /> : subtitle ? <span style={{ fontSize: 13, fontWeight: 600, color: "#FFFFFF", opacity: 0.92 }}>{subtitle}</span> : null}
+      {chip && <Chip chip={chip} />}
+    </div>
+  );
 }
 
 export default function LayoutBanner({
@@ -238,72 +338,126 @@ export default function LayoutBanner({
 }: LayoutBannerProps): JSX.Element {
   const t = TONES[tone];
 
-  // ── "hero" — pill gradiente + título + timer izquierda · número gigante derecha ──
+  // ── "hero" — contenido izquierda · «Ofertas» + número gigante derecha ──
   if (layout === "hero") {
     return (
       <div data-slot="layout-banner" className={className} style={shell(t.bg)}>
         <Glass />
-        <ChevronV width={170} color={t.chevron} style={{ left: 330, top: "50%", transform: "translateY(-50%)" }} />
-        <Gem left={410} bottom={18} size="sm" />
+        <ChevronV width={160} color={t.chevron} style={{ left: 350, top: "50%", transform: "translateY(-50%)" }} />
+        <Gem left={430} bottom={16} size="sm" />
         <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 48px", gap: 24 }}>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 10, maxWidth: 400 }}>
-            <GradientPill t={t} text={pillText} icon={pillIcon} />
-            <span style={{ fontSize: 27, fontWeight: 800, color: t.ink, letterSpacing: "-0.02em", lineHeight: 1.1, textShadow: "rgba(20,0,70,0.22) 0 1px 3px" }}>{title}</span>
-            {timer ? <TimerChip text={timer} /> : subtitle ? <span style={{ fontSize: 13, fontWeight: 600, color: t.ink, opacity: 0.92 }}>{subtitle}</span> : null}
-          </div>
+          <ContentColumn t={t} pillText={pillText} pillIcon={pillIcon} title={title} timer={timer} subtitle={subtitle} chip={chip} maxWidth={390} />
           <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexShrink: 0 }}>
             <span style={{ fontSize: 22, fontWeight: 800, color: t.ink, textShadow: "rgba(20,0,70,0.22) 0 1px 3px" }}>Ofertas</span>
-            <span style={{ fontSize: 104, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.04em", color: t.accent, textShadow: "rgba(255,255,255,0.30) 0 2px 0" }}>{count}</span>
+            <span style={{ fontSize: 100, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.04em", color: t.accent, textShadow: "rgba(255,255,255,0.30) 0 2px 0" }}>{count}</span>
           </div>
         </div>
-        {chip && <ChipSlot side="left"><Chip chip={chip} /></ChipSlot>}
       </div>
     );
   }
 
-  // ── "panel" — morado DetailCard · contador con estilos de StatPill a la derecha ──
+  // ── "panel" — morado DetailCard · contador estilo StatPill derecha ──
   if (layout === "panel") {
     return (
       <div data-slot="layout-banner" className={className} style={shell(PANEL_BG)}>
         <Glass />
-        <ChevronV width={180} color="rgba(255,255,255,0.20)" style={{ left: 330, top: "50%", transform: "translateY(-50%)" }} />
-        <Gem left={410} bottom={16} size="sm" />
+        <ChevronV width={170} color="rgba(255,255,255,0.20)" style={{ left: 350, top: "50%", transform: "translateY(-50%)" }} />
+        <Gem left={430} bottom={16} size="sm" />
         <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 48px", gap: 24 }}>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 10, maxWidth: 400 }}>
-            <GradientPill t={t} text={pillText} icon={pillIcon} />
-            <span style={{ fontSize: 27, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.02em", lineHeight: 1.1 }}>{title}</span>
-            {timer && <TimerChip text={timer} />}
-          </div>
+          <ContentColumn t={t} pillText={pillText} pillIcon={pillIcon} title={title} timer={timer} subtitle={subtitle} chip={chip} maxWidth={390} />
           <GlassCounter label="Ofertas" value={String(count)} big />
         </div>
-        {chip && <ChipSlot side="left"><Chip chip={chip} /></ChipSlot>}
       </div>
     );
   }
 
-  // ── "big-number" — número gigante a la izquierda, texto a la derecha ──
+  // ── "primary" — fondo = fill del Button a todo el banner + SubasCoins grandes ──
+  if (layout === "primary") {
+    return (
+      <div data-slot="layout-banner" className={className} style={shell(t.primaryBg)}>
+        <Glass />
+        {/* SubasCoins grandes del OfferCard */}
+        <BigGem size={116} style={{ right: 236, top: -26 }} />
+        <BigGem size={88} style={{ right: 330, bottom: -18 }} />
+        <BigGem size={56} style={{ right: 190, bottom: 34 }} />
+        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 48px", gap: 24 }}>
+          <ContentColumn t={t} pillText={pillText} pillIcon={pillIcon} title={title} timer={timer} subtitle={subtitle} chip={chip} darkPill maxWidth={360} />
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1, flexShrink: 0 }}>
+            <span style={{ fontSize: 15, fontWeight: 800, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.06em", textShadow: "rgba(20,0,70,0.3) 0 1px 3px" }}>Ofertas</span>
+            <span style={{ fontSize: 92, fontWeight: 800, lineHeight: 0.95, letterSpacing: "-0.04em", color: "#FFFFFF", textShadow: "rgba(20,0,70,0.35) 0 3px 0" }}>{count}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── "photo" — placeholder de imagen detrás + gradiente de opacidad encima ──
+  if (layout === "photo") {
+    return (
+      <div data-slot="layout-banner" className={className} style={shell("#E9EAEC")}>
+        {/* Placeholder de imagen (visible por la derecha) */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            paddingRight: 96,
+            gap: 12,
+            color: "#9AA1AC",
+            background: "repeating-linear-gradient(45deg, #E9EAEC 0px, #E9EAEC 22px, #E2E4E7 22px, #E2E4E7 44px)",
+          }}
+        >
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#9AA1AC" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="9" cy="9" r="2" />
+            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+          </svg>
+          <span style={{ fontFamily: "monospace", fontSize: 13, fontWeight: 600, letterSpacing: "0.08em" }}>IMAGEN</span>
+        </div>
+        {/* Gradiente de opacidad del tono, de izquierda a transparente */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: `linear-gradient(95deg, rgba(${t.photoBase},1) 0%, rgba(${t.photoBase},0.92) 34%, rgba(${t.photoBase},0.55) 52%, rgba(${t.photoBase},0) 74%)`,
+          }}
+        />
+        <Glass />
+        <Gem left={400} bottom={18} size="sm" />
+        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, display: "flex", alignItems: "center", padding: "0 48px" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 9, maxWidth: 400 }}>
+            <GradientPill t={t} text={pillText} icon={pillIcon} />
+            <span style={{ fontSize: 26, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.02em", lineHeight: 1.1, textShadow: "rgba(20,0,70,0.30) 0 1px 4px" }}>{title}</span>
+            <span style={{ display: "inline-flex", alignItems: "baseline", gap: 7, fontSize: 14, fontWeight: 700, color: "#FFFFFF", textShadow: "rgba(20,0,70,0.30) 0 1px 3px" }}>
+              <b style={{ fontSize: 22 }}>{count}</b> ofertas disponibles
+            </span>
+            {chip && <Chip chip={chip} />}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── "big-number" — número con borde gradiente live a la izquierda ──
   if (layout === "big-number") {
     return (
       <div data-slot="layout-banner" className={className} style={shell(t.bg)}>
         <Glass />
         <ChevronV width={170} color={t.chevron} style={{ right: -24, top: "50%", transform: "translateY(-50%)" }} />
-        <Gem right={64} bottom={20} />
-        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", padding: "0 44px", gap: 28 }}>
-          <span style={{ fontSize: 104, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.04em", color: t.accent, textShadow: "rgba(255,255,255,0.30) 0 2px 0", flexShrink: 0 }}>
-            {count}
-          </span>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 9 }}>
-            <GradientPill t={t} text={pillText} icon={pillIcon} />
-            <span style={{ fontSize: 25, fontWeight: 800, color: t.ink, letterSpacing: "-0.02em", lineHeight: 1.1, maxWidth: 330, textShadow: "rgba(20,0,70,0.22) 0 1px 3px" }}>{title}</span>
-            {subtitle && <span style={{ fontSize: 13, fontWeight: 600, color: t.ink, opacity: 0.92 }}>{subtitle}</span>}
-          </div>
+        <Gem right={190} top={24} />
+        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", padding: "0 40px", gap: 22 }}>
+          <GradientNumber value={count} fontSize={100} fill="#2E0F70" from={t.numFrom} to={t.numTo} />
+          <ContentColumn t={t} pillText={pillText} pillIcon={pillIcon} title={title} timer={timer} subtitle={subtitle} chip={chip} maxWidth={330} />
         </div>
-        {chip && <ChipSlot><Chip chip={chip} /></ChipSlot>}
       </div>
     );
   }
 
-  // ── "centered" — pill gradiente + título + número gigante, todo centrado ──
+  // ── "centered" — pill + título | separador | contador gigante ──
   if (layout === "centered") {
     return (
       <div data-slot="layout-banner" className={className} style={shell(t.bg)}>
@@ -316,6 +470,7 @@ export default function LayoutBanner({
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 10, textAlign: "right" }}>
             <GradientPill t={t} text={pillText} icon={pillIcon} />
             <span style={{ fontSize: 26, fontWeight: 800, color: t.ink, letterSpacing: "-0.02em", lineHeight: 1.1, maxWidth: 350, textShadow: "rgba(20,0,70,0.22) 0 1px 3px" }}>{title}</span>
+            {chip && <Chip chip={chip} />}
           </div>
           <span aria-hidden="true" style={{ width: 2, height: 96, background: "rgba(255,255,255,0.45)", borderRadius: 2, flexShrink: 0 }} />
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", lineHeight: 1 }}>
@@ -323,7 +478,6 @@ export default function LayoutBanner({
             <span style={{ fontSize: 88, fontWeight: 800, lineHeight: 0.95, letterSpacing: "-0.04em", color: t.accent, textShadow: "rgba(255,255,255,0.30) 0 2px 0" }}>{count}</span>
           </div>
         </div>
-        {chip && <ChipSlot><Chip chip={chip} /></ChipSlot>}
       </div>
     );
   }
@@ -351,14 +505,16 @@ export default function LayoutBanner({
         {count}
       </span>
       <Gem right={200} top={24} size="sm" />
-      <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", gap: 9, padding: "0 44px", maxWidth: 470 }}>
-        <GradientPill t={t} text={pillText} icon={pillIcon} />
-        <span style={{ fontSize: 27, fontWeight: 800, color: t.ink, letterSpacing: "-0.02em", lineHeight: 1.1, textShadow: "rgba(20,0,70,0.22) 0 1px 3px" }}>{title}</span>
-        <span style={{ display: "inline-flex", alignItems: "baseline", gap: 7, fontSize: 15, fontWeight: 700, color: t.ink }}>
-          <b style={{ fontSize: 21, color: t.accent }}>{count}</b> ofertas activas
-        </span>
+      <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, display: "flex", alignItems: "center", padding: "0 44px" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 9, maxWidth: 440 }}>
+          <GradientPill t={t} text={pillText} icon={pillIcon} />
+          <span style={{ fontSize: 26, fontWeight: 800, color: t.ink, letterSpacing: "-0.02em", lineHeight: 1.1, textShadow: "rgba(20,0,70,0.22) 0 1px 3px" }}>{title}</span>
+          <span style={{ display: "inline-flex", alignItems: "baseline", gap: 7, fontSize: 15, fontWeight: 700, color: t.ink }}>
+            <b style={{ fontSize: 21, color: t.accent }}>{count}</b> ofertas activas
+          </span>
+          {chip && <Chip chip={chip} />}
+        </div>
       </div>
-      {chip && <ChipSlot><Chip chip={chip} /></ChipSlot>}
     </div>
   );
 }

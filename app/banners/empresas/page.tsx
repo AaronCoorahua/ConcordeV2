@@ -41,6 +41,12 @@ const TEMPLATES: BannerTemplate[] = [
     node: <EmpresaBannerAlt {...DEMO} logoText="Maquisistema" layout="stats-bottom" />,
   },
   {
+    id: "photo",
+    name: "Con imagen (placeholder)",
+    description: "Placeholder de imagen detrás + gradiente de opacidad morado — para el banner de empresa con foto real.",
+    node: <EmpresaBannerAlt {...DEMO} logoText="Maquisistema" layout="photo" />,
+  },
+  {
     id: "legacy",
     name: "Maquisistema (legacy)",
     description: "Referencia del banner actual en vmcsubastas — estilo con ilustraciones que ya no se usa.",
