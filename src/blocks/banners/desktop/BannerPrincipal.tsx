@@ -52,7 +52,7 @@ const COPY: Record<BannerPrincipalVariant, VariantCopy> = {
   "en-vivo": {
     kicker: "EN VIVO",
     title: "Subastas en vivo",
-    subtitle: "Lotes rematándose ahora mismo — entra y puja en tiempo real.",
+    subtitle: "Lotes subastándose ahora mismo — entra y puja en tiempo real.",
     ctaLabel: "Entrar a la sala",
   },
   "categorias": {
@@ -63,7 +63,7 @@ const COPY: Record<BannerPrincipalVariant, VariantCopy> = {
   },
   "empresas": {
     kicker: "EMPRESAS",
-    title: "Empresas que rematan",
+    title: "Empresas que subastan",
     subtitle: "Lotes corporativos publicados directo por cada empresa.",
     ctaLabel: "Ver empresas",
   },

@@ -45,7 +45,7 @@ const COPY: Record<BannerSecundarioVariant, VariantCopy> = {
   "negociable": { kicker: "NEGOCIABLE", title: "Propón tu precio y negocia",  ctaLabel: "Ver ofertas" },
   "en-vivo":    { kicker: "EN VIVO",    title: "38 subastas en curso",        ctaLabel: "Entrar" },
   "categoria":  { kicker: "CATEGORÍA",  title: "Equipos diversos",            chip: "Equipos diversos / Equipo de cómputo", ctaLabel: "Explorar" },
-  "empresas":   { kicker: "EMPRESAS",   title: "Remates corporativos",        ctaLabel: "Ver empresas" },
+  "empresas":   { kicker: "EMPRESAS",   title: "Subastas corporativas",       ctaLabel: "Ver empresas" },
   "subaspass":  { kicker: "¿Te tienta el riesgo alto?", title: "Compra Subaspass", ctaLabel: "Comprar ahora" },
 };
 

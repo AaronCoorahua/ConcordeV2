@@ -50,7 +50,7 @@ const COPY: Record<BannerSidebarVariant, VariantCopy> = {
   "vende-tu-auto": {
     kicker: "¿Renovando tu auto?",
     title: "Vende tu auto",
-    body: "Publícalo y remátalo en la próxima subasta.",
+    body: "Publícalo y véndelo en la próxima subasta.",
     ctaLabel: "Publicar ahora",
   },
   "centro-ayuda": {
