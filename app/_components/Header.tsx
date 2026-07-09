@@ -17,7 +17,7 @@ const linkBase = {
   transition: "color 0.15s, background 0.15s",
 } as const;
 
-type Active = "home" | "components" | "blocks" | "banners";
+type Active = "home" | "components" | "blocks" | "banners" | "correos";
 
 export default function Header({ active, right }: { active?: Active; right?: ReactNode }): JSX.Element {
   const activeStyle = { ...linkBase, color: "#4f2ed8", background: "#f1edff" };
@@ -63,6 +63,7 @@ export default function Header({ active, right }: { active?: Active; right?: Rea
           <a href="/components" style={active === "components" ? activeStyle : idleStyle}>Componentes</a>
           <a href="/blocks" style={active === "blocks" ? activeStyle : idleStyle}>Bloques</a>
           <a href="/banners" style={active === "banners" ? activeStyle : idleStyle}>Banners</a>
+          <a href="/correos" style={active === "correos" ? activeStyle : idleStyle}>Correos</a>
         </nav>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
