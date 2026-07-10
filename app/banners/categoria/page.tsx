@@ -49,6 +49,18 @@ const TEMPLATES: BannerTemplate[] = [
     node: <PromoBanner layout="glass-tint" tone="negotiable" pillText="NEGOCIABLE" pillIcon titlePre="Explora esta" titleAccent="categoría" count={7} chip={{ label: "Categoría / Subcategoría" }} />,
   },
   {
+    id: "wave-split",
+    name: "Onda dividida",
+    description: "Divisor de onda curva con el chip de ruta en el flujo; mitad plum con contenido, mitad vault con el número.",
+    node: <PromoBanner layout="wave-split" tone="live" pillText="EN VIVO" pillIcon titlePre="Vehicular" titleAccent="liviano" count={13} chip={{ label: "Vehicular / Liviano", icon: "car" }} />,
+  },
+  {
+    id: "orbit",
+    name: "Órbitas",
+    description: "Número en anillos concéntricos con dots orbitando y chip de ruta.",
+    node: <PromoBanner layout="orbit" tone="negotiable" pillText="NEGOCIABLE" pillIcon titlePre="Explora esta" titleAccent="categoría" count={7} chip={{ label: "Categoría / Subcategoría" }} />,
+  },
+  {
     id: "legacy",
     name: "Vehicular / Liviano (legacy)",
     description: "Referencia del banner actual en vmcsubastas — estilo con ilustraciones que ya no se usa.",

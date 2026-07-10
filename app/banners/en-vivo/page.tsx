@@ -62,6 +62,24 @@ const TEMPLATES: BannerTemplate[] = [
     node: <PromoBanner layout="glass-tint" tone="live" pillText="EN VIVO" pillIcon titlePre="Subastas" titleAccent="en vivo" count={38} timer="Hoy · 6:01 PM" />,
   },
   {
+    id: "wave-split",
+    name: "Onda dividida",
+    description: "Divisor de onda curva: mitad plum profundo con el contenido, mitad con el gradiente vault del tono y el número blanco con glow, filo claro en la curva.",
+    node: <PromoBanner layout="wave-split" tone="live" pillText="EN VIVO" pillIcon titlePre="Subastas" titleAccent="en vivo" count={23} timer="Hoy · 6:01 PM" />,
+  },
+  {
+    id: "orbit",
+    name: "Órbitas",
+    description: "El número al centro de anillos concéntricos con dots orbitando (naranja, blanco, lila) y glow central — como una diana de subasta.",
+    node: <PromoBanner layout="orbit" tone="live" pillText="EN VIVO" pillIcon titlePre="Subastas" titleAccent="en vivo" count={38} timer="Hoy · 6:01 PM" />,
+  },
+  {
+    id: "echo",
+    name: "Eco tipográfico",
+    description: "El número duplicado: contorno gigante detrás + sólido crema delante, desplazados — efecto de profundidad sobre el naranja.",
+    node: <PromoBanner layout="echo" tone="live" pillText="EN VIVO" pillIcon titlePre="Subastas" titleAccent="en vivo" count={23} timer="Hoy · 6:01 PM" />,
+  },
+  {
     id: "legacy",
     name: "Asset de producción (legacy)",
     description: "Referencia del banner actual en vmcsubastas — estilo con ilustraciones que ya no se usa.",

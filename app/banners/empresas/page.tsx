@@ -46,6 +46,18 @@ const TEMPLATES: BannerTemplate[] = [
     node: <EmpresaBannerAlt {...DEMO} logoText="Maquisistema" layout="dark-hero" />,
   },
   {
+    id: "split",
+    name: "Split diagonal",
+    description: "Mitad clara con logo, rating y reseña; mitad morada con corte diagonal y las stats con glow naranja/lila.",
+    node: <EmpresaBannerAlt {...DEMO} logoText="Maquisistema" layout="split" />,
+  },
+  {
+    id: "rating-hero",
+    name: "Rating protagonista",
+    description: "El rating gigante (74px) con la StarIcon del DS y glow dorado, pill glass con «Buen Vendedor · 44 opiniones»; stats compactas junto a la reseña.",
+    node: <EmpresaBannerAlt {...DEMO} logoText="Maquisistema" layout="rating-hero" />,
+  },
+  {
     id: "legacy",
     name: "Maquisistema (legacy)",
     description: "Referencia del banner actual en vmcsubastas — estilo con ilustraciones que ya no se usa.",
