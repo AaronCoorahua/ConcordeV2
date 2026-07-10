@@ -68,6 +68,9 @@ interface ToneGrad {
   /** Glow cálido/frío en RGB */
   glowWarm: string;
   glowCool: string;
+  /** Stops del gradiente del tono para SVG (wave-split) */
+  stopA: string;
+  stopB: string;
 }
 
 const TONE_GRADIENTS: Record<PromoTone, ToneGrad> = {
@@ -80,6 +83,8 @@ const TONE_GRADIENTS: Record<PromoTone, ToneGrad> = {
     glassTint: "232,115,42",
     glowWarm: "255,226,194",
     glowCool: "174,142,255",
+    stopA: "#ED8936",
+    stopB: "#8460E5",
   },
   negotiable: {
     token: "linear-gradient(135deg, #00D2D3 0%, #00AEB1 25%, #8460E5 100%)",
@@ -90,6 +95,8 @@ const TONE_GRADIENTS: Record<PromoTone, ToneGrad> = {
     glassTint: "0,210,211",
     glowWarm: "178,246,246",
     glowCool: "174,142,255",
+    stopA: "#00D2D3",
+    stopB: "#8460E5",
   },
 };
 
@@ -283,7 +290,10 @@ export type PromoLayout =
   | "token"
   | "gem-outline"
   | "mega"
-  | "glass-tint";
+  | "glass-tint"
+  | "wave-split"
+  | "orbit"
+  | "echo";
 
 export interface PromoBannerProps {
   layout: PromoLayout;
@@ -405,6 +415,117 @@ export default function PromoBanner({
         </div>
         <div style={{ position: "relative", zIndex: 2, display: "flex", alignItems: "center", padding: "0 36px 0 0", flexShrink: 0 }}>
           <Counter count={count} />
+        </div>
+      </div>
+    );
+  }
+
+  // ── WAVE-SPLIT · divisor de onda curva: plum (contenido) | tono (número) ──
+  if (layout === "wave-split") {
+    const gid = `wave-${tone}`;
+    return (
+      <div data-slot="promo-banner" className={`${className}`.trim()} style={{ ...shell("linear-gradient(160deg, #2A1670 0%, #1D0F52 100%)"), display: "flex", alignItems: "stretch" }}>
+        {/* mitad derecha con onda curva y gradiente del tono */}
+        <svg aria-hidden="true" width="100%" height="100%" viewBox="0 0 766 192" preserveAspectRatio="none" style={{ position: "absolute", inset: 0, zIndex: 0 }}>
+          <defs>
+            <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
+              <stop stopColor={tg.stopA} />
+              <stop offset="1" stopColor={tg.stopB} />
+            </linearGradient>
+          </defs>
+          <path d="M 496 0 C 436 58, 546 128, 470 192 L 766 192 L 766 0 Z" fill={`url(#${gid})`} />
+          {/* filo claro de la onda */}
+          <path d="M 496 0 C 436 58, 546 128, 470 192" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="2.5" />
+        </svg>
+        {/* luces sutiles en el lado plum */}
+        <div aria-hidden="true" style={{ position: "absolute", left: -60, top: -80, width: 260, height: 260, borderRadius: "50%", background: "radial-gradient(closest-side, rgba(174,142,255,0.20) 0%, rgba(174,142,255,0) 70%)", pointerEvents: "none", zIndex: 0 }} />
+        <div aria-hidden="true" style={{ position: "absolute", left: 350, bottom: 24, width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.3)", pointerEvents: "none", zIndex: 0 }} />
+        <Sheen />
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: 9, padding: "0 20px 0 36px", position: "relative", zIndex: 2, maxWidth: 470 }}>
+          <Pill text={pillText} icon={pillIcon} />
+          <Headline pre={titlePre} accent={titleAccent} />
+          {timer && <TimerChip timer={timer} />}
+          {chip && <Chip chip={chip} />}
+        </div>
+        <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, width: 240, flexShrink: 0 }}>
+          <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.9)", textTransform: "uppercase", textShadow: "rgba(20,0,70,0.3) 0 1px 3px" }}>Ofertas</span>
+          <span style={{ fontSize: 100, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.04em", color: "#FFFFFF", fontVariantNumeric: "tabular-nums", filter: "drop-shadow(0 0 14px rgba(255,255,255,0.4)) drop-shadow(0 4px 10px rgba(20,0,70,0.35))" }}>{count}</span>
+        </div>
+      </div>
+    );
+  }
+
+  // ── ORBIT · número al centro de anillos concéntricos (órbitas con dots) ──
+  if (layout === "orbit") {
+    return (
+      <div data-slot="promo-banner" className={`${className}`.trim()} style={{ ...shell(tg.megaBg), display: "flex", alignItems: "stretch" }}>
+        {/* órbitas centradas en el número (derecha) */}
+        <div aria-hidden="true" style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
+          {[124, 188, 252].map((d, i) => (
+            <div key={d} style={{ position: "absolute", right: 118 - d / 2, top: "50%", transform: "translateY(-50%)", width: d, height: d, borderRadius: "50%", border: `1.5px solid rgba(255,255,255,${0.22 - i * 0.06})` }} />
+          ))}
+          {/* dots orbitando */}
+          <div style={{ position: "absolute", right: 118 - 94 + 8, top: 96 - 60, width: 9, height: 9, borderRadius: "50%", background: tg.stopA, boxShadow: `0 0 10px rgba(${tg.glassTint},0.8)` }} />
+          <div style={{ position: "absolute", right: 118 + 74, top: 96 + 44, width: 7, height: 7, borderRadius: "50%", background: "#FFFFFF", opacity: 0.8 }} />
+          <div style={{ position: "absolute", right: 118 - 126 + 4, top: 96 + 18, width: 5, height: 5, borderRadius: "50%", background: "#AE8EFF" }} />
+          {/* glow central */}
+          <div style={{ position: "absolute", right: 118 - 130, top: "50%", transform: "translateY(-50%)", width: 260, height: 260, borderRadius: "50%", background: `radial-gradient(closest-side, rgba(${tg.glassTint},0.30) 0%, rgba(${tg.glassTint},0) 70%)` }} />
+        </div>
+        <Sheen />
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: 9, padding: "0 20px 0 36px", position: "relative", zIndex: 2, maxWidth: 460 }}>
+          <Pill text={pillText} icon={pillIcon} />
+          <Headline pre={titlePre} accent={titleAccent} />
+          {timer && <TimerChip timer={timer} />}
+          {chip && <Chip chip={chip} />}
+        </div>
+        <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 0, width: 236, flexShrink: 0 }}>
+          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.85)", textTransform: "uppercase" }}>Ofertas</span>
+          <span style={{ fontSize: 76, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.04em", color: "#FFFFFF", fontVariantNumeric: "tabular-nums", filter: `drop-shadow(0 0 16px rgba(${tg.glassTint},0.7))` }}>{count}</span>
+        </div>
+      </div>
+    );
+  }
+
+  // ── ECHO · número con eco tipográfico (outline detrás + sólido delante) ──
+  if (layout === "echo") {
+    return (
+      <div data-slot="promo-banner" className={`${className}`.trim()} style={{ ...shell(tone === "live" ? BACKGROUNDS.orange : tg.gemBg), display: "flex", alignItems: "stretch" }}>
+        {/* eco: número gigante en contorno detrás, desplazado */}
+        <span
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            right: 24,
+            top: "50%",
+            transform: "translateY(-46%)",
+            fontSize: 170,
+            fontWeight: 800,
+            lineHeight: 1,
+            letterSpacing: "-0.05em",
+            color: "transparent",
+            WebkitTextStroke: "2px rgba(255,255,255,0.4)",
+            fontVariantNumeric: "tabular-nums",
+            pointerEvents: "none",
+            zIndex: 0,
+          }}
+        >
+          {count}
+        </span>
+        <div aria-hidden="true" style={{ position: "absolute", right: 260, bottom: 28, width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.35)", pointerEvents: "none", zIndex: 0 }} />
+        <div aria-hidden="true" style={{ position: "absolute", left: -50, bottom: -70, width: 220, height: 220, borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.12)", pointerEvents: "none", zIndex: 0 }} />
+        <Sheen />
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: 9, padding: "0 20px 0 36px", position: "relative", zIndex: 2, maxWidth: 450 }}>
+          <Pill text={pillText} icon={pillIcon} />
+          <Headline pre={titlePre} accent={titleAccent} />
+          {timer && <TimerChip timer={timer} />}
+          {chip && <Chip chip={chip} />}
+        </div>
+        {/* número sólido delante, desplazado del eco */}
+        <div style={{ position: "relative", zIndex: 2, display: "flex", alignItems: "center", padding: "0 110px 0 0", flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 10, transform: "translateY(8%)" }}>
+            <span style={{ fontSize: 19, fontWeight: 800, color: "#FFFFFF", textShadow: "rgba(20,0,70,0.3) 0 1px 3px" }}>Ofertas</span>
+            <span style={{ fontSize: 96, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.04em", color: C.cream, fontVariantNumeric: "tabular-nums", textShadow: "rgba(20,0,70,0.35) 0 3px 0, rgba(20,0,70,0.2) 0 8px 20px" }}>{count}</span>
+          </div>
         </div>
       </div>
     );

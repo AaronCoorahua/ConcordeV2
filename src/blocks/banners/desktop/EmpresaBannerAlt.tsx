@@ -15,7 +15,7 @@ import { BANNER_WIDTH, BANNER_HEIGHT } from "./dimensions";
 
 export { BANNER_WIDTH, BANNER_HEIGHT } from "./dimensions";
 
-export type EmpresaAltLayout = "logo-left" | "stats-bottom" | "panel" | "photo" | "glass" | "dark-hero";
+export type EmpresaAltLayout = "logo-left" | "stats-bottom" | "panel" | "photo" | "glass" | "dark-hero" | "split" | "rating-hero";
 
 export interface EmpresaBannerAltProps {
   nombre: string;
@@ -59,6 +59,35 @@ function LogoCircle({ text, size = 96 }: { text: string; size?: number }): JSX.E
         boxSizing: "border-box",
         flexShrink: 0,
         boxShadow: "rgba(255,255,255,0.22) 0 1px 0 0 inset, rgba(32,0,104,0.22) 0 6px 16px",
+      }}
+    >
+      {text}
+    </div>
+  );
+}
+
+/** Logo circular blanco (para fondos oscuros) */
+function LogoCircleDark({ text, size = 88 }: { text: string; size?: number }): JSX.Element {
+  return (
+    <div
+      style={{
+        position: "relative",
+        width: size,
+        height: size,
+        borderRadius: "50%",
+        background: "#FFFFFF",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        color: "#3B1782",
+        fontSize: 13,
+        fontWeight: 800,
+        lineHeight: 1.15,
+        padding: 10,
+        boxSizing: "border-box",
+        flexShrink: 0,
+        boxShadow: "rgba(0,0,0,0.35) 0 6px 18px",
       }}
     >
       {text}
@@ -169,6 +198,104 @@ export default function EmpresaBannerAlt({
   className = "",
 }: EmpresaBannerAltProps): JSX.Element {
   const logo = logoText ?? nombre;
+
+  // ── "split" — mitad clara (datos) | mitad morada diagonal (stats con glow) ──
+  if (layout === "split") {
+    return (
+      <div data-slot="empresa-banner-alt" className={className} style={{ ...shell, background: "linear-gradient(160deg, #ffffff 0%, #f4f5f9 100%)" }}>
+        {/* mitad derecha morada con corte diagonal */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: 340,
+            clipPath: "polygon(22% 0, 100% 0, 100% 100%, 0 100%)",
+            background: "linear-gradient(140deg, #3D2299 0%, #2A1670 60%, #1D0F52 100%)",
+          }}
+        />
+        {/* luces del lado morado */}
+        <div aria-hidden="true" style={{ position: "absolute", right: -60, top: -80, width: 240, height: 240, borderRadius: "50%", background: "radial-gradient(closest-side, rgba(232,115,42,0.30) 0%, rgba(232,115,42,0) 70%)", pointerEvents: "none" }} />
+        <div aria-hidden="true" style={{ position: "absolute", right: 40, bottom: 22, width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.35)", pointerEvents: "none" }} />
+        {/* datos en la mitad clara */}
+        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 430, display: "flex", alignItems: "center", gap: 18, padding: "0 0 0 30px" }}>
+          <LogoCircle text={logo} size={88} />
+          <div style={{ minWidth: 0 }}>
+            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "#241A3F", letterSpacing: "-0.01em" }}>{nombre}</h3>
+            <div style={{ marginTop: 5 }}><Rating rating={rating} ratingLabel={ratingLabel} opiniones={opiniones} /></div>
+            <p style={{ margin: "7px 0 0", fontSize: 11.5, fontWeight: 500, lineHeight: 1.45, color: "#6B6180", maxWidth: 280 }}>{descripcion}</p>
+          </div>
+        </div>
+        {/* stats en la mitad morada */}
+        <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 268, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", color: "#F49B57", textTransform: "uppercase", width: 108, textAlign: "right" }}>Ventas</span>
+            <span style={{ fontSize: 34, fontWeight: 800, lineHeight: 1, color: "#FFFFFF", fontVariantNumeric: "tabular-nums", filter: "drop-shadow(0 0 10px rgba(232,115,42,0.5))" }}>{ventas}</span>
+          </div>
+          <span aria-hidden="true" style={{ width: 150, height: 1, background: "rgba(255,255,255,0.25)" }} />
+          <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", color: "#AE8EFF", textTransform: "uppercase", width: 108, textAlign: "right" }}>Particip.</span>
+            <span style={{ fontSize: 34, fontWeight: 800, lineHeight: 1, color: "#FFFFFF", fontVariantNumeric: "tabular-nums", filter: "drop-shadow(0 0 10px rgba(132,96,229,0.55))" }}>{participantes}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── "rating-hero" — el rating como protagonista con glow dorado ──
+  if (layout === "rating-hero") {
+    return (
+      <div
+        data-slot="empresa-banner-alt"
+        className={className}
+        style={{ ...shell, background: "linear-gradient(100deg, #2A1670 0%, #3D2299 40%, #C85A1E 100%)", display: "flex", alignItems: "center", gap: 20, padding: "0 36px" }}
+      >
+        {/* luces */}
+        <div aria-hidden="true" style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+          <div style={{ position: "absolute", right: -60, top: "50%", transform: "translateY(-50%)", width: 320, height: 320, borderRadius: "50%", background: "radial-gradient(closest-side, rgba(255,215,120,0.28) 0%, rgba(255,215,120,0) 70%)" }} />
+          <div style={{ position: "absolute", left: -70, bottom: -90, width: 240, height: 240, borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.12)" }} />
+          <div style={{ position: "absolute", left: 330, top: 28, width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.3)" }} />
+        </div>
+        <LogoCircleDark text={logo} size={88} />
+        <div style={{ position: "relative", flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 5 }}>
+          <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.01em" }}>{nombre}</h3>
+          <p style={{ margin: 0, fontSize: 11.5, fontWeight: 500, lineHeight: 1.45, color: "#d8d2ec", maxWidth: 300 }}>{descripcion}</p>
+          <div style={{ display: "flex", gap: 16, marginTop: 5 }}>
+            <span style={{ fontSize: 12.5, fontWeight: 700, color: "#FFFFFF" }}>Ventas <b style={{ fontSize: 15 }}>{ventas}</b></span>
+            <span style={{ fontSize: 12.5, fontWeight: 700, color: "#FFFFFF" }}>Participantes <b style={{ fontSize: 15 }}>{participantes}</b></span>
+          </div>
+        </div>
+        {/* rating protagonista */}
+        <div style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, flexShrink: 0, paddingRight: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 74, fontWeight: 800, lineHeight: 1, color: "#FFFFFF", fontVariantNumeric: "tabular-nums", filter: "drop-shadow(0 0 16px rgba(255,196,90,0.65))" }}>{rating}</span>
+            <StarIcon size={44} />
+          </div>
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "5px 14px",
+              borderRadius: 999,
+              background: "linear-gradient(180deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.10) 100%)",
+              border: "1px solid rgba(255,255,255,0.5)",
+              backdropFilter: "blur(6px)",
+              WebkitBackdropFilter: "blur(6px)",
+              fontSize: 12,
+              fontWeight: 700,
+              color: "#FFFFFF",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {ratingLabel} · {opiniones}
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   // ── "glass" — panel glass centrado sobre gradiente morado→naranja ──
   if (layout === "glass") {

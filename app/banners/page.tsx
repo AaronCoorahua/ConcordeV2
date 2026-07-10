@@ -55,10 +55,10 @@ const ASSET_PLUS_LAYOUT = ASSET_HEIGHT + GAP + BANNER_HEIGHT;
 const EMPRESA_PREVIEW_H = EMPRESA_HEIGHT + GAP + BANNER_HEIGHT;
 
 const CATEGORIES: BannerCategoryEntry[] = [
-  { id: "en-vivo",    name: "En Vivo",    variantCount: 9, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: ENVIVO_PREVIEW },
-  { id: "negociable", name: "Negociable", variantCount: 9, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: NEGOCIABLE_PREVIEW },
-  { id: "categoria",  name: "Categoría",  variantCount: 7, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: CATEGORIA_PREVIEW },
-  { id: "empresas",   name: "Empresas",   variantCount: 5, width: BANNER_WIDTH, height: EMPRESA_PREVIEW_H,  node: EMPRESAS_PREVIEW },
+  { id: "en-vivo",    name: "En Vivo",    variantCount: 12, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: ENVIVO_PREVIEW },
+  { id: "negociable", name: "Negociable", variantCount: 12, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: NEGOCIABLE_PREVIEW },
+  { id: "categoria",  name: "Categoría",  variantCount: 9, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: CATEGORIA_PREVIEW },
+  { id: "empresas",   name: "Empresas",   variantCount: 7, width: BANNER_WIDTH, height: EMPRESA_PREVIEW_H,  node: EMPRESAS_PREVIEW },
 ];
 
 const THUMB_H = 260;
