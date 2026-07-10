@@ -15,7 +15,7 @@ import { BANNER_WIDTH, BANNER_HEIGHT } from "./dimensions";
 
 export { BANNER_WIDTH, BANNER_HEIGHT } from "./dimensions";
 
-export type EmpresaAltLayout = "logo-left" | "stats-bottom" | "panel" | "photo";
+export type EmpresaAltLayout = "logo-left" | "stats-bottom" | "panel" | "photo" | "glass" | "dark-hero";
 
 export interface EmpresaBannerAltProps {
   nombre: string;
@@ -169,6 +169,149 @@ export default function EmpresaBannerAlt({
   className = "",
 }: EmpresaBannerAltProps): JSX.Element {
   const logo = logoText ?? nombre;
+
+  // ── "glass" — panel glass centrado sobre gradiente morado→naranja ──
+  if (layout === "glass") {
+    return (
+      <div
+        data-slot="empresa-banner-alt"
+        className={className}
+        style={{ ...shell, background: "linear-gradient(100deg, #2A1670 0%, #3D2299 32%, #C85A1E 78%, #E8732A 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}
+      >
+        {/* luces de fondo */}
+        <div aria-hidden="true" style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+          <div style={{ position: "absolute", right: -50, top: "50%", transform: "translateY(-50%)", width: 320, height: 320, borderRadius: "50%", background: "radial-gradient(closest-side, rgba(255,226,194,0.28) 0%, rgba(255,226,194,0) 70%)" }} />
+          <div style={{ position: "absolute", left: -60, bottom: -80, width: 240, height: 240, borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.12)" }} />
+          <div style={{ position: "absolute", left: 200, top: 26, width: 7, height: 7, borderRadius: "50%", background: "rgba(255,255,255,0.32)" }} />
+        </div>
+        {/* panel glass con todo el contenido */}
+        <div
+          style={{
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            gap: 22,
+            padding: "16px 30px",
+            borderRadius: 18,
+            background: "linear-gradient(180deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.08) 100%)",
+            border: "1px solid rgba(255,255,255,0.45)",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+            boxShadow: "rgba(255,255,255,0.25) 0 1px 0 0 inset, rgba(20,0,70,0.25) 0 10px 26px -6px",
+          }}
+        >
+          <div
+            style={{
+              width: 84,
+              height: 84,
+              borderRadius: "50%",
+              background: "#FFFFFF",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              color: "#3B1782",
+              fontSize: 13,
+              fontWeight: 800,
+              lineHeight: 1.15,
+              padding: 10,
+              boxSizing: "border-box",
+              flexShrink: 0,
+              boxShadow: "rgba(20,0,70,0.3) 0 5px 14px",
+            }}
+          >
+            {logo}
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 5, minWidth: 0, maxWidth: 300 }}>
+            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.01em" }}>{nombre}</h3>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 14, fontWeight: 800, color: "#FFFFFF" }}>{rating}</span>
+              <StarIcon size={16} />
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF" }}>{ratingLabel}</span>
+              <span style={{ color: "rgba(255,255,255,0.5)", fontWeight: 700 }}>·</span>
+              <span style={{ fontSize: 12.5, fontWeight: 600, color: "#FFE2C2" }}>{opiniones}</span>
+            </div>
+          </div>
+          <span aria-hidden="true" style={{ width: 1.5, alignSelf: "stretch", background: "rgba(255,255,255,0.35)", borderRadius: 2 }} />
+          <div style={{ display: "flex", gap: 26, flexShrink: 0 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", color: "rgba(255,255,255,0.85)", textTransform: "uppercase" }}>Ventas</span>
+              <span style={{ fontSize: 34, fontWeight: 800, lineHeight: 1, color: "#FFFFFF", filter: "drop-shadow(0 0 10px rgba(255,226,194,0.5))" }}>{ventas}</span>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", color: "rgba(255,255,255,0.85)", textTransform: "uppercase" }}>Participantes</span>
+              <span style={{ fontSize: 34, fontWeight: 800, lineHeight: 1, color: "#FFFFFF", filter: "drop-shadow(0 0 10px rgba(255,226,194,0.5))" }}>{participantes}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── "dark-hero" — plum profundo, stats XXL blancas con glow, formas de fondo ──
+  if (layout === "dark-hero") {
+    return (
+      <div
+        data-slot="empresa-banner-alt"
+        className={className}
+        style={{ ...shell, background: "linear-gradient(160deg, #2A1670 0%, #1D0F52 100%)", display: "flex", alignItems: "center", gap: 22, padding: "0 36px" }}
+      >
+        {/* formas: cuarto de círculo naranja + arcos + dots */}
+        <div aria-hidden="true" style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+          <div style={{ position: "absolute", left: 0, top: 0, width: 180, height: 180, borderRadius: "0 0 100% 0", background: "radial-gradient(circle at 0% 0%, rgba(232,115,42,0.32) 0%, rgba(232,115,42,0) 74%)" }} />
+          <div style={{ position: "absolute", right: -100, top: -120, width: 300, height: 300, borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.12)" }} />
+          <div style={{ position: "absolute", right: -60, top: -80, width: 220, height: 220, borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.09)" }} />
+          <div style={{ position: "absolute", right: 320, bottom: 30, width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.3)" }} />
+          <div style={{ position: "absolute", right: -40, bottom: -60, width: 280, height: 280, borderRadius: "50%", background: "radial-gradient(closest-side, rgba(174,142,255,0.22) 0%, rgba(174,142,255,0) 70%)" }} />
+        </div>
+        <div
+          style={{
+            position: "relative",
+            width: 88,
+            height: 88,
+            borderRadius: "50%",
+            background: "#FFFFFF",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            color: "#3B1782",
+            fontSize: 13,
+            fontWeight: 800,
+            lineHeight: 1.15,
+            padding: 10,
+            boxSizing: "border-box",
+            flexShrink: 0,
+            boxShadow: "rgba(0,0,0,0.35) 0 6px 18px",
+          }}
+        >
+          {logo}
+        </div>
+        <div style={{ position: "relative", flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 5 }}>
+          <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.01em" }}>{nombre}</h3>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 14, fontWeight: 800, color: "#FFFFFF" }}>{rating}</span>
+            <StarIcon size={16} />
+            <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF" }}>{ratingLabel}</span>
+            <span style={{ color: "rgba(255,255,255,0.5)", fontWeight: 700 }}>·</span>
+            <span style={{ fontSize: 12.5, fontWeight: 600, color: "#d8d2ec" }}>{opiniones}</span>
+          </div>
+          <p style={{ margin: "4px 0 0", fontSize: 11.5, fontWeight: 500, lineHeight: 1.45, color: "#d8d2ec", maxWidth: 320 }}>{descripcion}</p>
+        </div>
+        <div style={{ position: "relative", display: "flex", gap: 34, flexShrink: 0, alignItems: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", color: "#F49B57", textTransform: "uppercase" }}>Ventas</span>
+            <span style={{ fontSize: 56, fontWeight: 800, lineHeight: 1, color: "#FFFFFF", fontVariantNumeric: "tabular-nums", filter: "drop-shadow(0 0 14px rgba(232,115,42,0.55))" }}>{ventas}</span>
+          </div>
+          <span aria-hidden="true" style={{ width: 1.5, height: 64, background: "rgba(255,255,255,0.28)", borderRadius: 2 }} />
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", color: "#AE8EFF", textTransform: "uppercase" }}>Participantes</span>
+            <span style={{ fontSize: 56, fontWeight: 800, lineHeight: 1, color: "#FFFFFF", fontVariantNumeric: "tabular-nums", filter: "drop-shadow(0 0 14px rgba(132,96,229,0.6))" }}>{participantes}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // ── "photo" — placeholder de imagen + gradiente de opacidad morado ──
   if (layout === "photo") {

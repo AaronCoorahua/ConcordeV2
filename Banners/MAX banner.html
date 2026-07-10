@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>MAX banner — variaciones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&family=Caveat:wght@500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f0eee9;
+  }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="max-variations.jsx"></script>
+<script type="text/babel" src="max-variations-v2.jsx"></script>
+<script type="text/babel" src="max-variations-v3.jsx"></script>
+<script type="text/babel">
+  const { useState } = React;
+
+  function App() {
+    return (
+      <DesignCanvas>
+        <DCSection
+          id="evolutions"
+          title="→ Evoluciones de VN3, VN5 y VN6"
+          subtitle="Una variación por cada ruta que te gustó: contador en vivo + búsquedas activas, carta con habilidades, y search con autocompletado de resultados reales."
+        >
+          <DCArtboard id="vn3b" label="VN3b · Contador en vivo" width={600} height={240}>
+            <VN3bLive />
+          </DCArtboard>
+          <DCArtboard id="vn5b" label="VN5b · Habilidades" width={600} height={240}>
+            <VN5bAbilities />
+          </DCArtboard>
+          <DCArtboard id="vn6b" label="VN6b · Search + preview" width={600} height={240}>
+            <VN6bSearchPreview />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection
+          id="more-directions-2"
+          title="✨✨✨ Tres más, metáforas nuevas"
+          subtitle="Postcard handwritten, vinilo/radio, y boarding pass. Cada una con tipografía y tono propios."
+        >
+          <DCArtboard id="vn7" label="VN7 · Postal manuscrita" width={600} height={240}>
+            <VN7Postcard />
+          </DCArtboard>
+          <DCArtboard id="vn8" label="VN8 · Vinilo / radio" width={600} height={240}>
+            <VN8Vinyl />
+          </DCArtboard>
+          <DCArtboard id="vn9" label="VN9 · Boarding pass" width={600} height={240}>
+            <VN9BoardingPass />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection
+          id="more-directions"
+          title="✨✨ Tres más, igual de distintas"
+          subtitle="Editorial, trading-card y search-hero. Nuevas metáforas, nuevas tipografías, nuevos tonos."
+        >
+          <DCArtboard id="vn4" label="VN4 · Editorial / newspaper" width={600} height={240}>
+            <VN4Editorial />
+          </DCArtboard>
+          <DCArtboard id="vn5" label="VN5 · Trading card" width={600} height={240}>
+            <VN5Card />
+          </DCArtboard>
+          <DCArtboard id="vn6" label="VN6 · Search hero" width={600} height={240}>
+            <VN6Search />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection
+          id="new-directions"
+          title="✨ Direcciones totalmente nuevas"
+          subtitle="3 conceptos que rompen con el formato banner-clásico — cada uno apuesta por una metáfora distinta."
+        >
+          <DCArtboard id="vn1" label="VN1 · Chat demo en teléfono" width={600} height={240}>
+            <VN1Phone />
+          </DCArtboard>
+          <DCArtboard id="vn2" label="VN2 · Pop-art / cómic" width={600} height={240}>
+            <VN2PopArt />
+          </DCArtboard>
+          <DCArtboard id="vn3" label="VN3 · Actividad en vivo" width={600} height={240}>
+            <VN3Activity />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection
+          id="context"
+          title="En contexto · cómo se ve en tu newsletter"
+          subtitle="Previsualización a ancho mobile (~360px) mostrando el banner debajo de la card de subasta y del CTA naranja. Verifica que no compita con '¡Toma el control de tu flota!'."
+        >
+          <DCArtboard id="ctx-vp1d" label="Contexto · VP1d Categorías" width={360} height={470}>
+            <NewsletterContext label="Sección MAX">
+              <VP1dChips />
+            </NewsletterContext>
+          </DCArtboard>
+          <DCArtboard id="ctx-vp1e" label="Contexto · VP1e 3 pasos" width={360} height={470}>
+            <NewsletterContext label="Sección MAX">
+              <VP1eFlow />
+            </NewsletterContext>
+          </DCArtboard>
+          <DCArtboard id="ctx-vp1c" label="Contexto · VP1c Chat demo" width={360} height={470}>
+            <NewsletterContext label="Sección MAX">
+              <VP1cChat />
+            </NewsletterContext>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection
+          id="lavender-dense"
+          title="Royal purple #391383 — composiciones densas"
+          subtitle="Tres formas distintas de llenar el espacio sobre fondo oscuro: conversación demo, categorías visibles, y flujo en 3 pasos."
+        >
+          <DCArtboard id="vp1c" label="VP1c · Chat demo" width={600} height={240}>
+            <VP1cChat />
+          </DCArtboard>
+          <DCArtboard id="vp1d" label="VP1d · Categorías" width={600} height={240}>
+            <VP1dChips />
+          </DCArtboard>
+          <DCArtboard id="vp1e" label="VP1e · 3 pasos" width={600} height={240}>
+            <VP1eFlow />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection
+          id="purple"
+          title="Fondo púrpura / lavanda — paleta nueva"
+          subtitle="VP1 y VP1b comparten fondo lavanda #A298B3 con copy distinto. VP2 y VP3 usan navy/royal."
+        >
+          <DCArtboard id="vp1" label="VP1 · Lavender" width={600} height={240}>
+            <VP1Royal />
+          </DCArtboard>
+          <DCArtboard id="vp1b" label="VP1b · Lavender · copy alt" width={600} height={240}>
+            <VP1bAlt />
+          </DCArtboard>
+          <DCArtboard id="vp2" label="VP2 · Navy #00005E" width={600} height={240}>
+            <VP2NavyBold />
+          </DCArtboard>
+          <DCArtboard id="vp3" label="VP3 · Two-tone" width={600} height={240}>
+            <VP3TwoTone />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection
+          id="focus"
+          title="Foco · V1, V3 y V6 — rebalanceadas"
+          subtitle="Grid de 2 columnas claras. Personaje siempre anclado a su panel, badge en posición consistente, sin elementos descuadrados."
+        >
+          <DCArtboard id="v1" label="V1 · Refinado" width={600} height={240}>
+            <V1Refined />
+          </DCArtboard>
+          <DCArtboard id="v3" label="V3 · Sugerencias" width={600} height={240}>
+            <V3Prompts />
+          </DCArtboard>
+          <DCArtboard id="v6" label="V6 · Stats split" width={600} height={240}>
+            <V6Split />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection
+          id="alt"
+          title="Otras direcciones (referencia)"
+          subtitle="V2, V4 y V5 siguen disponibles por si quieres mezclar elementos."
+        >
+          <DCArtboard id="v2" label="V2 · Chat con MAX" width={600} height={240}>
+            <V2ChatBubble />
+          </DCArtboard>
+          <DCArtboard id="v4" label="V4 · Tipográfica" width={600} height={240}>
+            <V4Typographic />
+          </DCArtboard>
+          <DCArtboard id="v5" label="V5 · Composer" width={600} height={240}>
+            <V5Composer />
+          </DCArtboard>
+        </DCSection>
+
+        <DCPostIt x={40} y={40}>
+          <strong>Notas de diseño</strong><br/><br/>
+          • Paleta detectada de tu banner: teal <code>#1F5163</code>, coral <code>#F57854</code>, crema, púrpura secundario.<br/><br/>
+          • El personaje MAX y el badge vmc&amp;MAX están representados como <em>placeholders</em> — sustitúyelos por tus ilustraciones reales antes de exportar.<br/><br/>
+          • Arrastra los artboards para reordenar. Doble-click para abrir en focus mode.
+        </DCPostIt>
+      </DesignCanvas>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

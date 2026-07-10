@@ -2,46 +2,51 @@ import type { JSX } from "react";
 import Header from "@/app/_components/Header";
 import BannerGallery, { type BannerTemplate } from "@/app/banners/_components/BannerGallery";
 import AssetBanner from "@/src/blocks/banners/desktop/AssetBanner";
-import LayoutBanner from "@/src/blocks/banners/desktop/LayoutBanner";
+import PromoBanner from "@/src/blocks/banners/desktop/PromoBanner";
 import { BANNER_WIDTH, BANNER_HEIGHT } from "@/src/blocks/banners/desktop/dimensions";
 
 /**
  * /banners/categoria — banner 766×192 de las páginas de categoría.
- * Como En Vivo/Negociable + chip de ruta (estilo CategoryCard). Las categorías
- * son muchas: hay chip genérico «Categoría / Subcategoría» y uno con nombre.
- * La referencia legacy va al final.
+ * Base: variantes C y B de la referencia + variantes modernas con tokens del DS
+ * y el chip de ruta. Legacy al final.
  */
 
 const TEMPLATES: BannerTemplate[] = [
   {
-    id: "hero",
-    name: "Hero — número a la derecha",
-    description: "Vehicular / Liviano en sistema live: pill gradiente del Button primary, TimerIcon, número gigante a la derecha y chip de ruta estilo CategoryCard (borde gradiente lila).",
-    node: <LayoutBanner tone="naranja" layout="hero" pillText="EN VIVO" pillIcon count={13} title="Vehículos livianos en subasta" timer="Hoy · 6:01 PM" chip={{ label: "Vehicular / Liviano", icon: "car" }} />,
+    id: "promo-c",
+    name: "C · Foto der. diagonal",
+    description: "Background morado→naranja con foto a la derecha en corte diagonal; contador, horario y chip de ruta a la izquierda.",
+    node: <PromoBanner layout="photo-right" pillText="EN VIVO" pillIcon titlePre="Vehicular" titleAccent="liviano" count={13} timer="6:01 PM" chip={{ label: "Vehicular / Liviano", icon: "car" }} />,
   },
   {
-    id: "panel-morado",
-    name: "Panel morado",
-    description: "Plantilla genérica para cualquier nodo del árbol: fondo DetailCard + contador con estilos del StatPill + chip «Categoría / Subcategoría».",
-    node: <LayoutBanner tone="teal" layout="panel" pillText="NEGOCIABLE" pillIcon count={7} title="Explora esta categoría" timer="Cierra hoy · 6:01 PM" chip={{ label: "Categoría / Subcategoría" }} />,
+    id: "promo-b",
+    name: "B · Degradado morado→naranja",
+    description: "Background morado→naranja de la referencia con luces de fondo, contador y chip de ruta.",
+    node: <PromoBanner layout="plum-counter" pillText="NEGOCIABLE" pillIcon titlePre="Explora esta" titleAccent="categoría" count={7} chip={{ label: "Categoría / Subcategoría" }} />,
   },
   {
-    id: "photo",
-    name: "Con imagen (placeholder)",
-    description: "Placeholder de imagen detrás + gradiente de opacidad — para el banner de categoría con foto real de los lotes.",
-    node: <LayoutBanner tone="naranja" layout="photo" pillText="EN VIVO" pillIcon count={13} title="Vehículos livianos en subasta" chip={{ label: "Vehicular / Liviano", icon: "car" }} />,
+    id: "center-glass",
+    name: "Centrado glass",
+    description: "Panel GLASS centrado con el contenido y el chip de ruta, sobre el degradado morado→celeste negociable.",
+    node: <PromoBanner layout="center-glass" tone="negotiable" pillText="NEGOCIABLE" pillIcon titlePre="Explora esta" titleAccent="categoría" count={7} chip={{ label: "Categoría / Subcategoría" }} />,
   },
   {
-    id: "big-number",
-    name: "Número gigante",
-    description: "Contador protagonista con borde gradiente live + chip de ruta con icono de auto (Vehicular / Seminuevo).",
-    node: <LayoutBanner tone="naranja" layout="big-number" pillText="EN VIVO" pillIcon count={17} title="Vehicular · Seminuevo" chip={{ label: "Vehicular / Seminuevo", icon: "car" }} />,
+    id: "gem-outline",
+    name: "Gema outline de fondo",
+    description: "La gema SubasCoin en bordes blancos como forma gigante de fondo, con el chip de ruta con icono de auto.",
+    node: <PromoBanner layout="gem-outline" tone="live" pillText="EN VIVO" pillIcon titlePre="Vehicular" titleAccent="seminuevo" count={17} timer="Hoy · 6:01 PM" chip={{ label: "Vehicular / Seminuevo", icon: "car" }} />,
   },
   {
-    id: "centered-stack",
-    name: "Centrado simple",
-    description: "Solo los títulos, todo apilado y centrado, con el chip de ruta debajo.",
-    node: <LayoutBanner tone="teal" layout="centered-stack" pillText="NEGOCIABLE" pillIcon count={7} title="Explora esta categoría" chip={{ label: "Categoría / Subcategoría" }} />,
+    id: "mega",
+    name: "Número mega blanco",
+    description: "Contador blanco 148px con glow y bandas diagonales glass, con el chip de ruta en el flujo.",
+    node: <PromoBanner layout="mega" tone="live" pillText="EN VIVO" pillIcon titlePre="Vehicular" titleAccent="liviano" count={13} chip={{ label: "Vehicular / Liviano", icon: "car" }} />,
+  },
+  {
+    id: "glass-tint",
+    name: "Glass teñido celeste",
+    description: "Contador en tarjeta glass teñida celeste sobre plum profundo, con formas de fondo y chip de ruta.",
+    node: <PromoBanner layout="glass-tint" tone="negotiable" pillText="NEGOCIABLE" pillIcon titlePre="Explora esta" titleAccent="categoría" count={7} chip={{ label: "Categoría / Subcategoría" }} />,
   },
   {
     id: "legacy",
@@ -59,7 +64,7 @@ export default function BannerCategoriaPage(): JSX.Element {
         title="Banner Categoría"
         format={`${BANNER_WIDTH} × ${BANNER_HEIGHT}`}
         slot="Página de categoría (árbol del sidebar)"
-        description="Banner hero de las páginas de categoría: la nueva propuesta del design system (pills con gradientes del Button, contador con estilos del StatPill, TimerIcon) más el chip de ruta estilo CategoryCard con la categoría y subcategoría (Vehicular → Liviano/Pesado, Equipos diversos, Materiales…). La referencia legacy va al final. Estático, sin efectos."
+        description="Banner hero de las páginas de categoría: base C/B de la referencia + variantes modernas (glass, tokens del DS, gema outline) con el chip de ruta (Vehicular → Liviano/Pesado, Equipos diversos, Materiales…). La referencia legacy va al final. Estático, sin efectos."
         templates={TEMPLATES}
       />
     </div>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Subaspass — Banner Registro 366×557 / 388×120</title>
+<template id="__bundler_thumbnail" data-bg-color="#3D2299">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#3D2299"/>
+    <rect x="420" y="160" width="360" height="480" rx="40" fill="rgba(255,255,255,0.12)"/>
+    <rect x="470" y="240" width="260" height="40" rx="12" fill="#FFFFFF"/>
+    <circle cx="900" cy="220" r="120" fill="#E8732A" opacity="0.5"/>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; min-height: 100%; background: #f0eee9; }
+  * { box-sizing: border-box; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="register-banner.jsx"></script>
+<script type="text/babel">
+  function App() {
+    return (
+      <DesignCanvas>
+        <DCSection id="desktop" title="Desktop · 366 × 557" subtitle="Banner de registro — glassmorphism sobre gradiente de marca">
+          <DCArtboard id="d-reg" label="A · Beneficios" width={366} height={557}>
+            <RegisterBannerDesktop w={366} h={557} />
+          </DCArtboard>
+          <DCArtboard id="d-reg-b" label="B · Subasta en vivo" width={366} height={557}>
+            <RegisterBannerDesktopB w={366} h={557} />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="mobile" title="Mobile · 388 × 120" subtitle="Formato compacto para la vista móvil">
+          <DCArtboard id="m-reg" label="A · 388 × 120" width={388} height={120}>
+            <RegisterBannerMobile w={388} h={120} />
+          </DCArtboard>
+          <DCArtboard id="m-reg-b" label="B · 388 × 120" width={388} height={120}>
+            <RegisterBannerMobileB w={388} h={120} />
+          </DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

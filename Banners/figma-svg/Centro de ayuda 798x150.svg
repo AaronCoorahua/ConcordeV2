@@ -1,0 +1,43 @@
+<svg width="798" height="150" viewBox="0 0 798 150" xmlns="http://www.w3.org/2000/svg" font-family="Inter, -apple-system, sans-serif">
+<defs>
+  <linearGradient id="bgD" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#1E1052"></stop>
+    <stop offset="0.5" stop-color="#3D2299"></stop>
+    <stop offset="1" stop-color="#5A3BC4"></stop>
+  </linearGradient>
+  <radialGradient id="glowD" cx="0.82" cy="0.15" r="0.7">
+    <stop offset="0" stop-color="#E8732A" stop-opacity="0.35"></stop>
+    <stop offset="0.6" stop-color="#E8732A" stop-opacity="0"></stop>
+  </radialGradient>
+  <linearGradient id="barD" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#E8732A"></stop>
+    <stop offset="0.5" stop-color="#F49B57"></stop>
+    <stop offset="1" stop-color="#FFE2C2"></stop>
+  </linearGradient>
+  <linearGradient id="btnD" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FFFFFF"></stop>
+    <stop offset="1" stop-color="#EFE9FF"></stop>
+  </linearGradient>
+  <radialGradient id="avD" cx="0.35" cy="0.3" r="0.9">
+    <stop offset="0" stop-color="#F3EEFF"></stop>
+    <stop offset="1" stop-color="#D8CCF2"></stop>
+  </radialGradient>
+  <clipPath id="roundD"><rect width="798" height="150" rx="20"></rect></clipPath></defs>
+<g clip-path="url(#roundD)">
+  <rect width="798" height="150" fill="url(#bgD)"></rect>
+  <rect width="798" height="150" fill="url(#glowD)"></rect>
+  <circle cx="640" cy="20" r="80" fill="none" stroke="#fff" stroke-opacity="0.06" stroke-width="2"></circle>
+  <circle cx="540" cy="150" r="60" fill="none" stroke="#fff" stroke-opacity="0.06" stroke-width="2"></circle>
+  <rect x="0" y="0" width="798" height="5" fill="url(#barD)"></rect>
+  
+  <circle cx="80" cy="78" r="44" fill="url(#avD)" stroke="#fff" stroke-opacity="0.5" stroke-width="2"></circle>
+  <text x="80" y="82" text-anchor="middle" font-size="11" fill="#3D2299" opacity="0.55" font-family="monospace">Foto</text>
+  
+  <text x="150" y="58" font-size="15" font-weight="600" fill="#fff" fill-opacity="0.88">Visita nuestro</text>
+  <text x="150" y="90" font-size="31" font-weight="800" letter-spacing="-0.8" fill="#fff">Centro de ayuda</text>
+  <text x="150" y="118" font-size="15" font-weight="500" fill="#fff" fill-opacity="0.5">Respuestas rápidas a todas tus dudas</text>
+  
+  <rect x="566" y="49" width="208" height="52" rx="26" fill="url(#btnD)"></rect>
+  <text x="670" y="80" text-anchor="middle" font-size="15" font-weight="800" letter-spacing="0.2" fill="#3D2299">Ir al Centro de Ayuda  →</text>
+</g>
+</svg>

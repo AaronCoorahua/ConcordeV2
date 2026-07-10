@@ -1,8 +1,8 @@
 import type { JSX, ReactNode } from "react";
 import Header from "@/app/_components/Header";
-import AssetBanner, { ASSET_HEIGHT } from "@/src/blocks/banners/desktop/AssetBanner";
-import LayoutBanner from "@/src/blocks/banners/desktop/LayoutBanner";
-import EmpresaBanner, { EMPRESA_HEIGHT } from "@/src/blocks/banners/desktop/EmpresaBanner";
+import { ASSET_HEIGHT } from "@/src/blocks/banners/desktop/AssetBanner";
+import PromoBanner from "@/src/blocks/banners/desktop/PromoBanner";
+import { EMPRESA_HEIGHT } from "@/src/blocks/banners/desktop/EmpresaBanner";
 import EmpresaBannerAlt from "@/src/blocks/banners/desktop/EmpresaBannerAlt";
 import { BANNER_WIDTH, BANNER_HEIGHT } from "@/src/blocks/banners/desktop/dimensions";
 
@@ -24,22 +24,22 @@ const GAP = 16;
 
 const ENVIVO_PREVIEW = (
   <div style={{ display: "flex", flexDirection: "column", gap: GAP, width: BANNER_WIDTH }}>
-    <LayoutBanner tone="naranja" layout="hero" pillText="EN VIVO" pillIcon count={23} title="Subastas de autos en vivo" timer="Hoy · 6:01 PM" />
-    <LayoutBanner tone="naranja" layout="panel" pillText="EN VIVO" pillIcon count={38} title="Subastas de autos en vivo" timer="Hoy · 6:01 PM" />
+    <PromoBanner layout="photo-left" pillText="EN VIVO" pillIcon titlePre="Subastas de autos" titleAccent="en vivo" count={23} timer="Hoy · 6:01 PM" />
+    <PromoBanner layout="token" tone="live" pillText="EN VIVO" pillIcon titlePre="Subastas" titleAccent="en vivo" count={38} timer="Hoy · 6:01 PM" />
   </div>
 );
 
 const NEGOCIABLE_PREVIEW = (
   <div style={{ display: "flex", flexDirection: "column", gap: GAP, width: BANNER_WIDTH }}>
-    <LayoutBanner tone="teal" layout="hero" pillText="NEGOCIABLE" pillIcon count={11} title="Subasta negociable de autos, maquinaria y más" timer="Cierra hoy · 6:01 PM" />
-    <LayoutBanner tone="teal" layout="panel" pillText="NEGOCIABLE" pillIcon count={13} title="Negocia tu precio" timer="Propuestas hasta 6:01 PM" />
+    <PromoBanner layout="token" tone="negotiable" pillText="NEGOCIABLE" pillIcon titlePre="Subasta" titleAccent="negociable" count={11} timer="Cierra hoy · 6:01 PM" />
+    <PromoBanner layout="center-glass" tone="negotiable" pillText="NEGOCIABLE" pillIcon titlePre="Subasta" titleAccent="negociable" count={13} timer="Cierra hoy · 6:01 PM" />
   </div>
 );
 
 const CATEGORIA_PREVIEW = (
   <div style={{ display: "flex", flexDirection: "column", gap: GAP, width: BANNER_WIDTH }}>
-    <LayoutBanner tone="naranja" layout="hero" pillText="EN VIVO" pillIcon count={13} title="Vehículos livianos en subasta" timer="Hoy · 6:01 PM" chip={{ label: "Vehicular / Liviano", icon: "car" }} />
-    <LayoutBanner tone="naranja" layout="big-number" pillText="EN VIVO" pillIcon count={17} title="Vehicular · Seminuevo" subtitle="Puja en tiempo real" chip={{ label: "Vehicular / Seminuevo", icon: "car" }} />
+    <PromoBanner layout="photo-right" pillText="EN VIVO" pillIcon titlePre="Vehicular" titleAccent="liviano" count={13} timer="6:01 PM" chip={{ label: "Vehicular / Liviano", icon: "car" }} />
+    <PromoBanner layout="gem-outline" tone="live" pillText="EN VIVO" pillIcon titlePre="Vehicular" titleAccent="seminuevo" count={17} timer="Hoy · 6:01 PM" chip={{ label: "Vehicular / Seminuevo", icon: "car" }} />
   </div>
 );
 
@@ -57,7 +57,7 @@ const EMPRESA_PREVIEW_H = EMPRESA_HEIGHT + GAP + BANNER_HEIGHT;
 const CATEGORIES: BannerCategoryEntry[] = [
   { id: "en-vivo",    name: "En Vivo",    variantCount: 9, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: ENVIVO_PREVIEW },
   { id: "negociable", name: "Negociable", variantCount: 9, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: NEGOCIABLE_PREVIEW },
-  { id: "categoria",  name: "Categoría",  variantCount: 6, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: CATEGORIA_PREVIEW },
+  { id: "categoria",  name: "Categoría",  variantCount: 7, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: CATEGORIA_PREVIEW },
   { id: "empresas",   name: "Empresas",   variantCount: 5, width: BANNER_WIDTH, height: EMPRESA_PREVIEW_H,  node: EMPRESAS_PREVIEW },
 ];
 

@@ -1,0 +1,11 @@
+<svg width="798" height="140" viewBox="0 0 798 140" xmlns="http://www.w3.org/2000/svg" font-family="Inter, -apple-system, sans-serif">
+<defs>
+<linearGradient id="gA2" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0" stop-color="#E8732A"></stop><stop offset="1" stop-color="#C85A1E"></stop></linearGradient><linearGradient id="fA2" x1="0" y1="0" x2="1" y2="0"><stop offset="0.5" stop-color="#E8732A" stop-opacity="0"></stop><stop offset="1" stop-color="#E8732A" stop-opacity="1"></stop></linearGradient>
+<clipPath id="round"><rect width="798" height="140" rx="18"></rect></clipPath>
+</defs>
+<g clip-path="url(#round)"><rect width="798" height="140" fill="url(#gA2)"></rect><g>
+  <rect x="0" y="0" width="200" height="140" fill="#C9803F"></rect>
+  <rect x="0" y="0" width="200" height="140" fill="#000" opacity="0.06"></rect>
+  <text x="100" y="73" text-anchor="middle" font-size="9" fill="#fff" opacity="0.8" font-family="monospace">Foto</text>
+  <rect x="0" y="0" width="200" height="140" fill="url(#fA2)"></rect></g><rect x="224" y="26" width="184" height="24" rx="12" fill="#000" opacity="0.2"></rect><text x="234" y="42" font-size="12" font-weight="700" fill="#fff">¡Dile bye al riesgo alto!</text><text x="224" y="86" font-size="34" font-weight="800" letter-spacing="-1.2"><tspan fill="#fff">Compra </tspan><tspan fill="#FFE2C2">Subaspass</tspan></text><text x="224" y="108" font-size="14" fill="#fff" opacity="0.92">Y participa en las subastas sin consignar y</text><text x="224" y="126" font-size="14" fill="#fff" opacity="0.92">sin restricciones.</text><rect x="610" y="48" width="166" height="44" rx="22" fill="#fff"></rect><text x="693" y="76" text-anchor="middle" font-size="15" font-weight="800" fill="#C85A1E">Comprar ahora →</text></g>
+</svg>

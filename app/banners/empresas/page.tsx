@@ -7,8 +7,7 @@ import { BANNER_WIDTH, BANNER_HEIGHT } from "@/src/blocks/banners/desktop/dimens
 
 /**
  * /banners/empresas — banner 766×192 de la página de empresa/vendedor.
- * Variantes modernas con los componentes reales (StatPill, StarIcon,
- * BusinessIcon, bordes gradiente); la referencia legacy va al final.
+ * Variantes 1 y 2 (panel morado + logo claro) y la referencia legacy al final.
  */
 
 const DEMO = {
@@ -35,16 +34,16 @@ const TEMPLATES: BannerTemplate[] = [
     node: <EmpresaBannerAlt {...DEMO} logoText="Maquisistema" layout="logo-left" />,
   },
   {
-    id: "stats-bottom",
-    name: "Stats en franja inferior",
-    description: "Nombre y rating arriba con BusinessIcon del sidebar; las stats ocupan una franja inferior de ancho completo.",
-    node: <EmpresaBannerAlt {...DEMO} logoText="Maquisistema" layout="stats-bottom" />,
+    id: "glass",
+    name: "Panel glass",
+    description: "Todo el contenido (logo, rating y stats con glow) dentro de un panel GLASS centrado sobre el degradado morado→naranja, con luces de fondo.",
+    node: <EmpresaBannerAlt {...DEMO} logoText="Maquisistema" layout="glass" />,
   },
   {
-    id: "photo",
-    name: "Con imagen (placeholder)",
-    description: "Placeholder de imagen detrás + gradiente de opacidad morado — para el banner de empresa con foto real.",
-    node: <EmpresaBannerAlt {...DEMO} logoText="Maquisistema" layout="photo" />,
+    id: "dark-hero",
+    name: "Stats XXL",
+    description: "Plum profundo con formas de fondo (cuarto de círculo naranja, arcos, glow lila) y las stats gigantes en blanco con glow: Ventas naranja / Participantes lila.",
+    node: <EmpresaBannerAlt {...DEMO} logoText="Maquisistema" layout="dark-hero" />,
   },
   {
     id: "legacy",
@@ -62,7 +61,7 @@ export default function BannerEmpresasPage(): JSX.Element {
         title="Banner Empresas"
         format={`${BANNER_WIDTH} × ${BANNER_HEIGHT}`}
         slot="Página de empresa / vendedor"
-        description="Banner hero de la página de una empresa vendedora, con la nueva propuesta del design system: stats con los estilos del StatPill del bloque Sala, StarIcon, BusinessIcon y bordes gradiente. La referencia legacy (ilustraciones) va al final. Estático, sin efectos."
+        description="Banner hero de la página de una empresa vendedora: logo, rating con opiniones, reseña y stats de Ventas y Participantes. La referencia legacy (ilustraciones) va al final. Estático, sin efectos."
         templates={TEMPLATES}
       />
     </div>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Compra Subaspass — Large / Medium / Small</title>
+<template id="__bundler_thumbnail" data-bg-color="#3D2299">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#3D2299"/>
+    <rect x="150" y="120" width="220" height="560" rx="24" fill="#E8732A"/>
+    <rect x="490" y="220" width="220" height="360" rx="24" fill="#E8732A"/>
+    <rect x="830" y="300" width="220" height="200" rx="24" fill="#E8732A"/>
+    <circle cx="260" cy="250" r="48" fill="#FFE2C2"/>
+    <circle cx="600" cy="320" r="40" fill="#FFE2C2"/>
+    <circle cx="940" cy="360" r="30" fill="#FFE2C2"/>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #ece9e4;
+    box-sizing: border-box;
+  }
+  .wrap {
+    display: flex; gap: 40px; align-items: flex-start; justify-content: center;
+    padding: 48px 24px; flex-wrap: wrap;
+  }
+  .col { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .tag { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #6b6257; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script src="image-slot.js"></script>
+<script type="text/babel" src="hero-600.jsx"></script>
+<script type="text/babel">
+  function App() {
+    return (
+      <div className="wrap">
+        <div className="col">
+          <div className="tag">Large · 200×600</div>
+          <HeroBanner />
+        </div>
+        <div className="col">
+          <div className="tag">Medium · 200×400</div>
+          <HeroBannerMedium />
+        </div>
+        <div className="col">
+          <div className="tag">Small · 200×250</div>
+          <HeroBannerSmall />
+        </div>
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
