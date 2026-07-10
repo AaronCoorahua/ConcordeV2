@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Subaspass — Todos los banners</title>
+<template id="__bundler_thumbnail" data-bg-color="#E8732A">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#E8732A"/>
+    <rect x="150" y="160" width="170" height="480" rx="20" fill="#3D2299"/>
+    <rect x="360" y="280" width="170" height="240" rx="20" fill="#3D2299"/>
+    <rect x="580" y="300" width="470" height="90" rx="16" fill="#FFE2C2"/>
+    <rect x="580" y="420" width="470" height="90" rx="16" fill="#2A1670"/>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; min-height: 100%; background: #f0eee9; }
+  * { box-sizing: border-box; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script src="image-slot.js"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="hero-600.jsx"></script>
+<script type="text/babel" src="horizontal-banners.jsx"></script>
+<script type="text/babel" src="sidebar-banners.jsx"></script>
+<script type="text/babel">
+  function App() {
+    return (
+      <DesignCanvas>
+        <DCSection id="horizontal-m" title="Horizontal · Mobile 388 × 120" subtitle="4 variaciones de layout">
+          <DCArtboard id="hm-a" label="A · Foto izq. + naranja" width={388} height={120}><BannerA w={388} h={120} /></DCArtboard>
+          <DCArtboard id="hm-b" label="B · Degradado morado→naranja" width={388} height={120}><BannerB w={388} h={120} /></DCArtboard>
+          <DCArtboard id="hm-c" label="C · Foto der. diagonal" width={388} height={120}><BannerC w={388} h={120} /></DCArtboard>
+          <DCArtboard id="hm-d" label="D · Naranja sólido + CTA outline" width={388} height={120}><BannerD w={388} h={120} /></DCArtboard>
+        </DCSection>
+
+        <DCSection id="horizontal-d" title="Horizontal · Desktop 798 × 140" subtitle="Las mismas 4 direcciones, formato ancho">
+          <DCArtboard id="hd-a" label="A · Foto izq. + naranja" width={798} height={140}><BannerA w={798} h={140} big slot="d" /></DCArtboard>
+          <DCArtboard id="hd-b" label="B · Degradado morado→naranja" width={798} height={140}><BannerB w={798} h={140} big /></DCArtboard>
+          <DCArtboard id="hd-c" label="C · Foto der. diagonal" width={798} height={140}><BannerC w={798} h={140} big /></DCArtboard>
+          <DCArtboard id="hd-d" label="D · Naranja sólido + CTA outline" width={798} height={140}><BannerD w={798} h={140} big /></DCArtboard>
+        </DCSection>
+
+        <DCSection id="vertical" title="Vertical · Large / Medium / Small" subtitle="Formatos display clásicos (skyscraper / medium rectangle / small)">
+          <DCArtboard id="v-l" label="Large · 200×600" width={200} height={600}><HeroBanner /></DCArtboard>
+          <DCArtboard id="v-m" label="Medium · 200×400" width={200} height={400}><HeroBannerMedium /></DCArtboard>
+          <DCArtboard id="v-s" label="Small · 200×250" width={200} height={250}><HeroBannerSmall /></DCArtboard>
+        </DCSection>
+
+        <DCSection id="sidebar" title="Sidebar · ancho neto 202px" subtitle="4 formatos para el slot del sidebar">
+          <DCArtboard id="sb-c" label="Compacto · 202×100" width={202} height={100}><SBCompacto /></DCArtboard>
+          <DCArtboard id="sb-sq" label="Cuadrado · 202×202" width={202} height={202}><SBCuadrado /></DCArtboard>
+          <DCArtboard id="sb-p" label="Portrait · 202×280" width={202} height={280}><SBPortrait /></DCArtboard>
+          <DCArtboard id="sb-t" label="Tall · 202×400" width={202} height={400}><SBTall /></DCArtboard>
+        </DCSection>
+
+        <DCPostIt x={40} y={40}>
+          <strong>Subaspass · librería de banners</strong><br/><br/>
+          • Todos comparten la misma marca: naranja <code>#E8732A</code>, morado <code>#3D2299</code>, crema <code>#FFE2C2</code>, Inter.<br/><br/>
+          • Las zonas de foto son <strong>slots</strong> — arrastra una imagen encima y queda fija.<br/><br/>
+          • Arrastra los artboards para reordenar · doble-click para abrir en pantalla completa.
+        </DCPostIt>
+      </DesignCanvas>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

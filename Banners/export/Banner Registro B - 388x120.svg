@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="388" height="120" viewBox="0 0 388 120" fill="none" role="img" aria-label="Banner Registro B Subasta en vivo 388x120">
+  <defs>
+    
+    <linearGradient id="bbgm" x1="0" y1="0" x2="388" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2A1670"></stop>
+      <stop offset="0.46" stop-color="#3D2299"></stop>
+      <stop offset="0.74" stop-color="#4A2BB0"></stop>
+      <stop offset="1" stop-color="#C85A1E"></stop>
+    </linearGradient>
+    <radialGradient id="borbOm" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#F08A2B" stop-opacity="0.55"></stop>
+      <stop offset="0.68" stop-color="#F08A2B" stop-opacity="0"></stop>
+    </radialGradient>
+    <filter id="bsoftm" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"></feGaussianBlur></filter>
+    <clipPath id="bclipm"><rect width="388" height="120" rx="16"></rect></clipPath>
+  </defs>
+
+  <g clip-path="url(#bclipm)">
+    <rect width="388" height="120" fill="url(#bbgm)"></rect>
+    <circle cx="378" cy="10" r="80" fill="url(#borbOm)" filter="url(#bsoftm)"></circle>
+
+    
+    <g>
+      <rect x="16" y="18" width="122" height="22" rx="11" fill="#FFFFFF" fill-opacity="0.12" stroke="#FFFFFF" stroke-opacity="0.22"></rect>
+      <circle cx="30" cy="29" r="5.5" fill="none" stroke="#7CF2A8" stroke-opacity="0.55" stroke-width="1.3"></circle>
+      <circle cx="30" cy="29" r="3" fill="#7CF2A8"></circle>
+      <text x="41" y="29" fill="#FFFFFF" font-size="9.5" font-weight="700" letter-spacing="0.4" dominant-baseline="central">SUBASTA EN VIVO</text>
+    </g>
+
+    
+    <text x="16" y="68" fill="#FFFFFF" font-size="18" font-weight="800" letter-spacing="-0.6">No te quedes sin enviar tu bid</text>
+    <text x="16" y="92" fill="#FFFFFF" fill-opacity="0.72" font-size="11" font-weight="400">Regístrate antes de que cierre</text>
+
+    
+    <g>
+      <rect x="288" y="32" width="84" height="56" rx="14" fill="#FFFFFF" fill-opacity="0.12" stroke="#FFFFFF" stroke-opacity="0.22"></rect>
+      <text x="330" y="50" fill="#FFFFFF" fill-opacity="0.6" font-size="9" font-weight="600" text-anchor="middle">Cierra en</text>
+      <text x="330" y="70" fill="#FFFFFF" font-size="19" font-weight="800" letter-spacing="-0.5" text-anchor="middle" dominant-baseline="central">02:47:09</text>
+    </g>
+  </g>
+</svg>

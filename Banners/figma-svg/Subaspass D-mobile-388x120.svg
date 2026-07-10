@@ -1,0 +1,7 @@
+<svg width="388" height="120" viewBox="0 0 388 120" xmlns="http://www.w3.org/2000/svg" font-family="Inter, -apple-system, sans-serif">
+<defs>
+<linearGradient id="gD" x1="0" y1="0" x2="0.5" y2="1"><stop offset="0" stop-color="#F49B57"></stop><stop offset="0.45" stop-color="#E8732A"></stop><stop offset="1" stop-color="#B14E18"></stop></linearGradient>
+<clipPath id="round"><rect width="388" height="120" rx="14"></rect></clipPath>
+</defs>
+<g clip-path="url(#round)"><rect width="388" height="120" fill="url(#gD)"></rect><circle cx="232" cy="60" r="27" fill="none" stroke="#fff" stroke-opacity="0.16" stroke-width="2"></circle><text x="16" y="44" font-size="10" font-weight="700" fill="#fff" opacity="0.92">¡Dile bye al riesgo alto!</text><text x="16" y="76" font-size="21" font-weight="800" letter-spacing="-0.7" fill="#fff">Compra</text><text x="16" y="96" font-size="21" font-weight="800" letter-spacing="-0.7" fill="#FFE2C2">Subaspass</text><rect x="252" y="44" width="124" height="32" rx="16" fill="none" stroke="#fff" stroke-opacity="0.85" stroke-width="2"></rect><text x="314" y="64" text-anchor="middle" font-size="11.5" font-weight="800" fill="#fff">Comprar ahora →</text></g>
+</svg>

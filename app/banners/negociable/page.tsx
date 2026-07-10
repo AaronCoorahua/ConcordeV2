@@ -2,65 +2,64 @@ import type { JSX } from "react";
 import Header from "@/app/_components/Header";
 import BannerGallery, { type BannerTemplate } from "@/app/banners/_components/BannerGallery";
 import AssetBanner from "@/src/blocks/banners/desktop/AssetBanner";
-import LayoutBanner from "@/src/blocks/banners/desktop/LayoutBanner";
+import PromoBanner from "@/src/blocks/banners/desktop/PromoBanner";
 import { BANNER_WIDTH, BANNER_HEIGHT } from "@/src/blocks/banners/desktop/dimensions";
 
 /**
- * /banners/negociable — banner 766×192 de la página Negociable (sistema teal).
- * Variantes modernas con los ESTILOS del DS (gradiente del Button negotiable en
- * la pill, borde/glass del StatPill en el contador) — sin botones. Legacy al final.
+ * /banners/negociable — banner 766×192 de la página Negociable.
+ * Base: variantes A y B de la referencia Subaspass. Sobre esa base, variantes
+ * modernas con los tokens del DS (negotiable = CELESTE #00D2D3/#00AEB1 → #8460E5),
+ * glass y luces/formas de fondo. Legacy al final.
  */
-
-const TITLE = "Subasta negociable de autos, maquinaria y más";
 
 const TEMPLATES: BannerTemplate[] = [
   {
-    id: "hero",
-    name: "Hero — número a la derecha",
-    description: "Pill «NEGOCIABLE» con el gradiente del Button negotiable (anillo teal + fill #00aeb1→#8460e5), chip de horario con TimerIcon y el número gigante a la derecha.",
-    node: <LayoutBanner tone="teal" layout="hero" pillText="NEGOCIABLE" pillIcon count={11} title={TITLE} timer="Cierra hoy · 6:01 PM" />,
+    id: "promo-a",
+    name: "A · Foto izq. + naranja",
+    description: "Background naranja de la referencia, foto a la izquierda con fundido, título con acento crema y contador con luces de fondo.",
+    node: <PromoBanner layout="photo-left" pillText="NEGOCIABLE" pillIcon titlePre="Subasta" titleAccent="negociable" count={11} timer="Cierra hoy · 6:01 PM" />,
   },
   {
-    id: "panel-morado",
-    name: "Panel morado",
-    description: "Fondo con el gradiente del header de DetailCard + contador con los estilos del StatPill (dark glass + borde VYStrokes).",
-    node: <LayoutBanner tone="teal" layout="panel" pillText="NEGOCIABLE" pillIcon count={13} title="Negocia tu precio" timer="Propuestas hasta 6:01 PM" />,
+    id: "promo-b",
+    name: "B · Degradado morado→naranja",
+    description: "Background morado→naranja de la referencia con glow, anillos y dots de fondo.",
+    node: <PromoBanner layout="plum-counter" pillText="NEGOCIABLE" pillIcon titlePre="Subasta" titleAccent="negociable" count={13} timer="Cierra hoy · 6:01 PM" />,
   },
   {
-    id: "primary",
-    name: "Fondo negotiable + SubasCoins",
-    description: "Todo el fondo con el fill del Button negotiable (#00aeb1→#8460e5) y las SubasCoins grandes del OfferCard flotando.",
-    node: <LayoutBanner tone="teal" layout="primary" pillText="NEGOCIABLE" pillIcon count={11} title={TITLE} timer="Cierra hoy · 6:01 PM" />,
+    id: "flip",
+    name: "Celeste invertido",
+    description: "El degradado volteado con el CELESTE negociable (#00D2D3→#00AEB1) hacia el morado, contador a la izquierda y contenido a la derecha.",
+    node: <PromoBanner layout="flip" tone="negotiable" pillText="NEGOCIABLE" pillIcon titlePre="Subasta" titleAccent="negociable" count={11} timer="Cierra hoy · 6:01 PM" />,
   },
   {
-    id: "photo",
-    name: "Con imagen (placeholder)",
-    description: "Placeholder de imagen detrás + gradiente de opacidad del tono encima — para banners con foto del lote/campaña.",
-    node: <LayoutBanner tone="teal" layout="photo" pillText="NEGOCIABLE" pillIcon count={11} title={TITLE} />,
+    id: "center-glass",
+    name: "Centrado glass",
+    description: "Panel GLASS centrado (blur + borde claro) sobre el degradado morado→celeste, con separador y contador.",
+    node: <PromoBanner layout="center-glass" tone="negotiable" pillText="NEGOCIABLE" pillIcon titlePre="Subasta" titleAccent="negociable" count={13} timer="Cierra hoy · 6:01 PM" />,
   },
   {
-    id: "big-number",
-    name: "Número gigante a la izquierda",
-    description: "El contador domina a la izquierda con borde gradiente negotiable (#00aeb1→#8460e5); pill gradiente y título a la derecha.",
-    node: <LayoutBanner tone="teal" layout="big-number" pillText="NEGOCIABLE" pillIcon count={11} title="Negocia autos, maquinaria y equipos" subtitle="Propón tu precio" />,
+    id: "token",
+    name: "Celeste→vault (token negotiable)",
+    description: "Fondo con el gradiente del Button negotiable del DS (#00D2D3→#00AEB1→#8460E5) — el token celeste — con anillos, arco y glow.",
+    node: <PromoBanner layout="token" tone="negotiable" pillText="NEGOCIABLE" pillIcon titlePre="Subasta" titleAccent="negociable" count={11} timer="Cierra hoy · 6:01 PM" />,
   },
   {
-    id: "centered-stack",
-    name: "Centrado simple",
-    description: "Solo los títulos, todo apilado y bien centrado: pill gradiente, título y «N ofertas disponibles».",
-    node: <LayoutBanner tone="teal" layout="centered-stack" pillText="NEGOCIABLE" pillIcon count={5} title="Subasta negociable" />,
+    id: "gem-outline",
+    name: "Gema outline de fondo",
+    description: "La gema SubasCoin en SOLO BORDES blancos como forma decorativa gigante detrás del contador, sobre el celeste negociable.",
+    node: <PromoBanner layout="gem-outline" tone="negotiable" pillText="NEGOCIABLE" pillIcon titlePre="Subasta" titleAccent="negociable" count={11} timer="Cierra hoy · 6:01 PM" />,
   },
   {
-    id: "centered",
-    name: "Centrado con separador",
-    description: "Composición simétrica: pill gradiente + título a un lado, separador y contador «OFERTAS N» gigante al otro.",
-    node: <LayoutBanner tone="teal" layout="centered" pillText="NEGOCIABLE" pillIcon count={5} title="Subasta negociable" />,
+    id: "mega",
+    name: "Número mega blanco",
+    description: "El contador BLANCO a 148px con glow celeste y «Ofertas» en vertical; fondo plum→teal con bandas diagonales glass.",
+    node: <PromoBanner layout="mega" tone="negotiable" pillText="NEGOCIABLE" pillIcon titlePre="Subasta" titleAccent="negociable" count={11} timer="Cierra hoy · 6:01 PM" />,
   },
   {
-    id: "outline-number",
-    name: "Número contorno de fondo",
-    description: "El número gigante en contorno detrás del contenido — efecto tipográfico sobre el gradiente negotiable.",
-    node: <LayoutBanner tone="teal" layout="outline-number" pillText="NEGOCIABLE" pillIcon count={13} title="Subasta negociable" />,
+    id: "glass-tint",
+    name: "Glass teñido celeste",
+    description: "Contador en tarjeta glass TEÑIDA celeste (translúcido + blur) sobre plum profundo, con cuarto de círculo, arcos y dots de fondo.",
+    node: <PromoBanner layout="glass-tint" tone="negotiable" pillText="NEGOCIABLE" pillIcon titlePre="Subasta" titleAccent="negociable" count={13} timer="Cierra hoy · 6:01 PM" />,
   },
   {
     id: "legacy",
@@ -78,7 +77,7 @@ export default function BannerNegociablePage(): JSX.Element {
         title="Banner Negociable"
         format={`${BANNER_WIDTH} × ${BANNER_HEIGHT}`}
         slot="Página Tipo de oferta → Negociable"
-        description="Banner hero de la página de ofertas negociables, con la nueva propuesta del design system: gradiente negotiable de OfferType, pill con los colores del Button negotiable, contador con los estilos del StatPill, TimerIcon y gema SubasCoin. La referencia legacy (ilustraciones) va al final. Estático, sin efectos."
+        description="Banner hero de la página de ofertas negociables. Base A/B de la referencia Subaspass + variantes modernas con los tokens del DS (el celeste negociable #00D2D3 hacia vault), paneles glass, luces y formas de fondo. La referencia legacy va al final. Estático, sin efectos."
         templates={TEMPLATES}
       />
     </div>

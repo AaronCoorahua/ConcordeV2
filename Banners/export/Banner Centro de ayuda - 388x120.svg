@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="388" height="120" viewBox="0 0 388 120" fill="none" role="img" aria-label="Banner Centro de ayuda 388x120">
+  <defs>
+    
+    <linearGradient id="bgM" x1="0" y1="44" x2="388" y2="76" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2A1670"></stop>
+      <stop offset="0.46" stop-color="#3D2299"></stop>
+      <stop offset="0.74" stop-color="#4A2BB0"></stop>
+      <stop offset="1" stop-color="#914559"></stop>
+    </linearGradient>
+    <linearGradient id="fadeM" x1="0" y1="0" x2="96" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0.5" stop-color="#2A1670" stop-opacity="0"></stop>
+      <stop offset="1" stop-color="#2A1670"></stop>
+    </linearGradient>
+    <pattern id="stripeM" width="14" height="14" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <rect width="14" height="14" fill="none"></rect>
+      <rect width="7" height="14" fill="#FFFFFF" opacity="0.045"></rect>
+    </pattern>
+    <clipPath id="roundM"><rect width="388" height="120" rx="16"></rect></clipPath>
+  </defs>
+
+  <g clip-path="url(#roundM)">
+    <rect width="388" height="120" fill="url(#bgM)"></rect>
+
+    
+    <rect x="0" y="0" width="96" height="120" fill="#34208A"></rect>
+    <rect x="0" y="0" width="96" height="120" fill="url(#stripeM)"></rect>
+    <text x="48" y="60" fill="#FFFFFF" fill-opacity="0.5" font-family="&#39;IBM Plex Mono&#39;, monospace" font-size="10" font-weight="500" letter-spacing="2" text-anchor="middle" dominant-baseline="central">FOTO</text>
+    <rect x="0" y="0" width="96" height="120" fill="url(#fadeM)"></rect>
+
+    
+    <circle cx="270" cy="0" r="40" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="2" fill="none"></circle>
+
+    
+    <text x="110" y="33" fill="#FFFFFF" fill-opacity="0.72" font-size="11" font-weight="600">Visita nuestro</text>
+    <text x="110" y="54" fill="#FFFFFF" font-size="19" font-weight="800" letter-spacing="-0.5">Centro de</text>
+    <text x="110" y="74" fill="#FFFFFF" font-size="19" font-weight="800" letter-spacing="-0.5">ayuda</text>
+    <text x="110" y="93" fill="#FFFFFF" fill-opacity="0.66" font-size="11" font-weight="400">Respuestas rápidas a</text>
+    <text x="110" y="106" fill="#FFFFFF" fill-opacity="0.66" font-size="11" font-weight="400">todas tus dudas</text>
+
+    
+    <g>
+      <rect x="236" y="35" width="140" height="50" rx="11" fill="#FFFFFF"></rect>
+      <text x="248" y="56" fill="#3D2299" font-size="11" font-weight="800" letter-spacing="0.4">IR AL CENTRO</text>
+      <text x="248" y="70" fill="#3D2299" font-size="11" font-weight="800" letter-spacing="0.4">DE AYUDA</text>
+      <circle cx="353" cy="60" r="11" fill="#E8732A"></circle>
+      <text x="353" y="60" fill="#FFFFFF" font-size="12" font-weight="700" text-anchor="middle" dominant-baseline="central">→</text>
+    </g>
+  </g>
+</svg>

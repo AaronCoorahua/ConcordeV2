@@ -120,6 +120,96 @@ export function BigGem({ size = 96, style }: { size?: number; style?: CSSPropert
   );
 }
 
+// ─── Ribbons — curvas de luz iridiscentes (estilo voyager-slides, estáticas) ──
+// Trazos bezier con el trío del sistema "ganador" (#F4AC59 → #8460E5 → #ffffff),
+// desenfocados y en mix-blend screen sobre fondos oscuros.
+
+export interface RibbonsProps {
+  /** Color medio de las cintas (default lila #8460E5) */
+  mid?: string;
+  /** Color cálido/acento (default ámbar #F4AC59) */
+  warm?: string;
+  style?: CSSProperties;
+}
+
+export function Ribbons({ mid = "#8460E5", warm = "#F4AC59", style }: RibbonsProps): JSX.Element {
+  const gid = `rib-${warm.slice(1)}-${mid.slice(1)}`;
+  return (
+    <div aria-hidden="true" style={ABS({ inset: 0, mixBlendMode: "screen", ...style })}>
+      {/* capa difusa (luz) */}
+      <svg width="100%" height="100%" viewBox="0 0 766 192" preserveAspectRatio="none" style={{ position: "absolute", inset: 0, filter: "blur(10px) saturate(1.6) brightness(1.25)" }}>
+        <defs>
+          <linearGradient id={`${gid}-a`} x1="0" y1="0" x2="1" y2="1">
+            <stop stopColor={warm} /><stop offset="0.52" stopColor={mid} /><stop offset="1" stopColor="#ffffff" />
+          </linearGradient>
+          <linearGradient id={`${gid}-b`} x1="1" y1="0" x2="0" y2="1">
+            <stop stopColor="#ffffff" stopOpacity="0.9" /><stop offset="0.5" stopColor={mid} /><stop offset="1" stopColor={warm} />
+          </linearGradient>
+        </defs>
+        <path d="M-60 170 C 140 30, 330 235, 520 95 S 760 40, 830 110" fill="none" stroke={`url(#${gid}-a)`} strokeWidth="46" strokeLinecap="round" opacity="0.5" />
+        <path d="M-40 60 C 180 190, 420 -40, 620 120 S 790 150, 830 90" fill="none" stroke={`url(#${gid}-b)`} strokeWidth="30" strokeLinecap="round" opacity="0.38" />
+      </svg>
+      {/* capa nítida (filo de la cinta) */}
+      <svg width="100%" height="100%" viewBox="0 0 766 192" preserveAspectRatio="none" style={{ position: "absolute", inset: 0, filter: "blur(1.2px)" }}>
+        <path d="M-60 170 C 140 30, 330 235, 520 95 S 760 40, 830 110" fill="none" stroke={`url(#${gid}-a)`} strokeWidth="7" strokeLinecap="round" opacity="0.75" />
+        <path d="M-40 60 C 180 190, 420 -40, 620 120 S 790 150, 830 90" fill="none" stroke={`url(#${gid}-b)`} strokeWidth="4" strokeLinecap="round" opacity="0.55" />
+      </svg>
+    </div>
+  );
+}
+
+// ─── GlassWaves — ondas de vidrio en capas (superficies onduladas translúcidas) ──
+// No son luces radiales: son pliegues de "vidrio" que refractan el fondo del tono.
+// Bandas onduladas con relleno blanco translúcido + blur, borde claro fino (filo del
+// vidrio) y un tinte del color medio. Sin morado vault de fondo.
+
+export interface GlassWavesProps {
+  /** Color de tinte de las ondas (medio del tono) */
+  tint?: string;
+  style?: CSSProperties;
+}
+
+export function GlassWaves({ tint = "#ffffff", style }: GlassWavesProps): JSX.Element {
+  return (
+    <div aria-hidden="true" style={ABS({ inset: 0, overflow: "hidden", ...style })}>
+      {/* Onda 1 — banda ancha diagonal, vidrio esmerilado */}
+      <svg width="100%" height="100%" viewBox="0 0 766 192" preserveAspectRatio="none" style={{ position: "absolute", inset: 0, filter: "blur(6px)" }}>
+        <path d="M-40 118 C 150 40, 300 168, 480 96 C 620 42, 720 96, 810 66 L 810 220 L -40 220 Z" fill="rgba(255,255,255,0.16)" />
+        <path d="M-40 150 C 160 78, 330 196, 520 120 C 660 66, 740 116, 810 94 L 810 240 L -40 240 Z" fill={`${tint}`} fillOpacity="0.10" />
+      </svg>
+      {/* Onda 2 — pliegue superior fino con filo brillante */}
+      <svg width="100%" height="100%" viewBox="0 0 766 192" preserveAspectRatio="none" style={{ position: "absolute", inset: 0, filter: "blur(1.5px)" }}>
+        <path d="M-40 78 C 170 8, 360 128, 560 52 C 690 4, 760 52, 810 34" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M-40 92 C 170 22, 360 142, 560 66 C 690 18, 760 66, 810 48" fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="10" strokeLinecap="round" />
+      </svg>
+      {/* Onda 3 — pliegue inferior, sombra suave del vidrio */}
+      <svg width="100%" height="100%" viewBox="0 0 766 192" preserveAspectRatio="none" style={{ position: "absolute", inset: 0, filter: "blur(3px)" }}>
+        <path d="M-40 200 C 180 130, 380 218, 600 150 C 720 112, 780 150, 810 138" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="3" strokeLinecap="round" />
+        <path d="M120 214 C 320 150, 520 224, 720 168" fill="none" stroke="rgba(20,0,70,0.14)" strokeWidth="14" strokeLinecap="round" />
+      </svg>
+      {/* Highlight especular puntual (brillo del vidrio) */}
+      <div style={{ position: "absolute", top: -30, left: 90, width: 260, height: 150, borderRadius: "50%", background: "radial-gradient(closest-side, rgba(255,255,255,0.35), transparent)", filter: "blur(14px)" }} />
+    </div>
+  );
+}
+
+// ─── Gema SubasCoin en OUTLINE (solo bordes, sin relleno) ─────────────────────
+// Misma geometría que la gema del OfferCard pero como forma decorativa grande
+// de fondo: trazos blancos translúcidos, sin fill.
+
+export function GemOutline({ size = 220, color = "rgba(255,255,255,0.30)", style }: { size?: number; color?: string; style?: CSSProperties }): JSX.Element {
+  const h = (size * 30) / 28;
+  // strokeWidth en unidades del viewBox (28 de ancho): 0.55 ≈ 4px a 200px
+  return (
+    <svg width={size} height={h} viewBox="30 199 28 30" fill="none" aria-hidden="true" style={ABS(style)}>
+      <path d="M44 215.5L56 221L44 226.5L32 221L44 215.5Z" stroke={color} strokeWidth="0.55" strokeLinejoin="round" />
+      <rect x="34" y="201" width="20" height="20" rx="10" stroke={color} strokeWidth="0.55" />
+      <path d="M44 206.417V215.583" stroke={color} strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M46.0833 208.083H42.9583C42.1535 208.083 41.5 208.737 41.5 209.542C41.5 210.347 42.1535 211 42.9583 211H45.0417C45.8465 211 46.5 211.653 46.5 212.458C46.5 213.263 45.8465 213.917 45.0417 213.917H41.5" stroke={color} strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 // ─── Iconos de pill / chip ────────────────────────────────────────────────────
 
 /** Apretón de manos (pill EN VIVO / NEGOCIABLE) — glifo limpio estilo Lucide */
