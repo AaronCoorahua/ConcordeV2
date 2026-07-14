@@ -132,8 +132,22 @@ function copyBlock(t: TipoBasica, align: "left" | "center"): string {
 </table>`;
 }
 
+/**
+ * Wordmark con colores custom (para fondos que no son morado: el «Subastas» y el
+ * «powered by» necesitan otro tono para contrastar sobre naranja/teal).
+ */
+export function wordmarkTinted(align: "left" | "center", sub: string, powered: string, poweredBrand: string): string {
+  return `<table border="0" cellpadding="0" cellspacing="0"${align === "center" ? ' align="center"' : ""}>
+<tr><td align="${align}" style="font-family:'Poppins','Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:28px;font-weight:700;letter-spacing:-0.01em;line-height:1;color:#FFFFFF;">›vmc‹</td></tr>
+<tr><td height="2" style="font-size:1px;line-height:1px;">&nbsp;</td></tr>
+<tr><td align="${align}" style="font-family:'Poppins','Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:24px;font-weight:700;letter-spacing:-0.01em;line-height:1;color:${sub};">Subastas</td></tr>
+<tr><td height="6" style="font-size:1px;line-height:1px;">&nbsp;</td></tr>
+<tr><td align="${align}" style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.02em;line-height:1;color:${powered};">powered by <b style="color:${poweredBrand};">SUBASTOP</b> .Co</td></tr>
+</table>`;
+}
+
 /** Ícono «¡CON TODO!» real (choque de puños entre chevrons) a `w` px. */
-function conTodo(w: number): string {
+export function conTodo(w: number): string {
   return `<img src="${ASSET_CON_TODO}" width="${w}" alt="¡Con todo!" style="border:0;display:block;width:100%;max-width:${w}px;height:auto;">`;
 }
 
