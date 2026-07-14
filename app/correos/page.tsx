@@ -2,16 +2,47 @@ import type { JSX } from "react";
 import Header from "@/app/_components/Header";
 import { EMAIL_GROUPS } from "@/src/emails/registry";
 import { EMAIL_PROD_TOTAL } from "@/src/emails/tipologias";
+import { TIPO_GROUPS } from "@/src/emails/tipologiasRegistry";
 
 /**
- * /correos — Catálogo de correos por tipología (mismo estilo que /banners).
- * Cada card es una tipología con el preview de su correo demo; dentro,
- * las plantillas HTML estáticas (banner header, correo demo y reales).
+ * /correos — hub de correos. Dos secciones:
+ *   · Tipologías — layouts base de banner (A/B/C), posición texto↔imagen.
+ *   · Variantes  — los correos reales en producción, agrupados por tema.
+ * Cada card enlaza a su galería (/correos/tipologias · /correos/variantes).
  */
 
-const THUMB_H = 260;
+const THUMB_H = 300;
 const EMAIL_W = 600;
 const SCALE = 0.5;
+
+interface HubCard {
+  href: string;
+  title: string;
+  meta: string;
+  desc: string;
+  previewDoc: string;
+}
+
+const CARDS: HubCard[] = [
+  {
+    href: "/correos/tipologias",
+    title: "Tipologías",
+    meta: `${TIPO_GROUPS.length} layouts base`,
+    desc: "Layouts base del banner header según la posición texto↔imagen (A, B, C). El sistema estructural sobre el que se arman los correos.",
+    previewDoc: TIPO_GROUPS[0].plantillas[0].previewDoc,
+  },
+  {
+    href: "/correos/variantes",
+    title: "Variantes",
+    meta: `${EMAIL_GROUPS.length} tipologías · ${EMAIL_PROD_TOTAL} en prod`,
+    desc: "Los correos que hoy existen en producción, agrupados por tema (En vivo, Negociable, SubasCoins, Registro…) con sus plantillas HTML.",
+    previewDoc: (function pickDemo() {
+      const g = EMAIL_GROUPS[0];
+      const demo = g.plantillas.find(function isDemo(p) { return p.id === `${g.tipologia.id}-demo`; }) ?? g.plantillas[0];
+      return demo.previewDoc;
+    })(),
+  },
+];
 
 export default function CorreosPage(): JSX.Element {
   return (
@@ -21,33 +52,29 @@ export default function CorreosPage(): JSX.Element {
       <main style={{ maxWidth: 1120, margin: "0 auto", padding: "40px 40px 80px" }}>
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
           <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>Correos</h1>
-          <span style={{ fontSize: 13, color: "#94a3b8", fontWeight: 500 }}>
-            {EMAIL_GROUPS.length} tipologías · {EMAIL_PROD_TOTAL} correos en producción
-          </span>
         </div>
-        <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 24px", maxWidth: 720 }}>
-          Tipologías de mailing con sus plantillas HTML estáticas email-safe (tablas + estilos
-          inline, formato 600px). Cada card es una tipología; dentro están el banner header
-          copiable y los correos completos.
+        <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 32px", maxWidth: 720 }}>
+          Sistema de mailing de VMC Subastas. Empieza por las <strong style={{ color: "#0f172a", fontWeight: 700 }}>tipologías</strong>{" "}
+          (layouts base del banner) y revisa las <strong style={{ color: "#0f172a", fontWeight: 700 }}>variantes</strong>{" "}
+          que hoy están en producción.
         </p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
-          {EMAIL_GROUPS.map(function renderGroup(g) {
-            const demo = g.plantillas.find(function isDemo(p) { return p.id === `${g.tipologia.id}-demo`; }) ?? g.plantillas[0];
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 20 }}>
+          {CARDS.map(function renderCard(c) {
             return (
-              <a key={g.tipologia.id} href={`/correos/${g.tipologia.id}`} className="cor-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", borderRadius: 12, overflow: "hidden", background: "#ffffff", border: "1px solid #e2e8f0", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
+              <a key={c.href} href={c.href} className="cor-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", borderRadius: 14, overflow: "hidden", background: "#ffffff", border: "1px solid #e2e8f0", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
                 <div style={{ height: THUMB_H, display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
-                  <div style={{ width: EMAIL_W * SCALE, height: THUMB_H - 32, position: "relative", overflow: "hidden", borderRadius: 4, boxShadow: "0 6px 18px rgba(15,23,42,0.12)", outline: "1px solid #e2e8f0", background: "#FAFAFA" }}>
+                  <div style={{ width: EMAIL_W * SCALE, height: THUMB_H - 40, position: "relative", overflow: "hidden", borderRadius: 6, boxShadow: "0 6px 18px rgba(15,23,42,0.12)", outline: "1px solid #e2e8f0", background: "#FAFAFA" }}>
                     <iframe
-                      title={g.tipologia.label}
-                      srcDoc={demo.previewDoc}
+                      title={c.title}
+                      srcDoc={c.previewDoc}
                       scrolling="no"
                       style={{
                         position: "absolute",
                         top: 0,
                         left: 0,
                         width: EMAIL_W,
-                        height: (THUMB_H - 32) / SCALE,
+                        height: (THUMB_H - 40) / SCALE,
                         border: "none",
                         transform: `scale(${SCALE})`,
                         transformOrigin: "top left",
@@ -56,14 +83,13 @@ export default function CorreosPage(): JSX.Element {
                     />
                   </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px" }}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    <span className="cor-name" style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", letterSpacing: "-0.01em" }}>{g.tipologia.label}</span>
-                    <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>
-                      {g.plantillas.length} plantillas · {g.tipologia.prodCount} en prod
-                    </span>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, padding: "18px 20px 20px" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span className="cor-name" style={{ fontSize: 17, fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em" }}>{c.title}</span>
+                    <span className="cor-arrow" aria-hidden="true" style={{ fontSize: 16, color: "#cbd5e1" }}>→</span>
                   </div>
-                  <span className="cor-arrow" aria-hidden="true" style={{ fontSize: 15, color: "#cbd5e1" }}>→</span>
+                  <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 600, fontFamily: "monospace" }}>{c.meta}</span>
+                  <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.5, margin: "4px 0 0" }}>{c.desc}</p>
                 </div>
               </a>
             );
