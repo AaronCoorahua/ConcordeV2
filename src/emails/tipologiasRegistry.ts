@@ -12,6 +12,12 @@ import {
   wrapTipoPreview,
   type TipoBasica,
 } from "./tipologiasBanners";
+import {
+  TIPOLOGIAS_V2,
+  buildV2Banner,
+  wrapV2Preview,
+  v2Height,
+} from "./tipologiasV2";
 
 export interface TipoPlantilla {
   id: string;
@@ -25,8 +31,19 @@ export interface TipoPlantilla {
   previewHeight: number;
 }
 
+/** Metadatos comunes de una tipología (Opción 1 «marca» u Opción 2 «gradientes»). */
+export interface TipoMeta {
+  id: string;
+  /** Letra (A–G) para Opción 1; sigla V2 para Opción 2. */
+  letra: string;
+  label: string;
+  descripcion: string;
+}
+
 export interface TipoGroup {
-  tipologia: TipoBasica;
+  tipologia: TipoMeta;
+  /** "marca" = Opción 1 (A–G) · "gradiente" = Opción 2 (V2). */
+  opcion: "marca" | "gradiente";
   plantillas: TipoPlantilla[];
 }
 
@@ -37,10 +54,12 @@ const PREVIEW_HEIGHT: Record<string, number> = {
   F: 360, // banda copy + banda imagen
 };
 
-export const TIPO_GROUPS: TipoGroup[] = TIPOLOGIAS_BASICAS.map(function toGroup(t): TipoGroup {
+/** Opción 1 «Marca» — tipologías A–G (header glass + assets de marca). */
+const GROUPS_MARCA: TipoGroup[] = TIPOLOGIAS_BASICAS.map(function toGroup(t: TipoBasica): TipoGroup {
   const banner = buildTipoBanner(t);
   return {
-    tipologia: t,
+    tipologia: { id: t.id, letra: t.letra, label: t.label, descripcion: t.descripcion },
+    opcion: "marca",
     plantillas: [
       {
         id: `${t.id}-banner`,
@@ -53,6 +72,27 @@ export const TIPO_GROUPS: TipoGroup[] = TIPOLOGIAS_BASICAS.map(function toGroup(
     ],
   };
 });
+
+/** Opción 2 «Gradientes» — tipologías V2 (estilo Voyager: gradiente + formas + foto). */
+const GROUPS_GRADIENTE: TipoGroup[] = TIPOLOGIAS_V2.map(function toGroup(t): TipoGroup {
+  const banner = buildV2Banner(t);
+  return {
+    tipologia: { id: t.id, letra: "V2", label: t.label, descripcion: t.descripcion },
+    opcion: "gradiente",
+    plantillas: [
+      {
+        id: `${t.id}-banner`,
+        name: "Banner hero",
+        description: `Banner hero email-safe con estilo Voyager — ${t.descripcion} Pégalo como header de cualquier plantilla.`,
+        previewDoc: wrapV2Preview(banner, `${t.label}`),
+        copyHtml: banner,
+        previewHeight: v2Height(t) + 20,
+      },
+    ],
+  };
+});
+
+export const TIPO_GROUPS: TipoGroup[] = [...GROUPS_MARCA, ...GROUPS_GRADIENTE];
 
 export function getTipoGroup(id: string): TipoGroup | undefined {
   return TIPO_GROUPS.find(function byId(g) { return g.tipologia.id === id; });

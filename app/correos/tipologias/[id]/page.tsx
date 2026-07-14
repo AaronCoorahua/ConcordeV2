@@ -33,14 +33,17 @@ export default async function TipologiaBasicaPage({ params }: { params: Promise<
         </a>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8, flexWrap: "wrap" }}>
-          <span style={{ fontSize: 13, fontWeight: 800, fontFamily: "monospace", width: 26, height: 26, borderRadius: 8, background: "#f1edff", color: "#4f2ed8", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>{t.letra}</span>
+          <span style={{ fontSize: 13, fontWeight: 800, fontFamily: "monospace", minWidth: 26, height: 26, padding: "0 7px", borderRadius: 8, background: "#f1edff", color: "#4f2ed8", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>{t.letra}</span>
           <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>{t.label}</h1>
           <span style={{ fontSize: 11, fontWeight: 700, fontFamily: "monospace", padding: "3px 10px", borderRadius: 20, background: "#f1edff", color: "#4f2ed8", letterSpacing: "0.04em" }}>
             600 px
           </span>
         </div>
         <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 40px", maxWidth: 640 }}>
-          {t.descripcion} Usa los assets reales de marca de los correos VMC (logo »vmc« Subastas + ícono «¡Con todo!»).
+          {t.descripcion}{" "}
+          {group.opcion === "marca"
+            ? "Usa los assets reales de marca de los correos VMC (logo »vmc« Subastas + ícono «¡Con todo!»)."
+            : "Estilo Voyager v2 traducido a HTML email-safe: gradiente por tono, chevrons y glows de fondo, y foto placeholder por campaña."}
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
