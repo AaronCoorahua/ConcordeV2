@@ -2,21 +2,20 @@ import type { JSX } from "react";
 import { notFound } from "next/navigation";
 import Header from "@/app/_components/Header";
 import CopyHtmlButton from "@/app/correos/_components/CopyHtmlButton";
-import { EMAIL_GROUPS, getEmailGroup } from "@/src/emails/registry";
+import { TIPO_GROUPS, getTipoGroup } from "@/src/emails/tipologiasRegistry";
 
 /**
- * /correos/[id] — galería de una tipología (mismo patrón que /banners/{formato}):
- * cada plantilla HTML estática se muestra a tamaño real (600px) con su nombre,
- * descripción y botón «Copiar HTML».
+ * /correos/tipologias/[id] — detalle de un layout base (A/B/C):
+ * el banner header a tamaño real (600px) con «Copiar HTML».
  */
 
 export function generateStaticParams(): Array<{ id: string }> {
-  return EMAIL_GROUPS.map(function toParam(g) { return { id: g.tipologia.id }; });
+  return TIPO_GROUPS.map(function toParam(g) { return { id: g.tipologia.id }; });
 }
 
-export default async function CorreoTipologiaPage({ params }: { params: Promise<{ id: string }> }): Promise<JSX.Element> {
+export default async function TipologiaBasicaPage({ params }: { params: Promise<{ id: string }> }): Promise<JSX.Element> {
   const { id } = await params;
-  const group = getEmailGroup(id);
+  const group = getTipoGroup(id);
   if (!group) notFound();
 
   const t = group.tipologia;
@@ -27,24 +26,21 @@ export default async function CorreoTipologiaPage({ params }: { params: Promise<
 
       <main style={{ maxWidth: 1120, margin: "0 auto", padding: "40px 40px 80px" }}>
         <a
-          href="/correos/variantes"
+          href="/correos/tipologias"
           style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "#64748b", textDecoration: "none", marginBottom: 16 }}
         >
-          <span aria-hidden="true">←</span> Variantes
+          <span aria-hidden="true">←</span> Tipologías
         </a>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 13, fontWeight: 800, fontFamily: "monospace", width: 26, height: 26, borderRadius: 8, background: "#f1edff", color: "#4f2ed8", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>{t.letra}</span>
           <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>{t.label}</h1>
           <span style={{ fontSize: 11, fontWeight: 700, fontFamily: "monospace", padding: "3px 10px", borderRadius: 20, background: "#f1edff", color: "#4f2ed8", letterSpacing: "0.04em" }}>
             600 px
           </span>
-          <span style={{ fontSize: 11, fontWeight: 600, fontFamily: "monospace", padding: "3px 10px", borderRadius: 20, background: "#f1f5f9", color: "#64748b" }}>
-            {t.prodCount} en producción
-          </span>
         </div>
         <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 40px", maxWidth: 640 }}>
-          Plantillas HTML estáticas de la tipología {t.label} — email-safe (tablas anidadas +
-          estilos inline). Copia el banner header para reutilizarlo o el correo completo.
+          {t.descripcion} Usa los assets reales de marca de los correos VMC (logo »vmc« Subastas + ícono «¡Con todo!»).
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
@@ -56,8 +52,8 @@ export default async function CorreoTipologiaPage({ params }: { params: Promise<
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <h2 style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", color: "#0f172a", margin: 0 }}>{p.name}</h2>
-                  <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", padding: "2px 8px", borderRadius: 20, background: p.kind === "banner" ? "#f1edff" : "#e6fbfb", color: p.kind === "banner" ? "#4f2ed8" : "#009699" }}>
-                    {p.kind}
+                  <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", padding: "2px 8px", borderRadius: 20, background: "#f1edff", color: "#4f2ed8" }}>
+                    banner
                   </span>
                   <div style={{ flex: 1 }} />
                   <CopyHtmlButton html={p.copyHtml} />
