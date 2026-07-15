@@ -54,6 +54,8 @@ function TipoCard({ g }: { g: TipoGroup }): JSX.Element {
 }
 
 export default function TipologiasPage(): JSX.Element {
+  const banners = TIPO_GROUPS.filter(function isBanner(g) { return g.kind === "banner"; });
+  const footers = TIPO_GROUPS.filter(function isFooter(g) { return g.kind === "footer"; });
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff", color: "#0f172a", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
       <Header active="correos" />
@@ -73,13 +75,36 @@ export default function TipologiasPage(): JSX.Element {
           </span>
         </div>
         <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 40px", maxWidth: 720 }}>
-          Layouts base del banner header de los correos, en el estilo Voyager v2: gradiente por tono,
-          chevrons y anillos de fondo. Cada tipología define <strong style={{ color: "#0f172a", fontWeight: 700 }}>dónde va la marca y dónde el copy</strong>;
-          el fondo es un eje aparte — entra a cualquiera y cámbialo con el tab para verla sobre los 5 tonos.
+          Layouts base del banner header y del footer Centro de Ayuda de los correos, en el estilo
+          Voyager v2: gradiente por tono, chevrons y anillos de fondo. Cada tipología define{" "}
+          <strong style={{ color: "#0f172a", fontWeight: 700 }}>dónde va cada pieza</strong>; el fondo
+          es un eje aparte — entra a cualquiera y cámbialo con el tab para verla sobre los 5 tonos.
         </p>
 
+        {/* ── Banners header ── */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+          <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20, background: "#f1edff", color: "#4f2ed8" }}>Banner</span>
+          <h2 style={{ fontSize: 17, fontWeight: 800, letterSpacing: "-0.01em", color: "#0f172a", margin: 0 }}>Header hero</h2>
+          <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>· {banners.length} layouts</span>
+        </div>
+        <p style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.5, margin: "0 0 18px", maxWidth: 640 }}>
+          El banner que abre el correo: composición marca↔copy sobre el gradiente del tono.
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16, marginBottom: 48 }}>
+          {banners.map(function renderTipo(g) { return <TipoCard key={g.tipologia.id} g={g} />; })}
+        </div>
+
+        {/* ── Footers Centro de Ayuda ── */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+          <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20, background: "#fff0e6", color: "#c85a1e" }}>Footer</span>
+          <h2 style={{ fontSize: 17, fontWeight: 800, letterSpacing: "-0.01em", color: "#0f172a", margin: 0 }}>Centro de Ayuda</h2>
+          <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>· {footers.length} layouts</span>
+        </div>
+        <p style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.5, margin: "0 0 18px", maxWidth: 640 }}>
+          El cierre del correo: marca, «¿Quieres saber más?» y el botón ¡Vamos!, reordenados sobre el mismo sistema de fondos.
+        </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
-          {TIPO_GROUPS.map(function renderTipo(g) { return <TipoCard key={g.tipologia.id} g={g} />; })}
+          {footers.map(function renderTipo(g) { return <TipoCard key={g.tipologia.id} g={g} />; })}
         </div>
       </main>
 

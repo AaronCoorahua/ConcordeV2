@@ -1,20 +1,21 @@
 "use client";
 
 /**
- * BannerLab — laboratorio del header de un correo real: un tab elige la
- * TIPOLOGÍA de banner (o el header original de producción) y otro el FONDO
- * (los 5 tonos V2). El preview y el botón «Copiar HTML» siempre reflejan la
- * combinación activa, así que lo que copias es lo que ves.
+ * BannerLab — laboratorio del header y el footer de un correo real: un tab
+ * elige la TIPOLOGÍA de banner header, otro la del FOOTER Centro de Ayuda (o
+ * los originales de producción) y otro el FONDO (los 5 tonos V2, compartido
+ * por ambos para que el correo quede coherente). El preview y el botón
+ * «Copiar HTML» siempre reflejan la combinación activa.
  *
  * El swap ocurre sobre el HTML ya generado (ver src/emails/headerSwap.ts):
- * el resto del correo — cuerpo, footer, merge tags — queda intacto.
+ * el resto del correo — cuerpo, footer web, merge tags — queda intacto.
  */
 
 import { useMemo, useState } from "react";
 import type { JSX } from "react";
 import CopyHtmlButton from "@/app/correos/_components/CopyHtmlButton";
 import EmailFrame from "@/app/correos/_components/EmailFrame";
-import { BANNER_OPTIONS, buildBannerFor, swapEmailHeader } from "@/src/emails/headerSwap";
+import { BANNER_OPTIONS, FOOTER_OPTIONS, buildBannerFor, buildFooterFor, swapEmailHeader, swapEmailFooter } from "@/src/emails/headerSwap";
 import { V2_TONE_OPTIONS, V2_DEFAULT_TONE, type V2Tone } from "@/src/emails/tipologiasV2";
 
 const ORIGINAL = "original";
@@ -72,14 +73,22 @@ function Tab({ on, onClick, children, disabled }: { on: boolean; onClick: () => 
 
 export default function BannerLab({ html, title, subject, categoria }: BannerLabProps): JSX.Element {
   const [banner, setBanner] = useState<string>(ORIGINAL);
+  const [footer, setFooter] = useState<string>(ORIGINAL);
   const [tone, setTone] = useState<V2Tone>(V2_DEFAULT_TONE);
-  const isOriginal = banner === ORIGINAL;
+  const allOriginal = banner === ORIGINAL && footer === ORIGINAL;
 
   const activeHtml = useMemo(function compute() {
-    if (isOriginal) return html;
-    const bannerHtml = buildBannerFor(banner, tone, subject, categoria.toUpperCase());
-    return bannerHtml ? swapEmailHeader(html, bannerHtml) : html;
-  }, [html, banner, tone, subject, categoria, isOriginal]);
+    let out = html;
+    if (banner !== ORIGINAL) {
+      const bannerHtml = buildBannerFor(banner, tone, subject, categoria.toUpperCase());
+      if (bannerHtml) out = swapEmailHeader(out, bannerHtml);
+    }
+    if (footer !== ORIGINAL) {
+      const footerHtml = buildFooterFor(footer, tone);
+      if (footerHtml) out = swapEmailFooter(out, footerHtml);
+    }
+    return out;
+  }, [html, banner, footer, tone, subject, categoria]);
 
   return (
     <div>
@@ -87,7 +96,7 @@ export default function BannerLab({ html, title, subject, categoria }: BannerLab
         <div style={{ display: "flex", alignItems: "flex-start", gap: 10, flexWrap: "wrap" }}>
           <TabGroup label="Banner">
             {[
-              <Tab key={ORIGINAL} on={isOriginal} onClick={function pick() { setBanner(ORIGINAL); }}>
+              <Tab key={ORIGINAL} on={banner === ORIGINAL} onClick={function pick() { setBanner(ORIGINAL); }}>
                 Original
               </Tab>,
               ...BANNER_OPTIONS.map(function renderTab(opt) {
@@ -100,16 +109,31 @@ export default function BannerLab({ html, title, subject, categoria }: BannerLab
             ]}
           </TabGroup>
           <div style={{ flex: 1 }} />
-          <CopyHtmlButton key={`${banner}-${tone}`} html={activeHtml} />
+          <CopyHtmlButton key={`${banner}-${footer}-${tone}`} html={activeHtml} />
         </div>
 
-        <TabGroup label="Fondo" dimmed={isOriginal}>
+        <TabGroup label="Footer">
+          {[
+            <Tab key={ORIGINAL} on={footer === ORIGINAL} onClick={function pick() { setFooter(ORIGINAL); }}>
+              Original
+            </Tab>,
+            ...FOOTER_OPTIONS.map(function renderTab(opt) {
+              return (
+                <Tab key={opt.id} on={footer === opt.id} onClick={function pick() { setFooter(opt.id); }}>
+                  {opt.label}
+                </Tab>
+              );
+            }),
+          ]}
+        </TabGroup>
+
+        <TabGroup label="Fondo" dimmed={allOriginal}>
           {V2_TONE_OPTIONS.map(function renderTone(opt) {
             return (
               <Tab
                 key={opt.tone}
-                on={!isOriginal && tone === opt.tone}
-                disabled={isOriginal}
+                on={!allOriginal && tone === opt.tone}
+                disabled={allOriginal}
                 onClick={function pick() { setTone(opt.tone); }}
               >
                 {opt.label}
@@ -120,7 +144,7 @@ export default function BannerLab({ html, title, subject, categoria }: BannerLab
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", padding: 32, borderRadius: 12, background: "#f8fafc", border: "1px solid #f1f5f9", overflowX: "auto" }}>
-        <EmailFrame html={activeHtml} title={`${title} · ${isOriginal ? "header original" : banner}`} />
+        <EmailFrame html={activeHtml} title={`${title} · ${allOriginal ? "original" : `${banner} / ${footer}`}`} />
       </div>
     </div>
   );
