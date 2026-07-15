@@ -1,25 +1,40 @@
 import type { JSX } from "react";
 import { notFound } from "next/navigation";
 import Header from "@/app/_components/Header";
-import CopyHtmlButton from "@/app/correos/_components/CopyHtmlButton";
-import { EMAIL_GROUPS, getEmailGroup } from "@/src/emails/registry";
+import BannerLab from "./BannerLab";
+import { EMAIL_GROUPS, getEmailReal, type EmailGroup, type EmailReal } from "@/src/emails/registry";
 
 /**
- * /correos/[id] — galería de una tipología (mismo patrón que /banners/{formato}):
- * cada plantilla HTML estática se muestra a tamaño real (600px) con su nombre,
- * descripción y botón «Copiar HTML».
+ * /correos/[id] — detalle de UN correo real de producción: preview completo a
+ * tamaño real, asunto, «Copiar HTML» y los correos a los que deriva en el flujo
+ * (`leadsTo`). Equivalente al /correo/[id] del catálogo de Concorde-Email.
+ *
+ * El header del correo es intercambiable (BannerLab): un tab elige la tipología
+ * de banner y otro el fondo; el botón copia la combinación activa.
  */
 
 export function generateStaticParams(): Array<{ id: string }> {
-  return EMAIL_GROUPS.map(function toParam(g) { return { id: g.tipologia.id }; });
+  return EMAIL_GROUPS.flatMap(function toParams(g) {
+    return g.correos.map(function toParam(c) { return { id: c.id }; });
+  });
 }
 
-export default async function CorreoTipologiaPage({ params }: { params: Promise<{ id: string }> }): Promise<JSX.Element> {
-  const { id } = await params;
-  const group = getEmailGroup(id);
-  if (!group) notFound();
+/** El grupo (categoría) al que pertenece un correo, para su pill y gradiente. */
+function groupOf(correoId: string): EmailGroup | undefined {
+  return EMAIL_GROUPS.find(function contains(g) {
+    return g.correos.some(function byId(c) { return c.id === correoId; });
+  });
+}
 
-  const t = group.tipologia;
+export default async function CorreoPage({ params }: { params: Promise<{ id: string }> }): Promise<JSX.Element> {
+  const { id } = await params;
+  const correo = getEmailReal(id);
+  if (!correo) notFound();
+
+  const group = groupOf(correo.id);
+  const siguientes = correo.leadsTo
+    .map(function resolve(nextId) { return getEmailReal(nextId); })
+    .filter(function exists(x): x is EmailReal { return Boolean(x); });
 
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff", color: "#0f172a", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
@@ -34,48 +49,61 @@ export default async function CorreoTipologiaPage({ params }: { params: Promise<
         </a>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8, flexWrap: "wrap" }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>{t.label}</h1>
-          <span style={{ fontSize: 11, fontWeight: 700, fontFamily: "monospace", padding: "3px 10px", borderRadius: 20, background: "#f1edff", color: "#4f2ed8", letterSpacing: "0.04em" }}>
-            600 px
-          </span>
-          <span style={{ fontSize: 11, fontWeight: 600, fontFamily: "monospace", padding: "3px 10px", borderRadius: 20, background: "#f1f5f9", color: "#64748b" }}>
-            {t.prodCount} en producción
-          </span>
+          <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>{correo.name}</h1>
+          {group && correo.stage && (
+            <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", padding: "3px 10px", borderRadius: 9999, color: "#ffffff", backgroundImage: group.gradient }}>
+              {group.label} · {correo.stage}
+            </span>
+          )}
         </div>
-        <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 40px", maxWidth: 640 }}>
-          Plantillas HTML estáticas de la tipología {t.label} — email-safe (tablas anidadas +
-          estilos inline). Copia el banner header para reutilizarlo o el correo completo.
-        </p>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
-          {group.plantillas.map(function renderPlantilla(p, i) {
-            return (
-              <section key={p.id}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4, flexWrap: "wrap" }}>
-                  <span style={{ fontSize: 12, fontWeight: 700, fontFamily: "monospace", color: "#94a3b8" }}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <h2 style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", color: "#0f172a", margin: 0 }}>{p.name}</h2>
-                  <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", padding: "2px 8px", borderRadius: 20, background: p.kind === "banner" ? "#f1edff" : "#e6fbfb", color: p.kind === "banner" ? "#4f2ed8" : "#009699" }}>
-                    {p.kind}
-                  </span>
-                  <div style={{ flex: 1 }} />
-                  <CopyHtmlButton html={p.copyHtml} />
-                </div>
-                <p style={{ fontSize: 13, color: "#64748b", margin: "0 0 16px 26px", lineHeight: 1.5, maxWidth: 640 }}>{p.description}</p>
-                <div style={{ display: "flex", justifyContent: "center", padding: 32, borderRadius: 12, background: "#f8fafc", border: "1px solid #f1f5f9", overflowX: "auto" }}>
-                  <iframe
-                    title={p.name}
-                    srcDoc={p.previewDoc}
-                    scrolling="no"
-                    style={{ width: 600, height: p.previewHeight, border: "none", background: "#FAFAFA", borderRadius: 8, boxShadow: "0 6px 18px rgba(15,23,42,0.10)", flexShrink: 0 }}
-                  />
-                </div>
-              </section>
-            );
-          })}
+        <div style={{ margin: "0 0 6px", display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", letterSpacing: "0.04em", textTransform: "uppercase", flexShrink: 0 }}>Asunto</span>
+          <span style={{ fontSize: 13, color: "#0f172a", fontWeight: 600 }}>{correo.subject}</span>
         </div>
+        <p style={{ fontSize: 13, color: "#64748b", margin: "0 0 24px", lineHeight: 1.5, maxWidth: 640 }}>{correo.desc}</p>
+
+        <BannerLab html={correo.html} title={correo.name} subject={correo.subject} categoria={group?.label ?? "General"} />
+
+        {siguientes.length > 0 && (
+          <div style={{ marginTop: 20 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+              Sigue en el flujo
+            </span>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 10, maxWidth: 640 }}>
+              {siguientes.map(function renderNext(n) {
+                const nGroup = groupOf(n.id);
+                return (
+                  <a
+                    key={n.id}
+                    href={`/correos/${n.id}`}
+                    className="cor-flow"
+                    style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", borderRadius: 10, border: "1px solid #e2e8f0", background: "#ffffff", textDecoration: "none", transition: "border-color 0.15s ease, box-shadow 0.15s ease" }}
+                  >
+                    {nGroup && n.stage && (
+                      <span style={{ flexShrink: 0, padding: "3px 9px", borderRadius: 9999, fontSize: 10, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: "#ffffff", backgroundImage: nGroup.gradient }}>
+                        {n.stage}
+                      </span>
+                    )}
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>{n.name}</span>
+                    <span aria-hidden="true" style={{ marginLeft: "auto", color: "#cbd5e1", fontSize: 13 }}>→</span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {correo.leadsTo.length === 0 && correo.stage && (
+          <p style={{ marginTop: 20, fontSize: 12, color: "#94a3b8", fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}>
+            Correo final de este flujo
+          </p>
+        )}
       </main>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        .cor-flow:hover { border-color: #cbd5e1; box-shadow: 0 4px 14px rgba(15,23,42,0.08); }
+      `}} />
     </div>
   );
 }

@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Clon de referencia del catalogo de mailing (no versionar)
+/Concorde-Email/

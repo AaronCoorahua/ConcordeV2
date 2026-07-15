@@ -3,10 +3,11 @@ import Header from "@/app/_components/Header";
 import { TIPO_GROUPS, type TipoGroup } from "@/src/emails/tipologiasRegistry";
 
 /**
- * /correos/tipologias — layouts base del banner, en dos opciones:
- *   · Opción 1 «Marca»      — A–G, header glass + assets reales de marca.
- *   · Opción 2 «Gradientes» — V2, estilo Voyager (gradiente + formas + foto).
- * Cada card enlaza al detalle con el banner copiable.
+ * /correos/tipologias — layouts base del banner header de los correos.
+ *
+ * Una tipología = un LAYOUT. Todas comparten el lenguaje visual V2 (gradiente +
+ * chevrons + anillos) y se muestran con el fondo «En Vivo»; dentro del detalle,
+ * un tab permite verlas sobre cualquiera de los 5 fondos.
  */
 
 const THUMB_H = 240;
@@ -14,7 +15,8 @@ const EMAIL_W = 600;
 const SCALE = 0.5;
 
 function TipoCard({ g }: { g: TipoGroup }): JSX.Element {
-  const banner = g.plantillas[0];
+  // El thumbnail muestra siempre el fondo por defecto (En Vivo, el primero).
+  const banner = g.plantillas[0].fondos[0];
   return (
     <a href={`/correos/tipologias/${g.tipologia.id}`} className="cor-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", borderRadius: 12, overflow: "hidden", background: "#ffffff", border: "1px solid #e2e8f0", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
       <div style={{ height: THUMB_H, display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
@@ -52,9 +54,6 @@ function TipoCard({ g }: { g: TipoGroup }): JSX.Element {
 }
 
 export default function TipologiasPage(): JSX.Element {
-  const marca = TIPO_GROUPS.filter(function isMarca(g) { return g.opcion === "marca"; });
-  const gradiente = TIPO_GROUPS.filter(function isGrad(g) { return g.opcion === "gradiente"; });
-
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff", color: "#0f172a", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
       <Header active="correos" />
@@ -70,40 +69,17 @@ export default function TipologiasPage(): JSX.Element {
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
           <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>Tipologías</h1>
           <span style={{ fontSize: 13, color: "#94a3b8", fontWeight: 500 }}>
-            {TIPO_GROUPS.length} layouts · 2 opciones
+            {TIPO_GROUPS.length} layouts · 5 fondos
           </span>
         </div>
         <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 40px", maxWidth: 720 }}>
-          Layouts base del banner header de los correos. Dos direcciones: la <strong style={{ color: "#0f172a", fontWeight: 700 }}>Opción 1</strong>{" "}
-          reordena los assets de marca (logo »vmc« + «¡Con todo!») sobre el band morado; la{" "}
-          <strong style={{ color: "#0f172a", fontWeight: 700 }}>Opción 2</strong> trae el estilo Voyager con gradientes
-          por tono, formas de fondo y foto. Toma lo que sirva de cada una.
+          Layouts base del banner header de los correos, en el estilo Voyager v2: gradiente por tono,
+          chevrons y anillos de fondo. Cada tipología define <strong style={{ color: "#0f172a", fontWeight: 700 }}>dónde va la marca y dónde el copy</strong>;
+          el fondo es un eje aparte — entra a cualquiera y cámbialo con el tab para verla sobre los 5 tonos.
         </p>
 
-        {/* ── Opción 1 · Marca ── */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-          <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20, background: "#f1edff", color: "#4f2ed8" }}>Opción 1</span>
-          <h2 style={{ fontSize: 17, fontWeight: 800, letterSpacing: "-0.01em", color: "#0f172a", margin: 0 }}>Marca</h2>
-          <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>· header glass + logo »vmc« / «¡Con todo!»</span>
-        </div>
-        <p style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.5, margin: "0 0 18px", maxWidth: 640 }}>
-          Reordena el logo y la ilustración de marca dentro del panel glass sobre el band morado (posición logo↔ilustración).
-        </p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16, marginBottom: 48 }}>
-          {marca.map(function renderMarca(g) { return <TipoCard key={g.tipologia.id} g={g} />; })}
-        </div>
-
-        {/* ── Opción 2 · Gradientes ── */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-          <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20, background: "#fff0e6", color: "#c85a1e" }}>Opción 2</span>
-          <h2 style={{ fontSize: 17, fontWeight: 800, letterSpacing: "-0.01em", color: "#0f172a", margin: 0 }}>Gradientes</h2>
-          <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>· estilo Voyager: gradiente + formas + foto</span>
-        </div>
-        <p style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.5, margin: "0 0 18px", maxWidth: 640 }}>
-          Toma los fondos, gradientes y formas (chevrons, glows, dots) de los banners Voyager v2, con foto y el contador «Ofertas N».
-        </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
-          {gradiente.map(function renderGrad(g) { return <TipoCard key={g.tipologia.id} g={g} />; })}
+          {TIPO_GROUPS.map(function renderTipo(g) { return <TipoCard key={g.tipologia.id} g={g} />; })}
         </div>
       </main>
 

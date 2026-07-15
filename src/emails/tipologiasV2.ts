@@ -19,7 +19,7 @@
  * anillos concéntricos del layout `orbit`). Ver la tabla TONE más abajo.
  */
 
-import { conTodo, wordmarkTinted } from "./tipologiasBanners";
+import { conTodo, wordmarkTinted } from "./tipologiasBrand";
 
 export const V2_WIDTH = 600;
 export const V2_HEIGHT = 190;
@@ -41,51 +41,69 @@ export interface V2Tipo {
   id: string;
   label: string;
   descripcion: string;
+  /** Tono por defecto con el que se muestra la tipología (siempre `live`). */
   tone: V2Tone;
   layout: V2Layout;
 }
 
+/** Tono por defecto de TODA tipología: el fondo de «En Vivo». */
+export const V2_DEFAULT_TONE: V2Tone = "live";
+
+/** Los tonos seleccionables desde el tab de fondo, en orden. */
+export const V2_TONE_OPTIONS: Array<{ tone: V2Tone; label: string }> = [
+  { tone: "live", label: "En Vivo" },
+  { tone: "proximas", label: "Morado" },
+  { tone: "negotiable", label: "Negociable" },
+  { tone: "coins", label: "SubasCoins" },
+  { tone: "dark", label: "Dark" },
+];
+
+/**
+ * Las tipologías son LAYOUTS, no tonos: todas nacen con el fondo `live` y el
+ * fondo se cambia con el tab del detalle. Por eso el nombre describe la
+ * composición (dónde va la marca y dónde el copy), no el color.
+ */
 export const TIPOLOGIAS_V2: V2Tipo[] = [
   {
     id: "v2-en-vivo",
-    label: "V2 · En Vivo",
-    descripcion: "Texto a la izquierda, marca a la derecha, sobre gradiente naranja En Vivo con chevrons y glow cálido.",
-    tone: "live",
+    label: "V2 · Texto izquierda",
+    descripcion: "Texto a la izquierda y marca a la derecha, con chevrons detrás del copy y anillos tras la marca.",
+    tone: V2_DEFAULT_TONE,
     layout: "text-left",
   },
   {
     id: "v2-proximas",
-    label: "V2 · Morado",
-    descripcion: "Marca a la izquierda, texto a la derecha, sobre gradiente morado profundo con chevrons lila.",
-    tone: "proximas",
+    label: "V2 · Marca izquierda",
+    descripcion: "Espejo del anterior: la marca abre a la izquierda y el texto se lee a la derecha.",
+    tone: V2_DEFAULT_TONE,
     layout: "brand-left",
   },
   {
     id: "v2-negociable",
-    label: "V2 · Negociable",
-    descripcion: "Todo centrado (marca arriba + copy debajo), sobre gradiente teal Negociable con chevrons y glow frío.",
-    tone: "negotiable",
+    label: "V2 · Centrado",
+    descripcion: "Todo centrado: marca arriba (ícono + logo) y copy debajo. Layout simétrico, el más solemne.",
+    tone: V2_DEFAULT_TONE,
     layout: "center",
   },
   {
     id: "v2-coins",
-    label: "V2 · SubasCoins",
-    descripcion: "Apilado: copy arriba y la franja de marca (logo + ícono) abajo, sobre el gradiente morado→naranja profundo de SubasCoins.",
-    tone: "coins",
+    label: "V2 · Apilado",
+    descripcion: "Apilado: copy arriba y la franja de marca (ícono + logo en horizontal) abajo.",
+    tone: V2_DEFAULT_TONE,
     layout: "stacked",
   },
   {
     id: "v2-dark",
-    label: "V2 · Dark",
-    descripcion: "Copy a la izquierda + ícono «¡CON TODO!» grande a la derecha, sobre morado profundo casi negro con chevrons sutiles.",
-    tone: "dark",
+    label: "V2 · Ícono derecha",
+    descripcion: "Copy a la izquierda y el ícono «¡CON TODO!» grande a la derecha, sin wordmark. El más directo.",
+    tone: V2_DEFAULT_TONE,
     layout: "icon-right",
   },
 ];
 
 // ─── Tonos ────────────────────────────────────────────────────────────────────
 
-interface ToneStyle {
+export interface ToneStyle {
   /** Gradiente de fondo (background-image del band) */
   bg: string;
   /** Color plano de respaldo (bgcolor) */
@@ -111,7 +129,7 @@ interface ToneStyle {
  *     de ProfileCard/SubasCoinsCard.
  * Mantener sincronizados con PromoBanner.tsx si allí cambian.
  */
-const TONE: Record<V2Tone, ToneStyle> = {
+export const V2_TONE: Record<V2Tone, ToneStyle> = {
   // PromoBanner `live.flip` — naranja #E8732A → #C85A1E → morado #3D2299 → #2A1670
   live: {
     bg: "linear-gradient(100deg,#E8732A 0%,#C85A1E 26%,#3D2299 72%,#2A1670 100%)",
@@ -277,8 +295,8 @@ export function v2Height(t: V2Tipo): number {
   return V2_HEIGHT;
 }
 
-export function buildV2Banner(t: V2Tipo): string {
-  const s = TONE[t.tone];
+export function buildV2Banner(t: V2Tipo, tone: V2Tone = t.tone): string {
+  const s = V2_TONE[tone];
   const H = v2Height(t);
 
   // text-left — copy izq, marca der. Chevrons a la izq (detrás del copy), anillos a la der.
@@ -330,6 +348,20 @@ export function buildV2Banner(t: V2Tipo): string {
   const content = `<td valign="middle" align="left" style="padding:0 8px 0 30px;">${copyV2("left")}</td>
 <td valign="middle" width="200" align="center" style="padding:0 30px 0 12px;">${conTodo(180)}</td>`;
   return shell(s, t.id, t.label, bg, content, H);
+}
+
+/**
+ * Envuelve contenido ARBITRARIO (p. ej. las tipologías C/E de la Opción 1, que
+ * traen sus propios assets de marca) sobre el fondo V2 de un tono: gradiente +
+ * chevrons + anillos + sheen, con el mismo shell y strip que los banners V2.
+ *
+ * `content` debe ser el interior de un <tr> (una o más celdas <td>), igual que
+ * el `content` que arma buildV2Banner.
+ */
+export function v2Backdrop(tone: V2Tone, id: string, label: string, content: string, height: number): string {
+  const s = V2_TONE[tone];
+  const bg = `${chevrons(s.chevron, "left", height)}${rings(s.glow, "right", height)}`;
+  return shell(s, id, label, bg, content, height);
 }
 
 /** Documento HTML para previsualizar el banner V2 en un iframe. */

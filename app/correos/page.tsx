@@ -1,13 +1,12 @@
 import type { JSX } from "react";
 import Header from "@/app/_components/Header";
-import { EMAIL_GROUPS } from "@/src/emails/registry";
-import { EMAIL_PROD_TOTAL } from "@/src/emails/tipologias";
+import { EMAIL_GROUPS, EMAIL_PROD_TOTAL } from "@/src/emails/registry";
 import { TIPO_GROUPS } from "@/src/emails/tipologiasRegistry";
 
 /**
  * /correos — hub de correos. Dos secciones:
- *   · Tipologías — layouts base de banner (A/B/C), posición texto↔imagen.
- *   · Variantes  — los correos reales en producción, agrupados por tema.
+ *   · Tipologías — layouts base de banner (propuestas de diseño).
+ *   · Variantes  — los correos REALES en producción, agrupados por categoría.
  * Cada card enlaza a su galería (/correos/tipologias · /correos/variantes).
  */
 
@@ -28,19 +27,15 @@ const CARDS: HubCard[] = [
     href: "/correos/tipologias",
     title: "Tipologías",
     meta: `${TIPO_GROUPS.length} layouts base`,
-    desc: "Layouts base del banner header según la posición texto↔imagen (A, B, C). El sistema estructural sobre el que se arman los correos.",
-    previewDoc: TIPO_GROUPS[0].plantillas[0].previewDoc,
+    desc: "Layouts base del banner header según la posición marca↔copy, en el estilo Voyager v2. Cada uno se puede ver sobre los 5 fondos de gradiente.",
+    previewDoc: TIPO_GROUPS[0].plantillas[0].fondos[0].previewDoc,
   },
   {
     href: "/correos/variantes",
     title: "Variantes",
-    meta: `${EMAIL_GROUPS.length} tipologías · ${EMAIL_PROD_TOTAL} en prod`,
-    desc: "Los correos que hoy existen en producción, agrupados por tema (En vivo, Negociable, SubasCoins, Registro…) con sus plantillas HTML.",
-    previewDoc: (function pickDemo() {
-      const g = EMAIL_GROUPS[0];
-      const demo = g.plantillas.find(function isDemo(p) { return p.id === `${g.tipologia.id}-demo`; }) ?? g.plantillas[0];
-      return demo.previewDoc;
-    })(),
+    meta: `${EMAIL_GROUPS.length} categorías · ${EMAIL_PROD_TOTAL} en prod`,
+    desc: "Los correos que hoy se envían en producción, agrupados por categoría (En vivo, Negociable, SubasCoins, Registro…) y ordenados por el paso del flujo.",
+    previewDoc: EMAIL_GROUPS[0].correos[0].html,
   },
 ];
 
