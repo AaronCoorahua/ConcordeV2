@@ -13,6 +13,7 @@
 
 import { TIPOLOGIAS_V2, buildV2Banner, type V2Tone } from "./tipologiasV2";
 import { TIPOLOGIAS_BASICAS, buildTipoBanner } from "./tipologiasBanners";
+import { FOOTER_TIPOLOGIAS, buildFooterBanner } from "./tipologiasFooter";
 
 export interface BannerOption {
   id: string;
@@ -80,4 +81,49 @@ export function swapEmailHeader(emailHtml: string, bannerHtml: string): string {
   return `${emailHtml.slice(0, start)}<tr><td align="center" style="padding:0;">
 ${bannerHtml}
 </td></tr>${emailHtml.slice(end)}`;
+}
+
+// ─── Footer «Centro de Ayuda» ────────────────────────────────────────────────
+
+/** Las tipologías de footer disponibles, en el orden del tab. */
+export const FOOTER_OPTIONS: BannerOption[] = FOOTER_TIPOLOGIAS.map(function toOption(f) {
+  return { id: f.id, label: f.label.replace(/^Footer · /, "") };
+});
+
+/** Footer de la tipología `id` con el tono `tone` (contenido fijo de ayuda). */
+export function buildFooterFor(id: string, tone: V2Tone): string | null {
+  const f = FOOTER_TIPOLOGIAS.find(function byId(t) { return t.id === id; });
+  return f ? buildFooterBanner(f, tone) : null;
+}
+
+/**
+ * Marcadores del footer original (glassFooter en generateEmail):
+ *  · la consola glass abre con este td (único con width="600" ANTES del
+ *    bgcolor — el header no lleva width)
+ *  · justo antes va su strip de 4px (se reemplaza junto, si está pegado)
+ *  · el bloque termina donde empieza el footer web blanco (links + legal),
+ *    que SIEMPRE se conserva
+ */
+const FOOTER_CONSOLE_START = '<tr><td align="center" width="600" bgcolor="#3b1782"';
+const FOOTER_STRIPE_START = '<tr><td height="4"';
+const WHITE_FOOTER_START = '<tr bgcolor="#FFFFFF"><td align="center" width="600">';
+
+/**
+ * Sustituye la consola «Centro de Ayuda» (strip + panel glass) por
+ * `footerHtml`, conservando el footer web blanco. Si el HTML no trae los
+ * marcadores esperados, devuelve el correo intacto.
+ */
+export function swapEmailFooter(emailHtml: string, footerHtml: string): string {
+  const consoleStart = emailHtml.indexOf(FOOTER_CONSOLE_START);
+  if (consoleStart === -1) return emailHtml;
+  const whiteStart = emailHtml.indexOf(WHITE_FOOTER_START, consoleStart);
+  if (whiteStart === -1) return emailHtml;
+  // El strip pegado a la consola cae con ella; si no está adyacente (<400
+  // chars), se respeta lo que haya y se reemplaza solo desde la consola.
+  const stripeStart = emailHtml.lastIndexOf(FOOTER_STRIPE_START, consoleStart);
+  const start = stripeStart !== -1 && consoleStart - stripeStart < 400 ? stripeStart : consoleStart;
+  return `${emailHtml.slice(0, start)}<tr><td align="center" style="padding:0;">
+${footerHtml}
+</td></tr>
+${emailHtml.slice(whiteStart)}`;
 }

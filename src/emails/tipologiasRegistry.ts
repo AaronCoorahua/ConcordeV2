@@ -28,6 +28,11 @@ import {
   V2_TONE_OPTIONS,
   type V2Tone,
 } from "./tipologiasV2";
+import {
+  FOOTER_TIPOLOGIAS,
+  buildFooterBanner,
+  footerHeight,
+} from "./tipologiasFooter";
 
 /** Una variante de FONDO de una tipología: el mismo layout con otro tono. */
 export interface TipoFondo {
@@ -61,6 +66,8 @@ export interface TipoMeta {
 
 export interface TipoGroup {
   tipologia: TipoMeta;
+  /** "banner" = header hero · "footer" = consola Centro de Ayuda. */
+  kind: "banner" | "footer";
   plantillas: TipoPlantilla[];
 }
 
@@ -84,6 +91,7 @@ function buildFondos(label: string, build: (tone: V2Tone) => string): TipoFondo[
 const GROUPS_V2: TipoGroup[] = TIPOLOGIAS_V2.map(function toGroup(t): TipoGroup {
   return {
     tipologia: { id: t.id, letra: "V2", label: t.label, descripcion: t.descripcion },
+    kind: "banner",
     plantillas: [
       {
         id: `${t.id}-banner`,
@@ -100,6 +108,7 @@ const GROUPS_V2: TipoGroup[] = TIPOLOGIAS_V2.map(function toGroup(t): TipoGroup 
 const GROUPS_CE: TipoGroup[] = TIPOLOGIAS_BASICAS.map(function toGroup(t: TipoBasica): TipoGroup {
   return {
     tipologia: { id: t.id, letra: t.letra, label: t.label, descripcion: t.descripcion },
+    kind: "banner",
     plantillas: [
       {
         id: `${t.id}-banner`,
@@ -112,7 +121,24 @@ const GROUPS_CE: TipoGroup[] = TIPOLOGIAS_BASICAS.map(function toGroup(t: TipoBa
   };
 });
 
-export const TIPO_GROUPS: TipoGroup[] = [...GROUPS_V2, ...GROUPS_CE];
+/** Tipologías de FOOTER «Centro de Ayuda» — 4 layouts sobre el fondo V2. */
+const GROUPS_FOOTER: TipoGroup[] = FOOTER_TIPOLOGIAS.map(function toGroup(f, i): TipoGroup {
+  return {
+    tipologia: { id: f.id, letra: `F${i + 1}`, label: f.label, descripcion: f.descripcion },
+    kind: "footer",
+    plantillas: [
+      {
+        id: `${f.id}-banner`,
+        name: "Footer Centro de Ayuda",
+        description: `${f.descripcion} Elige el fondo con el tab y pégalo como cierre de cualquier plantilla (antes del footer web).`,
+        previewHeight: footerHeight(f) + 20,
+        fondos: buildFondos(f.label, function build(tone) { return buildFooterBanner(f, tone); }),
+      },
+    ],
+  };
+});
+
+export const TIPO_GROUPS: TipoGroup[] = [...GROUPS_V2, ...GROUPS_CE, ...GROUPS_FOOTER];
 
 export function getTipoGroup(id: string): TipoGroup | undefined {
   return TIPO_GROUPS.find(function byId(g) { return g.tipologia.id === id; });
