@@ -23,9 +23,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { JSX } from "react";
 import { useSearchParams } from "next/navigation";
 import CopyHtmlButton from "@/app/correos/_components/CopyHtmlButton";
-import EditorCanvas, { CANVAS_CSS, type EditorCanvasHandle } from "./EditorCanvas";
-import { SECTION_LABELS, createSection, renderSection, generateEmail, type Section } from "@/src/emails/prodEmailTemplates";
+import EditorCanvas, { CANVAS_CSS, DND_NEW, type EditorCanvasHandle } from "./EditorCanvas";
+import RichTextField from "./RichTextField";
+import { SECTION_LABELS, createSection, generateEmail, type Section } from "@/src/emails/prodEmailTemplates";
+import { renderEdSection, buildEmailFromEd, newHtmlSection, type EdSection } from "@/src/emails/editorSections";
 import { EMAILS } from "@/src/emails/prodEmails";
+import { SECTION_TYPES, SECTION_DESCRIPTIONS, sectionPreviewDoc } from "@/src/emails/sectionPreviews";
 import { BANNER_OPTIONS, FOOTER_OPTIONS, buildBannerFor, buildFooterFor, swapEmailHeader, swapEmailFooter, type BannerText } from "@/src/emails/headerSwap";
 import { V2_TONE_OPTIONS, V2_DEFAULT_TONE, type V2Tone } from "@/src/emails/tipologiasV2";
 
@@ -51,7 +54,7 @@ function fieldLabel(key: string): string {
 }
 
 /** ¿La clave es una imagen? (URL de imagen → preview + upload). */
-function isImageKey(type: Section["type"], key: string): boolean {
+function isImageKey(type: EdSection["type"], key: string): boolean {
   if (/img|icon(Url)?$|image|thumb/i.test(key) && key !== "icon") return true;
   if (type === "features" && /^i\d$/.test(key)) return true;
   if (type === "image" && key === "url") return true;
@@ -59,7 +62,7 @@ function isImageKey(type: Section["type"], key: string): boolean {
 }
 
 /** ¿Campo largo? → textarea con toolbar de estilos. */
-function isLongKey(type: Section["type"], key: string): boolean {
+function isLongKey(type: EdSection["type"], key: string): boolean {
   if (["text", "body", "body1", "body2", "sub", "caption"].includes(key)) return true;
   if (type === "features" && /^t\d$/.test(key)) return true;
   if (type === "list" && /^i\d$/.test(key)) return true;
@@ -88,39 +91,17 @@ function FieldShell({ label, children }: { label: string; children: React.ReactN
   );
 }
 
-/** Textarea con la toolbar de estilos del renderer (**naranja** __oscuro__ [[morado]]). */
-function RichField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }): JSX.Element {
-  const ref = useRef<HTMLTextAreaElement | null>(null);
-
-  function applyMarker(open: string, close: string): void {
-    const el = ref.current;
-    if (!el) return;
-    const s = el.selectionStart ?? value.length;
-    const e = el.selectionEnd ?? value.length;
-    const inner = value.slice(s, e) || "texto";
-    onChange(`${value.slice(0, s)}${open}${inner}${close}${value.slice(e)}`);
-    requestAnimationFrame(function refocus() { el.focus(); });
-  }
-
-  const markBtn = (bg: string, color: string): React.CSSProperties => ({
-    height: 22, padding: "0 8px", borderRadius: 5, border: "none", cursor: "pointer",
-    background: bg, color, fontSize: 10, fontWeight: 800, fontFamily: "inherit",
-  });
-
+/** Miniatura renderizada de un bloque para la paleta (catálogo visual). */
+function BlockThumb({ doc, title }: { doc: string; title: string }): JSX.Element {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-        <span style={{ fontSize: 10, fontWeight: 700, color: MUTED, letterSpacing: "0.04em", textTransform: "uppercase", flex: 1 }}>{label}</span>
-        <button type="button" title="Acento naranja (**texto**)" onClick={function b() { applyMarker("**", "**"); }} style={markBtn("#fdeadd", "#c85a1e")}>B naranja</button>
-        <button type="button" title="Fuerte oscuro (__texto__)" onClick={function b() { applyMarker("__", "__"); }} style={markBtn("#e8e6f5", "#0E016C")}>B oscuro</button>
-        <button type="button" title="Número morado ([[texto]])" onClick={function b() { applyMarker("[[", "]]"); }} style={markBtn("#f1edff", "#4f2ed8")}>B morado</button>
-      </div>
-      <textarea
-        ref={ref}
-        value={value}
-        onChange={function onInput(e) { onChange(e.target.value); }}
-        rows={3}
-        style={{ ...inputStyle, height: "auto", padding: "7px 9px", resize: "vertical", lineHeight: 1.45 }}
+    <div style={{ height: 74, overflow: "hidden", background: "#f8fafc", borderRadius: "8px 8px 0 0", position: "relative" }}>
+      <iframe
+        title={title}
+        srcDoc={doc}
+        scrolling="no"
+        loading="lazy"
+        tabIndex={-1}
+        style={{ position: "absolute", top: 0, left: "50%", width: 600, height: 74 / 0.33, border: "none", transform: "translateX(-50%) scale(0.33)", transformOrigin: "top center", pointerEvents: "none", background: "#FAFAFA" }}
       />
     </div>
   );
@@ -172,14 +153,17 @@ function ImageField({ label, value, onChange }: { label: string; value: string; 
 export default function EditorApp(): JSX.Element {
   const params = useSearchParams();
 
-  // Seed inicial: ?desde=<id de correo real> o lienzo vacío.
+  // Seed inicial: ?desde=<correo real>, ?bloque=<tipo de sección>, o lienzo vacío.
   const [subject, setSubject] = useState<string>(function init() {
     const seed = EMAILS.find(function byId(e) { return e.id === params.get("desde"); });
     return seed ? seed.subject : "Asunto del correo";
   });
-  const [sections, setSections] = useState<Section[]>(function init() {
+  const [sections, setSections] = useState<EdSection[]>(function init() {
     const seed = EMAILS.find(function byId(e) { return e.id === params.get("desde"); });
-    return seed ? structuredClone(seed.sections) : [];
+    if (seed) return structuredClone(seed.sections);
+    const bloque = params.get("bloque");
+    if (bloque && (SECTION_TYPES as string[]).includes(bloque)) return [createSection(bloque as Section["type"])];
+    return [];
   });
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -207,7 +191,7 @@ export default function EditorApp(): JSX.Element {
   const doc = useMemo(function buildDoc() {
     const shell = generateEmail([], dSubject);
     const bodyHtml = sectionsRef.current
-      .map(function wrap(s) { return `<tbody data-sec="${s.id}">${renderSection(s)}</tbody>`; })
+      .map(function wrap(s) { return `<tbody data-sec="${s.id}">${renderEdSection(s)}</tbody>`; })
       .join("\n");
     const SPACER = '<tr><td height="20"></td></tr>';
     const at = shell.indexOf(SPACER);
@@ -247,7 +231,7 @@ export default function EditorApp(): JSX.Element {
     const prev = sectionsRef.current;
     const i = prev.findIndex(function byId(s) { return s.id === id; });
     if (i === -1) return;
-    const copy: Section = { ...structuredClone(prev[i]), id: `${prev[i].type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}` };
+    const copy: EdSection = { ...structuredClone(prev[i]), id: `${prev[i].type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}` };
     const next = prev.slice();
     next.splice(i + 1, 0, copy);
     setSections(next);
@@ -270,12 +254,12 @@ export default function EditorApp(): JSX.Element {
   const patchContent = useCallback(function patchContent(id: string, key: string, value: string) {
     const current = sectionsRef.current.find(function byId(s) { return s.id === id; });
     if (!current) return;
-    const updated: Section = { ...current, content: { ...current.content, [key]: value } };
+    const updated: EdSection = { ...current, content: { ...current.content, [key]: value } };
     setSections(function patch(prev) {
       return prev.map(function each(s) { return s.id === id ? updated : s; });
     });
     // Patch en sitio: el iframe NO se recarga al escribir.
-    canvasRef.current?.patchSection(id, renderSection(updated));
+    canvasRef.current?.patchSection(id, renderEdSection(updated));
   }, []);
 
   const loadEmail = useCallback(function loadEmail(id: string) {
@@ -288,8 +272,134 @@ export default function EditorApp(): JSX.Element {
     bump();
   }, [bump]);
 
+  // ── Drag & drop desde la paleta y reordenar en el canvas ──
+  const dropNew = useCallback(function dropNew(type: string, index: number) {
+    if (!(SECTION_TYPES as string[]).includes(type)) return;
+    const nueva = createSection(type as Section["type"]);
+    const next = sectionsRef.current.slice();
+    next.splice(Math.max(0, Math.min(index, next.length)), 0, nueva);
+    setSections(next);
+    setSelected(nueva.id);
+    bump();
+  }, [bump]);
+
+  const reorder = useCallback(function reorder(id: string, index: number) {
+    const prev = sectionsRef.current;
+    const i = prev.findIndex(function byId(s) { return s.id === id; });
+    if (i === -1) return;
+    const next = prev.slice();
+    const [moved] = next.splice(i, 1);
+    next.splice(i < index ? index - 1 : index, 0, moved);
+    setSections(next);
+    bump();
+  }, [bump]);
+
+  // ── Crear con IA (Gemini) ──
+  // La IA VE el lienzo actual: si el pedido es una mejora ("cambia el botón a
+  // teal", "mueve la card"), edita solo eso y conserva el resto; si pide un
+  // correo distinto, lo rehace. Siempre hay Deshacer con el estado previo.
+  interface LabSnapshot {
+    subject: string;
+    sections: EdSection[];
+    banner: string;
+    footer: string;
+    tone: V2Tone;
+    bannerText: BannerText;
+  }
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [aiInfo, setAiInfo] = useState<string | null>(null);
+  const [aiUndo, setAiUndo] = useState<LabSnapshot | null>(null);
+
+  const generarConIA = useCallback(async function generarConIA() {
+    if (!aiPrompt.trim() || aiBusy) return;
+    setAiBusy(true);
+    setAiError(null);
+    setAiInfo(null);
+    try {
+      const actual = sectionsRef.current.length > 0
+        ? {
+            subject,
+            banner: { id: banner, tono: tone, titulo: bannerText.titulo, bajada: bannerText.bajada, pill: bannerText.pill },
+            footer,
+            // content Y html renderizado: con el HTML disponible la IA puede
+            // editar cualquier aspecto (colores, fondos, layout), no solo textos.
+            sections: sectionsRef.current.map(function full(s) {
+              return { type: s.type, content: s.content, html: renderEdSection(s) };
+            }),
+          }
+        : null;
+      const res = await fetch("/api/correo-ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: aiPrompt, actual }),
+      });
+      const data = (await res.json()) as {
+        error?: string;
+        mode?: "edicion" | "nuevo";
+        nota?: string;
+        subject?: string;
+        banner?: { id: string; tono: string; titulo: string; bajada: string; pill: string };
+        footer?: string;
+        sections?: Array<{ type: Section["type"] | "html"; content?: Record<string, string>; html?: string }>;
+      };
+      if (!res.ok || data.error) {
+        setAiError(data.error ?? `Error ${res.status}`);
+        return;
+      }
+      // Snapshot para Deshacer, y aplicar (ids frescos sobre defaults reales;
+      // las secciones con estilo editado llegan como bloques "html").
+      setAiUndo({ subject, sections: sectionsRef.current, banner, footer, tone, bannerText });
+      const nuevas: EdSection[] = (data.sections ?? []).map(function build(s) {
+        if (s.type === "html") return newHtmlSection(s.html ?? "");
+        const base = createSection(s.type);
+        return { ...base, content: { ...base.content, ...s.content } };
+      });
+      setSections(nuevas);
+      if (data.subject) setSubject(data.subject);
+      if (data.banner) {
+        setBanner(data.banner.id);
+        setTone(data.banner.tono as V2Tone);
+        setBannerText({ titulo: data.banner.titulo, bajada: data.banner.bajada, pill: data.banner.pill });
+      }
+      if (data.footer) setFooter(data.footer);
+      setSelected(null);
+      setAiPrompt("");
+      const base = data.mode === "edicion" ? "✓ Edité el correo del lienzo (lo demás quedó igual)." : "✓ Correo nuevo generado.";
+      setAiInfo(data.nota ? `${base} ⚠ ${data.nota}` : base);
+      bump();
+    } catch {
+      setAiError("No se pudo conectar con el generador — revisa que el server esté corriendo.");
+    } finally {
+      setAiBusy(false);
+    }
+  }, [aiPrompt, aiBusy, bump, subject, banner, footer, tone, bannerText]);
+
+  const deshacerIA = useCallback(function deshacerIA() {
+    const snap = aiUndo;
+    if (!snap) return;
+    setSections(snap.sections);
+    setSubject(snap.subject);
+    setBanner(snap.banner);
+    setFooter(snap.footer);
+    setTone(snap.tone);
+    setBannerText(snap.bannerText);
+    setAiUndo(null);
+    setAiInfo(null);
+    setSelected(null);
+    bump();
+  }, [aiUndo, bump]);
+
+  // Previews de la paleta (se construyen una sola vez).
+  const paletteDocs = useMemo(function build() {
+    const map = new Map<Section["type"], string>();
+    SECTION_TYPES.forEach(function each(t) { map.set(t, sectionPreviewDoc(t)); });
+    return map;
+  }, []);
+
   const buildExport = useCallback(function buildExport(): string {
-    let out = generateEmail(sectionsRef.current, subject);
+    let out = buildEmailFromEd(sectionsRef.current, subject);
     if (banner !== ORIGINAL) {
       const b = buildBannerFor(banner, tone, resolveBannerText(bannerText, subject));
       if (b) out = swapEmailHeader(out, b);
@@ -317,24 +427,72 @@ export default function EditorApp(): JSX.Element {
           {EMAILS.map(function opt(e) { return <option key={e.id} value={e.id}>{e.name}</option>; })}
         </select>
 
-        <span style={{ fontSize: 11, fontWeight: 700, color: MUTED, letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 4 }}>Bloques</span>
-        {(Object.keys(SECTION_LABELS) as Array<Section["type"]>).map(function renderPal(type) {
+        <span style={{ fontSize: 11, fontWeight: 700, color: MUTED, letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 2 }}>Bloques</span>
+        <span style={{ fontSize: 10, color: MUTED, lineHeight: 1.4, marginBottom: 6 }}>Haz clic para agregar, o arrástralo hasta el correo.</span>
+        {SECTION_TYPES.map(function renderPal(type) {
           return (
-            <button
+            <div
               key={type}
-              type="button"
+              role="button"
+              tabIndex={0}
+              draggable
+              onDragStart={function drag(e) {
+                e.dataTransfer.setData(DND_NEW, type);
+                e.dataTransfer.effectAllowed = "copy";
+              }}
               onClick={function add() { addSection(type); }}
+              onKeyDown={function key(e) { if (e.key === "Enter") addSection(type); }}
+              title={SECTION_DESCRIPTIONS[type]}
               className="ed-pal"
-              style={{ textAlign: "left", padding: "8px 11px", borderRadius: 8, border: `1px solid ${DIVIDER}`, background: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 600, color: INK, fontFamily: "inherit", transition: "background 0.12s ease, border-color 0.12s ease" }}
+              style={{ borderRadius: 8, border: `1px solid ${DIVIDER}`, background: "#fff", cursor: "grab", overflow: "hidden", transition: "border-color 0.12s ease, box-shadow 0.12s ease" }}
             >
-              + {SECTION_LABELS[type]}
-            </button>
+              <BlockThumb doc={paletteDocs.get(type) ?? ""} title={SECTION_LABELS[type]} />
+              <div style={{ padding: "7px 10px", fontSize: 11, fontWeight: 700, color: INK }}>{SECTION_LABELS[type]}</div>
+            </div>
           );
         })}
       </aside>
 
       {/* ── Canvas ── */}
       <main style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {/* Crear con IA */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: "12px 14px", borderRadius: 12, border: "1px solid #e9d5ff", background: "linear-gradient(135deg,#faf5ff 0%,#f5f3ff 100%)" }}>
+          <span style={{ fontSize: 12, fontWeight: 800, color: "#6d28d9" }}>✨ Crear con IA</span>
+          <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
+            <textarea
+              value={aiPrompt}
+              onChange={function onInput(e) { setAiPrompt(e.target.value); }}
+              placeholder="Describe el correo que necesitas — p. ej.: «correo para avisar que su recarga de US$ 500 fue exitosa, con los datos de la operación y un botón a su billetera»"
+              rows={2}
+              style={{ ...inputStyle, height: "auto", padding: "8px 10px", resize: "none", flex: 1, lineHeight: 1.45 }}
+            />
+            <button
+              type="button"
+              onClick={function go() { void generarConIA(); }}
+              disabled={aiBusy || !aiPrompt.trim()}
+              style={{ padding: "0 18px", borderRadius: 8, border: "none", cursor: aiBusy || !aiPrompt.trim() ? "default" : "pointer", background: aiBusy ? "#a78bfa" : "#6d28d9", color: "#fff", fontSize: 12, fontWeight: 800, fontFamily: "inherit", whiteSpace: "nowrap" }}
+            >
+              {aiBusy ? "Generando…" : "Generar correo"}
+            </button>
+          </div>
+          {aiError && <span style={{ fontSize: 11, color: "#dc2626", fontWeight: 600 }}>{aiError}</span>}
+          {(aiInfo || aiUndo) && (
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              {aiInfo && <span style={{ fontSize: 11, color: "#15803d", fontWeight: 700 }}>{aiInfo}</span>}
+              <div style={{ flex: 1 }} />
+              {aiUndo && (
+                <button
+                  type="button"
+                  onClick={deshacerIA}
+                  style={{ height: 26, padding: "0 12px", borderRadius: 7, border: "1px solid #ddd6fe", background: "#fff", cursor: "pointer", fontSize: 11, fontWeight: 700, color: "#6d28d9", fontFamily: "inherit" }}
+                >
+                  ↩ Deshacer
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <input
             value={subject}
@@ -346,11 +504,11 @@ export default function EditorApp(): JSX.Element {
         </div>
         {sections.length === 0 && (
           <p style={{ margin: 0, padding: "14px 18px", borderRadius: 10, border: `2px dashed ${DIVIDER}`, background: "#fafafa", fontSize: 13, color: BODY, textAlign: "center" }}>
-            Lienzo vacío — agrega bloques desde la paleta o carga un correo real 👈
+            Lienzo vacío — arrastra un bloque de la izquierda, carga un correo real, o pídeselo a la IA ✨
           </p>
         )}
         <div style={{ display: "flex", justifyContent: "center", padding: 24, borderRadius: 12, background: "#f8fafc", border: "1px solid #f1f5f9", overflowX: "auto" }}>
-          <EditorCanvas ref={canvasRef} doc={doc} selectedId={selected} onSelect={setSelected} />
+          <EditorCanvas ref={canvasRef} doc={doc} selectedId={selected} onSelect={setSelected} onDropNew={dropNew} onReorder={reorder} />
         </div>
       </main>
 
@@ -359,7 +517,9 @@ export default function EditorApp(): JSX.Element {
         {sel ? (
           <>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 13, fontWeight: 800, color: INK, flex: 1 }}>{SECTION_LABELS[sel.type]}</span>
+              <span style={{ fontSize: 13, fontWeight: 800, color: INK, flex: 1 }}>
+                {sel.type === "html" ? "Bloque personalizado" : SECTION_LABELS[sel.type]}
+              </span>
               <span style={{ fontSize: 10, fontWeight: 700, fontFamily: "monospace", padding: "2px 7px", borderRadius: 6, background: "#f1edff", color: "#4f2ed8" }}>{selIndex + 1}/{sections.length}</span>
             </div>
             <div style={{ display: "flex", gap: 6 }}>
@@ -370,15 +530,37 @@ export default function EditorApp(): JSX.Element {
               <button type="button" onClick={function del() { removeSection(sel.id); }} style={{ ...opBtn, color: "#dc2626", borderColor: "#fecaca" }}>Eliminar</button>
             </div>
             <div style={{ height: 1, background: DIVIDER }} />
-            {Object.keys(sel.content).length === 0 && (
+            {sel.type === "html" && (
+              <>
+                <span style={{ fontSize: 11, color: MUTED, lineHeight: 1.5 }}>
+                  Sección con estilo personalizado por la IA. Para retocarla, vuelve a pedírselo a la IA (p. ej. «en la card naranja, sube el tamaño del monto») o edita su HTML aquí:
+                </span>
+                <textarea
+                  value={sel.content.html ?? ""}
+                  onChange={function set(e) { patchContent(sel.id, "html", e.target.value); }}
+                  rows={12}
+                  spellCheck={false}
+                  style={{ ...inputStyle, height: "auto", padding: "8px 9px", resize: "vertical", fontFamily: "ui-monospace, Menlo, monospace", fontSize: 10.5, lineHeight: 1.5, whiteSpace: "pre" }}
+                />
+              </>
+            )}
+            {sel.type !== "html" && Object.keys(sel.content).length === 0 && (
               <span style={{ fontSize: 12, color: MUTED }}>Este bloque no tiene propiedades.</span>
             )}
-            {Object.entries(sel.content).map(function renderField([key, value]) {
+            {sel.type !== "html" && Object.entries(sel.content).map(function renderField([key, value]) {
               if (isImageKey(sel.type, key)) {
                 return <ImageField key={key} label={fieldLabel(key)} value={value} onChange={function set(v) { patchContent(sel.id, key, v); }} />;
               }
               if (isLongKey(sel.type, key)) {
-                return <RichField key={key} label={fieldLabel(key)} value={value} onChange={function set(v) { patchContent(sel.id, key, v); }} />;
+                return (
+                  <RichTextField
+                    key={key}
+                    resetKey={`${sel.id}:${key}`}
+                    label={fieldLabel(key)}
+                    initialValue={value}
+                    onChange={function set(v) { patchContent(sel.id, key, v); }}
+                  />
+                );
               }
               if (sel.type === "cta" && key === "variant") {
                 return (
@@ -397,7 +579,7 @@ export default function EditorApp(): JSX.Element {
               );
             })}
             <span style={{ fontSize: 10, color: MUTED, lineHeight: 1.5 }}>
-              Estilos de texto: <b style={{ color: "#c85a1e" }}>**naranja**</b> · <b style={{ color: "#0E016C" }}>__oscuro__</b> · <b style={{ color: "#4f2ed8" }}>[[morado]]</b>. Los merge tags {"{{variable}}"} pasan literales.
+              Para colorear: selecciona el texto y toca <b style={{ color: "#c85a1e" }}>Naranja</b>, <b style={{ color: "#0E016C" }}>Oscuro</b> o <b style={{ color: "#4f2ed8" }}>Morado</b>. Lo que escribas como {"{{variable}}"} queda como dato variable.
             </span>
           </>
         ) : (
@@ -441,7 +623,8 @@ export default function EditorApp(): JSX.Element {
       </aside>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .ed-pal:hover { background: #f8fafc; border-color: #cbd5e1; }
+        .ed-pal:hover { border-color: #a78bfa; box-shadow: 0 4px 14px rgba(79,46,216,0.12); }
+        .ed-pal:active { cursor: grabbing; }
       `}} />
     </div>
   );

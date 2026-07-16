@@ -28,7 +28,15 @@ export interface EditorCanvasProps {
   doc: string;
   selectedId: string | null;
   onSelect: (id: string | null) => void;
+  /** Soltaron un bloque NUEVO de la paleta en la posición `index`. */
+  onDropNew: (type: string, index: number) => void;
+  /** Arrastraron una sección existente a la posición `index`. */
+  onReorder: (id: string, index: number) => void;
 }
+
+/** Tipos MIME propios del drag & drop del editor. */
+export const DND_NEW = "application/x-concorde-block";
+export const DND_MOVE = "application/x-concorde-section";
 
 /** CSS del editor que se inyecta en el documento del canvas. */
 export const CANVAS_CSS = `
@@ -38,13 +46,17 @@ export const CANVAS_CSS = `
 `;
 
 function EditorCanvasInner(
-  { doc, selectedId, onSelect }: EditorCanvasProps,
+  { doc, selectedId, onSelect, onDropNew, onReorder }: EditorCanvasProps,
   ref: ForwardedRef<EditorCanvasHandle>,
 ): React.JSX.Element {
   const frameRef = useRef<HTMLIFrameElement | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
   const selectRef = useRef(onSelect);
   selectRef.current = onSelect;
+  const dropNewRef = useRef(onDropNew);
+  dropNewRef.current = onDropNew;
+  const reorderRef = useRef(onReorder);
+  reorderRef.current = onReorder;
 
   const fit = useCallback(function fit(): void {
     const f = frameRef.current;
@@ -76,9 +88,12 @@ function EditorCanvasInner(
 
     try {
       const win = f.contentWindow;
-      const d = f.contentDocument ?? win?.document;
-      const body = d?.body;
-      if (!d || !body || !win) return;
+      const maybeDoc = f.contentDocument ?? win?.document;
+      const maybeBody = maybeDoc?.body;
+      if (!maybeDoc || !maybeBody || !win) return;
+      // Alias ya estrechados: el narrowing de TS no cruza a los closures de abajo.
+      const d: Document = maybeDoc;
+      const body: HTMLElement = maybeBody;
 
       // Click: seleccionar sección (y bloquear la navegación de los <a> del correo).
       function onClick(e: MouseEvent): void {
@@ -90,6 +105,82 @@ function EditorCanvasInner(
       d.addEventListener("click", onClick);
 
       const offs: Array<() => void> = [function offClick() { d.removeEventListener("click", onClick); }];
+
+      // ── Drag & drop: soltar bloques de la paleta y reordenar secciones ──
+      body.style.position = "relative";
+      const line = d.createElement("div");
+      line.id = "__dropline";
+      line.style.cssText = "position:absolute;left:8px;right:8px;height:4px;border-radius:4px;background:#f1705d;box-shadow:0 0 0 3px rgba(241,112,93,0.25);display:none;pointer-events:none;z-index:99;";
+      body.appendChild(line);
+
+      const secList = (): HTMLElement[] => Array.from(d.querySelectorAll<HTMLElement>("tbody[data-sec]"));
+
+      /** Índice de inserción según la Y del cursor (documento sin scroll interno). */
+      function dropIndexAt(y: number): number {
+        const list = secList();
+        for (let i = 0; i < list.length; i += 1) {
+          const r = list[i].getBoundingClientRect();
+          if (y < r.top + r.height / 2) return i;
+        }
+        return list.length;
+      }
+
+      /** Y (px del documento) donde va la línea indicadora para `index`. */
+      function lineYFor(index: number): number {
+        const list = secList();
+        if (list.length === 0) {
+          // Sin secciones: bajo el header (aprox. tercio superior del correo).
+          return Math.min(360, d.body.getBoundingClientRect().height / 3);
+        }
+        const r = index < list.length ? list[index].getBoundingClientRect() : list[list.length - 1].getBoundingClientRect();
+        return index < list.length ? r.top - 3 : r.bottom - 1;
+      }
+
+      // Cada sección se puede arrastrar para reordenar.
+      secList().forEach(function makeDraggable(el) {
+        el.draggable = true;
+        el.addEventListener("dragstart", function onDragStart(e) {
+          e.dataTransfer?.setData(DND_MOVE, el.getAttribute("data-sec") ?? "");
+          if (e.dataTransfer) e.dataTransfer.effectAllowed = "move";
+        });
+      });
+
+      function isOurs(e: DragEvent): boolean {
+        const types = e.dataTransfer ? Array.from(e.dataTransfer.types) : [];
+        return types.includes(DND_NEW) || types.includes(DND_MOVE);
+      }
+
+      function onDragOver(e: DragEvent): void {
+        if (!isOurs(e)) return;
+        e.preventDefault();
+        if (e.dataTransfer) e.dataTransfer.dropEffect = Array.from(e.dataTransfer.types).includes(DND_NEW) ? "copy" : "move";
+        line.style.display = "block";
+        line.style.top = `${lineYFor(dropIndexAt(e.clientY))}px`;
+      }
+      function onDrop(e: DragEvent): void {
+        if (!isOurs(e)) return;
+        e.preventDefault();
+        line.style.display = "none";
+        const index = dropIndexAt(e.clientY);
+        const nuevo = e.dataTransfer?.getData(DND_NEW);
+        if (nuevo) {
+          dropNewRef.current(nuevo, index);
+          return;
+        }
+        const id = e.dataTransfer?.getData(DND_MOVE);
+        if (id) reorderRef.current(id, index);
+      }
+      function onDragLeave(e: DragEvent): void {
+        if (!e.relatedTarget) line.style.display = "none";
+      }
+      d.addEventListener("dragover", onDragOver);
+      d.addEventListener("drop", onDrop);
+      d.addEventListener("dragleave", onDragLeave);
+      offs.push(function offDnd() {
+        d.removeEventListener("dragover", onDragOver);
+        d.removeEventListener("drop", onDrop);
+        d.removeEventListener("dragleave", onDragLeave);
+      });
 
       Array.from(d.images).forEach(function watchImg(img) {
         if (img.complete) return;

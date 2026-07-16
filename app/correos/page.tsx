@@ -2,6 +2,7 @@ import type { JSX } from "react";
 import Header from "@/app/_components/Header";
 import { EMAIL_GROUPS, EMAIL_PROD_TOTAL } from "@/src/emails/registry";
 import { TIPO_GROUPS } from "@/src/emails/tipologiasRegistry";
+import { SECTION_TYPES, sectionPreviewDoc } from "@/src/emails/sectionPreviews";
 
 /**
  * /correos — hub de correos. Dos secciones:
@@ -40,9 +41,16 @@ const CARDS: HubCard[] = [
   {
     href: "/correos/editor",
     title: "Editor",
-    meta: "23 bloques · maqueta y copia HTML",
-    desc: "Editor visual estilo Elementor sobre el renderer real: arma un correo con los bloques de producción, edita textos e imágenes, y expórtalo email-safe.",
+    meta: "23 bloques · drag & drop · IA",
+    desc: "Editor visual estilo Elementor: arrastra bloques reales, edita textos con color sin comandos, o describe el correo y la IA lo arma. Exporta HTML email-safe.",
     previewDoc: EMAIL_GROUPS[1]?.correos[0]?.html ?? EMAIL_GROUPS[0].correos[0].html,
+  },
+  {
+    href: "/correos/secciones",
+    title: "Secciones",
+    meta: `${SECTION_TYPES.length} bloques de producción`,
+    desc: "Catálogo visual de los bloques con los que se arman los correos, renderizados con el renderer real — los mismos que usa el editor.",
+    previewDoc: sectionPreviewDoc("features"),
   },
 ];
 
