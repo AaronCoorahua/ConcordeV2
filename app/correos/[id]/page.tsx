@@ -56,6 +56,13 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
               {group.label} · {correo.stage}
             </span>
           )}
+          <div style={{ flex: 1 }} />
+          <a
+            href={`/correos/editor?desde=${correo.id}`}
+            style={{ display: "inline-flex", alignItems: "center", gap: 6, height: 32, padding: "0 14px", borderRadius: 8, border: "1px solid #e2e8f0", background: "#ffffff", color: "#0f172a", fontSize: 12, fontWeight: 700, textDecoration: "none" }}
+          >
+            ✏️ Abrir en editor
+          </a>
         </div>
 
         <div style={{ margin: "0 0 6px", display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
