@@ -37,6 +37,13 @@ const CARDS: HubCard[] = [
     desc: "Los correos que hoy se envían en producción, agrupados por categoría (En vivo, Negociable, SubasCoins, Registro…) y ordenados por el paso del flujo.",
     previewDoc: EMAIL_GROUPS[0].correos[0].html,
   },
+  {
+    href: "/correos/editor",
+    title: "Editor",
+    meta: "23 bloques · maqueta y copia HTML",
+    desc: "Editor visual estilo Elementor sobre el renderer real: arma un correo con los bloques de producción, edita textos e imágenes, y expórtalo email-safe.",
+    previewDoc: EMAIL_GROUPS[1]?.correos[0]?.html ?? EMAIL_GROUPS[0].correos[0].html,
+  },
 ];
 
 export default function CorreosPage(): JSX.Element {

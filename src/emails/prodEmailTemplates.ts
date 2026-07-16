@@ -1,10 +1,14 @@
 /* ─────────────────────────────────────────────────────────────────────────────
    PORTADO desde el repo Concorde-Email (github.com/Jarbram/Concorde-Email),
-   archivo `lib/email-templates.ts`, SIN modificaciones.
+   archivo `lib/email-templates.ts`.
 
    Es el renderer real de los correos de producción: generateEmail(sections,
    subject) devuelve el HTML email-safe completo. Lo consume prodEmails.ts.
    No editar a mano — si Concorde-Email cambia, volver a copiar.
+
+   Únicas desviaciones respecto al original (reaplicar al resincronizar):
+    · `renderSection` lleva `export` — el editor visual (/correos/editor)
+      renderiza sección por sección para el canvas.
    ───────────────────────────────────────────────────────────────────────────── */
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -165,7 +169,7 @@ function chipCell(iconUrl: string): string {
 
 const vDivider = `<table border="0" cellpadding="0" cellspacing="0" width="1" height="40" bgcolor="${C.divider}"><tr><td></td></tr></table>`;
 
-function renderSection(s: Section): string {
+export function renderSection(s: Section): string {
   const c = s.content;
   switch (s.type) {
     case 'title': {
