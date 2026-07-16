@@ -3,22 +3,27 @@
 /**
  * CopyHtmlButton — copia el HTML de un correo/banner al portapapeles
  * con feedback «¡Copiado!» (mismo patrón que el catálogo de mailing en prod).
+ *
+ * `html` acepta un string (HTML fijo) o una función que devuelve el HTML en el
+ * momento del clic — así el editor puede copiar el estado VIVO del iframe
+ * (con las ediciones inline) en vez de un snapshot previo.
  */
 
 import { useRef, useState } from "react";
 import type { JSX } from "react";
 
-export default function CopyHtmlButton({ html }: { html: string }): JSX.Element {
+export default function CopyHtmlButton({ html }: { html: string | (() => string) }): JSX.Element {
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   async function copy(): Promise<void> {
+    const text = typeof html === "function" ? html() : html;
     try {
-      await navigator.clipboard.writeText(html);
+      await navigator.clipboard.writeText(text);
     } catch {
       // Fallback (contextos sin Clipboard API): textarea temporal
       const ta = document.createElement("textarea");
-      ta.value = html;
+      ta.value = text;
       document.body.appendChild(ta);
       ta.select();
       document.execCommand("copy");

@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import Header from "@/app/_components/Header";
 import BannerLab from "./BannerLab";
@@ -63,7 +64,9 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
         </div>
         <p style={{ fontSize: 13, color: "#64748b", margin: "0 0 24px", lineHeight: 1.5, maxWidth: 640 }}>{correo.desc}</p>
 
-        <BannerLab html={correo.html} title={correo.name} subject={correo.subject} categoria={group?.label ?? "General"} />
+        <Suspense fallback={<div style={{ height: 400, display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", fontSize: 13 }}>Cargando editor…</div>}>
+          <BannerLab html={correo.html} title={correo.name} subject={correo.subject} categoria={group?.label ?? "General"} />
+        </Suspense>
 
         {siguientes.length > 0 && (
           <div style={{ marginTop: 20 }}>
