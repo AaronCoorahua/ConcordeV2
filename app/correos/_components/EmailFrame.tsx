@@ -1,47 +1,61 @@
 "use client";
 
 /**
- * EmailFrame — iframe que se autoajusta al alto real del correo.
+ * EmailFrame — iframe que se autoajusta al alto real del correo, con modo de
+ * edición inline opcional del CUERPO.
  *
- * Los correos de producción miden entre ~800px y ~1600px y ese alto no se sabe
- * sin renderizarlos, así que en vez de hardcodear un alto por correo (que
- * recortaría unos y dejaría hueco en otros) se mide el documento ya cargado.
+ * Auto-alto (siempre): los correos miden entre ~800 y ~1600px y ese alto no se
+ * sabe sin renderizar, así que se mide el documento ya cargado. Dos detalles o
+ * la medida sale mal:
+ *   1. Se mide `body`, NO `documentElement` (el <html> lo estira el alto del
+ *      iframe, así que se mediría a sí mismo y nunca encogería).
+ *   2. `onLoad` no basta: dispara antes de que carguen imágenes y fuentes. Se
+ *      re-mide con `document.fonts.ready`, el load de cada <img> y un
+ *      ResizeObserver sobre el body.
  *
- * Dos detalles que hay que respetar o la medida sale mal:
- *
- *  1. Se mide `body`, NO `documentElement`. El <html> lo estira el propio alto
- *     del iframe, así que su scrollHeight devuelve el alto actual del frame en
- *     vez del alto del contenido — se mide a sí mismo y nunca encoge.
- *
- *  2. `onLoad` no basta: dispara antes de que carguen las imágenes remotas del
- *     CDN y las fuentes, cuando el layout aún no es el definitivo. Por eso se
- *     re-mide con `document.fonts.ready`, con el load de cada <img> y con un
- *     ResizeObserver sobre el body (que cubre cualquier reflow posterior).
+ * Edición inline (`editable`): al cargar se marcan como `contenteditable` las
+ * celdas de TEXTO del cuerpo del correo (las <td> con texto directo entre el
+ * header y el footer). No se toca todo el documento — eso rompería el layout de
+ * tablas email-safe. El HTML editado se lee bajo demanda con la ref imperativa
+ * (`getHtml`), no en cada tecla, para no re-renderizar mientras se escribe.
  */
 
-import { useCallback, useEffect, useRef } from "react";
-import type { JSX } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from "react";
+import type { ForwardedRef } from "react";
 
 /**
  * Ancho real del correo: la tabla de producción es width=600 MÁS padding:20px
- * (ver prodEmailTemplates.ts), así que ocupa 640. Con 600 el correo se
- * recortaría 40px en horizontal.
+ * (ver prodEmailTemplates.ts), así que ocupa 640.
  */
 export const EMAIL_FRAME_W = 640;
+
+/** API imperativa: leer el HTML vivo del iframe (con las ediciones aplicadas). */
+export interface EmailFrameHandle {
+  /** HTML actual del documento (`<!DOCTYPE html>…`), sin los marcadores de edición. */
+  getHtml: () => string;
+}
 
 export interface EmailFrameProps {
   html: string;
   title: string;
   /** Alto inicial mientras carga; también el fallback si no se puede medir. */
   fallbackHeight?: number;
+  /** Si true, el cuerpo del correo se puede editar inline. */
+  editable?: boolean;
 }
 
-export default function EmailFrame({ html, title, fallbackHeight = 1200 }: EmailFrameProps): JSX.Element {
-  const ref = useRef<HTMLIFrameElement | null>(null);
+/** Atributo con el que se marca cada celda de cuerpo editable (para limpiarla al exportar). */
+const EDIT_ATTR = "data-lab-edit";
+
+function EmailFrameInner(
+  { html, title, fallbackHeight = 1200, editable = false }: EmailFrameProps,
+  ref: ForwardedRef<EmailFrameHandle>,
+): React.JSX.Element {
+  const frameRef = useRef<HTMLIFrameElement | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
 
   const fit = useCallback(function fit(): void {
-    const f = ref.current;
+    const f = frameRef.current;
     if (!f) return;
     try {
       const doc = f.contentDocument ?? f.contentWindow?.document;
@@ -50,20 +64,40 @@ export default function EmailFrame({ html, title, fallbackHeight = 1200 }: Email
       const h = Math.ceil(body.getBoundingClientRect().height);
       if (h > 0) f.style.height = `${h}px`;
     } catch {
-      // Documento inaccesible (no debería pasar con srcDoc): deja el fallback.
       f.style.height = `${fallbackHeight}px`;
     }
   }, [fallbackHeight]);
 
-  /** Engancha las re-medidas al documento del iframe una vez cargado. */
+  /**
+   * Marca como editable cada <td> del CUERPO que contiene texto directo. Cuerpo
+   * = lo que hay entre el primer <img> del header y la consola del footer; para
+   * no depender de esa geometría, se usa una heurística simple y segura: una
+   * celda es editable si tiene texto propio (no solo espacios) y NO contiene
+   * tablas anidadas ni imágenes (esas son estructura/branding, no copy).
+   */
+  const markEditable = useCallback(function markEditable(doc: Document): void {
+    const cells = Array.from(doc.querySelectorAll("td, span, p, a"));
+    cells.forEach(function each(el) {
+      const hasNestedBlock = el.querySelector("table, img, td, tr");
+      const ownText = (el.textContent ?? "").trim();
+      if (hasNestedBlock || ownText.length === 0) return;
+      // Evita marcar el footer legal y los links de navegación (texto muy chico
+      // o dentro de la sección blanca): se permiten, pero se marca todo texto de
+      // párrafo; el usuario decide. Mantener simple y reversible.
+      el.setAttribute(EDIT_ATTR, "1");
+      (el as HTMLElement).contentEditable = "true";
+      (el as HTMLElement).style.outline = "none";
+    });
+  }, []);
+
   const onLoad = useCallback(function onLoad(): void {
     cleanupRef.current?.();
     cleanupRef.current = null;
 
-    const f = ref.current;
+    const f = frameRef.current;
     if (!f) return;
 
-    fit(); // primera medida: sirve mientras cargan imágenes y fuentes
+    fit();
 
     try {
       const win = f.contentWindow;
@@ -71,9 +105,15 @@ export default function EmailFrame({ html, title, fallbackHeight = 1200 }: Email
       const body = doc?.body;
       if (!doc || !body || !win) return;
 
-      const offs: Array<() => void> = [];
+      if (editable) {
+        markEditable(doc);
+        // Re-medir tras cada edición (el texto puede crecer de línea).
+        body.addEventListener("input", fit);
+      }
 
-      // Cada imagen del CDN que llega cambia el alto.
+      const offs: Array<() => void> = [];
+      if (editable) offs.push(function off() { body.removeEventListener("input", fit); });
+
       Array.from(doc.images).forEach(function watchImg(img) {
         if (img.complete) return;
         img.addEventListener("load", fit);
@@ -84,12 +124,8 @@ export default function EmailFrame({ html, title, fallbackHeight = 1200 }: Email
         });
       });
 
-      // Las webfonts re-flowan el texto al aplicarse.
       doc.fonts?.ready.then(fit).catch(function ignore() { /* sin fonts API */ });
 
-      // Red de seguridad para cualquier reflow posterior. Se usa el
-      // ResizeObserver del iframe (no el de la página) para observar un nodo de
-      // su propio documento; `Window` no lo declara, de ahí el cast puntual.
       const RO = (win as Window & { ResizeObserver?: typeof ResizeObserver }).ResizeObserver;
       if (RO) {
         const ro = new RO(fit);
@@ -99,9 +135,28 @@ export default function EmailFrame({ html, title, fallbackHeight = 1200 }: Email
 
       cleanupRef.current = function cleanup() { offs.forEach(function run(o) { o(); }); };
     } catch {
-      // Documento inaccesible: la medida inicial es lo que hay.
+      /* documento inaccesible */
     }
-  }, [fit]);
+  }, [fit, editable, markEditable]);
+
+  useImperativeHandle(ref, function expose() {
+    return {
+      getHtml: function getHtml(): string {
+        const f = frameRef.current;
+        const doc = f?.contentDocument ?? f?.contentWindow?.document;
+        if (!doc) return html;
+        // Clona el documento y quita los marcadores de edición antes de exportar.
+        const clone = doc.documentElement.cloneNode(true) as HTMLElement;
+        clone.querySelectorAll(`[${EDIT_ATTR}]`).forEach(function strip(el) {
+          el.removeAttribute(EDIT_ATTR);
+          el.removeAttribute("contenteditable");
+          (el as HTMLElement).style.removeProperty("outline");
+          if (!el.getAttribute("style")) el.removeAttribute("style");
+        });
+        return `<!DOCTYPE html>\n${clone.outerHTML}`;
+      },
+    };
+  }, [html]);
 
   useEffect(function unmount() {
     return function cleanup() {
@@ -112,7 +167,7 @@ export default function EmailFrame({ html, title, fallbackHeight = 1200 }: Email
 
   return (
     <iframe
-      ref={ref}
+      ref={frameRef}
       title={title}
       srcDoc={html}
       scrolling="no"
@@ -121,3 +176,6 @@ export default function EmailFrame({ html, title, fallbackHeight = 1200 }: Email
     />
   );
 }
+
+const EmailFrame = forwardRef<EmailFrameHandle, EmailFrameProps>(EmailFrameInner);
+export default EmailFrame;

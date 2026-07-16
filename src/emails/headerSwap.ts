@@ -34,21 +34,42 @@ function escHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+/** Textos editables del banner de tipología (todos con default sensato). */
+export interface BannerText {
+  /** Título grande del banner. */
+  titulo: string;
+  /** Bajada bajo el título. */
+  bajada: string;
+  /** Texto del pill de contexto (solo lo muestran los layouts V2). */
+  pill: string;
+}
+
+/** Placeholders originales dentro de las plantillas de banner. */
+const PH_TITULO = "{{ Título del correo }}";
+const PH_BAJADA = "{{ Bajada breve del correo va aquí }}";
+const PH_PILL = "{{ PILL }}";
+
 /**
- * Banner de la tipología `id` con el tono `tone`, personalizado con el asunto
- * real del correo (reemplaza el placeholder «{{ Título del correo }}») y la
- * categoría como pill. La bajada queda como placeholder editable.
+ * Banner de la tipología `id` con el tono `tone`, personalizado con los textos
+ * de `text` (título, bajada, pill). Cada campo reemplaza su placeholder; si un
+ * campo viene vacío se conserva el placeholder, para no dejar huecos.
  */
-export function buildBannerFor(id: string, tone: V2Tone, titulo: string, pill: string): string | null {
+export function buildBannerFor(id: string, tone: V2Tone, text: BannerText): string | null {
+  const titulo = text.titulo.trim() ? escHtml(text.titulo) : PH_TITULO;
+  const bajada = text.bajada.trim() ? escHtml(text.bajada) : PH_BAJADA;
+  const pill = text.pill.trim() ? escHtml(text.pill) : PH_PILL;
+
   const v2 = TIPOLOGIAS_V2.find(function byId(t) { return t.id === id; });
   if (v2) {
     return buildV2Banner(v2, tone)
-      .replace("{{ Título del correo }}", escHtml(titulo))
-      .replace("{{ PILL }}", escHtml(pill));
+      .replace(PH_TITULO, titulo)
+      .replace(PH_BAJADA, bajada)
+      .replace(PH_PILL, pill);
   }
   const ce = TIPOLOGIAS_BASICAS.find(function byId(t) { return t.id === id; });
   if (ce) {
-    return buildTipoBanner({ ...ce, titulo: escHtml(titulo) }, tone);
+    // C/E llevan título y bajada por sus props; el pill no aplica a estos layouts.
+    return buildTipoBanner({ ...ce, titulo, subtitulo: bajada }, tone);
   }
   return null;
 }
