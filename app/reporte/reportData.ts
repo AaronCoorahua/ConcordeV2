@@ -101,3 +101,8 @@ function SidebarItem({ label, count, isActive }) {
     codeLink: "/blocks/sidebar",
   },
 ];
+
+/** Busca una entrada por su slug. */
+export function getReportEntry(slug: string): ReportEntry | undefined {
+  return REPORT_ENTRIES.find((e) => e.slug === slug);
+}
