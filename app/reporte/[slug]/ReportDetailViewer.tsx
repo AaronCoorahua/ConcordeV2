@@ -79,7 +79,7 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
             marginBottom: 36,
           }}
         >
-          <ImagePanel label="Original" tone="#f97316" src={entry.originalImage} alt={`Original — ${entry.title}`} />
+          <ImagePanel label="Producción" tone="#f97316" src={entry.originalImage} alt={`Producción — ${entry.title}`} />
           <ImagePanel label="Concorde" tone="#4f2ed8" src={entry.concordeImage} alt={`Concorde — ${entry.title}`} />
         </div>
 
@@ -100,7 +100,7 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
               alignItems: "stretch",
             }}
           >
-            {entry.codeOriginal && <CodeBlock label="Código original" tone="#f97316" code={entry.codeOriginal} />}
+            {entry.codeOriginal && <CodeBlock label="Código producción" tone="#f97316" code={entry.codeOriginal} />}
             {entry.codeConcorde && (
               <CodeBlock label="Código Concorde" tone="#4f2ed8" code={entry.codeConcorde} link={entry.codeLink} />
             )}
@@ -111,27 +111,40 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
   );
 }
 
-function ImagePanel({ label, tone, src, alt }: { label: string; tone: string; src: string; alt: string }): JSX.Element {
+function ImagePanel({ label, tone, src, alt }: { label: string; tone: string; src: string | string[]; alt: string }): JSX.Element {
+  const sources = Array.isArray(src) ? src : [src];
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
         <span style={{ width: 8, height: 8, borderRadius: "50%", background: tone }} />
         <span style={{ fontSize: 13, fontWeight: 700, color: "#334155", letterSpacing: "0.02em" }}>{label}</span>
+        {sources.length > 1 && (
+          <span style={{ fontSize: 11, color: "#94a3b8", fontWeight: 600 }}>· {sources.length} capturas</span>
+        )}
       </div>
-      <div
-        style={{
-          borderRadius: 12,
-          overflow: "hidden",
-          border: "1px solid #e2e8f0",
-          background: "#f8fafc",
-          aspectRatio: "16 / 10",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt={alt} style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {sources.map((s, i) => (
+          <div
+            key={i}
+            style={{
+              borderRadius: 12,
+              overflow: "hidden",
+              border: "1px solid #e2e8f0",
+              background: "#f8fafc",
+              aspectRatio: "16 / 10",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={s}
+              alt={sources.length > 1 ? `${alt} (${i + 1})` : alt}
+              style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
