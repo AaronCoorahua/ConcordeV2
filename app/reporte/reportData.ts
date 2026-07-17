@@ -44,6 +44,44 @@ export const REPORT_ENTRIES: ReportEntry[] = [
   // Envíame las imágenes + explicación + código y yo relleno esto.
   // ────────────────────────────────────────────────────────────────
   {
+    slug: "homepage-padding-entre-secciones",
+    title: "Homepage — padding entre secciones inconsistente y mayor a 16px",
+    date: "17 jul 2026",
+    status: "corregido",
+    originalImage: [
+      "/assets/reporte/homepage-padding-entre-secciones-original-1.png",
+      "/assets/reporte/homepage-padding-entre-secciones-original-2.png",
+    ],
+    concordeImage: "/assets/reporte/homepage-padding-entre-secciones-concorde.png",
+    problem: [
+      "El contenedor ya aporta gap-4 (16px), pero además cada sección lleva su propio mb-3/mb-4 → los espacios se suman y superan los 16px.",
+      "La separación mezcla mb-3 (12px) en los banners y mb-4 (16px) en las secciones de ofertas, así que no es consistente entre bloques.",
+    ],
+    fix: [
+      "Dejar UNA sola fuente de separación: el gap del contenedor. Quitar el mb-3/mb-4 de cada <section>.",
+      "Con gap-4 en el padre y sin margin en las secciones, la separación es 16px iguales en todo el homepage.",
+    ],
+    codeLang: "tsx",
+    codeOriginal: `// PROD — el contenedor ya tiene gap-4, y ADEMÁS cada sección lleva mb
+<div className="flex flex-1 flex-col gap-4 px-4 pt-4">
+  <section className="... mb-3 ...">Banner principal</section>   {/* 16 + 12 */}
+  <section className="... mb-3 ...">Subaspass</section>          {/* 16 + 12 */}
+  <section className="mb-4 ...">Tipo de oferta / Categorías</section>  {/* 16 + 16 */}
+  <section className="mb-4 ...">Empresa industrial</section>    {/* 16 + 16 */}
+</div>
+// gap (16) + mb-3 (12) = 28px entre banners  ❌
+// gap (16) + mb-4 (16) = 32px entre ofertas  ❌  → inconsistente`,
+    codeConcorde: `// Concorde — una sola fuente de separación: el gap del padre
+<div className="flex flex-1 flex-col gap-4 px-4 pt-4">
+  <section>Banner principal</section>
+  <section>Subaspass</section>
+  <section>Tipo de oferta / Categorías</section>
+  <section>Empresa industrial</section>
+</div>
+// sin mb en las secciones → 16px exactos entre TODAS  ✅`,
+    codeLink: "/blocks/homepage",
+  },
+  {
     slug: "sidebar-alineacion-burger-y-top",
     title: "Sidebar — burger/iconos y top no alineados con el contenido",
     date: "17 jul 2026",

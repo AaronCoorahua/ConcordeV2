@@ -46,7 +46,7 @@ export default function ReportePage(): JSX.Element {
             Catálogo de issues
           </h1>
           <p style={{ fontSize: 17, color: "#64748b", lineHeight: 1.6, margin: "16px 0 0", maxWidth: 620 }}>
-            Correcciones entre la referencia <strong style={{ color: "#0f172a" }}>Original</strong> y su implementación en{" "}
+            Correcciones entre <strong style={{ color: "#0f172a" }}>Producción</strong> y su implementación en{" "}
             <strong style={{ color: "#0f172a" }}>Concorde</strong>. Haz click en un issue para ver el detalle.
           </p>
         </div>
@@ -65,7 +65,7 @@ export default function ReportePage(): JSX.Element {
             <div style={{ fontSize: 40, marginBottom: 12 }}>📋</div>
             <p style={{ fontSize: 16, fontWeight: 600, margin: 0, color: "#0f172a" }}>Aún no hay issues registrados</p>
             <p style={{ fontSize: 14, color: "#94a3b8", margin: "8px 0 0" }}>
-              Envía la imagen Original, la de Concorde, la explicación y el código para crear el primer issue.
+              Envía la imagen de Producción, la de Concorde, la explicación y el código para crear el primer issue.
             </p>
           </div>
         ) : (
