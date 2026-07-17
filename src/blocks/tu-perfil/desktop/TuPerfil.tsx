@@ -19,6 +19,8 @@ export { TUPERFIL_WIDTH, TUPERFIL_HEIGHT } from "./dimensions";
 export interface TuPerfilProps {
   /** Usuario logueado — alimenta el CTA del header. */
   username?: string;
+  /** Renderiza el AppHeader interno. `false` cuando el visor lo dibuja aparte. Default `true`. */
+  renderHeader?: boolean;
   className?: string;
 }
 
@@ -36,7 +38,7 @@ const BANNER_PLACEHOLDER: CSSProperties = {
   color: "#9AA1AC",
 };
 
-export default function TuPerfil({ username = "ZAEX5G", className = "" }: TuPerfilProps): JSX.Element {
+export default function TuPerfil({ username = "ZAEX5G", renderHeader = true, className = "" }: TuPerfilProps): JSX.Element {
   return (
     <div
       className={className}
@@ -51,7 +53,7 @@ export default function TuPerfil({ username = "ZAEX5G", className = "" }: TuPerf
         fontFamily: 'var(--vmc-font-display, "Plus Jakarta Sans", -apple-system, sans-serif)',
       }}
     >
-      <AppHeader width={TUPERFIL_WIDTH} username={username} />
+      {renderHeader ? <AppHeader width={TUPERFIL_WIDTH} username={username} /> : null}
 
       {/* Área blanca: columna de 766 (16px a cada lado = 798). No usa flex:1 para
           que abrace su contenido y el Centro de Ayuda quede pegado al botón. */}

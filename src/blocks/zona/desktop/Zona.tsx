@@ -24,6 +24,9 @@ export { ZONA_WIDTH, ZONA_HEIGHT } from "./dimensions";
 export interface ZonaProps {
   /** Usuario logueado — alimenta el CTA del header y el saludo de la card. */
   username?: string;
+  /** Renderiza el AppHeader interno. Ponlo en `false` cuando el visor dibuja el
+   *  header por separado (para escalarlo aparte del cuerpo). Por defecto `true`. */
+  renderHeader?: boolean;
   className?: string;
 }
 
@@ -42,7 +45,7 @@ const BANNER_PLACEHOLDER: CSSProperties = {
   color: "#9AA1AC",
 };
 
-export default function Zona({ username = "ZAEX5G", className = "" }: ZonaProps): JSX.Element {
+export default function Zona({ username = "ZAEX5G", renderHeader = true, className = "" }: ZonaProps): JSX.Element {
   return (
     <div
       className={className}
@@ -57,7 +60,7 @@ export default function Zona({ username = "ZAEX5G", className = "" }: ZonaProps)
         fontFamily: 'var(--vmc-font-display, "Plus Jakarta Sans", -apple-system, sans-serif)',
       }}
     >
-      <AppHeader width={ZONA_WIDTH} username={username} />
+      {renderHeader ? <AppHeader width={ZONA_WIDTH} username={username} /> : null}
 
       {/* Área blanca: columna de 766 (16px a cada lado = 798), gap 16 entre secciones */}
       <div style={{ flex: 1, padding: "24px 16px", display: "flex", justifyContent: "center" }}>

@@ -105,6 +105,11 @@ export interface SidebarProps {
    *  sidebar — pásale ese mismo alto (igual a `height`) para que el spacer
    *  interno se comprima y el sidebar no sobre por debajo del contenido. */
   contentHeight?: number;
+  /** Alto de la cabecera fija (logo + hamburguesa), en px. Por defecto 60. Cuando
+   *  el contenido de al lado tiene su propio header y se escala, pásale la altura
+   *  de ESE header escalada (p.ej. HEADER_HEIGHT × scale) para que el top de los
+   *  iconos del sidebar quede alineado con el top del contenido. */
+  headerHeight?: number;
   /** Colapsado (controlado). Si se omite, el Sidebar maneja su estado interno. */
   collapsed?: boolean;
   /** Callback al alternar el colapsado (para reaccionar desde el contenedor). */
@@ -120,6 +125,7 @@ export default function Sidebar({
   defaultActiveId,
   height = SIDEBAR_HEIGHT,
   contentHeight = SIDEBAR_HEIGHT,
+  headerHeight = 60,
   collapsed: collapsedProp,
   onCollapsedChange,
   onItemClick,
@@ -160,32 +166,44 @@ export default function Sidebar({
           width:         collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH,
           height,
           background:    "#2E0F70",
-          display:       "flex",
-          flexDirection: "column",
           fontFamily:    'var(--vmc-font-display, "Plus Jakarta Sans", -apple-system, sans-serif)',
           flexShrink:    0,
           position:      "relative",
-          overflow:      "hidden",
+          /* Sin overflow:hidden en la raíz — la cabecera (logo+hamburguesa) se
+             mantiene a 226px aunque el resto colapse a 76px. */
         }}
       >
-        {/* Bloque interno de tamaño fijo (contentHeight, por defecto SIDEBAR_HEIGHT):
-            header + frame. Si el sidebar crece (prop height > contentHeight), sólo se
-            alarga el relleno morado de abajo; lo interno (nav + banner) queda igual,
-            no se estira. Para achicarlo sin recortar el banner, sube contentHeight. */}
+        {/* Cabecera FIJA (logo + hamburguesa) — ancho completo 226, no colapsa.
+            Va como overlay en el top; el bloque de contenido de abajo deja headerHeight px. */}
+        <div
+          style={{
+            position:  "absolute",
+            top:       0,
+            left:      0,
+            width:     SIDEBAR_WIDTH,
+            height:    headerHeight,
+            zIndex:    2,
+            background: "#2E0F70",
+          }}
+        >
+          <SidebarHeader logo={logo} collapsed={collapsed} onToggle={toggleCollapsed} height={headerHeight} />
+        </div>
+
+        {/* Bloque colapsable (nav + banner) — este SÍ encoge su ancho. Recortado
+            con overflow:hidden y desplazado headerHeight px para no tapar la cabecera. */}
         <div
           style={{
             height:        contentHeight,
+            width:         collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH,
+            paddingTop:    headerHeight,
+            boxSizing:     "border-box",
             flexShrink:    0,
             display:       "flex",
             flexDirection: "column",
+            overflow:      "hidden",
+            transition:    `width 0.28s ${EASE}`,
           }}
         >
-        <SidebarHeader
-          logo={logo}
-          collapsed={collapsed}
-          onToggle={toggleCollapsed}
-        />
-
         {/* Área de contenido 216×935 — borde VYStrokes1 */}
         <div
           className="sb-content-frame"

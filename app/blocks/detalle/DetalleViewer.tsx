@@ -50,7 +50,7 @@ export default function DetalleViewer({ files }: { files: BlockFile[] }): JSX.El
   const fillW = COMBINED_WIDTH - (collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH); // ancho a cubrir
   const OVERSCAN = 2;                                 // px que el contenido mete BAJO el sidebar
   const scale = (fillW + OVERSCAN) / DETALLE_WIDTH;
-  const canvasH = Math.max(COMBINED_HEIGHT, (HEADER_HEIGHT + DETALLE_HEIGHT) * scale);
+  const canvasH = Math.max(COMBINED_HEIGHT, HEADER_HEIGHT + DETALLE_HEIGHT * scale);
 
   // Tabs «En vivo / Negociable» — cambian la variante del DetailCard,
   // AuctionStatus, CardViewer y los ConditionPills (en desktop y mobile).
@@ -74,12 +74,17 @@ export default function DetalleViewer({ files }: { files: BlockFile[] }): JSX.El
   // así el seam queda perfecto sin micro-desfases. Solo cambia el height.
   const canvas = (
     <div style={{ position: "relative", width: COMBINED_WIDTH, height: canvasH, background: VAULT_PREVIEW_BG, overflow: "hidden", transition: `height 0.28s ${EASE}` }}>
-      <div style={{ position: "absolute", right: 0, top: 0, width: DETALLE_WIDTH, display: "flex", flexDirection: "column", transformOrigin: "top right", transform: `scale(${scale})`, transition: `transform 0.28s ${EASE}` }}>
-        <AppHeader width={DETALLE_WIDTH} />
+      {/* Header — ancho real (fillW), sin transform → el fondo se alarga pero el
+          contenido (logo/botón) no se estira. */}
+      <div style={{ position: "absolute", right: 0, top: 0, width: fillW + OVERSCAN, transition: `width 0.28s ${EASE}` }}>
+        <AppHeader width="100%" />
+      </div>
+      {/* Cuerpo — escala proporcional desde la esquina sup-der; top fijo bajo el header */}
+      <div style={{ position: "absolute", right: 0, top: HEADER_HEIGHT, width: DETALLE_WIDTH, transformOrigin: "top right", transform: `scale(${scale})`, transition: `transform 0.28s ${EASE}` }}>
         <Detalle variant={variant} />
       </div>
       <div style={{ position: "absolute", left: 0, top: 0 }}>
-        <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed} height={canvasH} />
+        <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed} height={canvasH} headerHeight={HEADER_HEIGHT} />
       </div>
     </div>
   );

@@ -18,6 +18,8 @@ export { AGREGARSUBASCOINS_WIDTH, AGREGARSUBASCOINS_HEIGHT } from "./dimensions"
 export interface AgregarSubascoinsProps {
   /** Usuario logueado — alimenta el CTA del header. */
   username?: string;
+  /** Renderiza el AppHeader interno. `false` cuando el visor lo dibuja aparte. Default `true`. */
+  renderHeader?: boolean;
   className?: string;
 }
 
@@ -36,7 +38,7 @@ const BANNER_PLACEHOLDER: CSSProperties = {
   color: "#9AA1AC",
 };
 
-export default function AgregarSubascoins({ username = "ZAEX5G", className = "" }: AgregarSubascoinsProps): JSX.Element {
+export default function AgregarSubascoins({ username = "ZAEX5G", renderHeader = true, className = "" }: AgregarSubascoinsProps): JSX.Element {
   return (
     <div
       className={className}
@@ -51,7 +53,7 @@ export default function AgregarSubascoins({ username = "ZAEX5G", className = "" 
         fontFamily: 'var(--vmc-font-display, "Plus Jakarta Sans", -apple-system, sans-serif)',
       }}
     >
-      <AppHeader width={AGREGARSUBASCOINS_WIDTH} username={username} />
+      {renderHeader ? <AppHeader width={AGREGARSUBASCOINS_WIDTH} username={username} /> : null}
 
       {/* Área blanca: columna de 766 (16px a cada lado = 798), gap 16 entre secciones */}
       <div style={{ flex: 1, minHeight: AGREGARSUBASCOINS_HEIGHT - HEADER_HEIGHT, padding: "24px 16px", display: "flex", justifyContent: "center" }}>

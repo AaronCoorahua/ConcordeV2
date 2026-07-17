@@ -23,6 +23,8 @@ import { REGISTER_WIDTH, REGISTER_HEIGHT } from "./dimensions";
 export { REGISTER_WIDTH, REGISTER_HEIGHT } from "./dimensions";
 
 export interface RegisterProps {
+  /** Renderiza el AppHeader interno. `false` cuando el visor lo dibuja aparte. Default `true`. */
+  renderHeader?: boolean;
   className?: string;
 }
 
@@ -95,7 +97,7 @@ function RegisterHeading(): JSX.Element {
   );
 }
 
-export default function Register({ className = "" }: RegisterProps): JSX.Element {
+export default function Register({ renderHeader = true, className = "" }: RegisterProps): JSX.Element {
   return (
     <div
       className={className}
@@ -109,7 +111,7 @@ export default function Register({ className = "" }: RegisterProps): JSX.Element
         fontFamily: 'var(--vmc-font-display, "Plus Jakarta Sans", -apple-system, sans-serif)',
       }}
     >
-      <AppHeader width={REGISTER_WIDTH} />
+      {renderHeader ? <AppHeader width={REGISTER_WIDTH} /> : null}
 
       <div style={{ flex: 1, padding: "24px 16px", display: "flex", flexDirection: "column", gap: 16 }}>
         {/* Heading — primer elemento, sin card detrás (apoyado directo en el fondo blanco) */}
