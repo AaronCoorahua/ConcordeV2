@@ -80,8 +80,9 @@ export default function SidebarHeader({ logo, collapsed = false, onToggle, heigh
           height,
           display: "flex",
           alignItems: "center",
-          // La hamburguesa queda alineada con la columna de iconos del sidebar
-          // colapsado (centro ≈ 38px): paddingLeft 20 + medio botón (18) = 38.
+          // paddingLeft FIJO (20) en ambos estados → la hamburguesa y el logo NO se
+          // mueven al abrir/cerrar. La hamburguesa (centro ≈ 38px) queda alineada con
+          // la columna de iconos del nav (que también están fijos a esa posición).
           paddingLeft: 20,
           paddingRight: 14,
           gap: 8,

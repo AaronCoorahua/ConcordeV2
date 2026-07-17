@@ -25,7 +25,10 @@ const STYLES = `
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 14px;
+  /* padding-left FIJO (22px) → el ícono queda SIEMPRE en la misma posición, la del
+     estado colapsado (centrado en el pill de 66px). Al expandir, el ícono NO se mueve;
+     solo aparece el texto+badge a su derecha. */
+  padding: 0 14px 0 22px;
   box-sizing: border-box;
   cursor: pointer;
   user-select: none;
@@ -48,10 +51,11 @@ const STYLES = `
     inset 0px -1px 6px rgba(0,0,0,0.3);
   transition: box-shadow 0.15s, background 0.12s, border-color 0.12s, padding 0.28s cubic-bezier(0.4,0,0.2,1), gap 0.28s cubic-bezier(0.4,0,0.2,1);
 }
+/* Colapsado: el ícono NO se mueve (mantiene padding-left 22px, igual que expandido).
+   Solo el texto+badge (.sbi-trailing) se desvanece a la derecha. Así al abrir/cerrar
+   el ícono queda FIJO y solo aparece/desaparece el texto. */
 .sbi-item--collapsed {
-  padding: 0;
   gap: 0;
-  justify-content: center;
 }
 /* Hover — fill #8460E5 38% (sobre base oscura) + borde white 44% + drop #0A0026 55%
    (0,6,18,-6) + inner top white 60% (0,1,4) */
