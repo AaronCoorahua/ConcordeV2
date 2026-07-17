@@ -21,6 +21,8 @@ import { LOGIN_WIDTH, LOGIN_HEIGHT } from "./dimensions";
 export { LOGIN_WIDTH, LOGIN_HEIGHT } from "./dimensions";
 
 export interface LoginProps {
+  /** Renderiza el AppHeader interno. `false` cuando el visor lo dibuja aparte. Default `true`. */
+  renderHeader?: boolean;
   className?: string;
 }
 
@@ -227,7 +229,7 @@ export function LoginForm(): JSX.Element {
   );
 }
 
-export default function Login({ className = "" }: LoginProps): JSX.Element {
+export default function Login({ renderHeader = true, className = "" }: LoginProps): JSX.Element {
   if (typeof document !== "undefined" && !_stylesInjected) {
     if (!document.getElementById(STYLE_ID)) {
       const el = document.createElement("style");
@@ -253,7 +255,7 @@ export default function Login({ className = "" }: LoginProps): JSX.Element {
     >
       <style id={`${STYLE_ID}-ssr`} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: LOGIN_STYLES }} />
 
-      <AppHeader width={LOGIN_WIDTH} />
+      {renderHeader ? <AppHeader width={LOGIN_WIDTH} /> : null}
 
       <div style={{ flex: 1, padding: "24px 16px", display: "flex", justifyContent: "center" }}>
         <div style={{ width: 766, display: "flex", flexDirection: "column", gap: 16 }}>

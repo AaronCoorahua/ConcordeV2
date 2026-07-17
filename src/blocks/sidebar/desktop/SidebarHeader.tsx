@@ -34,14 +34,10 @@ const STYLES = `
   align-items: center;
   gap: 8px;
   min-width: 0;
-  overflow: hidden;
+  /* El logo permanece SIEMPRE visible (también al colapsar): no se desvanece,
+     solo lo recorta el overflow del sidebar (76px) mostrando el isotipo. */
+  overflow: visible;
   opacity: 1;
-  max-width: 200px;
-  transition: opacity 0.18s ease, max-width 0.28s cubic-bezier(0.4,0,0.2,1);
-}
-.sbh-logo--collapsed {
-  opacity: 0;
-  max-width: 0;
 }
 @media (prefers-reduced-motion: reduce) {
   .psb-toggle, .sbh-logo { transition: none; }
@@ -57,9 +53,11 @@ export interface SidebarHeaderProps {
   collapsed?: boolean;
   /** Handler del botón hamburguesa */
   onToggle?: () => void;
+  /** Alto de la cabecera en px (para alinear con el header del contenido). Default 60. */
+  height?: number;
 }
 
-export default function SidebarHeader({ logo, collapsed = false, onToggle }: SidebarHeaderProps): JSX.Element {
+export default function SidebarHeader({ logo, collapsed = false, onToggle, height = 60 }: SidebarHeaderProps): JSX.Element {
   const uid = useId().replace(/:/g, "-");
 
   if (typeof document !== "undefined" && !_injected) {
@@ -79,15 +77,16 @@ export default function SidebarHeader({ logo, collapsed = false, onToggle }: Sid
         data-slot="sidebar-header"
         style={{
           width: "100%",
-          height: 60,
+          height,
           display: "flex",
           alignItems: "center",
-          paddingLeft: collapsed ? 20 : 14,
-          paddingRight: collapsed ? 20 : 14,
+          // La hamburguesa queda alineada con la columna de iconos del sidebar
+          // colapsado (centro ≈ 38px): paddingLeft 20 + medio botón (18) = 38.
+          paddingLeft: 20,
+          paddingRight: 14,
           gap: 8,
           flexShrink: 0,
           boxSizing: "border-box",
-          transition: "padding 0.28s cubic-bezier(0.4,0,0.2,1)",
         }}
       >
         {/* Botón colapsar */}
@@ -126,14 +125,14 @@ export default function SidebarHeader({ logo, collapsed = false, onToggle }: Sid
           </svg>
         </button>
 
-        {/* Slot del logo */}
-        <div className={`sbh-logo${collapsed ? " sbh-logo--collapsed" : ""}`}>
+        {/* Slot del logo — visible siempre (no desaparece al colapsar) */}
+        <div className="sbh-logo">
           {logo ?? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src="/logo-preview.png"
-              alt="Subastop"
-              style={{ height: 22, width: "auto", display: "block", flexShrink: 0 }}
+              src="/assets/brand/logo-voyager.svg"
+              alt="VMC Subastas"
+              style={{ height: 40, width: "auto", display: "block", flexShrink: 0 }}
             />
           )}
         </div>

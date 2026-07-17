@@ -7,6 +7,8 @@ import AgregarSubascoinsMobile from "@/src/blocks/agregar-subascoins/mobile/Agre
 import { AGREGARSUBASCOINS_MOBILE_WIDTH } from "@/src/blocks/agregar-subascoins/mobile/dimensions";
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_COLLAPSED_WIDTH } from "@/src/blocks/sidebar/desktop/dimensions";
+import AppHeader from "@/src/blocks/header/desktop/Header";
+import { HEADER_HEIGHT } from "@/src/blocks/header/desktop/dimensions";
 import BlockViewer, { type BlockFile, VAULT_PREVIEW_BG } from "@/app/blocks/_components/BlockViewer";
 
 /**
@@ -26,16 +28,25 @@ export default function AgregarSubascoinsViewer({ files }: { files: BlockFile[] 
   const [collapsed, setCollapsed] = useState(false);
   const fillW = COMBINED_WIDTH - (collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH);
   const OVERSCAN = 2;
+  // Escalado PROPORCIONAL (uniforme, sin distorsión) anclado a la esquina superior
+  // derecha: al colapsar, el contenido crece hacia la izquierda; el alto crece con él.
   const scale = (fillW + OVERSCAN) / AGREGARSUBASCOINS_WIDTH;
-  const canvasH = AGREGARSUBASCOINS_HEIGHT * scale;
+  const canvasH = HEADER_HEIGHT + (AGREGARSUBASCOINS_HEIGHT - HEADER_HEIGHT) * scale;
 
+  // Header con ancho real (fillW), sin transform → su fondo se alarga pero el
+  // contenido no se estira. Cuerpo con zoom proporcional desde la esquina sup-der
+  // arrancando en top=64 fijo → top del cuerpo alineado con el sidebar.
   const canvas = (
     <div style={{ position: "relative", width: COMBINED_WIDTH, height: canvasH, background: VAULT_PREVIEW_BG, overflow: "hidden", transition: `height 0.28s ${EASE}` }}>
-      <div style={{ position: "absolute", right: 0, top: 0, width: AGREGARSUBASCOINS_WIDTH, transformOrigin: "top right", transform: `scale(${scale})`, transition: `transform 0.28s ${EASE}` }}>
-        <AgregarSubascoins />
+      {/* Header — ancho real (fillW), sin transform → fondo se alarga, contenido no se estira */}
+      <div style={{ position: "absolute", right: 0, top: 0, width: fillW + OVERSCAN, transition: `width 0.28s ${EASE}` }}>
+        <AppHeader width="100%" username="ZAEX5G" />
+      </div>
+      <div style={{ position: "absolute", right: 0, top: HEADER_HEIGHT, width: AGREGARSUBASCOINS_WIDTH, transformOrigin: "top right", transform: `scale(${scale})`, transition: `transform 0.28s ${EASE}` }}>
+        <AgregarSubascoins renderHeader={false} />
       </div>
       <div style={{ position: "absolute", left: 0, top: 0 }}>
-        <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed} height={canvasH} contentHeight={canvasH} />
+        <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed} height={canvasH} contentHeight={canvasH} headerHeight={HEADER_HEIGHT} />
       </div>
     </div>
   );

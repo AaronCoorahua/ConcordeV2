@@ -26,21 +26,21 @@ export default function HomepageViewer({ files }: { files: BlockFile[] }): JSX.E
   const fillW = COMBINED_WIDTH - (collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH); // ancho a cubrir
   const OVERSCAN = 2;                                 // px que el contenido mete BAJO el sidebar
   const scale = (fillW + OVERSCAN) / HOMEPAGE_WIDTH;
-  const canvasH = Math.max(COMBINED_HEIGHT, (HEADER_HEIGHT + HOMEPAGE_HEIGHT) * scale);
+  const canvasH = Math.max(COMBINED_HEIGHT, HEADER_HEIGHT + HOMEPAGE_HEIGHT * scale);
 
-  // Contenido PEGADO A LA DERECHA (right:0) y escalado desde la esquina sup-der
-  // (transform-origin: top right) → el borde derecho es el PIVOTE: nunca se mueve.
-  // El borde izquierdo es el que se mueve (sigue al sidebar). El sidebar va
-  // ENCIMA (se pinta después) y tapa los px que el contenido mete por debajo,
-  // así el seam queda perfecto sin micro-desfases. Solo cambia el height.
+  // Header: ancho REAL (fillW), sin transform → su fondo se alarga pero el contenido
+  // (logo, botón) NO se estira, queda a tamaño natural (usa justify space-between).
+  // Cuerpo: zoom proporcional desde la esquina sup-der, arrancando en top=64 fijo.
   const canvas = (
     <div style={{ position: "relative", width: COMBINED_WIDTH, height: canvasH, background: VAULT_PREVIEW_BG, overflow: "hidden", transition: `height 0.28s ${EASE}` }}>
-      <div style={{ position: "absolute", right: 0, top: 0, width: HOMEPAGE_WIDTH, display: "flex", flexDirection: "column", transformOrigin: "top right", transform: `scale(${scale})`, transition: `transform 0.28s ${EASE}` }}>
-        <AppHeader width={HOMEPAGE_WIDTH} />
+      <div style={{ position: "absolute", right: 0, top: 0, width: fillW + OVERSCAN, transition: `width 0.28s ${EASE}` }}>
+        <AppHeader width="100%" />
+      </div>
+      <div style={{ position: "absolute", right: 0, top: HEADER_HEIGHT, width: HOMEPAGE_WIDTH, transformOrigin: "top right", transform: `scale(${scale})`, transition: `transform 0.28s ${EASE}` }}>
         <Homepage />
       </div>
       <div style={{ position: "absolute", left: 0, top: 0 }}>
-        <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed} height={canvasH} />
+        <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed} height={canvasH} headerHeight={HEADER_HEIGHT} />
       </div>
     </div>
   );

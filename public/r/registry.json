@@ -277,6 +277,17 @@
       ]
     },
     {
+      "name": "banners",
+      "type": "registry:block",
+      "title": "banners",
+      "url": "https://concorde-v2-theta.vercel.app/r/banners.json",
+      "components": [
+        "staricon",
+        "businessicon",
+        "timericon"
+      ]
+    },
+    {
       "name": "detalle",
       "type": "registry:block",
       "title": "detalle",
