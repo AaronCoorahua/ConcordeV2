@@ -96,7 +96,7 @@ export const REPORT_ENTRIES: ReportEntry[] = [
     linear-gradient(#fff, #fff),
     linear-gradient(148deg, #ED8936 0%, #8460E5 100%);   /* focus */
 }`,
-    codeLink: "/blocks/register",
+    codeLink: "/blocks/login",
   },
   {
     slug: "relacionadas-titulo-y-card",
