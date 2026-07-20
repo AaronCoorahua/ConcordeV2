@@ -46,6 +46,222 @@ export const REPORT_ENTRIES: ReportEntry[] = [
   // Envíame las imágenes + explicación + código y yo relleno esto.
   // ────────────────────────────────────────────────────────────────
   {
+    slug: "relacionadas-titulo-y-card",
+    title: "Ofertas relacionadas — brackets del título mal encajados y cards de otro tamaño",
+    date: "17 jul 2026",
+    status: "corregido",
+    originalImage: "/assets/reporte/relacionadas-titulo-y-card-original.png",
+    concordeImage: "/assets/reporte/relacionadas-titulo-y-card-concorde.png",
+    problem: [
+      "Los brackets (esquinas) del título «OFERTAS RELACIONADAS» no encajan alrededor del texto: el wrapper del título tiene distinto padding que en Concorde.",
+      "Las cards internas tienen tamaños distintos: Producción usa grid fluido (pcard--compact), Concorde usa cards fijas 134×170 (pcard--short).",
+    ],
+    fix: [
+      "Igualar el padding del wrapper del título (8px 12px) para que los brackets encajen en las esquinas del texto.",
+      "Usar el tamaño de card fijo de Concorde (134×170, imagen 134×112) en un grid de 134px por columna.",
+    ],
+    codeLang: "tsx",
+    codeOriginal: `// PROD — título con padding px-3 py-2 y brackets sueltos + cards en grid fluido
+<div className="relative inline-flex flex-col items-start gap-0 px-3 py-2">
+  <svg className="absolute left-0 top-0 h-2.5 w-2.5">…bracket tl…</svg>
+  <svg className="absolute bottom-0 right-0 h-2.5 w-2.5">…bracket br…</svg>
+  <h3 className="text-[14px] font-semibold uppercase">Ofertas relacionadas</h3>
+</div>
+
+<div className="grid grid-cols-2 gap-4">
+  <article className="pcard pcard--compact">…</article>   {/* tamaño fluido */}
+</div>`,
+    codeConcorde: `// Concorde — CardTitle (padding 8px 12px, brackets --tl/--br) + cards fijas
+<div className="cardtitle">   {/* padding: 8px 12px → brackets encajan */}
+  <svg className="cardtitle__bracket cardtitle__bracket--tl">…</svg>
+  <h3 className="cardtitle__title">OFERTAS RELACIONADAS</h3>
+  <svg className="cardtitle__bracket cardtitle__bracket--br">…</svg>
+</div>
+
+<div style={{ display: "grid", gridTemplateColumns: "134px 134px",
+              justifyContent: "space-between", rowGap: 8 }}>
+  <article className="pcard pcard--short">…</article>   {/* 134×170 · img 134×112 */}
+</div>
+
+/* .pcard--short { width: 134px; height: 170px; }
+   .pcard--short .pcard__img { height: 112px; } */`,
+    codeLink: "/blocks/detalle",
+  },
+  {
+    slug: "detalle-columnas-ancho",
+    title: "Detalle — reparto de ancho de columnas distinto al de Concorde",
+    date: "17 jul 2026",
+    status: "corregido",
+    originalImage: [
+      "/assets/reporte/detalle-columnas-ancho-original-1.png",
+      "/assets/reporte/detalle-columnas-ancho-original-2.png",
+      "/assets/reporte/detalle-columnas-ancho-original-3.png",
+    ],
+    concordeImage: "/assets/reporte/detalle-columnas-ancho-concorde.png",
+    problem: [
+      "En Producción la columna izquierda (galería) es ~10px más ancha y la derecha (participación) ~10px más angosta de lo que deberían.",
+      "El reparto correcto es el de Concorde: izquierda con 10px menos y derecha con 10px más.",
+    ],
+    fix: [
+      "Ajustar el grid para restar 10px a la columna izquierda y sumárselos a la derecha.",
+      "En Concorde el reparto ya deja la izquierda −10px y la derecha +10px respecto a Producción.",
+    ],
+    codeLang: "tsx",
+    codeOriginal: `// PROD — grid con fracciones fluidas 3fr / 2fr
+<div className="grid grid-cols-1 gap-3
+                md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]
+                md:items-start">
+  <div className="md:col-start-1">…galería (izquierda)…</div>
+  <div>…participación (derecha)…</div>
+</div>
+// las fracciones no dan 443/311 → izquierda ~10px de más, derecha ~10px de menos`,
+    codeConcorde: `// Concorde — columnas con ANCHO FIJO: izquierda 443px, derecha 311px
+<div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
+  <div style={{ display: "flex", flexDirection: "column", gap: 16, width: 443 }}>
+    {/* galería (AuctionStatus + CardViewer + accordions) */}
+  </div>
+  <div style={{ display: "flex", flexDirection: "column", gap: 16, width: 311 }}>
+    {/* participación (DetailCard + pills + banner) */}
+  </div>
+</div>
+// 443 / 311 fijos → izquierda −10px y derecha +10px respecto a PROD`,
+    codeLink: "/blocks/detalle",
+  },
+  {
+    slug: "detalle-like-subascoin-pequenos",
+    title: "Detalle — like button e ícono Subascoin más pequeños que Concorde",
+    date: "17 jul 2026",
+    status: "corregido",
+    originalImage: "/assets/reporte/detalle-like-subascoin-pequenos-original.png",
+    concordeImage: "/assets/reporte/detalle-like-subascoin-pequenos-concorde.png",
+    problem: [
+      "El like button (♡) de la cabecera es más pequeño: en Producción usa like-button--md con el SVG a 14×14.",
+      "El ícono de Subascoin del Precio Base se ve pequeño y comprimido: el SVG usa viewBox con margen negativo (-6 -12 48 56).",
+    ],
+    fix: [
+      "Usar el tamaño grande del like (plike--lg, 40×40) con el corazón a ~21×21.",
+      "Ajustar el viewBox del ícono al contenido real (0 0 36 38) y dar width/height fijos, sin margen negativo.",
+    ],
+    codeLang: "tsx",
+    codeOriginal: `// PROD — like chico (md, svg 14) + subascoin con viewBox negativo
+<button className="like-button like-button--md">
+  <svg width="14" height="14" viewBox="0 0 24 24">♡</svg>
+</button>
+
+<div className="… size-10 …">
+  <svg className="size-7" viewBox="-6 -12 48 56" overflow="visible">
+    {/* margen negativo → ícono chico y comprimido */}
+  </svg>
+</div>`,
+    codeConcorde: `// Concorde — like grande (lg, 40×40) + subascoin con viewBox ajustado
+<button className="plike plike--lg" style={{ width: 40, height: 40 }}>
+  <svg width="21" height="21" viewBox="0 0 24 24">♡</svg>
+</button>
+
+<span className="priceicon">
+  <svg width="36" height="38" viewBox="0 0 36 38">
+    {/* tamaño real, sin margen negativo → ícono a escala */}
+  </svg>
+</span>`,
+    codeLink: "/blocks/detalle",
+  },
+  {
+    slug: "offercard-viewer-imagen-hover-live",
+    title: "OfferCard viewer — tamaño de imagen, hover en miniaturas y color live",
+    date: "17 jul 2026",
+    status: "corregido",
+    originalImage: "/assets/reporte/offercard-viewer-imagen-hover-live-original.png",
+    concordeImage: "/assets/reporte/offercard-viewer-imagen-hover-live-concorde.png",
+    problem: [
+      "La imagen principal no tiene el mismo tamaño: en Producción es h-[362px] fija.",
+      "El film de miniaturas no tiene efecto de hover.",
+      "La miniatura seleccionada/presionada no tiene el mismo borde naranja (live) que en Concorde.",
+    ],
+    fix: [
+      "Fijar la altura de la imagen principal a 362px, igual que Producción.",
+      "Añadir un estado :hover a las miniaturas (borde/ring al pasar el cursor).",
+      "Igualar el borde naranja de la miniatura seleccionada/presionada al de Concorde.",
+    ],
+    codeLang: "tsx",
+    codeOriginal: `// PROD — imagen principal 362px fija; miniaturas solo con transition-colors
+<div className="relative h-[362px] overflow-hidden rounded-b-[8px] border">
+  <img className="h-full w-full object-cover" />
+  …flechas · fullscreen · contador 1/21…
+</div>
+
+// miniatura: sin hover; el borde de la seleccionada no coincide con Concorde
+<button className="aspect-[106/98] rounded-[6px] border border-[#d8d9e3]
+                   transition-colors
+                   /* seleccionada: */ border-[#ED8936] ring-2 ring-[#F99845]/40">
+  <img className="h-full w-full object-cover" />
+</button>`,
+    codeConcorde: `// Concorde — viewer con altura fija, hover y borde naranja al seleccionar
+<div className="pcardv pcardv--live">
+  <div className="pcardv__viewer">
+    <img className="pcardv__img" />      {/* height: 362px */}
+    …prev · next · expand · count…
+  </div>
+  <div className="pcardv__strip">
+    <button className="pcardv__thumb pcardv__thumb--selected"><img/></button>
+    <button className="pcardv__thumb"><img/></button>
+  </div>
+</div>
+
+/* CSS clave */
+.pcardv__img   { height: 362px; width: 100%; object-fit: cover; }
+.pcardv__thumb { border: 1px solid #d8d9e3; transition: border-color .18s, box-shadow .18s; }
+.pcardv__thumb:hover { border-color: #ED8936; box-shadow: 0 0 0 2px rgba(249,152,69,.4); }
+/* seleccionada/presionada = borde naranja (live) */
+.pcardv__thumb--selected { border-color: #ED8936; box-shadow: 0 0 0 2px rgba(249,152,69,.4); }`,
+    codeLink: "/blocks/detalle",
+  },
+  {
+    slug: "pcard-subascoin-alineacion",
+    title: "OfferCard — ícono Subascoin pequeño y desalineado del precio",
+    date: "17 jul 2026",
+    status: "corregido",
+    originalImage: "/assets/reporte/pcard-subascoin-alineacion-original.png",
+    concordeImage: "/assets/reporte/pcard-subascoin-alineacion-concorde.png",
+    problem: [
+      "El ícono de Subascoin se ve pequeño y no queda alineado verticalmente con el precio ni con el like button.",
+      "El SVG usa un viewBox con margen negativo (-6 -12 48 56) para acomodar filtros/sombras, lo que descentra el ícono dentro de su caja.",
+    ],
+    fix: [
+      "Ajustar el viewBox al contenido real y dar al SVG un width/height fijos, sin margen negativo.",
+      "Envolver ícono + precio en un contenedor flex con align-items:center para que ícono, precio y like queden en el mismo eje vertical.",
+    ],
+    codeLang: "tsx",
+    codeOriginal: `// PROD — SVG con viewBox de margen negativo + filtros → ícono chico y descentrado
+<div className="pcard__price-row">
+  <div className="pcard__price-group">
+    <div className="pcard__price-icon-wrap">
+      <svg viewBox="-6 -12 48 56" overflow="visible">  {/* ← descentra */}
+        …filtros/sombras que agrandan la caja…
+      </svg>
+    </div>
+    <p className="pcard__price">US$ 5,399</p>
+  </div>
+  <button className="like-button">♡</button>
+</div>`,
+    codeConcorde: `// Concorde — SVG con viewBox ajustado + flex alineado al centro
+<div className="pcard__price-row">
+  <div className="pcard__price-left">   {/* flex; align-items:center */}
+    <div className="pcard-pprice" aria-hidden="true">
+      <svg width="30" height="32" viewBox="30 199 28 30">  {/* ← ajustado */}
+        …
+      </svg>
+    </div>
+    <span className="pcard__price-text">US$ 9,999</span>
+  </div>
+  <button className="pcard-like" aria-label="Agregar a favoritos">♡</button>
+</div>
+
+/* CSS clave */
+.pcard__price-left { display: flex; align-items: center; gap: 8px; }
+// → ícono, precio y like alineados en el mismo eje vertical`,
+    codeLink: "/blocks/homepage",
+  },
+  {
     slug: "card-rounded-border-distinto",
     title: "Cards — border-radius de fondo distintos",
     date: "17 jul 2026",
@@ -94,41 +310,40 @@ export const REPORT_ENTRIES: ReportEntry[] = [
   },
   {
     slug: "sidebar-delay-colapso",
-    title: "Sidebar — delay al colapsar/expandir",
+    title: "Sidebar — la sección no se queda seleccionada en naranja",
     date: "17 jul 2026",
     status: "corregido",
-    originalImage: [
-      "/assets/reporte/sidebar-delay-colapso-original-1.png",
-      "/assets/reporte/sidebar-delay-colapso-original-2.png",
-      "/assets/reporte/sidebar-delay-colapso-original-3.png",
-    ],
+    originalImage: "/assets/reporte/sidebar-delay-colapso-original-3.png",
     concordeImage: "/assets/reporte/sidebar-delay-colapso-concorde.png",
     concordeEmbed: "/blocks/sidebar/embed",
     problem: [
-      "El panel expandido lleva delay-[400ms] en su transición de opacidad: al volver a abrir, la opacidad espera 400ms antes de animar → ese retardo es el delay visible.",
-      "Al cerrar usa delay-0 duration-0 (instantáneo) pero al abrir no, así que el colapso y la expansión no son simétricos.",
+      "En Producción, al hacer click en una subsección el ítem no se queda en naranja (estado seleccionado): el naranja solo aparece mientras está presionado y se pierde al soltar.",
+      "En Concorde el ítem sí conserva el estado seleccionado (naranja) tras el click.",
     ],
     fix: [
-      "Quitar el delay-[400ms] de la transición de opacidad del panel (o dejarlo en 0) para que al expandir aparezca de inmediato.",
-      "En Concorde el colapso/expansión anima solo el ancho, sincronizado, sin delay en la opacidad. Pruébalo en el iframe de al lado.",
+      "Guardar el ítem activo en estado y aplicarle el estilo naranja de forma persistente, no solo en :active.",
+      "Pruébalo en el iframe de al lado: al pulsar un ítem se queda seleccionado en naranja.",
     ],
     codeLang: "tsx",
-    codeOriginal: `// PROD — el panel expandido tiene delay-[400ms] en la opacidad
-<div className="opacity-100 transition-opacity duration-[250ms] delay-[400ms]
-                peer-checked/dc:opacity-0 peer-checked/dc:delay-0 peer-checked/dc:duration-0">
-//                            ▲ al ABRIR espera 400ms → delay visible
-//   (al cerrar: delay-0 duration-0 = instantáneo → asimétrico)`,
-    codeConcorde: `// Concorde — el colapso/expansión anima solo el ancho, sincronizado y sin delay
-const EASE = "cubic-bezier(0.4,0,0.2,1)";
+    codeOriginal: `// PROD — el naranja solo existe en :active (mientras se presiona)
+<a className="… active:bg-[linear-gradient(to_bottom,#ff9639,#ef852e,#be3d00)]
+              active:text-white">
+  {/* al soltar el click, vuelve al estado por defecto → no se queda naranja */}
+</a>`,
+    codeConcorde: `// Concorde — el ítem activo se guarda en estado y conserva el naranja
+const [activeId, setActiveId] = useState(defaultActiveId);
 
-.sb-root      { transition: width 0.28s \${EASE}; }
-.sbi-trailing { transition: opacity 0.28s \${EASE}, max-width 0.28s \${EASE}; }
-//              ▲ sin delay → aparece a la vez que se expande el ancho
+<SidebarItem
+  isActive={activeId === item.id}       // ← selección persistente
+  onClick={handleItemClick}             // setActiveId(id)
+/>
 
-@media (prefers-reduced-motion: reduce) {
-  .sb-root, .sbi-trailing { transition: none; }
+/* estilo del seleccionado (no depende de :active) */
+.sbi-item--active {
+  background: linear-gradient(180deg, #FF9639 0%, #EF852E 40%, #BE3D00 100%);
 }
-// → abre y cierra simétrico, sin el salto de 400ms. Compruébalo en el iframe.`,
+.sbi-item--active .sbi-label { color: #FFFFFF; }
+// → tras el click el ítem se queda seleccionado en naranja. Compruébalo en el iframe.`,
     codeLink: "/blocks/sidebar",
   },
   {
