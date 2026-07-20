@@ -80,7 +80,11 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
           }}
         >
           <ImagePanel label="Producción" tone="#f97316" src={entry.originalImage} alt={`Producción — ${entry.title}`} />
-          <ImagePanel label="Concorde" tone="#4f2ed8" src={entry.concordeImage} alt={`Concorde — ${entry.title}`} />
+          {entry.concordeEmbed ? (
+            <EmbedPanel label="Concorde" tone="#4f2ed8" src={entry.concordeEmbed} title={`Concorde — ${entry.title}`} />
+          ) : (
+            <ImagePanel label="Concorde" tone="#4f2ed8" src={entry.concordeImage} alt={`Concorde — ${entry.title}`} />
+          )}
         </div>
 
         {/* Problema */}
@@ -145,6 +149,67 @@ function ImagePanel({ label, tone, src, alt }: { label: string; tone: string; sr
             />
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function EmbedPanel({ label, tone, src, title }: { label: string; tone: string; src: string; title: string }): JSX.Element {
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+        <span style={{ width: 8, height: 8, borderRadius: "50%", background: tone }} />
+        <span style={{ fontSize: 13, fontWeight: 700, color: "#334155", letterSpacing: "0.02em" }}>{label}</span>
+        <span
+          style={{
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: "0.04em",
+            textTransform: "uppercase",
+            color: "#4f2ed8",
+            background: "#f1edff",
+            padding: "2px 8px",
+            borderRadius: 20,
+          }}
+        >
+          Interactivo
+        </span>
+        <a
+          href={src.replace(/\/embed$/, "")}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            marginLeft: "auto",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+            fontSize: 11,
+            fontWeight: 600,
+            color: "#93a3b8",
+            textDecoration: "none",
+          }}
+        >
+          abrir bloque
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <path d="M3.5 3H9V8.5M9 3L3 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </a>
+      </div>
+      <div
+        style={{
+          borderRadius: 12,
+          overflow: "hidden",
+          border: "1px solid #e2e8f0",
+          background: "#f8fafc",
+          aspectRatio: "16 / 10",
+        }}
+      >
+        <iframe
+          src={src}
+          title={title}
+          loading="lazy"
+          style={{ width: "100%", height: "100%", border: "none", display: "block" }}
+        />
       </div>
     </div>
   );

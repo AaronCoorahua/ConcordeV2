@@ -24,6 +24,8 @@ export type ReportEntry = {
   originalImage: string | string[];
   /** Imagen(es) del resultado en Concorde. Ruta pública o array si son varias. */
   concordeImage: string | string[];
+  /** Ruta de un bloque real a embeber en iframe en el lado Concorde, EN LUGAR de la imagen. */
+  concordeEmbed?: string;
   /** Qué está mal — descripción del problema. Soporta varios párrafos (array de strings). */
   problem: string[];
   /** Cómo se corrige — explicación redactada de la solución. Varios párrafos. */
@@ -43,6 +45,92 @@ export const REPORT_ENTRIES: ReportEntry[] = [
   // Las entradas se agregan aquí. La más reciente va PRIMERO (arriba).
   // Envíame las imágenes + explicación + código y yo relleno esto.
   // ────────────────────────────────────────────────────────────────
+  {
+    slug: "card-rounded-border-distinto",
+    title: "Cards — border-radius de fondo distintos",
+    date: "17 jul 2026",
+    status: "corregido",
+    originalImage: "/assets/reporte/card-rounded-border-distinto-original.png",
+    concordeImage: "/assets/reporte/card-rounded-border-distinto-concorde.png",
+    problem: [
+      "El border-radius del contenedor de la card no coincide entre superficies: en Producción es 8px y en Concorde 16px.",
+      "Al no calzar, las esquinas redondeadas del fondo se ven distintas entre secciones.",
+    ],
+    fix: [
+      "Unificar el radius del contenedor a un solo valor en ambas superficies.",
+      "Concorde usa 16px; Producción usa rounded-[8px]. Alinear ambos al mismo token de radius.",
+    ],
+    codeLang: "tsx",
+    codeOriginal: `// PROD — contenedor de la card con radius 8px
+<div className="mx-auto mb-4 w-full py-0 md:py-4
+                rounded-[8px]           /* ← 8px */
+                border border-[rgba(32,0,104,0.07)]
+                bg-white shadow-[0_2px_10px_rgba(32,0,104,0.06)]">
+  {/* Tipo de oferta + Categorías */}
+</div>`,
+    codeConcorde: `// Concorde — el mismo contenedor con radius 16px
+<section style={{
+  width: 766,
+  height: 184,
+  background: "#ffffff",
+  borderRadius: 16,          /* ← 16px (distinto de PROD) */
+  boxShadow: "rgba(0,0,0,0.07) 0px 0px 16px 4px",
+  padding: "12px 20px",
+  display: "flex",
+  alignItems: "center",
+}}>
+  {/* Tipo de oferta */}
+  <div>…</div>
+
+  {/* divisor vertical del medio */}
+  <div style={{ width: 1, height: 143, background: "#E5E7EB" }} />
+
+  {/* Categorías */}
+  <div>…</div>
+</section>
+
+// Fix: unificar borderRadius al mismo valor en ambas superficies.`,
+    codeLink: "/blocks/homepage",
+  },
+  {
+    slug: "sidebar-delay-colapso",
+    title: "Sidebar — delay al colapsar/expandir",
+    date: "17 jul 2026",
+    status: "corregido",
+    originalImage: [
+      "/assets/reporte/sidebar-delay-colapso-original-1.png",
+      "/assets/reporte/sidebar-delay-colapso-original-2.png",
+      "/assets/reporte/sidebar-delay-colapso-original-3.png",
+    ],
+    concordeImage: "/assets/reporte/sidebar-delay-colapso-concorde.png",
+    concordeEmbed: "/blocks/sidebar/embed",
+    problem: [
+      "El panel expandido lleva delay-[400ms] en su transición de opacidad: al volver a abrir, la opacidad espera 400ms antes de animar → ese retardo es el delay visible.",
+      "Al cerrar usa delay-0 duration-0 (instantáneo) pero al abrir no, así que el colapso y la expansión no son simétricos.",
+    ],
+    fix: [
+      "Quitar el delay-[400ms] de la transición de opacidad del panel (o dejarlo en 0) para que al expandir aparezca de inmediato.",
+      "En Concorde el colapso/expansión anima solo el ancho, sincronizado, sin delay en la opacidad. Pruébalo en el iframe de al lado.",
+    ],
+    codeLang: "tsx",
+    codeOriginal: `// PROD — el panel expandido tiene delay-[400ms] en la opacidad
+<div className="opacity-100 transition-opacity duration-[250ms] delay-[400ms]
+                peer-checked/dc:opacity-0 peer-checked/dc:delay-0 peer-checked/dc:duration-0">
+//                            ▲ al ABRIR espera 400ms → delay visible
+//   (al cerrar: delay-0 duration-0 = instantáneo → asimétrico)`,
+    codeConcorde: `// Concorde — el colapso/expansión anima solo el ancho, sincronizado y sin delay
+const EASE = "cubic-bezier(0.4,0,0.2,1)";
+
+.sb-root      { transition: width 0.28s \${EASE}; }
+.sbi-trailing { transition: opacity 0.28s \${EASE}, max-width 0.28s \${EASE}; }
+//              ▲ sin delay → aparece a la vez que se expande el ancho
+
+@media (prefers-reduced-motion: reduce) {
+  .sb-root, .sbi-trailing { transition: none; }
+}
+// → abre y cierra simétrico, sin el salto de 400ms. Compruébalo en el iframe.`,
+    codeLink: "/blocks/sidebar",
+  },
   {
     slug: "homepage-padding-entre-secciones",
     title: "Homepage — padding entre secciones inconsistente y mayor a 16px",
