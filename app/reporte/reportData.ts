@@ -46,6 +46,59 @@ export const REPORT_ENTRIES: ReportEntry[] = [
   // Envíame las imágenes + explicación + código y yo relleno esto.
   // ────────────────────────────────────────────────────────────────
   {
+    slug: "register-boton-press-e-input-gradiente",
+    title: "Register — botón «Regístrate» sin press e input con gradiente de border distinto",
+    date: "17 jul 2026",
+    status: "corregido",
+    originalImage: "/assets/reporte/register-boton-press-e-input-gradiente-original.png",
+    concordeImage: "/assets/reporte/register-boton-press-e-input-gradiente-concorde.png",
+    problem: [
+      "El botón «Regístrate» (outline) no tiene efecto press: al pulsarlo no cambia de estado.",
+      "El gradiente del border de los inputs (Correo/Contraseña) es distinto al de Concorde.",
+    ],
+    fix: [
+      "Usar el botón outline de Concorde (.poutline), que sí trae :active con relleno naranja oscuro.",
+      "Aplicar el gradiente de border del input de Concorde: default 338deg #8460E5→#FFF8F1, focus 148deg #ED8936→#8460E5.",
+    ],
+    codeLang: "tsx",
+    codeOriginal: `// PROD — botón e input con clases propias (sin :active, gradiente distinto)
+<button type="button" className="login-form__register-link">Regístrate</button>
+
+<div className="relative">
+  <input id="email" className="login-form__input" type="email" />
+</div>`,
+    codeConcorde: `// Concorde — botón .poutline (CON press) + input .pinput (gradiente exacto)
+<button className="poutline" type="button" style={{ width: 296 }}>Regístrate</button>
+
+<div className="pinput-root">
+  <div className="pinput">
+    <input className="pinput__field" type="email" placeholder="tucorreo@gmail.com" />
+  </div>
+</div>
+
+/* Button.tsx — el press del outline */
+.poutline:active {
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 55%),
+    linear-gradient(156deg, #D46E20 0%, #B73700 100%);   /* relleno pressed */
+}
+
+/* Input.tsx — gradiente del border */
+.pinput {
+  border: 1px solid transparent;
+  background-image:
+    linear-gradient(#fff, #fff),
+    linear-gradient(338deg, #8460E5 0%, #FFF8F1 100%);   /* default */
+}
+.pinput:focus-within {
+  border-width: 2px;
+  background-image:
+    linear-gradient(#fff, #fff),
+    linear-gradient(148deg, #ED8936 0%, #8460E5 100%);   /* focus */
+}`,
+    codeLink: "/blocks/register",
+  },
+  {
     slug: "relacionadas-titulo-y-card",
     title: "Ofertas relacionadas — brackets del título mal encajados y cards de otro tamaño",
     date: "17 jul 2026",
