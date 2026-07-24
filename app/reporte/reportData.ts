@@ -46,6 +46,88 @@ export const REPORT_ENTRIES: ReportEntry[] = [
   // Envíame las imágenes + explicación + código y yo relleno esto.
   // ────────────────────────────────────────────────────────────────
   {
+    slug: "perfil-espaciado-cerrar-sesion",
+    title: "Perfil — espaciado entre «Cerrar Sesión» y «Centro de Ayuda» muy justo",
+    date: "17 jul 2026",
+    status: "corregido",
+    originalImage: "/assets/reporte/perfil-espaciado-cerrar-sesion-original.png",
+    concordeImage: "/assets/reporte/perfil-espaciado-cerrar-sesion-concorde.png",
+    problem: [
+      "El botón «Cerrar Sesión» queda demasiado cerca del banner «Centro de Ayuda»: falta aire entre ambos.",
+      "El «Centro de Ayuda» se empuja al fondo con mt-auto, sin un margen dedicado respecto al botón.",
+    ],
+    fix: [
+      "Añadir un margen/gap explícito entre el botón «Cerrar Sesión» y el banner «Centro de Ayuda».",
+      "En Concorde hay separación clara entre ambos, igualarla.",
+    ],
+    codeLang: "tsx",
+    codeOriginal: `// PROD — el banner se empuja con mt-auto, sin gap propio con el botón
+<button className="button-secondary !min-w-[200px]">Cerrar Sesión</button>
+
+{/* Centro de Ayuda empujado al fondo, pegado al botón */}
+<div className="mt-auto w-full px-4 pb-4">
+  <section>…Centro de Ayuda…</section>
+</div>`,
+    codeConcorde: `// Concorde — separación explícita entre el botón y el banner
+<button className="psec">Cerrar Sesión</button>
+
+{/* margen/gap dedicado antes del Centro de Ayuda */}
+<div style={{ marginTop: 32 }}>   {/* ← aire entre botón y banner */}
+  <section>…Centro de Ayuda…</section>
+</div>`,
+    codeLink: "/blocks/tu-perfil",
+  },
+  {
+    slug: "zona-cards-tamano-y-hover",
+    title: "Zona (perfil) — tamaño de cards/letras y hover del profile-link distintos",
+    date: "17 jul 2026",
+    status: "corregido",
+    originalImage: "/assets/reporte/zona-cards-tamano-y-hover-original.png",
+    concordeImage: "/assets/reporte/zona-cards-tamano-y-hover-concorde.png",
+    problem: [
+      "Las cards y las letras tienen otro tamaño y desaprovechan el espacio: «Tu actividad» en Producción son skeletons grises vacíos, en Concorde son pills con datos (Ganadas, Consignaciones…).",
+      "El hover del profile-link (Tu perfil / Historial) es distinto al de Concorde.",
+    ],
+    fix: [
+      "Usar las cards de tamaño fijo de Concorde (375×221, letras 15px) y llenar «Tu actividad» con pills en lugar de skeletons.",
+      "Aplicar el hover del ProfileButton de Concorde: círculo relleno naranja + chevron blanco + lift.",
+    ],
+    codeLang: "tsx",
+    codeOriginal: `// PROD — cards fluidas, texto sm/xs, «Tu actividad» = skeletons vacíos
+<section className="rounded-2xl bg-white p-4 shadow-[0_0_16px_rgba(0,0,0,0.14)]">
+  …
+  <div className="text-sm text-[#3b1782]">SubasCoins: >S< 0</div>
+</section>
+
+// Tu actividad → placeholders grises (espacio desaprovechado)
+<div className="grid grid-cols-2 gap-x-8 gap-y-7">
+  <div className="h-10 rounded-full bg-[#d3d6df] w-full"></div>
+  … (4 skeletons)
+</div>
+
+// profile-link con hover propio (distinto a Concorde)
+<a className="profile-link">Ir al Perfil …</a>`,
+    codeConcorde: `// Concorde — cards fijas 375×221 + pills de actividad con datos
+<section className="wbc">  {/* width:375px; height:221px; letras 15px */}
+  <span className="wbc__row-label">SubasCoins:</span>
+</section>
+
+// Tu actividad → pills reales (aprovechan el espacio)
+<span className="actpill actpill--orange">
+  <span className="actpill__badge">1</span>
+  <span className="actpill__label">Ganadas</span>
+</span>
+
+/* ProfileButton — el hover correcto */
+.pprofilebtn:hover .pprofilebtn__circle {
+  background: linear-gradient(90deg, #ff9639, #ef852e 40%, #be3d00);
+  color: #ffffff;                       /* chevron blanco */
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  transform: translateY(-1px);          /* lift */
+}`,
+    codeLink: "/blocks/zona",
+  },
+  {
     slug: "register-boton-press-e-input-gradiente",
     title: "Register — botón «Regístrate» sin press e input con gradiente de border distinto",
     date: "17 jul 2026",
