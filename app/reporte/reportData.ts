@@ -38,6 +38,8 @@ export type ReportEntry = {
   codeConcorde?: string;
   /** Link al bloque Concorde. Se muestra como "ver código Concorde" en el lado Concorde. */
   codeLink?: string;
+  /** Link al handoff del componente. Se muestra como "ver handoff" junto al código Concorde. */
+  handoffLink?: string;
 };
 
 export const REPORT_ENTRIES: ReportEntry[] = [
@@ -179,6 +181,7 @@ export const REPORT_ENTRIES: ReportEntry[] = [
     linear-gradient(148deg, #ED8936 0%, #8460E5 100%);   /* focus */
 }`,
     codeLink: "/blocks/register",
+    handoffLink: "/handoff/button",
   },
   {
     slug: "relacionadas-titulo-y-card",
@@ -299,6 +302,7 @@ export const REPORT_ENTRIES: ReportEntry[] = [
   </svg>
 </span>`,
     codeLink: "/blocks/detalle",
+    handoffLink: "/handoff/detailcard",
   },
   {
     slug: "offercard-viewer-imagen-hover-live",
@@ -349,6 +353,7 @@ export const REPORT_ENTRIES: ReportEntry[] = [
 /* seleccionada/presionada = borde naranja (live) */
 .pcardv__thumb--selected { border-color: #ED8936; box-shadow: 0 0 0 2px rgba(249,152,69,.4); }`,
     codeLink: "/blocks/detalle",
+    handoffLink: "/handoff/cardviewer",
   },
   {
     slug: "pcard-subascoin-alineacion",
@@ -395,6 +400,7 @@ export const REPORT_ENTRIES: ReportEntry[] = [
 .pcard__price-left { display: flex; align-items: center; gap: 8px; }
 // → ícono, precio y like alineados en el mismo eje vertical`,
     codeLink: "/blocks/homepage",
+    handoffLink: "/handoff/offershelf",
   },
   {
     slug: "card-rounded-border-distinto",

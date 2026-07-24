@@ -1,47 +1,39 @@
 /**
  * Registry de tipologías de banner — SOLO para Server Components.
  *
- * Una tipología = un LAYOUT (dónde va la marca y dónde el copy). El FONDO es un
- * eje aparte: cada tipología se puede ver con cualquiera de los tonos V2
- * (En Vivo, Morado, Negociable, SubasCoins, Dark) mediante el tab del detalle.
- * Todas se muestran por defecto con el fondo «En Vivo» (V2_DEFAULT_TONE).
+ * Modelo: cada tipología es un LAYOUT (composición marca↔copy). El TONO es un
+ * eje aparte: dentro del detalle, un tab permite ver el mismo layout sobre cada
+ * uno de los 5 tonos (En Vivo, Morado, Negociable, SubasCoins, Dark), cada uno
+ * clonado TAL CUAL de su SVG de Figma (tipologiasNew.ts), con el logo real.
  *
- * Son 7 layouts: los 5 V2 + las tipologías C y E (que conservan sus assets de
- * marca pero ahora van sobre el mismo fondo V2).
- *
- * Complementa a src/emails/registry.ts (los correos reales de producción,
- * expuestos en /correos/variantes).
+ * Tipologías de layout:
+ *   01 · Texto a la izquierda — copy izq, marca der.
+ *   02 · Texto a la derecha   — espejo: marca izq, copy der.
  */
 
 import {
-  TIPOLOGIAS_BASICAS,
-  buildTipoBanner,
-  tipoHeight,
-  type TipoBasica,
-} from "./tipologiasBanners";
+  TIPOLOGIAS_LAYOUT,
+  TONOS,
+  buildBanner,
+  tipoNewHeight,
+  wrapTipoPreview,
+} from "./tipologiasNew";
 import {
-  TIPOLOGIAS_V2,
-  buildV2Banner,
-  wrapV2Preview,
-  v2Height,
-  V2_DEFAULT_TONE,
-  V2_TONE_OPTIONS,
-  type V2Tone,
-} from "./tipologiasV2";
-import {
-  FOOTER_TIPOLOGIAS,
-  buildFooterBanner,
+  FOOTER_TONOS,
+  buildFooter,
   footerHeight,
+  wrapFooterPreview,
 } from "./tipologiasFooter";
 
-/** Una variante de FONDO de una tipología: el mismo layout con otro tono. */
+/** Un TONO de una tipología: el mismo layout sobre otro fondo. */
 export interface TipoFondo {
-  tone: V2Tone;
+  /** id del tono (en-vivo, morado, …) — sirve de key del tab. */
+  tone: string;
   /** Etiqueta del tab («En Vivo», «Morado», …). */
   label: string;
-  /** Documento HTML completo para previsualizar en un iframe */
+  /** Documento HTML completo para previsualizar en un iframe. */
   previewDoc: string;
-  /** HTML que copia el botón: bloque banner listo para pegar */
+  /** HTML que copia el botón: bloque banner listo para pegar. */
   copyHtml: string;
 }
 
@@ -49,16 +41,16 @@ export interface TipoPlantilla {
   id: string;
   name: string;
   description: string;
-  /** Alto del contenido (px) para dimensionar el iframe */
+  /** Alto del contenido (px) para dimensionar el iframe. */
   previewHeight: number;
-  /** Un fondo por tono, en el orden de V2_TONE_OPTIONS. El primero es el default. */
+  /** Un fondo por tono, en el orden del tab. El primero es el default. */
   fondos: TipoFondo[];
 }
 
 /** Metadatos de una tipología. */
 export interface TipoMeta {
   id: string;
-  /** Sigla corta para el chip de la card (C, E o V2). */
+  /** Sigla corta para el chip de la card. */
   letra: string;
   label: string;
   descripcion: string;
@@ -71,77 +63,64 @@ export interface TipoGroup {
   plantillas: TipoPlantilla[];
 }
 
-/**
- * Arma la lista de fondos de una tipología: el mismo layout renderizado con
- * cada tono, en el orden del tab. `build` recibe el tono y devuelve el HTML.
- */
-function buildFondos(label: string, build: (tone: V2Tone) => string): TipoFondo[] {
-  return V2_TONE_OPTIONS.map(function toFondo(opt): TipoFondo {
-    const banner = build(opt.tone);
+/** Cada tipología de layout, con los 5 tonos renderizados como fondos. */
+const GROUPS: TipoGroup[] = TIPOLOGIAS_LAYOUT.map(function toGroup(layout): TipoGroup {
+  const fondos: TipoFondo[] = TONOS.map(function toFondo(tone): TipoFondo {
+    const banner = buildBanner(layout, tone);
     return {
-      tone: opt.tone,
-      label: opt.label,
-      previewDoc: wrapV2Preview(banner, `${label} · ${opt.label}`),
+      tone: tone.id,
+      label: tone.label,
+      previewDoc: wrapTipoPreview(banner, `${layout.label} · ${tone.label}`),
       copyHtml: banner,
     };
   });
-}
-
-/** Tipologías V2 — los 5 layouts de gradiente. */
-const GROUPS_V2: TipoGroup[] = TIPOLOGIAS_V2.map(function toGroup(t): TipoGroup {
   return {
-    tipologia: { id: t.id, letra: "V2", label: t.label, descripcion: t.descripcion },
+    tipologia: { id: layout.id, letra: layout.letra, label: layout.label, descripcion: layout.descripcion },
     kind: "banner",
     plantillas: [
       {
-        id: `${t.id}-banner`,
-        name: "Banner hero",
-        description: `${t.descripcion} Elige el fondo con el tab y pégalo como header de cualquier plantilla.`,
-        previewHeight: v2Height(t) + 20,
-        fondos: buildFondos(t.label, function build(tone) { return buildV2Banner(t, tone); }),
-      },
-    ],
-  };
-});
-
-/** Tipologías C y E — assets de marca sobre el mismo fondo V2. */
-const GROUPS_CE: TipoGroup[] = TIPOLOGIAS_BASICAS.map(function toGroup(t: TipoBasica): TipoGroup {
-  return {
-    tipologia: { id: t.id, letra: t.letra, label: t.label, descripcion: t.descripcion },
-    kind: "banner",
-    plantillas: [
-      {
-        id: `${t.id}-banner`,
+        id: `${layout.id}-banner`,
         name: "Banner header",
-        description: `${t.descripcion} Elige el fondo con el tab y pégalo como header de cualquier plantilla.`,
-        previewHeight: tipoHeight(t) + 20,
-        fondos: buildFondos(t.label, function build(tone) { return buildTipoBanner(t, tone); }),
+        description: `${layout.descripcion} Elige el tono con el tab y pégalo como header de cualquier plantilla.`,
+        previewHeight: tipoNewHeight(layout.layout) + 20,
+        fondos,
       },
     ],
   };
 });
 
-/** Tipologías de FOOTER «Centro de Ayuda» — 4 layouts sobre el fondo V2. */
-const GROUPS_FOOTER: TipoGroup[] = FOOTER_TIPOLOGIAS.map(function toGroup(f, i): TipoGroup {
-  return {
-    tipologia: { id: f.id, letra: `F${i + 1}`, label: f.label, descripcion: f.descripcion },
-    kind: "footer",
-    plantillas: [
-      {
-        id: `${f.id}-banner`,
-        name: "Footer Centro de Ayuda",
-        description: `${f.descripcion} Elige el fondo con el tab y pégalo como cierre de cualquier plantilla (antes del footer web).`,
-        previewHeight: footerHeight(f) + 20,
-        fondos: buildFondos(f.label, function build(tone) { return buildFooterBanner(f, tone); }),
-      },
-    ],
-  };
-});
+/** Footer «Centro de Ayuda» — un solo layout con los 5 tonos como tabs. */
+const FOOTER_GROUP: TipoGroup = {
+  tipologia: {
+    id: "footer-centro-ayuda",
+    letra: "F1",
+    label: "Centro de Ayuda",
+    descripcion:
+      "El cierre del correo: panel glass con «¿Quieres saber más?», el botón ¡Vamos! y la marca vmc, sobre el gradiente del tono.",
+  },
+  kind: "footer",
+  plantillas: [
+    {
+      id: "footer-centro-ayuda-banner",
+      name: "Footer glass",
+      description:
+        "Consola glass del footer (título + Centro de Ayuda + ¡Vamos! + marca). Elige el tono con el tab y pégalo como cierre de cualquier plantilla.",
+      previewHeight: footerHeight() + 20,
+      fondos: FOOTER_TONOS.map(function toFondo(tone): TipoFondo {
+        const footer = buildFooter(tone.id, tone.style);
+        return {
+          tone: tone.id,
+          label: tone.label,
+          previewDoc: wrapFooterPreview(footer, `Centro de Ayuda · ${tone.label}`),
+          copyHtml: footer,
+        };
+      }),
+    },
+  ],
+};
 
-export const TIPO_GROUPS: TipoGroup[] = [...GROUPS_V2, ...GROUPS_CE, ...GROUPS_FOOTER];
+export const TIPO_GROUPS: TipoGroup[] = [...GROUPS, FOOTER_GROUP];
 
 export function getTipoGroup(id: string): TipoGroup | undefined {
   return TIPO_GROUPS.find(function byId(g) { return g.tipologia.id === id; });
 }
-
-export { V2_DEFAULT_TONE };

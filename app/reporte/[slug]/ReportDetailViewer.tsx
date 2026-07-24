@@ -106,7 +106,13 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
           >
             {entry.codeOriginal && <CodeBlock label="Código producción" tone="#f97316" code={entry.codeOriginal} />}
             {entry.codeConcorde && (
-              <CodeBlock label="Código Concorde" tone="#4f2ed8" code={entry.codeConcorde} link={entry.codeLink} />
+              <CodeBlock
+                label="Código Concorde"
+                tone="#4f2ed8"
+                code={entry.codeConcorde}
+                link={entry.codeLink}
+                handoffLink={entry.handoffLink}
+              />
             )}
           </div>
         )}
@@ -245,7 +251,7 @@ function Section({ title, accent, paragraphs }: { title: string; accent: string;
   );
 }
 
-function CodeBlock({ label, tone, code, link }: { label: string; tone: string; code: string; link?: string }): JSX.Element {
+function CodeBlock({ label, tone, code, link, handoffLink }: { label: string; tone: string; code: string; link?: string; handoffLink?: string }): JSX.Element {
   return (
     <div
       style={{
@@ -273,24 +279,47 @@ function CodeBlock({ label, tone, code, link }: { label: string; tone: string; c
           <span style={{ width: 8, height: 8, borderRadius: "50%", background: tone }} />
           <span style={{ fontSize: 12, fontWeight: 700, color: "#e2e8f0", letterSpacing: "0.02em" }}>{label}</span>
         </div>
-        {link && (
-          <a
-            href={link}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 4,
-              fontSize: 11,
-              fontWeight: 600,
-              color: "#93c5fd",
-              textDecoration: "none",
-            }}
-          >
-            ver código Concorde
-            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-              <path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </a>
+        {(link || handoffLink) && (
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            {link && (
+              <a
+                href={link}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "#93c5fd",
+                  textDecoration: "none",
+                }}
+              >
+                ver código Concorde
+                <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </a>
+            )}
+            {handoffLink && (
+              <a
+                href={handoffLink}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "#c4b5fd",
+                  textDecoration: "none",
+                }}
+              >
+                ver handoff
+                <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </a>
+            )}
+          </div>
         )}
       </div>
       <pre

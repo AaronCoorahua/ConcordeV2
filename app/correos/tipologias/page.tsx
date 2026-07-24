@@ -15,12 +15,16 @@ const EMAIL_W = 600;
 const SCALE = 0.5;
 
 function TipoCard({ g }: { g: TipoGroup }): JSX.Element {
-  // El thumbnail muestra siempre el fondo por defecto (En Vivo, el primero).
+  // El thumbnail muestra el primer tono (En Vivo) de la tipología.
   const banner = g.plantillas[0].fondos[0];
+  // El alto del iframe se ajusta al del banner (214 izq/der · 340 centrado) para
+  // mostrarlo completo sin recortar. La caja escalada crece con él.
+  const innerH = g.plantillas[0].previewHeight;
+  const boxH = Math.round(innerH * SCALE);
   return (
     <a href={`/correos/tipologias/${g.tipologia.id}`} className="cor-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", borderRadius: 12, overflow: "hidden", background: "#ffffff", border: "1px solid #e2e8f0", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
-      <div style={{ height: THUMB_H, display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
-        <div style={{ width: EMAIL_W * SCALE, height: THUMB_H - 32, position: "relative", overflow: "hidden", borderRadius: 4, boxShadow: "0 6px 18px rgba(15,23,42,0.12)", outline: "1px solid #e2e8f0", background: "#FAFAFA" }}>
+      <div style={{ minHeight: THUMB_H, display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", borderBottom: "1px solid #f1f5f9", padding: "16px 0" }}>
+        <div style={{ width: EMAIL_W * SCALE, height: boxH, position: "relative", overflow: "hidden", borderRadius: 4, boxShadow: "0 6px 18px rgba(15,23,42,0.12)", outline: "1px solid #e2e8f0", background: "#FAFAFA" }}>
           <iframe
             title={g.tipologia.label}
             srcDoc={banner.previewDoc}
@@ -30,7 +34,7 @@ function TipoCard({ g }: { g: TipoGroup }): JSX.Element {
               top: 0,
               left: 0,
               width: EMAIL_W,
-              height: (THUMB_H - 32) / SCALE,
+              height: innerH,
               border: "none",
               transform: `scale(${SCALE})`,
               transformOrigin: "top left",
@@ -71,41 +75,49 @@ export default function TipologiasPage(): JSX.Element {
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
           <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>Tipologías</h1>
           <span style={{ fontSize: 13, color: "#94a3b8", fontWeight: 500 }}>
-            {TIPO_GROUPS.length} layouts · 5 fondos
+            {TIPO_GROUPS.length} layouts · 5 tonos
           </span>
         </div>
         <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 40px", maxWidth: 720 }}>
-          Layouts base del banner header y del footer Centro de Ayuda de los correos, en el estilo
-          Voyager v2: gradiente por tono, chevrons y anillos de fondo. Cada tipología define{" "}
-          <strong style={{ color: "#0f172a", fontWeight: 700 }}>dónde va cada pieza</strong>; el fondo
-          es un eje aparte — entra a cualquiera y cámbialo con el tab para verla sobre los 5 tonos.
+          Banner header de los correos, en el estilo Voyager v2: gradiente por tono, anillos de fondo
+          y el logo real de marca. La tipología define{" "}
+          <strong style={{ color: "#0f172a", fontWeight: 700 }}>dónde va cada pieza</strong>; el tono
+          es un eje aparte — entra y cámbialo con el tab para verla sobre los 5 tonos.
         </p>
 
         {/* ── Banners header ── */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-          <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20, background: "#f1edff", color: "#4f2ed8" }}>Banner</span>
-          <h2 style={{ fontSize: 17, fontWeight: 800, letterSpacing: "-0.01em", color: "#0f172a", margin: 0 }}>Header hero</h2>
-          <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>· {banners.length} layouts</span>
-        </div>
-        <p style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.5, margin: "0 0 18px", maxWidth: 640 }}>
-          El banner que abre el correo: composición marca↔copy sobre el gradiente del tono.
-        </p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16, marginBottom: 48 }}>
-          {banners.map(function renderTipo(g) { return <TipoCard key={g.tipologia.id} g={g} />; })}
-        </div>
+        {banners.length > 0 && (
+          <>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20, background: "#f1edff", color: "#4f2ed8" }}>Banner</span>
+              <h2 style={{ fontSize: 17, fontWeight: 800, letterSpacing: "-0.01em", color: "#0f172a", margin: 0 }}>Banner header</h2>
+              <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>· {banners.length} layouts</span>
+            </div>
+            <p style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.5, margin: "0 0 18px", maxWidth: 640 }}>
+              El banner que abre el correo: composición marca↔copy sobre el gradiente del tono.
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16, marginBottom: footers.length > 0 ? 48 : 0 }}>
+              {banners.map(function renderTipo(g) { return <TipoCard key={g.tipologia.id} g={g} />; })}
+            </div>
+          </>
+        )}
 
         {/* ── Footers Centro de Ayuda ── */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-          <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20, background: "#fff0e6", color: "#c85a1e" }}>Footer</span>
-          <h2 style={{ fontSize: 17, fontWeight: 800, letterSpacing: "-0.01em", color: "#0f172a", margin: 0 }}>Centro de Ayuda</h2>
-          <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>· {footers.length} layouts</span>
-        </div>
-        <p style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.5, margin: "0 0 18px", maxWidth: 640 }}>
-          El cierre del correo: marca, «¿Quieres saber más?» y el botón ¡Vamos!, reordenados sobre el mismo sistema de fondos.
-        </p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
-          {footers.map(function renderTipo(g) { return <TipoCard key={g.tipologia.id} g={g} />; })}
-        </div>
+        {footers.length > 0 && (
+          <>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20, background: "#fff0e6", color: "#c85a1e" }}>Footer</span>
+              <h2 style={{ fontSize: 17, fontWeight: 800, letterSpacing: "-0.01em", color: "#0f172a", margin: 0 }}>Centro de Ayuda</h2>
+              <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>· {footers.length} layouts</span>
+            </div>
+            <p style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.5, margin: "0 0 18px", maxWidth: 640 }}>
+              El cierre del correo: marca, «¿Quieres saber más?» y el botón ¡Vamos!, reordenados sobre el mismo sistema de fondos.
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
+              {footers.map(function renderTipo(g) { return <TipoCard key={g.tipologia.id} g={g} />; })}
+            </div>
+          </>
+        )}
       </main>
 
       <style dangerouslySetInnerHTML={{ __html: `

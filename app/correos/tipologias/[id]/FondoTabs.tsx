@@ -1,14 +1,14 @@
 "use client";
 
 /**
- * FondoTabs — tab de FONDO de una tipología: cambia el gradiente/formas del
- * banner sin cambiar su layout.
+ * FondoTabs — tab de TONO de la tipología: cambia el gradiente/formas del banner
+ * sin cambiar su layout (Texto a la izquierda).
  *
- * Recibe los fondos ya renderizados desde el Server Component (el HTML de cada
- * tono se arma en build time), así que cambiar de tab solo intercambia el
+ * Recibe los tonos ya renderizados desde el Server Component (el HTML de cada
+ * banner se arma en build time), así que cambiar de tab solo intercambia el
  * srcDoc del iframe: no hay fetch ni regeneración en cliente.
  *
- * El botón «Copiar HTML» copia SIEMPRE el fondo activo.
+ * El botón «Copiar HTML» copia SIEMPRE el tono activo.
  */
 
 import { useState } from "react";
@@ -32,9 +32,9 @@ export default function FondoTabs({ fondos, previewHeight, title }: FondoTabsPro
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
         <span style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", letterSpacing: "0.04em", textTransform: "uppercase" }}>
-          Fondo
+          Tono
         </span>
-        <div role="tablist" aria-label="Fondo del banner" style={{ display: "inline-flex", gap: 4, padding: 4, borderRadius: 10, background: "#f1f5f9" }}>
+        <div role="tablist" aria-label="Tono del banner" style={{ display: "inline-flex", gap: 4, padding: 4, borderRadius: 10, background: "#f1f5f9" }}>
           {fondos.map(function renderTab(f, i) {
             const on = i === active;
             return (
