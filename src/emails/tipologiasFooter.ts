@@ -30,6 +30,12 @@ export interface FooterStyle {
   bgFallback: string;
   /** Glows difusos {hex, op, x, y, r}. */
   glows: Array<{ hex: string; op: number; x: number; y: number; r: number }>;
+  /**
+   * Intensidad del tinte oscuro del cristal (0..1). Los tonos vivos/claros
+   * (En Vivo, SubasCoins) necesitan tinte para apagar el fondo brillante; los
+   * oscuros (Dark, Morado) casi nada, si no el panel tapa el fondo. Def: 1.
+   */
+  glassDarken?: number;
 }
 
 // ─── Anillos IZQUIERDA — cx=0 (asoman por el borde izquierdo) ────────────────────
@@ -64,18 +70,20 @@ function gradientBorder(gradient: string, radius: number, width: number): string
 // ─── El panel GLASS grande (rect 568×186 rx20) ──────────────────────────────────
 // paint2 (relleno): white 20% → 8%(50%) → 5%, eje casi vertical (433,187.5)→(393.8,-19.8).
 // paint3 (borde): #CFBAFF → white(35%) → #AE8EFF(65%) → #CFBAFF ≈ 40°, 1.2px.
-function glassPanel(inner: string): string {
-  // Cristal como en Figma: se ve el fondo a través, pero el panel queda «oscurito»
-  // (no lechoso ni muy live). Lo logramos con DOS capas:
-  //   1) un tinte OSCURO translúcido (rgba morado/negro bajo) que apaga el naranja
-  //      vivo del fondo — es lo que da el matiz oscuro del glass en Figma.
-  //   2) un velo blanco sutil (paint2) encima, sólo para el brillo del vidrio.
-  // Más el backdrop-blur(12) e inner-shadow blanco 35% (el brillo del borde sup).
-  const darkTint =
-    "linear-gradient(190deg,rgba(20,4,40,0.22) 0%,rgba(20,4,40,0.16) 55%,rgba(20,4,40,0.12) 100%)";
+function glassPanel(inner: string, darken: number): string {
+  // Cristal como en Figma: MUY translúcido, para que las FORMAS del fondo (chevron,
+  // anillos, glows) se lean CLARAMENTE a través del panel. Claves:
+  //   · blur BAJO (4px): con blur alto (12) las líneas finas del chevron se
+  //     difuminan hasta desaparecer; a 4px se distinguen a través del vidrio.
+  //   · velo blanco casi nulo (el fill lechoso es lo que escondía el fondo).
+  //   · tinte oscuro solo un poco, escalado por `darken` (fuerte en tonos vivos
+  //     para apagar el fondo brillante; casi nulo en los oscuros).
+  //   · el «glass» lo da sobre todo el borde brillante + el inner-shadow blanco.
+  const a = (base: number): string => (base * darken).toFixed(3);
+  const darkTint = `linear-gradient(190deg,rgba(20,4,40,${a(0.16)}) 0%,rgba(20,4,40,${a(0.1)}) 55%,rgba(20,4,40,${a(0.07)}) 100%)`;
   const sheen =
-    "linear-gradient(190deg,rgba(255,255,255,0.14) 0%,rgba(255,255,255,0.05) 50%,rgba(255,255,255,0.03) 100%)";
-  return `<div style="position:absolute;left:7px;top:14px;width:568px;height:186px;border-radius:20px;background:${sheen},${darkTint};-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 10px 30px rgba(26,0,51,0.28),inset 0 1px 8px rgba(255,255,255,0.35);">
+    "linear-gradient(190deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0.03) 45%,rgba(255,255,255,0.015) 100%)";
+  return `<div style="position:absolute;left:7px;top:14px;width:568px;height:186px;border-radius:20px;background:${sheen},${darkTint};-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);box-shadow:0 10px 30px rgba(26,0,51,0.28),inset 0 1px 10px rgba(255,255,255,0.30);">
 ${gradientBorder(border20(), 20, 1.2)}
 ${inner}
 </div>`;
@@ -143,7 +151,7 @@ ${bgSvgLayer}
 ${glowLayers(style.glows)}
 ${FOOTER_RINGS}
 ${FOOTER_CHEVRON}
-${glassPanel(panelInner)}
+${glassPanel(panelInner, style.glassDarken ?? 1)}
 </div>
 </td></tr>
 </table>`;
@@ -169,6 +177,7 @@ const FOOTER_MORADO: FooterStyle = {
     { hex: "#AE8EFF", op: 0.3, x: 538, y: 111, r: 160 },
     { hex: "#7A50E0", op: 0.35, x: -94, y: -28, r: 160 },
   ],
+  glassDarken: 0.4, // morado ya es oscuro: poco tinte para que se vea el fondo.
 };
 
 const FOOTER_NEGOCIABLE: FooterStyle = {
@@ -178,6 +187,7 @@ const FOOTER_NEGOCIABLE: FooterStyle = {
     { hex: "#8460E5", op: 0.3, x: 538, y: 111, r: 160 },
     { hex: "#17C2A6", op: 0.35, x: -94, y: -28, r: 160 },
   ],
+  glassDarken: 0.6, // teal medio: tinte moderado.
 };
 
 const FOOTER_SUBASCOINS: FooterStyle = {
@@ -187,6 +197,7 @@ const FOOTER_SUBASCOINS: FooterStyle = {
     { hex: "#8460E5", op: 0.3, x: 538, y: 111, r: 160 },
     { hex: "#FFC53D", op: 0.4, x: -94, y: -28, r: 160 },
   ],
+  // claro/vivo → tinte completo (glassDarken: 1 por defecto).
 };
 
 const FOOTER_DARK: FooterStyle = {
@@ -196,6 +207,7 @@ const FOOTER_DARK: FooterStyle = {
     { hex: "#6E4BD6", op: 0.35, x: 538, y: 111, r: 160 },
     { hex: "#3B1782", op: 0.4, x: -94, y: -28, r: 160 },
   ],
+  glassDarken: 0.15, // ya es oscuro: casi sin tinte, para que se vea el fondo/formas.
 };
 
 /** Un tono del footer (id + label + estilo de fondo). */
