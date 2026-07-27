@@ -65,20 +65,20 @@ export interface BannerText {
   titulo: string;
   /** Bajada bajo el título. */
   bajada: string;
-  /** Texto del pill de contexto. En las tipologías nuevas el pill es fijo por
-   *  tono (parte del clon de Figma), así que este campo se conserva por
-   *  compatibilidad pero no se aplica. */
+  /** Texto del pill de contexto (el gradiente/estilo del pill sigue siendo fijo
+   *  por tono; solo cambia su texto). */
   pill: string;
 }
 
 /** Placeholders originales dentro de las plantillas de banner nuevas. */
 const PH_TITULO = "{{ Título del correo }}";
 const PH_BAJADA = "{{ Bajada breve del correo va aquí }}";
+const PH_PILL = "{{ PILL }}";
 
 /**
  * Banner de la tipología `id` con el tono `tone`, personalizado con los textos
- * de `text` (título, bajada). Cada campo reemplaza su placeholder; si un campo
- * viene vacío se conserva el placeholder, para no dejar huecos.
+ * de `text` (título, bajada, pill). Cada campo reemplaza su placeholder; si un
+ * campo viene vacío se conserva el placeholder, para no dejar huecos.
  */
 export function buildBannerFor(id: string, tone: V2Tone, text: BannerText): string | null {
   const layout: TipoLayoutDef | undefined = TIPOLOGIAS_LAYOUT.find(function byId(t) { return t.id === id; });
@@ -86,10 +86,12 @@ export function buildBannerFor(id: string, tone: V2Tone, text: BannerText): stri
 
   const titulo = text.titulo.trim() ? escHtml(text.titulo) : PH_TITULO;
   const bajada = text.bajada.trim() ? escHtml(text.bajada) : PH_BAJADA;
+  const pill = text.pill.trim() ? escHtml(text.pill) : PH_PILL;
 
   return buildBanner(layout, bannerTone(tone))
     .replace(PH_TITULO, titulo)
-    .replace(PH_BAJADA, bajada);
+    .replace(PH_BAJADA, bajada)
+    .replace(PH_PILL, pill);
 }
 
 /**

@@ -181,16 +181,19 @@ function copyBlock(s: TipoStyle, yPill: number, side: "left" | "right"): string 
   // borde derecho (right:40, la pill casi toca el borde como en el SVG Var A) con
   // la pill alineada a la derecha del bloque y el texto a la izquierda.
   const pos = side === "left" ? "left:48px" : "right:40px";
+  // En el ESPEJO (side=right) todo se alinea a la DERECHA — pill, título y bajada
+  // pegados al borde derecho, coherentes entre sí. En text-left, a la izquierda.
+  const align = side === "left" ? "left" : "right";
   const pillAlign = side === "left" ? "" : "margin-left:auto;";
   // El copy va a la IZQUIERDA (o derecha, espejo) y la marca ocupa ~186px del lado
   // opuesto: acotamos el ancho a 300px para que un título largo (el asunto real
   // del correo) ENVUELVA en 2-3 líneas en vez de desbordar sobre el logo. El bloque
   // se CENTRA verticalmente (top:50%) para que, crezca lo que crezca el título, no
   // rebase el banner por abajo. Con el placeholder corto de /tipologias queda como
-  // el SVG (pill+título+bajada centrados en su columna). yPill queda como fallback
+  // el SVG (pill+título+bajada alineados en su columna). yPill queda como fallback
   // de referencia pero ya no fija el top.
   void yPill;
-  return `<div style="position:absolute;${pos};top:50%;transform:translateY(-50%);width:300px;max-width:300px;text-align:left;">
+  return `<div style="position:absolute;${pos};top:50%;transform:translateY(-50%);width:300px;max-width:300px;text-align:${align};">
 <div style="width:91px;${pillAlign}">${pill(s)}</div>
 <div style="height:12px;line-height:12px;font-size:1px;">&nbsp;</div>
 <div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:26px;font-weight:800;letter-spacing:-0.02em;line-height:1.1;color:#FFFFFF;">{{ Título del correo }}</div>
