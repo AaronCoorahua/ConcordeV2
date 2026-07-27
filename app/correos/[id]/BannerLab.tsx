@@ -200,12 +200,13 @@ export default function BannerLab({ html, title, subject, categoria }: BannerLab
           })}
         </TabGroup>
 
-        {/* Campos del banner editables (B4) — solo si hay un banner de tipología. */}
+        {/* Campos del banner editables (B4) — solo si hay un banner de tipología.
+            El pill de las tipologías nuevas es fijo por tono (clon de Figma), así
+            que solo se editan título y bajada. */}
         {bannerOn && (
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", padding: "12px 14px", background: "#f8fafc", border: "1px solid #f1f5f9", borderRadius: 10 }}>
             <Field label="Título del banner" value={text.titulo} onChange={function set(v) { patchText("titulo", v); }} placeholder={subject} />
             <Field label="Bajada" value={text.bajada} onChange={function set(v) { patchText("bajada", v); }} placeholder="Bajada breve del correo…" />
-            <Field label="Pill" value={text.pill} onChange={function set(v) { patchText("pill", v); }} placeholder={categoria} />
           </div>
         )}
 

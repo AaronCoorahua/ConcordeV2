@@ -1,37 +1,62 @@
 /**
- * headerSwap — reemplaza el banner header de un correo REAL de producción por
- * un banner de tipología (los de /correos/tipologias), sin tocar el renderer
- * portado (prodEmailTemplates.ts es copia 1:1 de Concorde-Email y no se edita).
+ * headerSwap — reemplaza el banner header / footer de un correo REAL de
+ * producción por una TIPOLOGÍA NUEVA (las de /correos/tipologias), sin tocar el
+ * renderer portado (prodEmailTemplates.ts es copia 1:1 de Concorde-Email y no se
+ * edita).
  *
- * Cómo funciona: generateEmail() abre SIEMPRE con glassHeader() — dos filas
- * <tr> (el band glass morado con el PNG »vmc« + el strip de 4px). Este módulo
- * localiza ese bloque en el HTML generado por sus marcadores estables y lo
- * sustituye por el banner de la tipología elegida (que ya trae su propio strip).
+ * Las tipologías nuevas son las de tipologiasNew.ts (banners header, clonados de
+ * Figma con el logo real) y tipologiasFooter.ts (footers «Centro de Ayuda»:
+ * console · centered · compact · split). El «fondo» (tono) es un eje aparte que
+ * elige el tab del BannerLab; aquí se mapea al tono nuevo por posición.
+ *
+ * Cómo funciona: generateEmail() abre SIEMPRE con glassHeader() y cierra con la
+ * consola glass del footer. Este módulo localiza esos bloques por sus marcadores
+ * estables y los sustituye por la tipología elegida.
  *
  * Módulo plano (sin "use client" ni node:fs): usable desde cliente y servidor.
  */
 
-import { TIPOLOGIAS_V2, buildV2Banner, type V2Tone } from "./tipologiasV2";
-import { TIPOLOGIAS_BASICAS, buildTipoBanner } from "./tipologiasBanners";
-import { FOOTER_TIPOLOGIAS, buildFooterBanner } from "./tipologiasFooter";
+import {
+  TIPOLOGIAS_LAYOUT,
+  TONOS,
+  buildBanner,
+  type TipoLayoutDef,
+  type TipoTone,
+} from "./tipologiasNew";
+import {
+  FOOTER_TONOS,
+  buildFooter,
+  type FooterLayoutKind,
+} from "./tipologiasFooter";
+import { V2_TONE_OPTIONS, type V2Tone } from "./tipologiasV2";
 
 export interface BannerOption {
   id: string;
   label: string;
 }
 
-/** Las tipologías disponibles como header, en el orden del tab. */
-export const BANNER_OPTIONS: BannerOption[] = [
-  ...TIPOLOGIAS_V2.map(function toOption(t) {
-    return { id: t.id, label: t.label.replace(/^V2 · /, "") };
-  }),
-  ...TIPOLOGIAS_BASICAS.map(function toOption(t) {
-    return { id: t.id, label: t.label };
-  }),
-];
+/** Las tipologías de BANNER header disponibles, en el orden del tab. */
+export const BANNER_OPTIONS: BannerOption[] = TIPOLOGIAS_LAYOUT.map(function toOption(t) {
+  return { id: t.id, label: t.label };
+});
 
 function escHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+/**
+ * El tab de «Fondo» del BannerLab habla en tonos V2 (live/proximas/…); las
+ * tipologías nuevas usan sus propios tonos (en-vivo/morado/…), en el MISMO orden
+ * y con las mismas 5 etiquetas. Se mapea por posición: V2Tone → índice → tono
+ * nuevo. Si no se encuentra, cae al primero (En Vivo).
+ */
+function toneIndex(tone: V2Tone): number {
+  const i = V2_TONE_OPTIONS.findIndex(function byTone(o) { return o.tone === tone; });
+  return i === -1 ? 0 : i;
+}
+
+function bannerTone(tone: V2Tone): TipoTone {
+  return TONOS[toneIndex(tone)] ?? TONOS[0];
 }
 
 /** Textos editables del banner de tipología (todos con default sensato). */
@@ -40,38 +65,31 @@ export interface BannerText {
   titulo: string;
   /** Bajada bajo el título. */
   bajada: string;
-  /** Texto del pill de contexto (solo lo muestran los layouts V2). */
+  /** Texto del pill de contexto. En las tipologías nuevas el pill es fijo por
+   *  tono (parte del clon de Figma), así que este campo se conserva por
+   *  compatibilidad pero no se aplica. */
   pill: string;
 }
 
-/** Placeholders originales dentro de las plantillas de banner. */
+/** Placeholders originales dentro de las plantillas de banner nuevas. */
 const PH_TITULO = "{{ Título del correo }}";
 const PH_BAJADA = "{{ Bajada breve del correo va aquí }}";
-const PH_PILL = "{{ PILL }}";
 
 /**
  * Banner de la tipología `id` con el tono `tone`, personalizado con los textos
- * de `text` (título, bajada, pill). Cada campo reemplaza su placeholder; si un
- * campo viene vacío se conserva el placeholder, para no dejar huecos.
+ * de `text` (título, bajada). Cada campo reemplaza su placeholder; si un campo
+ * viene vacío se conserva el placeholder, para no dejar huecos.
  */
 export function buildBannerFor(id: string, tone: V2Tone, text: BannerText): string | null {
+  const layout: TipoLayoutDef | undefined = TIPOLOGIAS_LAYOUT.find(function byId(t) { return t.id === id; });
+  if (!layout) return null;
+
   const titulo = text.titulo.trim() ? escHtml(text.titulo) : PH_TITULO;
   const bajada = text.bajada.trim() ? escHtml(text.bajada) : PH_BAJADA;
-  const pill = text.pill.trim() ? escHtml(text.pill) : PH_PILL;
 
-  const v2 = TIPOLOGIAS_V2.find(function byId(t) { return t.id === id; });
-  if (v2) {
-    return buildV2Banner(v2, tone)
-      .replace(PH_TITULO, titulo)
-      .replace(PH_BAJADA, bajada)
-      .replace(PH_PILL, pill);
-  }
-  const ce = TIPOLOGIAS_BASICAS.find(function byId(t) { return t.id === id; });
-  if (ce) {
-    // C/E llevan título y bajada por sus props; el pill no aplica a estos layouts.
-    return buildTipoBanner({ ...ce, titulo, subtitulo: bajada }, tone);
-  }
-  return null;
+  return buildBanner(layout, bannerTone(tone))
+    .replace(PH_TITULO, titulo)
+    .replace(PH_BAJADA, bajada);
 }
 
 /**
@@ -106,15 +124,32 @@ ${bannerHtml}
 
 // ─── Footer «Centro de Ayuda» ────────────────────────────────────────────────
 
-/** Las tipologías de footer disponibles, en el orden del tab. */
-export const FOOTER_OPTIONS: BannerOption[] = FOOTER_TIPOLOGIAS.map(function toOption(f) {
-  return { id: f.id, label: f.label.replace(/^Footer · /, "") };
+/** Un layout de footer nuevo: su kind + la etiqueta del tab. */
+interface FooterLayoutOption {
+  id: string;
+  label: string;
+  kind: FooterLayoutKind;
+}
+
+/** Las tipologías de FOOTER disponibles (las nuevas), en el orden del tab. */
+const FOOTER_LAYOUT_OPTIONS: FooterLayoutOption[] = [
+  { id: "footer-console", label: "Consola", kind: "console" },
+  { id: "footer-centered", label: "Centrado", kind: "centered" },
+  { id: "footer-compact", label: "Compacto", kind: "compact" },
+  { id: "footer-split", label: "Split", kind: "split" },
+];
+
+/** Opciones para el tab de footer. */
+export const FOOTER_OPTIONS: BannerOption[] = FOOTER_LAYOUT_OPTIONS.map(function toOption(f) {
+  return { id: f.id, label: f.label };
 });
 
 /** Footer de la tipología `id` con el tono `tone` (contenido fijo de ayuda). */
 export function buildFooterFor(id: string, tone: V2Tone): string | null {
-  const f = FOOTER_TIPOLOGIAS.find(function byId(t) { return t.id === id; });
-  return f ? buildFooterBanner(f, tone) : null;
+  const f = FOOTER_LAYOUT_OPTIONS.find(function byId(o) { return o.id === id; });
+  if (!f) return null;
+  const t = FOOTER_TONOS[toneIndex(tone)] ?? FOOTER_TONOS[0];
+  return buildFooter(t.id, t.style, f.kind);
 }
 
 /**

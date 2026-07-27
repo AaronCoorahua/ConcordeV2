@@ -1,11 +1,13 @@
 import type { JSX } from "react";
 import Header from "@/app/_components/Header";
 import { TIPO_GROUPS } from "@/src/emails/tipologiasRegistry";
+import { EMAIL_GROUPS, EMAIL_PROD_TOTAL } from "@/src/emails/registry";
 
 /**
- * /correos — hub de correos. Dos secciones:
+ * /correos — hub de correos. Dos cards:
  *   · Tipologías — layouts base de banner (propuestas de diseño).
- *   · Variantes  — los correos REALES en producción, agrupados por categoría.
+ *   · Maquetar   — los correos REALES en producción: elige uno e intercambia su
+ *     tipología de header/footer/fondo con preview vivo (BannerLab) y expórtalo.
  * Cada card enlaza a su galería (/correos/tipologias · /correos/variantes).
  */
 
@@ -21,6 +23,9 @@ interface HubCard {
   previewDoc: string;
 }
 
+/** Primer correo real de producción — sirve de preview de la card «Maquetar». */
+const SAMPLE_EMAIL = EMAIL_GROUPS[0]?.correos[0];
+
 const CARDS: HubCard[] = [
   {
     href: "/correos/tipologias",
@@ -28,6 +33,13 @@ const CARDS: HubCard[] = [
     meta: `${TIPO_GROUPS.length} layouts base`,
     desc: "Layouts base del banner header según la posición marca↔copy, en el estilo Voyager v2. Cada uno se puede ver sobre los 5 fondos de gradiente.",
     previewDoc: TIPO_GROUPS[0].plantillas[0].fondos[0].previewDoc,
+  },
+  {
+    href: "/correos/variantes",
+    title: "Maquetar",
+    meta: `${EMAIL_PROD_TOTAL} correos en producción`,
+    desc: "Los correos reales en producción. Elige uno e intercambia la tipología de su header, footer y fondo con preview en vivo; edita el copy y copia el HTML listo para enviar.",
+    previewDoc: SAMPLE_EMAIL?.html ?? TIPO_GROUPS[0].plantillas[0].fondos[0].previewDoc,
   },
 ];
 
@@ -41,9 +53,9 @@ export default function CorreosPage(): JSX.Element {
           <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>Correos</h1>
         </div>
         <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 32px", maxWidth: 720 }}>
-          Sistema de mailing de VMC Subastas. Empieza por las <strong style={{ color: "#0f172a", fontWeight: 700 }}>tipologías</strong>{" "}
-          (layouts base del banner) y revisa las <strong style={{ color: "#0f172a", fontWeight: 700 }}>variantes</strong>{" "}
-          que hoy están en producción.
+          Sistema de mailing de VMC Subastas. Explora las <strong style={{ color: "#0f172a", fontWeight: 700 }}>tipologías</strong>{" "}
+          (layouts base del banner) o entra a <strong style={{ color: "#0f172a", fontWeight: 700 }}>maquetar</strong>{" "}
+          los correos que hoy están en producción, intercambiando su tipología de header, footer y fondo.
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 20 }}>

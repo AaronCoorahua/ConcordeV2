@@ -89,37 +89,86 @@ const GROUPS: TipoGroup[] = TIPOLOGIAS_LAYOUT.map(function toGroup(layout): Tipo
   };
 });
 
-/** Footer «Centro de Ayuda» — un solo layout con los 5 tonos como tabs. */
-const FOOTER_GROUP: TipoGroup = {
-  tipologia: {
+/** Los layouts de footer disponibles (cada uno es una tipología con 5 tonos). */
+interface FooterLayoutMeta {
+  id: string;
+  letra: string;
+  label: string;
+  descripcion: string;
+  name: string;
+  kind: "console" | "centered" | "compact" | "split";
+}
+
+const FOOTER_LAYOUTS: FooterLayoutMeta[] = [
+  {
     id: "footer-centro-ayuda",
     letra: "F1",
     label: "Centro de Ayuda",
     descripcion:
       "El cierre del correo: panel glass con «¿Quieres saber más?», el botón ¡Vamos! y la marca vmc, sobre el gradiente del tono.",
+    name: "Footer glass",
+    kind: "console",
   },
-  kind: "footer",
-  plantillas: [
-    {
-      id: "footer-centro-ayuda-banner",
-      name: "Footer glass",
-      description:
-        "Consola glass del footer (título + Centro de Ayuda + ¡Vamos! + marca). Elige el tono con el tab y pégalo como cierre de cualquier plantilla.",
-      previewHeight: footerHeight() + 20,
-      fondos: FOOTER_TONOS.map(function toFondo(tone): TipoFondo {
-        const footer = buildFooter(tone.id, tone.style);
-        return {
-          tone: tone.id,
-          label: tone.label,
-          previewDoc: wrapFooterPreview(footer, `Centro de Ayuda · ${tone.label}`),
-          copyHtml: footer,
-        };
-      }),
-    },
-  ],
-};
+  {
+    id: "footer-centro-ayuda-centrado",
+    letra: "F2",
+    label: "Centro de Ayuda · Centrado",
+    descripcion:
+      "Cierre centrado y sin panel: la marca vmc arriba, el título, la invitación al Centro de Ayuda y el botón ¡Vamos! apilados y centrados.",
+    name: "Footer centrado",
+    kind: "centered",
+  },
+  {
+    id: "footer-centro-ayuda-compacto",
+    letra: "F3",
+    label: "Centro de Ayuda · Compacto",
+    descripcion:
+      "El cierre más compacto (110px): la invitación al Centro de Ayuda a la izquierda y la marca vmc con el botón ¡Vamos! a la derecha, en una sola franja.",
+    name: "Footer compacto",
+    kind: "compact",
+  },
+  {
+    id: "footer-centro-ayuda-split",
+    letra: "F4",
+    label: "Centro de Ayuda · Split",
+    descripcion:
+      "Dos columnas divididas por una línea vertical: la marca vmc y su eslogan a la izquierda, la invitación al Centro de Ayuda y el botón ¡Vamos! a la derecha.",
+    name: "Footer split",
+    kind: "split",
+  },
+];
 
-export const TIPO_GROUPS: TipoGroup[] = [...GROUPS, FOOTER_GROUP];
+/** Cada layout de footer → un TipoGroup con los 5 tonos como tabs. */
+const FOOTER_GROUPS: TipoGroup[] = FOOTER_LAYOUTS.map(function toFooterGroup(layout): TipoGroup {
+  return {
+    tipologia: {
+      id: layout.id,
+      letra: layout.letra,
+      label: layout.label,
+      descripcion: layout.descripcion,
+    },
+    kind: "footer",
+    plantillas: [
+      {
+        id: `${layout.id}-banner`,
+        name: layout.name,
+        description: `${layout.descripcion} Elige el tono con el tab y pégalo como cierre de cualquier plantilla.`,
+        previewHeight: footerHeight(layout.kind) + 20,
+        fondos: FOOTER_TONOS.map(function toFondo(tone): TipoFondo {
+          const footer = buildFooter(tone.id, tone.style, layout.kind);
+          return {
+            tone: tone.id,
+            label: tone.label,
+            previewDoc: wrapFooterPreview(footer, `${layout.label} · ${tone.label}`),
+            copyHtml: footer,
+          };
+        }),
+      },
+    ],
+  };
+});
+
+export const TIPO_GROUPS: TipoGroup[] = [...GROUPS, ...FOOTER_GROUPS];
 
 export function getTipoGroup(id: string): TipoGroup | undefined {
   return TIPO_GROUPS.find(function byId(g) { return g.tipologia.id === id; });

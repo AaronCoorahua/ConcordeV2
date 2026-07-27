@@ -182,12 +182,20 @@ function copyBlock(s: TipoStyle, yPill: number, side: "left" | "right"): string 
   // la pill alineada a la derecha del bloque y el texto a la izquierda.
   const pos = side === "left" ? "left:48px" : "right:40px";
   const pillAlign = side === "left" ? "" : "margin-left:auto;";
-  return `<div style="position:absolute;${pos};top:${yPill}px;display:inline-block;text-align:left;">
+  // El copy va a la IZQUIERDA (o derecha, espejo) y la marca ocupa ~186px del lado
+  // opuesto: acotamos el ancho a 300px para que un título largo (el asunto real
+  // del correo) ENVUELVA en 2-3 líneas en vez de desbordar sobre el logo. El bloque
+  // se CENTRA verticalmente (top:50%) para que, crezca lo que crezca el título, no
+  // rebase el banner por abajo. Con el placeholder corto de /tipologias queda como
+  // el SVG (pill+título+bajada centrados en su columna). yPill queda como fallback
+  // de referencia pero ya no fija el top.
+  void yPill;
+  return `<div style="position:absolute;${pos};top:50%;transform:translateY(-50%);width:300px;max-width:300px;text-align:left;">
 <div style="width:91px;${pillAlign}">${pill(s)}</div>
 <div style="height:12px;line-height:12px;font-size:1px;">&nbsp;</div>
-<div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:26px;font-weight:800;letter-spacing:-0.02em;line-height:1.1;color:#FFFFFF;white-space:nowrap;">{{ Título del correo }}</div>
+<div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:26px;font-weight:800;letter-spacing:-0.02em;line-height:1.1;color:#FFFFFF;">{{ Título del correo }}</div>
 <div style="height:10px;line-height:10px;font-size:1px;">&nbsp;</div>
-<div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:14px;font-weight:500;line-height:1.4;color:rgba(255,255,255,0.86);white-space:nowrap;">{{ Bajada breve del correo va aquí }}</div>
+<div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:14px;font-weight:500;line-height:1.4;color:rgba(255,255,255,0.86);">{{ Bajada breve del correo va aquí }}</div>
 </div>`;
 }
 
@@ -215,11 +223,15 @@ function centeredContent(s: TipoStyle): string {
   const logo = `<img src="${LOGO_CORREOS}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;top:30px;left:50%;transform:translateX(-50%);width:186px;height:auto;border:0;display:block;">`;
   // Pill centrada — rect del SVG en y=158 (todas las variantes ~158-159).
   const pillBlock = `<div style="position:absolute;top:158px;left:50%;transform:translateX(-50%);width:91px;">${pill(s)}</div>`;
-  // Título centrado — baseline del SVG ~222, top del bloque ~200.
-  const titulo = `<div style="position:absolute;top:198px;left:0;right:0;text-align:center;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:30px;font-weight:800;letter-spacing:-0.02em;line-height:1.1;color:#FFFFFF;white-space:nowrap;">{{ Título del correo }}</div>`;
-  // Bajada centrada — top del SVG ~242.
-  const bajada = `<div style="position:absolute;top:242px;left:0;right:0;text-align:center;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:500;line-height:1.4;color:rgba(255,255,255,0.86);white-space:nowrap;">{{ Bajada breve del correo va aquí }}</div>`;
-  return `${logo}${pillBlock}${titulo}${bajada}`;
+  // Título + bajada en un bloque de FLUJO (padding-top:196 reserva logo+pill),
+  // centrados y acotados: el título largo envuelve, la bajada baja sola y el banner
+  // CRECE (min-height) en vez de cortar. Con el placeholder corto queda como el SVG.
+  const copy = `<div style="position:relative;padding:196px 40px 24px;text-align:center;">
+<div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:30px;font-weight:800;letter-spacing:-0.02em;line-height:1.1;color:#FFFFFF;">{{ Título del correo }}</div>
+<div style="height:10px;line-height:10px;font-size:1px;">&nbsp;</div>
+<div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:500;line-height:1.4;color:rgba(255,255,255,0.86);">{{ Bajada breve del correo va aquí }}</div>
+</div>`;
+  return `${logo}${pillBlock}${copy}`;
 }
 
 /**
@@ -238,11 +250,17 @@ function stackedContent(s: TipoStyle): string {
   const logo = `<img src="${LOGO_CORREOS}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;top:32px;left:${L};width:158px;height:auto;border:0;display:block;">`;
   // Pill — debajo del logo, misma columna izquierda.
   const pillBlock = `<div style="position:absolute;top:132px;left:${L};width:91px;">${pill(s)}</div>`;
-  // Título — left, grande.
-  const titulo = `<div style="position:absolute;top:174px;left:${L};right:24px;text-align:left;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:30px;font-weight:800;letter-spacing:-0.02em;line-height:1.1;color:#FFFFFF;white-space:nowrap;">{{ Título del correo }}</div>`;
-  // Bajada — left, debajo del título.
-  const bajada = `<div style="position:absolute;top:216px;left:${L};right:24px;text-align:left;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:500;line-height:1.4;color:rgba(255,255,255,0.86);white-space:nowrap;">{{ Bajada breve del correo va aquí }}</div>`;
-  return `${logo}${pillBlock}${titulo}${bajada}`;
+  // Título + bajada en un bloque de FLUJO (no absoluto): un padding-top reserva el
+  // espacio del logo+pill (que sí son absolutos) y el copy fluye debajo. Al ser
+  // flujo, EMPUJA el min-height del banner: si el título envuelve en 2-3 líneas, el
+  // banner CRECE en vez de cortar la bajada. Con el placeholder corto queda a la
+  // misma altura del SVG (top≈174).
+  const copy = `<div style="position:relative;padding:174px 24px 22px ${L};text-align:left;">
+<div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:30px;font-weight:800;letter-spacing:-0.02em;line-height:1.1;color:#FFFFFF;">{{ Título del correo }}</div>
+<div style="height:8px;line-height:8px;font-size:1px;">&nbsp;</div>
+<div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:500;line-height:1.4;color:rgba(255,255,255,0.86);">{{ Bajada breve del correo va aquí }}</div>
+</div>`;
+  return `${logo}${pillBlock}${copy}`;
 }
 
 /**
@@ -294,7 +312,7 @@ export function buildTipoNewBanner(t: TipoNew): string {
   return `<!-- Tipología: ${t.label} (${t.id}) — Concorde -->
 <table border="0" width="${TIPO_WIDTH}" cellspacing="0" cellpadding="0" align="center" style="border-collapse:separate;">
 <tr><td bgcolor="${s.bgFallback}" style="background-color:${s.bgFallback};${tdBg}padding:0;border-radius:18px;">
-<div style="position:relative;width:${TIPO_WIDTH}px;height:${H}px;overflow:hidden;border-radius:18px;">
+<div style="position:relative;width:${TIPO_WIDTH}px;min-height:${H}px;overflow:hidden;border-radius:18px;">
 ${bg}
 ${SHEEN}
 ${content}

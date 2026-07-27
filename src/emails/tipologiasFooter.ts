@@ -21,6 +21,24 @@ import { LOGO_CORREOS, wrapTipoPreview } from "./tipologiasNew";
 
 export const FOOTER_WIDTH = 600;
 export const FOOTER_HEIGHT = 214;
+/** Alto del footer «Panel Centrado» (el SVG mide 600×250). */
+export const FOOTER_CENTERED_HEIGHT = 250;
+/** Alto del footer «Compacto» (el SVG mide 600×110). */
+export const FOOTER_COMPACT_HEIGHT = 110;
+/** Alto del footer «Split» (el SVG mide 600×144). */
+export const FOOTER_SPLIT_HEIGHT = 144;
+
+/**
+ * Layout del footer:
+ *   · console  — panel glass grande, texto izq + logo der (600×214).
+ *   · centered — todo centrado y sin panel: logo arriba, título, ayuda y botón
+ *                glass «¡Vamos!» centrados (600×250).
+ *   · compact  — una franja: copy a la izquierda, marca vmc + botón glass a la
+ *                derecha (600×110).
+ *   · split    — dos columnas divididas por una línea vertical: izq marca vmc +
+ *                Centro de Ayuda; der «Voyager Subastas» + botón glass (600×144).
+ */
+export type FooterLayoutKind = "console" | "centered" | "compact" | "split";
 
 /** Estilo de fondo del footer por tono (gradiente + glows). */
 export interface FooterStyle {
@@ -38,20 +56,58 @@ export interface FooterStyle {
   glassDarken?: number;
 }
 
-// ─── Anillos IZQUIERDA — cx=0 (asoman por el borde izquierdo) ────────────────────
-// SVG: (0,63) r159.4 op0.12 · (0,29) r119.4 op0.16 · (0,29) r81.9 op0.10, 1.2px.
-const FOOTER_RINGS = `<div style="position:absolute;inset:0;overflow:hidden;pointer-events:none;">
-<div style="position:absolute;left:${0 - 159.4}px;top:${63 - 159.4}px;width:${2 * 159.4}px;height:${2 * 159.4}px;border-radius:50%;border:1.2px solid rgba(255,255,255,0.12);"></div>
-<div style="position:absolute;left:${0 - 119.4}px;top:${29 - 119.4}px;width:${2 * 119.4}px;height:${2 * 119.4}px;border-radius:50%;border:1.2px solid rgba(255,255,255,0.16);"></div>
-<div style="position:absolute;left:${0 - 81.9}px;top:${29 - 81.9}px;width:${2 * 81.9}px;height:${2 * 81.9}px;border-radius:50%;border:1.2px solid rgba(255,255,255,0.1);"></div>
-</div>`;
+// ─── Anillos — asoman por el borde. ─────────────────────────────────────────────
+// console (214): izq (0,63) r159.4 · (0,29) r119.4/81.9.
+// centered (250): izq (-9,250) r149.4/114.4/79.4.
+// compact (110): DER (550,55) r149.4/114.4/79.4 (op 0.12/0.16/0.10).
+function footerRings(kind: FooterLayoutKind): string {
+  const ring = (cx: number, cy: number, r: number, op: number): string =>
+    `<div style="position:absolute;left:${cx - r}px;top:${cy - r}px;width:${2 * r}px;height:${2 * r}px;border-radius:50%;border:1.2px solid rgba(255,255,255,${op});"></div>`;
+  let rings: string;
+  if (kind === "centered") {
+    rings = ring(-9, 250, 149.4, 0.12) + ring(-9, 250, 114.4, 0.16) + ring(-9, 250, 79.4, 0.1);
+  } else if (kind === "compact") {
+    rings = ring(550, 55, 149.4, 0.12) + ring(550, 55, 114.4, 0.16) + ring(550, 55, 79.4, 0.1);
+  } else if (kind === "split") {
+    // DER (560,80) r149.4/114.4/79.4 (op 0.12/0.16/0.10).
+    rings = ring(560, 80, 149.4, 0.12) + ring(560, 80, 114.4, 0.16) + ring(560, 80, 79.4, 0.1);
+  } else {
+    rings = ring(0, 63, 159.4, 0.12) + ring(0, 29, 119.4, 0.16) + ring(0, 29, 81.9, 0.1);
+  }
+  return `<div style="position:absolute;inset:0;overflow:hidden;pointer-events:none;">${rings}</div>`;
+}
 
-// ─── Chevron stroke con gradiente (paint1) — asoma por la derecha ────────────────
-// paint1: white → #4DDCDC(25%) → #6445DF(75%) → white. 2px. Forma `>`.
-const FOOTER_CHEVRON = `<svg width="${FOOTER_WIDTH}" height="${FOOTER_HEIGHT}" viewBox="0 0 ${FOOTER_WIDTH} ${FOOTER_HEIGHT}" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;overflow:visible;pointer-events:none;opacity:0.7;">
+// ─── Chevron stroke — asoma por los bordes ──────────────────────────────────────
+// console: paint1 gradiente (white→#4DDCDC→#6445DF→white), 2px, forma `M309.976…`.
+// centered: chevron blanco 0.12, 1.2px, forma `M504.693…`.
+// compact: DOS chevrons blancos 0.12 (uno a la der `M362.838…`, otro a la izq
+//   `M-65.8381…`), 1.2px.
+function footerChevron(kind: FooterLayoutKind, w: number, h: number): string {
+  if (kind === "split") {
+    // CUATRO chevrons `>` RELLENOS repartidos por todo el ancho, white ~0.055.
+    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;">
+<path d="M100 -10L170 72L100 154H140L210 72L140 -10H100Z" fill="white" fill-opacity="0.055"/>
+<path d="M220 -10L290 72L220 154H260L330 72L260 -10H220Z" fill="white" fill-opacity="0.055"/>
+<path d="M340 -10L410 72L340 154H380L450 72L380 -10H340Z" fill="white" fill-opacity="0.055"/>
+<path d="M460 -10L530 72L460 154H500L570 72L500 -10H460Z" fill="white" fill-opacity="0.055"/>
+</svg>`;
+  }
+  if (kind === "compact") {
+    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;overflow:visible;pointer-events:none;opacity:0.7;">
+<path d="M362.838 42.7856L285.531 -34.521C274.137 -45.915 255.664 -45.9144 244.27 -34.5203C232.876 -23.1263 232.875 -4.65297 244.269 6.74115L296.985 59.4565L241.147 115.294C230.128 126.313 230.127 144.18 241.147 155.199C252.166 166.219 270.033 166.219 281.053 155.199L362.838 73.4136C371.296 64.9561 371.296 51.2431 362.838 42.7856Z" stroke="white" stroke-opacity="0.12" stroke-width="1.2"/>
+<path d="M-65.8381 77.2144L11.4686 154.521C22.8627 165.915 41.336 165.914 52.7301 154.52C64.1241 143.126 64.1248 124.653 52.7308 113.259L0.0154083 60.5435L55.8527 4.70623C66.8721 -6.31325 66.8728 -24.1795 55.8534 -35.199C44.8339 -46.2185 26.9669 -46.2185 15.9474 -35.199L-65.8381 46.5864C-74.2955 55.0439 -74.2955 68.7569 -65.8381 77.2144Z" stroke="white" stroke-opacity="0.12" stroke-width="1.2"/>
+</svg>`;
+  }
+  if (kind === "centered") {
+    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;overflow:visible;pointer-events:none;opacity:0.7;">
+<path d="M504.693 173.646L647.477 316.43C669.415 338.368 704.983 338.368 726.921 316.43C748.858 294.493 748.858 258.925 726.921 236.987L630.235 140.302L737.273 33.2644C757.968 12.5691 757.968 -20.9841 737.273 -41.6793C716.578 -62.3744 683.024 -62.375 662.329 -41.68L504.693 115.956C488.763 131.886 488.763 157.715 504.693 173.646Z" stroke="white" stroke-opacity="0.12" stroke-width="1.2"/>
+</svg>`;
+  }
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;overflow:visible;pointer-events:none;opacity:0.7;">
 <defs><linearGradient id="footChev" x1="161.324" y1="318.712" x2="476.314" y2="508.553" gradientUnits="userSpaceOnUse"><stop stop-color="white"/><stop offset="0.25" stop-color="#4DDCDC"/><stop offset="0.75" stop-color="#6445DF"/><stop offset="1" stop-color="white"/></linearGradient></defs>
 <path d="M309.976 150.363L452.761 293.147C474.542 314.928 509.856 314.928 531.637 293.147C553.419 271.366 553.42 236.051 531.638 214.269L434.67 117.301L541.99 9.98124C562.529 -10.5578 562.529 -43.8572 541.99 -64.3962C521.451 -84.9351 488.151 -84.9356 467.612 -64.3969L309.976 93.2389C294.202 109.013 294.202 134.588 309.976 150.363Z" stroke="url(#footChev)" stroke-width="2"/>
 </svg>`;
+}
 
 function glowLayers(glows: FooterStyle["glows"]): string {
   return glows
@@ -132,26 +188,145 @@ function footerCopy(): string {
 </div>`;
 }
 
-/** Alto real del footer (el SVG mide 214). */
-export function footerHeight(): number {
+// ─── Layout CENTRADO (SVG «Var B · Panel Centrado», 600×250) ────────────────────
+// Todo centrado y sin panel: logo arriba, título, divisor, ayuda y botón «¡Vamos!».
+
+/**
+ * Botón glass «¡Vamos!» del layout centrado (rect 98×40 rx20, centrado en x=251).
+ * Igual que el otro botón pero con borde de gradiente DE MARCA (paint3:
+ * white→#F4AC59(22%)→#8460E5(74.5%)→white ≈ 38°), como en el SVG.
+ */
+function centeredGlassButton(): string {
+  const fill =
+    "linear-gradient(180deg,rgba(255,255,255,0.30) 0%,rgba(255,255,255,0.08) 45%,rgba(255,255,255,0.02) 100%)";
+  const border = "linear-gradient(38deg,#FFFFFF 0%,#F4AC59 22%,#8460E5 74.5%,#FFFFFF 100%)";
+  return `<div style="position:absolute;left:50%;top:180px;transform:translateX(-50%);width:98px;height:40px;border-radius:20px;background:${fill};-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);box-shadow:0 8px 24px rgba(0,0,0,0.10),inset 0 1px 3px rgba(255,255,255,0.45);display:flex;align-items:center;justify-content:center;">
+${gradientBorder(border, 20, 1.5)}
+<span style="position:relative;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#FFFFFF;letter-spacing:-0.01em;white-space:nowrap;">¡Vamos!</span>
+</div>`;
+}
+
+/** Contenido del layout centrado (logo + título + divisor + ayuda + botón). */
+function centeredContent(): string {
+  // Logo centrado arriba (glifos y≈30-67, barra y≈73). PNG 140px centrado.
+  const logo = `<img src="${LOGO_CORREOS}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;top:20px;left:50%;transform:translateX(-50%);width:140px;height:auto;border:0;display:block;">`;
+  // Título centrado (y≈115-129 del SVG).
+  const titulo = `<div style="position:absolute;top:104px;left:0;right:0;text-align:center;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#FFFFFF;line-height:1.2;white-space:nowrap;">¡Despierta al cazador de ofertas que hay en ti!</div>`;
+  // Divisor centrado (rect x=190 w=220 y=131, white 0.22).
+  const divisor = `<div style="position:absolute;top:131px;left:50%;transform:translateX(-50%);width:220px;height:1px;background:rgba(255,255,255,0.22);"></div>`;
+  // «¿Quieres saber más? ¡Visita nuestro Centro de Ayuda!» en UNA sola línea
+  // centrada (uno al lado del otro), todo con el MISMO grosor delgado (weight 500).
+  const ayuda = `<div style="position:absolute;top:146px;left:0;right:0;text-align:center;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:13px;font-weight:500;color:rgba(255,255,255,0.92);line-height:1.2;white-space:nowrap;">¿Quieres saber más? ¡Visita nuestro Centro de Ayuda!</div>`;
+  return `${logo}${titulo}${divisor}${ayuda}${centeredGlassButton()}`;
+}
+
+// ─── Layout COMPACTO (SVG «Compacto», 600×110) ──────────────────────────────────
+// Una franja: copy a la IZQUIERDA («¿Quieres saber más?» + «¡Visita nuestro Centro
+// de Ayuda!»), y a la DERECHA la marca vmc arriba con el botón glass «¡Vamos!»
+// debajo. Entre columnas, dos dots pequeños (como en el SVG).
+
+/** Botón glass «¡Vamos!» del compacto (rect 98×40 rx20, a la derecha en x=450). */
+function compactGlassButton(): string {
+  const fill =
+    "linear-gradient(180deg,rgba(255,255,255,0.30) 0%,rgba(255,255,255,0.08) 45%,rgba(255,255,255,0.02) 100%)";
+  // paint4: white→#F4AC59(22%)→#8460E5(74.5%)→white ≈ 38° (borde de marca).
+  const border = "linear-gradient(38deg,#FFFFFF 0%,#F4AC59 22%,#8460E5 74.5%,#FFFFFF 100%)";
+  return `<div style="position:absolute;left:450px;top:58px;width:98px;height:40px;border-radius:20px;background:${fill};-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);box-shadow:0 8px 24px rgba(0,0,0,0.10),inset 0 1px 3px rgba(255,255,255,0.45);display:flex;align-items:center;justify-content:center;">
+${gradientBorder(border, 20, 1.5)}
+<span style="position:relative;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#FFFFFF;letter-spacing:-0.01em;white-space:nowrap;">¡Vamos!</span>
+</div>`;
+}
+
+/** Contenido del layout compacto (copy izq · marca vmc + botón der). */
+function compactContent(): string {
+  // Izquierda (como en el SVG, sin «Voyager Subastas»): dos líneas centradas
+  // verticalmente en la franja — «¿Quieres saber más?» + «¡Visita nuestro Centro
+  // de Ayuda!». Énfasis cálido en «¡Visita nuestro»; «Centro de Ayuda» en BLANCO.
+  const copy = `<div style="position:absolute;left:44px;top:0;height:110px;right:270px;display:flex;flex-direction:column;justify-content:center;text-align:left;">
+<div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:16px;font-weight:700;color:#FFFFFF;line-height:1.25;white-space:nowrap;">¿Quieres saber más?</div>
+<div style="height:6px;line-height:6px;font-size:1px;">&nbsp;</div>
+<div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;white-space:nowrap;color:rgba(255,233,216,0.90);font-weight:500;">¡Visita nuestro <span style="color:#FFFFFF;font-weight:700;">Centro de Ayuda</span>!</div>
+</div>`;
+  // Derecha: marca vmc COMPLETA (glifos + «powered by» + barra), centrada sobre el
+  // botón. PNG 84px anclado der, arriba (top:6); el botón (top:58) queda debajo sin
+  // solaparse con el «powered by».
+  const logo = `<img src="${LOGO_CORREOS}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;right:66px;top:6px;width:84px;height:auto;border:0;display:block;">`;
+  // Dos dots entre columnas, como en el SVG.
+  const dots = `<div style="position:absolute;left:398px;top:44px;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.55);"></div>
+<div style="position:absolute;left:432px;top:70px;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.45);"></div>`;
+  return `${copy}${dots}${logo}${compactGlassButton()}`;
+}
+
+// ─── Layout SPLIT (SVG «Split», 600×144) ────────────────────────────────────────
+// Dos columnas divididas por una línea vertical (x=312):
+//   · IZQ: marca vmc arriba + «¡Despierta al cazador de ofertas que hay en ti!».
+//   · DER: «¿Quieres saber más?» + «¡Visita nuestro Centro de Ayuda!» + botón
+//          glass «¡Vamos!» debajo.
+
+/** Botón glass «¡Vamos!» del split (rect 98×40 rx20; flujo normal dentro del bloque der). */
+function splitGlassButton(): string {
+  const fill =
+    "linear-gradient(180deg,rgba(255,255,255,0.30) 0%,rgba(255,255,255,0.08) 45%,rgba(255,255,255,0.02) 100%)";
+  // paint4: white→#F4AC59(22%)→#8460E5(74.5%)→white ≈ 38° (borde de marca).
+  const border = "linear-gradient(38deg,#FFFFFF 0%,#F4AC59 22%,#8460E5 74.5%,#FFFFFF 100%)";
+  return `<div style="position:relative;width:98px;height:40px;border-radius:20px;background:${fill};-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);box-shadow:0 8px 24px rgba(0,0,0,0.10),inset 0 1px 3px rgba(255,255,255,0.45);display:flex;align-items:center;justify-content:center;">
+${gradientBorder(border, 20, 1.5)}
+<span style="position:relative;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#FFFFFF;letter-spacing:-0.01em;white-space:nowrap;">¡Vamos!</span>
+</div>`;
+}
+
+/** Contenido del layout split (izq marca+eslogan · divisor · der ayuda+botón). */
+function splitContent(): string {
+  // IZQUIERDA: marca vmc COMPLETA arriba (glifos + «powered by» + barra) + eslogan
+  // «¡Despierta al cazador de ofertas que hay en ti!» (2 líneas) debajo.
+  const logoIzq = `<img src="${LOGO_CORREOS}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;left:36px;top:24px;width:108px;height:auto;border:0;display:block;">`;
+  // Eslogan con el MISMO grosor delgado (weight 500) que el resto del copy.
+  const eslogan = `<div style="position:absolute;left:36px;top:86px;right:320px;text-align:left;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:500;color:rgba(255,255,255,0.95);line-height:1.3;">¡Despierta al cazador de ofertas que hay en ti!</div>`;
+  // Divisor vertical (rect x=312 y=24 w=1 h=96, white 0.18).
+  const divisor = `<div style="position:absolute;left:312px;top:24px;width:1px;height:96px;background:rgba(255,255,255,0.18);"></div>`;
+  // DERECHA: texto + botón CENTRADOS (vertical Y horizontal) al medio de su columna
+  // (x∈[352,600], alto 144). «¿Quieres saber más?» + «¡Visita nuestro Centro de
+  // Ayuda!» (énfasis cálido en «¡Visita nuestro»; «Centro de Ayuda» en BLANCO) +
+  // botón «¡Vamos!».
+  const der = `<div style="position:absolute;left:352px;right:24px;top:0;height:144px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;text-align:center;">
+<div>
+<div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:16px;font-weight:700;color:#FFFFFF;line-height:1.25;white-space:nowrap;">¿Quieres saber más?</div>
+<div style="height:6px;line-height:6px;font-size:1px;">&nbsp;</div>
+<div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;white-space:nowrap;color:rgba(255,233,216,0.90);font-weight:500;">¡Visita nuestro <span style="color:#FFFFFF;font-weight:700;">Centro de Ayuda</span>!</div>
+</div>
+${splitGlassButton()}
+</div>`;
+  return `${logoIzq}${eslogan}${divisor}${der}`;
+}
+
+/** Alto real del footer según su layout (214 console · 250 centrado · 110 compacto · 144 split). */
+export function footerHeight(kind: FooterLayoutKind = "console"): number {
+  if (kind === "centered") return FOOTER_CENTERED_HEIGHT;
+  if (kind === "compact") return FOOTER_COMPACT_HEIGHT;
+  if (kind === "split") return FOOTER_SPLIT_HEIGHT;
   return FOOTER_HEIGHT;
 }
 
-/** Construye el footer de un tono. */
-export function buildFooter(id: string, style: FooterStyle): string {
+/** Construye el footer de un tono, en el layout dado (console | centered | compact | split). */
+export function buildFooter(id: string, style: FooterStyle, kind: FooterLayoutKind = "console"): string {
+  const H = footerHeight(kind);
   const uid = `footBg_${id.replace(/[^a-z0-9]/gi, "")}`;
-  const bgSvgLayer = `<svg width="${FOOTER_WIDTH}" height="${FOOTER_HEIGHT}" viewBox="0 0 ${FOOTER_WIDTH} ${FOOTER_HEIGHT}" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="position:absolute;inset:0;display:block;"><defs>${style.bgSvgGradient.replace(/id="[^"]*"/, `id="${uid}"`)}</defs><rect width="${FOOTER_WIDTH}" height="${FOOTER_HEIGHT}" fill="url(#${uid})"/></svg>`;
-  // El logo va DENTRO del panel; el copy y el botón también. Todo en absoluto.
-  const panelInner = `${footerCopy()}${footerLogo()}${glassButton()}`;
-  return `<!-- Footer: Centro de Ayuda (${id}) — Concorde -->
+  const bgSvgLayer = `<svg width="${FOOTER_WIDTH}" height="${H}" viewBox="0 0 ${FOOTER_WIDTH} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="position:absolute;inset:0;display:block;"><defs>${style.bgSvgGradient.replace(/id="[^"]*"/, `id="${uid}"`)}</defs><rect width="${FOOTER_WIDTH}" height="${H}" fill="url(#${uid})"/></svg>`;
+  // console: panel glass · centered/compact/split: contenido suelto sin panel.
+  let content: string;
+  if (kind === "centered") content = centeredContent();
+  else if (kind === "compact") content = compactContent();
+  else if (kind === "split") content = splitContent();
+  else content = glassPanel(`${footerCopy()}${footerLogo()}${glassButton()}`, style.glassDarken ?? 1);
+  return `<!-- Footer: Centro de Ayuda ${kind} (${id}) — Concorde -->
 <table border="0" width="${FOOTER_WIDTH}" cellspacing="0" cellpadding="0" align="center" style="border-collapse:separate;">
 <tr><td bgcolor="${style.bgFallback}" style="background-color:${style.bgFallback};padding:0;border-radius:18px;">
-<div style="position:relative;width:${FOOTER_WIDTH}px;height:${FOOTER_HEIGHT}px;overflow:hidden;border-radius:18px;">
+<div style="position:relative;width:${FOOTER_WIDTH}px;height:${H}px;overflow:hidden;border-radius:18px;">
 ${bgSvgLayer}
 ${glowLayers(style.glows)}
-${FOOTER_RINGS}
-${FOOTER_CHEVRON}
-${glassPanel(panelInner, style.glassDarken ?? 1)}
+${footerRings(kind)}
+${footerChevron(kind, FOOTER_WIDTH, H)}
+${content}
 </div>
 </td></tr>
 </table>`;
