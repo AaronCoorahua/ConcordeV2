@@ -67,12 +67,10 @@ export const REPORT_ENTRIES: ReportEntry[] = [
     // Live preview del empty-state propuesto.
     concordeComponent: "actividad-empty-demo",
     problem: [
-      "En la card «Tu actividad», cuando el usuario no tiene actividad, se muestran las 4 pills (Ganadas, Consignaciones, etc.) en gris vacío, más el texto «Aún no tienes participaciones en subastas.» debajo.",
-      "Las 4 pills grises no aportan nada cuando no hay datos: se ven como placeholders rotos y desaprovechan el espacio.",
+      "En «Tu actividad», sin actividad, se muestran las 4 pills (Ganadas, Consignaciones…) en gris vacío. Se ven como placeholders rotos y desaprovechan el espacio.",
     ],
     fix: [
-      "Cuando no hay actividad, ocultar las pills y mostrar un solo empty-state centrado: un icono, el mensaje «Aún no tienes participaciones en subastas.» y un link «Ver ofertas».",
-      "Es una recomendación de mejora. Se toma como base la card «Tu actividad» del bloque zona (ActivityCard); se conserva el texto de Producción y se agrega el icono + el link.",
+      "Cuando no hay actividad, ocultar las pills y mostrar un empty-state centrado: icono, el mensaje «Aún no tienes participaciones en subastas.» y un link «Ver ofertas».",
     ],
     codeLang: "tsx",
     // Código real de Producción: las 4 pills grises + el texto.
@@ -143,13 +141,12 @@ function TuActividad({ items }) {
     // Live preview del dropdown propuesto (clickeable), no una imagen.
     concordeComponent: "selector-fecha-demo",
     problem: [
-      "En la card de Visitas de la oferta, «Seleccionar Fecha» usa un select nativo del navegador. El campo cerrado se ve bien (con el borde morado de Concorde), pero al abrirlo el desplegable lo pinta el navegador (en Chrome sale gris, con la opción resaltada en gris oscuro) y rompe la estética del resto de la card.",
-      "Al ser nativo, no se puede controlar su apariencia (colores, tipografía, el check de selección, el hover), así que se ve distinto en cada navegador y no combina con el diseño Voyager.",
+      "«Seleccionar Fecha» es un select nativo. Cerrado se ve bien, pero al abrirlo el desplegable lo pinta el navegador (en Chrome, gris) y rompe la estética de la card.",
     ],
+    cause: "El select nativo no permite estilar su desplegable (colores, tipografía, check, hover), así que se ve distinto en cada navegador.",
     fix: [
-      "Reemplazar el select nativo por un desplegable propio (custom): un botón que abre una lista de opciones estilizada, con la misma estética de la card (borde morado, radio completo, tipografía Voyager, opción seleccionada con check morado y hover suave).",
-      "Al ser custom, hay que cubrir lo que el select nativo ya trae gratis: cerrar al hacer clic fuera, y navegación por teclado (Esc para cerrar, flechas y Enter para elegir), para no perder accesibilidad respecto al nativo.",
-      "Es una recomendación de mejora, no un componente que ya exista en Concorde. Se puede tomar como base la card de Visitas del bloque detalle (que ya tiene el texto y el botón «Agenda tu visita», pero sin el selector).",
+      "Reemplazarlo por un desplegable propio con la estética de la card (borde morado, radio completo, opción activa con check morado y hover).",
+      "Cubrir lo que el nativo trae gratis: cerrar al clic-fuera y navegación por teclado (Esc, flechas, Enter).",
     ],
     codeLang: "tsx",
     // Código real de Producción: el select nativo (el que rompe la estética al abrirse).
@@ -246,12 +243,10 @@ function SelectorFecha({ fechas, value, onChange }) {
     // Preview del visor de imágenes real de Concorde (CardViewer).
     concordeComponent: "cardviewer-demo",
     problem: [
-      "Al entrar a una oferta, las imágenes del visor del detalle (CardViewer) no muestran un skeleton mientras cargan. A veces tardan en aparecer y queda un hueco vacío hasta que la imagen termina de cargar.",
-      "Sin un estado de carga, la espera se siente peor: no hay señal de que la imagen viene en camino.",
+      "Al entrar a una oferta, las imágenes del visor (CardViewer) no muestran skeleton mientras cargan: queda un hueco vacío hasta que la imagen aparece.",
     ],
     fix: [
-      "Agregar un skeleton de imagen mientras carga y quitarlo cuando la imagen ya está lista. Así el usuario ve un placeholder animado en vez de un hueco.",
-      "Se ata al evento onLoad de la imagen (no a un tiempo fijo): el skeleton se muestra mientras la foto no ha cargado y desaparece justo cuando termina, sin agregar retraso. El preview de al lado alterna en bucle solo para ilustrarlo.",
+      "Mostrar un skeleton mientras la imagen carga y quitarlo con su evento onLoad (sin timeout, no agrega retraso). El preview de al lado alterna en bucle solo para ilustrarlo.",
     ],
     codeLang: "tsx",
     // Mejora sugerida sobre el CardViewer de Concorde: loading state + skeleton
@@ -300,13 +295,11 @@ useEffect(function () { setLoading(true); }, [currentSrc]);
     originalImage: "/assets/reporte/zona-titulo-pegado-a-cards-original.png",
     concordeImage: "/assets/reporte/zona-titulo-pegado-a-cards-concorde.png",
     problem: [
-      "En Producción, el título de las secciones Recomendados y Me interesa (con los brackets naranjas del SVG) queda muy pegado a las cards de abajo. Falta aire entre el encabezado y la fila de ofertas.",
-      "El encabezado y la fila de cards van uno tras otro sin separación propia: la única distancia es el padding del bloque, así que el título queda casi tocando las cards.",
-      "En Concorde hay separación clara entre el título y las cards.",
+      "En Recomendados y Me interesa, el título (con los brackets del SVG) queda muy pegado a las cards de abajo. En Concorde hay separación clara.",
     ],
+    cause: "El encabezado y la fila de cards van seguidos sin separación propia; la única distancia es el padding del bloque.",
     fix: [
-      "Dar espacio entre el encabezado (título + nº de ofertas) y la fila de cards, igual que en Concorde.",
-      "En Concorde el estante (OfferShelf) tiene altura fija y reparte el contenido con space-between: el título arriba y las cards abajo, con aire en el medio.",
+      "Dar aire entre el encabezado y la fila de cards. En Concorde, OfferShelf lo logra con altura fija + space-between (título arriba, cards abajo).",
     ],
     codeLang: "tsx",
     codeOriginal: `// Producción — encabezado y cards seguidos, sin separación entre ellos
@@ -352,13 +345,12 @@ useEffect(function () { setLoading(true); }, [currentSrc]);
     concordeImage: "",
     concordeComponent: "none",
     problem: [
-      "Una vez que le das like a una oferta, no se puede quitar. Al volver a hacer clic en el corazón ya marcado, no pasa nada: el like se queda.",
-      "Puede ser que la función de quitar el like (dislike) directamente no esté implementada.",
-      "Este reporte es para el equipo de backend/integración. La lógica no vive en Concorde; aquí solo dejamos anotado el comportamiento.",
+      "Una vez marcado el like de una oferta, no se puede quitar: al volver a hacer clic en el corazón ya marcado, no pasa nada.",
     ],
+    cause: "Parece que la acción de quitar el favorito (dislike) no está implementada.",
     fix: [
-      "Permitir quitar el like: al hacer clic en un corazón ya marcado, desmarcarlo y quitar el favorito.",
-      "Si la función de quitar no existe en el backend, agregarla (endpoint para eliminar el favorito).",
+      "Al hacer clic en un corazón ya marcado, desmarcarlo y quitar el favorito.",
+      "Si no existe el endpoint para eliminar el favorito, agregarlo.",
     ],
   },
   {
@@ -372,17 +364,12 @@ useEffect(function () { setLoading(true); }, [currentSrc]);
     concordeImage: "",
     concordeComponent: "none",
     problem: [
-      "Le das like a una oferta en el listado (OfferShelf) y el corazón se marca. Entras a esa oferta y en el detalle (DetailCard) el like también aparece marcado, bien. Pero al volver al listado el corazón sale sin marcar. Si recargas la página, ahí sí vuelve a aparecer marcado.",
-      "Pasa porque cada vista maneja su propio estado del like por separado y no hay una fuente de datos compartida entre el listado y el detalle. Cuando das like en el listado, el cambio se guarda en el backend, pero el listado solo lo recuerda en memoria mientras está en pantalla.",
-      "Al entrar al detalle, el DetailCard pide los datos frescos al backend y por eso muestra el like correcto. Al volver, el listado se vuelve a montar desde cero: pierde el estado que tenía en memoria y no vuelve a preguntar al backend (o usa datos viejos guardados en caché), así que muestra el corazón sin marcar.",
-      "Al recargar, toda la página vuelve a pedir los datos al backend, y por eso recién ahí el listado aparece con el like correcto.",
-      "Este reporte es para el equipo de backend/integración. La lógica no vive en Concorde; aquí solo dejamos anotado el comportamiento y una propuesta.",
+      "Das like en el listado y el corazón se marca. Entras al detalle y ahí también aparece marcado, pero al volver al listado sale sin marcar. Recargando la página vuelve a aparecer marcado.",
     ],
+    cause: "Cada vista lleva su propio estado del like en memoria, sin fuente compartida. El detalle pide datos frescos al backend; al volver, el listado se re-monta y pierde el estado (o usa caché vieja), y no re-consulta. Recargar fuerza a pedir todo de nuevo.",
     fix: [
-      "Tener una sola fuente de verdad para los favoritos, compartida entre el listado y el detalle. Si das like en cualquiera de las dos vistas, ambas leen del mismo lugar y quedan sincronizadas.",
-      "Al volver al listado, refrescar el estado desde esa fuente (o desde el backend) en vez de mostrar lo que tenía en memoria antes de navegar. Así no hace falta recargar para ver el like.",
-      "Si se usa caché, invalidarla o actualizarla cuando el usuario da o quita un like, para que la caché no devuelva el estado viejo.",
-      "Idea simple: guardar los ids de las ofertas marcadas en un estado global (store) que las dos vistas consulten; al dar like se actualiza ese store y ambas vistas reflejan el cambio al instante.",
+      "Una sola fuente de verdad de favoritos compartida entre listado y detalle (p. ej. un store con los ids marcados).",
+      "Al volver al listado, leer de esa fuente en vez de la memoria previa; si hay caché, invalidarla al dar o quitar un like.",
     ],
     codeLang: "tsx",
     codeConcorde: `// El problema NO es de estos componentes (solo diseño), es de dónde

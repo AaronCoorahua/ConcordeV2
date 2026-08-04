@@ -113,6 +113,9 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
         {/* Problema */}
         <Section title="Qué está mal" accent="#dc2626" paragraphs={entry.problem} />
 
+        {/* Posible causa (opcional) */}
+        {entry.cause && <Section title="Posible causa" accent="#d97706" paragraphs={[entry.cause]} />}
+
         {/* Corrección */}
         <Section title="Cómo se corrige" accent="#16a34a" paragraphs={entry.fix} />
 
