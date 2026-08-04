@@ -36,6 +36,8 @@ export type ReportEntry = {
   concordeComponent?: "like-demo" | "cardviewer-demo" | "selector-fecha-demo" | "actividad-empty-demo" | "none";
   /** Qué está mal — descripción del problema. Soporta varios párrafos (array de strings). */
   problem: string[];
+  /** Posible causa (opcional) — una línea corta, sin relleno. */
+  cause?: string;
   /** Cómo se corrige — explicación redactada de la solución. Varios párrafos. */
   fix: string[];
   /** Lenguaje para el resaltado visual del bloque de código, e.g. "tsx", "css". */
@@ -117,7 +119,8 @@ function TuActividad({ items }) {
           <p style={{ margin: 0, fontSize: 13, color: "#3b1782" }}>
             Aún no tienes participaciones en subastas.
           </p>
-          <a href="/ofertas" style={{ display: "inline-flex", alignItems: "center",
+          {/* href: la ruta real del listado de ofertas (a confirmar con el equipo) */}
+          <a href={urlListadoOfertas} style={{ display: "inline-flex", alignItems: "center",
              gap: 4, fontSize: 13, fontWeight: 600, color: "#ED8936",
              textDecoration: "none" }}>
             Ver ofertas <span aria-hidden="true">›</span>
@@ -145,6 +148,7 @@ function TuActividad({ items }) {
     ],
     fix: [
       "Reemplazar el select nativo por un desplegable propio (custom): un botón que abre una lista de opciones estilizada, con la misma estética de la card (borde morado, radio completo, tipografía Voyager, opción seleccionada con check morado y hover suave).",
+      "Al ser custom, hay que cubrir lo que el select nativo ya trae gratis: cerrar al hacer clic fuera, y navegación por teclado (Esc para cerrar, flechas y Enter para elegir), para no perder accesibilidad respecto al nativo.",
       "Es una recomendación de mejora, no un componente que ya exista en Concorde. Se puede tomar como base la card de Visitas del bloque detalle (que ya tiene el texto y el botón «Agenda tu visita», pero sin el selector).",
     ],
     codeLang: "tsx",
@@ -168,6 +172,10 @@ function TuActividad({ items }) {
 
 function SelectorFecha({ fechas, value, onChange }) {
   const [open, setOpen] = useState(false);
+  const seleccionada = fechas.find(function (f) { return f.value === value; });
+
+  // Ojo: falta cubrir cierre al clic-fuera + teclado (Esc/flechas), que el
+  // <select> nativo ya trae. Sin eso, sería un downgrade de accesibilidad.
 
   return (
     <div style={{ position: "relative", width: "100%" }}>
@@ -185,7 +193,7 @@ function SelectorFecha({ fechas, value, onChange }) {
           cursor: "pointer",
         }}
       >
-        {value ? labelDe(value) : "Seleccionar Fecha"}
+        {seleccionada ? seleccionada.label : "Seleccionar Fecha"}
         {/* íconos calendario + chevron aquí */}
       </button>
 
@@ -409,16 +417,13 @@ function toggleLike(ofertaId) {
     concordeImage: "/assets/reporte/detalle-like-subascoin-pequenos-concorde.png",
     concordeComponent: "like-demo",
     problem: [
-      "Al hacer clic en el corazón de una oferta (en la card del listado y en la cabecera de la sala), el favorito tarda un poco en marcarse. No es inmediato: pulsas y hay un pequeño retraso antes de que el corazón cambie.",
-      "No es un problema de la interfaz ni de Concorde. En Concorde solo hacemos el diseño del componente (tamaños, colores, estados). El retraso viene del backend: al hacer clic, la app espera a que el servidor guarde el favorito antes de pintar el corazón marcado. Mientras la petición va y vuelve, el botón se queda a la espera.",
-      "Para el usuario se siente lento, como si el clic no hubiera hecho nada. Con conexión lenta se nota más, y si la petición falla no aparece ningún aviso: el corazón no se marca y no queda claro por qué.",
-      "Este reporte es para el equipo de backend. La lógica no vive en Concorde, así que aquí solo dejamos anotado el comportamiento y una propuesta de solución.",
+      "Al hacer clic en el corazón (card del listado y cabecera de la sala), el favorito tarda en marcarse. Con conexión lenta se nota más, y si la petición falla el corazón no se marca y no hay aviso.",
     ],
+    cause: "El clic espera la respuesta del servidor antes de pintar el corazón; mientras la petición va y vuelve, el botón se queda a la espera.",
     fix: [
-      "Marcar el corazón al instante, sin esperar al servidor. Al hacer clic se pinta el favorito de una vez y la petición se envía después, por detrás.",
-      "Guardar en segundo plano. La petición al backend no debe bloquear la interfaz; se manda de forma asíncrona para que el corazón responda al toque.",
-      "Si falla, revertir y avisar. Cuando la petición no se guarda (error o sin conexión), volver el corazón a como estaba y mostrar un aviso corto tipo No pudimos guardar tu favorito, inténtalo de nuevo.",
-      "Del lado del backend, que el endpoint sea rápido y tolere clics repetidos sin descuadrar el conteo.",
+      "Marcar el corazón al instante y enviar la petición en segundo plano (sin bloquear la UI).",
+      "Si la petición falla, revertir el corazón y mostrar un aviso corto.",
+      "Endpoint rápido y que tolere clics repetidos sin descuadrar el conteo.",
     ],
     codeLang: "tsx",
     // Los componentes del like en Concorde (solo diseño) + la idea de la solución.
