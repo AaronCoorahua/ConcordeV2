@@ -28,8 +28,12 @@ export type ReportEntry = {
   concordeImage: string | string[];
   /** Ruta de un bloque real a embeber en iframe en el lado Concorde, EN LUGAR de la imagen. */
   concordeEmbed?: string;
-  /** Renderiza componentes REALES de Concorde en el lado Concorde, EN LUGAR de la imagen. */
-  concordeComponent?: "like-demo";
+  /** Lado Concorde: "like-demo" renderiza los componentes del like; "cardviewer-demo"
+   *  renderiza el visor de imágenes (CardViewer); "selector-fecha-demo" renderiza
+   *  el dropdown de fecha propuesto (live, clickeable); "actividad-empty-demo"
+   *  renderiza el empty-state propuesto de «Tu actividad»; "none" oculta el panel
+   *  (para reportes de solo-Producción, p. ej. un video). */
+  concordeComponent?: "like-demo" | "cardviewer-demo" | "selector-fecha-demo" | "actividad-empty-demo" | "none";
   /** Qué está mal — descripción del problema. Soporta varios párrafos (array de strings). */
   problem: string[];
   /** Cómo se corrige — explicación redactada de la solución. Varios párrafos. */
@@ -52,12 +56,362 @@ export const REPORT_ENTRIES: ReportEntry[] = [
   // Envíame las imágenes + explicación + código y yo relleno esto.
   // ────────────────────────────────────────────────────────────────
   {
+    slug: "actividad-empty-state-pills-grises",
+    title: "Tu actividad — sin actividad, muestra 4 pills grises vacías",
+    date: "4 ago 2026",
+    status: "pendiente",
+    originalImage: "/assets/reporte/actividad-empty-state-pills-grises-original.png",
+    concordeImage: "",
+    // Live preview del empty-state propuesto.
+    concordeComponent: "actividad-empty-demo",
+    problem: [
+      "En la card «Tu actividad», cuando el usuario no tiene actividad, se muestran las 4 pills (Ganadas, Consignaciones, etc.) en gris vacío, más el texto «Aún no tienes participaciones en subastas.» debajo.",
+      "Las 4 pills grises no aportan nada cuando no hay datos: se ven como placeholders rotos y desaprovechan el espacio.",
+    ],
+    fix: [
+      "Cuando no hay actividad, ocultar las pills y mostrar un solo empty-state centrado: un icono, el mensaje «Aún no tienes participaciones en subastas.» y un link «Ver ofertas».",
+      "Es una recomendación de mejora. Se toma como base la card «Tu actividad» del bloque zona (ActivityCard); se conserva el texto de Producción y se agrega el icono + el link.",
+    ],
+    codeLang: "tsx",
+    // Código real de Producción: las 4 pills grises + el texto.
+    codeOriginal: `// Producción — sin actividad: 4 pills grises vacías + texto
+<section className="rounded-2xl bg-white p-4 shadow-... flex h-full flex-col">
+  <header className="border-b border-[#e1e3e2] pb-4">
+    {/* brackets + «Tu actividad» */}
+  </header>
+
+  <div className="mt-7">
+    <div className="grid grid-cols-2 gap-x-8 gap-y-7">
+      <div className="h-10 rounded-full bg-[#d3d6df] w-full"></div>
+      <div className="h-10 rounded-full bg-[#d3d6df] w-full"></div>
+      <div className="h-10 rounded-full bg-[#d3d6df] w-full"></div>
+      <div className="h-10 rounded-full bg-[#d3d6df] w-full"></div>
+    </div>
+  </div>
+
+  <p className="mt-3 text-sm text-[#3b1782]">
+    Aún no tienes participaciones en subastas.
+  </p>
+</section>`,
+    // Mejora RECOMENDADA (live al lado): empty-state con icono + mensaje + link.
+    codeConcorde: `// Mejora recomendada: empty-state centrado (icono + mensaje + link).
+// Base: ActivityCard del bloque zona (src/components/ActivityCard.tsx).
+// Cuando NO hay actividad, en vez de las pills grises:
+
+function TuActividad({ items }) {
+  const vacio = items.length === 0;
+
+  return (
+    <section className="actcard">
+      <div className="actcard__header">
+        <CardTitle title="TU ACTIVIDAD" />
+      </div>
+      <div className="actcard__divider" />
+
+      {vacio ? (
+        // Empty-state: icono + texto de producción + link «Ver ofertas»
+        <div style={{ flex: 1, display: "flex", flexDirection: "column",
+                      alignItems: "center", justifyContent: "center",
+                      gap: 8, textAlign: "center", padding: "8px 16px" }}>
+          <ActividadEmptyIcon />
+          <p style={{ margin: 0, fontSize: 13, color: "#3b1782" }}>
+            Aún no tienes participaciones en subastas.
+          </p>
+          <a href="/ofertas" style={{ display: "inline-flex", alignItems: "center",
+             gap: 4, fontSize: 13, fontWeight: 600, color: "#ED8936",
+             textDecoration: "none" }}>
+            Ver ofertas <span aria-hidden="true">›</span>
+          </a>
+        </div>
+      ) : (
+        <div className="actcard__grid">{/* pills con datos */}</div>
+      )}
+    </section>
+  );
+}`,
+    codeLink: "/blocks/zona",
+    handoffLink: "/handoff/activitycard",
+  },
+  {
+    slug: "visitas-selector-fecha-nativo",
+    title: "Visitas — el selector de fecha nativo rompe la estética",
+    date: "4 ago 2026",
+    status: "pendiente",
+    originalImage: "/assets/reporte/visitas-selector-fecha-nativo-original.png",
+    concordeImage: "",
+    // Live preview del dropdown propuesto (clickeable), no una imagen.
+    concordeComponent: "selector-fecha-demo",
+    problem: [
+      "En la card de Visitas de la oferta, «Seleccionar Fecha» usa un select nativo del navegador. El campo cerrado se ve bien (con el borde morado de Concorde), pero al abrirlo el desplegable lo pinta el navegador (en Chrome sale gris, con la opción resaltada en gris oscuro) y rompe la estética del resto de la card.",
+      "Al ser nativo, no se puede controlar su apariencia (colores, tipografía, el check de selección, el hover), así que se ve distinto en cada navegador y no combina con el diseño Voyager.",
+    ],
+    fix: [
+      "Reemplazar el select nativo por un desplegable propio (custom): un botón que abre una lista de opciones estilizada, con la misma estética de la card (borde morado, radio completo, tipografía Voyager, opción seleccionada con check morado y hover suave).",
+      "Es una recomendación de mejora, no un componente que ya exista en Concorde. Se puede tomar como base la card de Visitas del bloque detalle (que ya tiene el texto y el botón «Agenda tu visita», pero sin el selector).",
+    ],
+    codeLang: "tsx",
+    // Código real de Producción: el select nativo (el que rompe la estética al abrirse).
+    codeOriginal: `// Producción — select NATIVO: el desplegable lo pinta el navegador
+<label className="relative block w-full">
+  <span className="sr-only">Seleccionar Fecha</span>
+  <select className="h-10 w-full appearance-none rounded-full
+                     border border-[#5f3ed8] bg-white px-4 pr-14
+                     text-[12px] text-[#99a1af]">
+    <option value="">Seleccionar Fecha</option>
+    <option value="2026-08-07">viernes, 07 de agosto</option>
+  </select>
+  {/* íconos calendario + chevron */}
+  <span className="pointer-events-none absolute inset-y-0 right-3 ...">…</span>
+</label>
+// al abrirlo → menú gris nativo de Chrome (no se puede estilizar)`,
+    // Mejora RECOMENDADA (no existe aún en Concorde): dropdown propio estilizado.
+    codeConcorde: `// Mejora recomendada: dropdown propio (no es un componente de Concorde aún).
+// Base sugerida: la card de Visitas del bloque detalle (src/blocks/detalle).
+
+function SelectorFecha({ fechas, value, onChange }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div style={{ position: "relative", width: "100%" }}>
+      {/* Trigger — misma estética que el campo actual (borde morado, radio full) */}
+      <button
+        type="button"
+        onClick={function () { setOpen(function (o) { return !o; }); }}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        style={{
+          height: 40, width: "100%", padding: "0 16px", borderRadius: 9999,
+          border: "1px solid #5f3ed8", background: "#fff",
+          font: "inherit", fontSize: 12, color: value ? "#191c1c" : "#99a1af",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          cursor: "pointer",
+        }}
+      >
+        {value ? labelDe(value) : "Seleccionar Fecha"}
+        {/* íconos calendario + chevron aquí */}
+      </button>
+
+      {/* Lista propia estilizada (reemplaza al menú gris de Chrome) */}
+      {open && (
+        <ul
+          role="listbox"
+          style={{
+            position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0,
+            margin: 0, padding: 6, listStyle: "none", zIndex: 10,
+            background: "#fff", borderRadius: 16,
+            border: "1px solid #5f3ed8",
+            boxShadow: "0 8px 24px rgba(32,0,104,0.12)",
+          }}
+        >
+          {fechas.map(function (f) {
+            const selected = f.value === value;
+            return (
+              <li
+                key={f.value}
+                role="option"
+                aria-selected={selected}
+                onClick={function () { onChange(f.value); setOpen(false); }}
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  padding: "10px 12px", borderRadius: 10, cursor: "pointer",
+                  fontSize: 14, color: "#191c1c",
+                  background: selected ? "#f1edff" : "transparent",  // opción activa
+                }}
+              >
+                {f.label}
+                {selected && <span style={{ color: "#5f3ed8" }}>✓</span>}  {/* check morado */}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}`,
+    codeLink: "/blocks/detalle",
+  },
+  {
+    slug: "detalle-imagenes-sin-skeleton",
+    title: "Detalle — las imágenes no tienen skeleton de carga",
+    date: "4 ago 2026",
+    status: "pendiente",
+    originalImage: "",
+    originalVideo: "/assets/reporte/detalle-imagenes-sin-skeleton.mp4",
+    concordeImage: "",
+    // Preview del visor de imágenes real de Concorde (CardViewer).
+    concordeComponent: "cardviewer-demo",
+    problem: [
+      "Al entrar a una oferta, las imágenes del visor del detalle (CardViewer) no muestran un skeleton mientras cargan. A veces tardan en aparecer y queda un hueco vacío hasta que la imagen termina de cargar.",
+      "Sin un estado de carga, la espera se siente peor: no hay señal de que la imagen viene en camino.",
+    ],
+    fix: [
+      "Agregar un skeleton de imagen mientras carga y quitarlo cuando la imagen ya está lista. Así el usuario ve un placeholder animado en vez de un hueco.",
+      "Se ata al evento onLoad de la imagen (no a un tiempo fijo): el skeleton se muestra mientras la foto no ha cargado y desaparece justo cuando termina, sin agregar retraso. El preview de al lado alterna en bucle solo para ilustrarlo.",
+    ],
+    codeLang: "tsx",
+    // Mejora sugerida sobre el CardViewer de Concorde: loading state + skeleton
+    // atado al onLoad de la imagen (sin timeout artificial).
+    codeConcorde: `// Mejora sugerida: CardViewer con skeleton de carga
+// (partiendo de src/components/CardViewer.tsx)
+
+const [loading, setLoading] = useState(true);
+
+// al cambiar de imagen, vuelve a mostrar el skeleton hasta que la nueva cargue
+useEffect(function () { setLoading(true); }, [currentSrc]);
+
+// ...dentro del visor:
+<div className="pcardv__viewer">
+  {loading && <div className="pcardv__skeleton" aria-hidden="true" />}
+
+  {currentSrc ? (
+    <img
+      className="pcardv__img"
+      src={currentSrc}
+      alt={imageAlt}
+      style={{ opacity: loading ? 0 : 1, transition: "opacity .2s" }}
+      onLoad={function () { setLoading(false); }}   // se revela cuando REALMENTE cargó
+    />
+  ) : null}
+</div>
+
+/* CSS del skeleton (placeholder animado) */
+.pcardv__skeleton {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, #eceef3 25%, #f5f6f9 37%, #eceef3 63%);
+  background-size: 400% 100%;
+  animation: pcardv-shimmer 1.2s ease-in-out infinite;
+}
+@keyframes pcardv-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}`,
+    codeLink: "/blocks/detalle",
+  },
+  {
+    slug: "zona-titulo-pegado-a-cards",
+    title: "Recomendados / Me interesa — el título está muy pegado a las cards",
+    date: "4 ago 2026",
+    status: "pendiente",
+    // Producción: SVG del título pegado a las cards. Concorde: con separación.
+    originalImage: "/assets/reporte/zona-titulo-pegado-a-cards-original.png",
+    concordeImage: "/assets/reporte/zona-titulo-pegado-a-cards-concorde.png",
+    problem: [
+      "En Producción, el título de las secciones Recomendados y Me interesa (con los brackets naranjas del SVG) queda muy pegado a las cards de abajo. Falta aire entre el encabezado y la fila de ofertas.",
+      "El encabezado y la fila de cards van uno tras otro sin separación propia: la única distancia es el padding del bloque, así que el título queda casi tocando las cards.",
+      "En Concorde hay separación clara entre el título y las cards.",
+    ],
+    fix: [
+      "Dar espacio entre el encabezado (título + nº de ofertas) y la fila de cards, igual que en Concorde.",
+      "En Concorde el estante (OfferShelf) tiene altura fija y reparte el contenido con space-between: el título arriba y las cards abajo, con aire en el medio.",
+    ],
+    codeLang: "tsx",
+    codeOriginal: `// Producción — encabezado y cards seguidos, sin separación entre ellos
+<div className="px-4 py-4 rounded-[8px] border bg-white ...">
+  <div className="flex items-center justify-between gap-3">
+    <div className="relative inline-flex flex-col px-3 py-2">
+      {/* brackets (svg) + título + nº de ofertas */}
+      <span>Recomendados</span>
+      <p>3 Ofertas</p>
+    </div>
+  </div>
+
+  {/* la fila de cards viene justo debajo, sin margen que la separe */}
+  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+    {/* pcard ... */}
+  </div>
+</div>`,
+    codeConcorde: `// Concorde — bloque Zona: Recomendados / Me interesa usan OfferShelf
+// (src/blocks/zona/desktop/Zona.tsx)
+<OfferShelf title="RECOMENDADOS" offersLabel="4 Ofertas" />
+<OfferShelf title="ME INTERESA"  offersLabel="4 Ofertas" />
+
+// Dentro de OfferShelf, el aire sale de la altura fija + space-between:
+// (src/components/OfferShelf.tsx)
+<section style={{ height: 352, display: "flex", flexDirection: "column",
+                  justifyContent: "space-between", padding: "20px 16px 16px" }}>
+  <header>            {/* título + nº de ofertas (brackets) */}
+    <CardTitle title={title} subtitle={offersLabel} />
+  </header>
+
+  <div>              {/* fila de cards, empujada abajo → separada del título */}
+    {/* OfferCards */}
+  </div>
+</section>`,
+    codeLink: "/blocks/zona",
+    handoffLink: "/handoff/offershelf",
+  },
+  {
+    slug: "no-se-puede-dar-dislike",
+    title: "Like button — no se puede quitar el like",
+    date: "4 ago 2026",
+    status: "pendiente",
+    originalImage: "",
+    originalVideo: "/assets/reporte/no-se-puede-dar-dislike.mp4",
+    concordeImage: "",
+    concordeComponent: "none",
+    problem: [
+      "Una vez que le das like a una oferta, no se puede quitar. Al volver a hacer clic en el corazón ya marcado, no pasa nada: el like se queda.",
+      "Puede ser que la función de quitar el like (dislike) directamente no esté implementada.",
+      "Este reporte es para el equipo de backend/integración. La lógica no vive en Concorde; aquí solo dejamos anotado el comportamiento.",
+    ],
+    fix: [
+      "Permitir quitar el like: al hacer clic en un corazón ya marcado, desmarcarlo y quitar el favorito.",
+      "Si la función de quitar no existe en el backend, agregarla (endpoint para eliminar el favorito).",
+    ],
+  },
+  {
+    slug: "like-no-se-mantiene-al-volver",
+    title: "Like button — el like del listado se pierde al volver del detalle",
+    date: "4 ago 2026",
+    status: "pendiente",
+    // Solo video de Producción; sin lado Concorde.
+    originalImage: "",
+    originalVideo: "/assets/reporte/like-no-se-mantiene-al-volver.mp4",
+    concordeImage: "",
+    concordeComponent: "none",
+    problem: [
+      "Le das like a una oferta en el listado (OfferShelf) y el corazón se marca. Entras a esa oferta y en el detalle (DetailCard) el like también aparece marcado, bien. Pero al volver al listado el corazón sale sin marcar. Si recargas la página, ahí sí vuelve a aparecer marcado.",
+      "Pasa porque cada vista maneja su propio estado del like por separado y no hay una fuente de datos compartida entre el listado y el detalle. Cuando das like en el listado, el cambio se guarda en el backend, pero el listado solo lo recuerda en memoria mientras está en pantalla.",
+      "Al entrar al detalle, el DetailCard pide los datos frescos al backend y por eso muestra el like correcto. Al volver, el listado se vuelve a montar desde cero: pierde el estado que tenía en memoria y no vuelve a preguntar al backend (o usa datos viejos guardados en caché), así que muestra el corazón sin marcar.",
+      "Al recargar, toda la página vuelve a pedir los datos al backend, y por eso recién ahí el listado aparece con el like correcto.",
+      "Este reporte es para el equipo de backend/integración. La lógica no vive en Concorde; aquí solo dejamos anotado el comportamiento y una propuesta.",
+    ],
+    fix: [
+      "Tener una sola fuente de verdad para los favoritos, compartida entre el listado y el detalle. Si das like en cualquiera de las dos vistas, ambas leen del mismo lugar y quedan sincronizadas.",
+      "Al volver al listado, refrescar el estado desde esa fuente (o desde el backend) en vez de mostrar lo que tenía en memoria antes de navegar. Así no hace falta recargar para ver el like.",
+      "Si se usa caché, invalidarla o actualizarla cuando el usuario da o quita un like, para que la caché no devuelva el estado viejo.",
+      "Idea simple: guardar los ids de las ofertas marcadas en un estado global (store) que las dos vistas consulten; al dar like se actualiza ese store y ambas vistas reflejan el cambio al instante.",
+    ],
+    codeLang: "tsx",
+    codeConcorde: `// El problema NO es de estos componentes (solo diseño), es de dónde
+// se guarda el estado del like. Hoy cada vista lo lleva por su cuenta:
+import OfferShelf from "@/src/components/OfferShelf";   // listado
+import DetailCard from "@/src/components/DetailCard";   // detalle
+
+// Idea: una sola fuente de verdad compartida por las dos vistas.
+// (pseudocódigo, va donde viva la lógica del favorito)
+
+const favoritos = useFavoritos();          // store/contexto compartido
+
+function estaMarcada(ofertaId) {
+  return favoritos.tiene(ofertaId);        // ambas vistas leen de aquí
+}
+
+function toggleLike(ofertaId) {
+  favoritos.toggle(ofertaId);              // 1. actualiza el store (listado + detalle)
+  guardarEnBackend(ofertaId);              // 2. persiste
+  // al volver al listado se lee de 'favoritos', no de memoria vieja
+}`,
+    codeLink: "/handoff/offershelf",
+    handoffLink: "/handoff/detailcard",
+  },
+  {
     slug: "like-button-delay-backend",
     title: "Like button — se demora en marcar el favorito al hacer clic",
     date: "4 ago 2026",
     status: "pendiente",
-    // Producción: video del delay (súbelo a esta ruta).
-    originalImage: "/assets/reporte/like-button-delay-backend-original.png",
+    // Producción: video del delay.
+    originalImage: "",
     originalVideo: "/assets/reporte/like-button-delay-backend.mp4",
     // Concorde: se renderizan los componentes reales del like (no una imagen).
     concordeImage: "/assets/reporte/detalle-like-subascoin-pequenos-concorde.png",
@@ -75,24 +429,26 @@ export const REPORT_ENTRIES: ReportEntry[] = [
       "Del lado del backend, que el endpoint sea rápido y tolere clics repetidos sin descuadrar el conteo.",
     ],
     codeLang: "tsx",
-    // El like del listado (card de oferta).
-    codeOriginal: `// Like de la card del listado
-import OfferShelf from "@/src/components/OfferShelf";`,
-    // El like de la cabecera de la sala + la idea de la solución.
-    codeConcorde: `// Like de la cabecera de la sala
-import DetailCard from "@/src/components/DetailCard";
+    // Los componentes del like en Concorde (solo diseño) + la idea de la solución.
+    // No hay "código producción": no lo conocemos y no lo inventamos.
+    codeConcorde: `// Componentes del like en Concorde (solo diseño, sin la lógica de guardado):
+import OfferShelf from "@/src/components/OfferShelf";   // like en la card del listado
+import DetailCard from "@/src/components/DetailCard";   // like en la cabecera de la sala
 
 // Idea de la solución (donde viva la lógica del favorito):
 // 1. pintar el corazón al instante
 // 2. guardar en el backend por detrás
-// 3. si falla, revertir y avisar
+// 3. si falla, revertir SOLO si nadie volvió a tocarlo mientras tanto
 
 function onLike(estabaMarcado, marcar, guardarEnBackend, avisarError) {
-  marcar(!estabaMarcado);        // 1. respuesta inmediata en pantalla
+  const nuevo = !estabaMarcado;
+  marcar(nuevo);                 // 1. respuesta inmediata en pantalla
 
-  guardarEnBackend()             // 2. guardado en segundo plano
+  guardarEnBackend(nuevo)        // 2. guardado en segundo plano
     .catch(function alFallar() {
-      marcar(estabaMarcado);     // 3. vuelve a como estaba
+      // 3. solo revierte si el estado sigue siendo el que intentamos guardar
+      //    (si el usuario ya volvió a hacer clic, no lo pisamos)
+      marcar(function (actual) { return actual === nuevo ? estabaMarcado : actual; });
       avisarError("No pudimos guardar tu favorito, inténtalo de nuevo");
     });
 }`,
