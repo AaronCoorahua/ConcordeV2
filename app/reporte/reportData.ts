@@ -129,8 +129,6 @@ function TuActividad({ items }) {
     </section>
   );
 }`,
-    codeLink: "/blocks/zona",
-    handoffLink: "/handoff/activitycard",
   },
   {
     slug: "visitas-selector-fecha-nativo",
@@ -228,7 +226,6 @@ function SelectorFecha({ fechas, value, onChange }) {
     </div>
   );
 }`,
-    codeLink: "/blocks/detalle",
   },
   {
     slug: "detalle-imagenes-sin-skeleton",
@@ -285,7 +282,6 @@ useEffect(function () { setLoading(true); }, [currentSrc]);
   0% { background-position: 100% 0; }
   100% { background-position: 0 0; }
 }`,
-    codeLink: "/blocks/detalle",
   },
   {
     slug: "zona-titulo-pegado-a-cards",
@@ -337,8 +333,6 @@ useEffect(function () { setLoading(true); }, [currentSrc]);
     {/* OfferCards */}
   </div>
 </section>`,
-    codeLink: "/blocks/zona",
-    handoffLink: "/handoff/offershelf",
   },
   {
     slug: "no-se-puede-dar-dislike",
@@ -402,8 +396,6 @@ function toggleLike(ofertaId) {
   guardarEnBackend(ofertaId);              // 2. persiste
   // al volver al listado se lee de 'favoritos', no de memoria vieja
 }`,
-    codeLink: "/handoff/offershelf",
-    handoffLink: "/handoff/detailcard",
   },
   {
     slug: "like-button-delay-backend",
@@ -452,8 +444,6 @@ function onLike(estabaMarcado, marcar, guardarEnBackend, avisarError) {
       avisarError("No pudimos guardar tu favorito, inténtalo de nuevo");
     });
 }`,
-    codeLink: "/handoff/offershelf",
-    handoffLink: "/handoff/detailcard",
   },
   {
     slug: "perfil-espaciado-cerrar-sesion",
