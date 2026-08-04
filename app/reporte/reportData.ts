@@ -22,10 +22,14 @@ export type ReportEntry = {
   status: "corregido" | "en-progreso" | "pendiente";
   /** Imagen(es) de referencia (original / bitácora). Ruta pública o array si son varias. */
   originalImage: string | string[];
+  /** Video (mp4) para el lado Producción, EN LUGAR de la imagen (p. ej. para mostrar un delay). */
+  originalVideo?: string;
   /** Imagen(es) del resultado en Concorde. Ruta pública o array si son varias. */
   concordeImage: string | string[];
   /** Ruta de un bloque real a embeber en iframe en el lado Concorde, EN LUGAR de la imagen. */
   concordeEmbed?: string;
+  /** Renderiza componentes REALES de Concorde en el lado Concorde, EN LUGAR de la imagen. */
+  concordeComponent?: "like-demo";
   /** Qué está mal — descripción del problema. Soporta varios párrafos (array de strings). */
   problem: string[];
   /** Cómo se corrige — explicación redactada de la solución. Varios párrafos. */
@@ -47,6 +51,54 @@ export const REPORT_ENTRIES: ReportEntry[] = [
   // Las entradas se agregan aquí. La más reciente va PRIMERO (arriba).
   // Envíame las imágenes + explicación + código y yo relleno esto.
   // ────────────────────────────────────────────────────────────────
+  {
+    slug: "like-button-delay-backend",
+    title: "Like button — se demora en marcar el favorito al hacer clic",
+    date: "4 ago 2026",
+    status: "pendiente",
+    // Producción: video del delay (súbelo a esta ruta).
+    originalImage: "/assets/reporte/like-button-delay-backend-original.png",
+    originalVideo: "/assets/reporte/like-button-delay-backend.mp4",
+    // Concorde: se renderizan los componentes reales del like (no una imagen).
+    concordeImage: "/assets/reporte/detalle-like-subascoin-pequenos-concorde.png",
+    concordeComponent: "like-demo",
+    problem: [
+      "Al hacer clic en el corazón de una oferta (en la card del listado y en la cabecera de la sala), el favorito tarda un poco en marcarse. No es inmediato: pulsas y hay un pequeño retraso antes de que el corazón cambie.",
+      "No es un problema de la interfaz ni de Concorde. En Concorde solo hacemos el diseño del componente (tamaños, colores, estados). El retraso viene del backend: al hacer clic, la app espera a que el servidor guarde el favorito antes de pintar el corazón marcado. Mientras la petición va y vuelve, el botón se queda a la espera.",
+      "Para el usuario se siente lento, como si el clic no hubiera hecho nada. Con conexión lenta se nota más, y si la petición falla no aparece ningún aviso: el corazón no se marca y no queda claro por qué.",
+      "Este reporte es para el equipo de backend. La lógica no vive en Concorde, así que aquí solo dejamos anotado el comportamiento y una propuesta de solución.",
+    ],
+    fix: [
+      "Marcar el corazón al instante, sin esperar al servidor. Al hacer clic se pinta el favorito de una vez y la petición se envía después, por detrás.",
+      "Guardar en segundo plano. La petición al backend no debe bloquear la interfaz; se manda de forma asíncrona para que el corazón responda al toque.",
+      "Si falla, revertir y avisar. Cuando la petición no se guarda (error o sin conexión), volver el corazón a como estaba y mostrar un aviso corto tipo No pudimos guardar tu favorito, inténtalo de nuevo.",
+      "Del lado del backend, que el endpoint sea rápido y tolere clics repetidos sin descuadrar el conteo.",
+    ],
+    codeLang: "tsx",
+    // El like del listado (card de oferta).
+    codeOriginal: `// Like de la card del listado
+import OfferShelf from "@/src/components/OfferShelf";`,
+    // El like de la cabecera de la sala + la idea de la solución.
+    codeConcorde: `// Like de la cabecera de la sala
+import DetailCard from "@/src/components/DetailCard";
+
+// Idea de la solución (donde viva la lógica del favorito):
+// 1. pintar el corazón al instante
+// 2. guardar en el backend por detrás
+// 3. si falla, revertir y avisar
+
+function onLike(estabaMarcado, marcar, guardarEnBackend, avisarError) {
+  marcar(!estabaMarcado);        // 1. respuesta inmediata en pantalla
+
+  guardarEnBackend()             // 2. guardado en segundo plano
+    .catch(function alFallar() {
+      marcar(estabaMarcado);     // 3. vuelve a como estaba
+      avisarError("No pudimos guardar tu favorito, inténtalo de nuevo");
+    });
+}`,
+    codeLink: "/handoff/offershelf",
+    handoffLink: "/handoff/detailcard",
+  },
   {
     slug: "perfil-espaciado-cerrar-sesion",
     title: "Perfil — espaciado entre «Cerrar Sesión» y «Centro de Ayuda» muy justo",

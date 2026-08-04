@@ -2,6 +2,8 @@
 
 import type { JSX } from "react";
 import Header from "@/app/_components/Header";
+import DetailCard from "@/src/components/DetailCard";
+import OfferShelf from "@/src/components/OfferShelf";
 import type { ReportEntry } from "../reportData";
 
 /**
@@ -79,8 +81,14 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
             marginBottom: 36,
           }}
         >
-          <ImagePanel label="Producción" tone="#f97316" src={entry.originalImage} alt={`Producción — ${entry.title}`} />
-          {entry.concordeEmbed ? (
+          {entry.originalVideo ? (
+            <VideoPanel label="Producción" tone="#f97316" src={entry.originalVideo} title={`Producción — ${entry.title}`} />
+          ) : (
+            <ImagePanel label="Producción" tone="#f97316" src={entry.originalImage} alt={`Producción — ${entry.title}`} />
+          )}
+          {entry.concordeComponent === "like-demo" ? (
+            <LikeDemoPanel label="Concorde" tone="#4f2ed8" />
+          ) : entry.concordeEmbed ? (
             <EmbedPanel label="Concorde" tone="#4f2ed8" src={entry.concordeEmbed} title={`Concorde — ${entry.title}`} />
           ) : (
             <ImagePanel label="Concorde" tone="#4f2ed8" src={entry.concordeImage} alt={`Concorde — ${entry.title}`} />
@@ -216,6 +224,90 @@ function EmbedPanel({ label, tone, src, title }: { label: string; tone: string; 
           loading="lazy"
           style={{ width: "100%", height: "100%", border: "none", display: "block" }}
         />
+      </div>
+    </div>
+  );
+}
+
+function PanelLabel({ label, tone, tag }: { label: string; tone: string; tag?: string }): JSX.Element {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+      <span style={{ width: 8, height: 8, borderRadius: "50%", background: tone }} />
+      <span style={{ fontSize: 13, fontWeight: 700, color: "#334155", letterSpacing: "0.02em" }}>{label}</span>
+      {tag && (
+        <span
+          style={{
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: "0.04em",
+            textTransform: "uppercase",
+            color: "#4f2ed8",
+            background: "#f1edff",
+            padding: "2px 8px",
+            borderRadius: 20,
+          }}
+        >
+          {tag}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function VideoPanel({ label, tone, src, title }: { label: string; tone: string; src: string; title: string }): JSX.Element {
+  return (
+    <div>
+      <PanelLabel label={label} tone={tone} tag="Video" />
+      <div
+        style={{
+          borderRadius: 12,
+          overflow: "hidden",
+          border: "1px solid #e2e8f0",
+          background: "#0f172a",
+          aspectRatio: "16 / 10",
+        }}
+      >
+        <video
+          src={src}
+          title={title}
+          controls
+          loop
+          muted
+          playsInline
+          style={{ width: "100%", height: "100%", objectFit: "contain", display: "block", background: "#0f172a" }}
+        />
+      </div>
+    </div>
+  );
+}
+
+/** Renderiza los componentes REALES del like (cabecera de sala + card del listado). */
+function LikeDemoPanel({ label, tone }: { label: string; tone: string }): JSX.Element {
+  return (
+    <div>
+      <PanelLabel label={label} tone={tone} tag="Componentes reales" />
+      <div
+        style={{
+          borderRadius: 12,
+          border: "1px solid #e2e8f0",
+          background: "#f8fafc",
+          aspectRatio: "16 / 10",
+          overflow: "auto",
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "center",
+          padding: 16,
+        }}
+      >
+        {/* Escalados para caber en el panel; el like es clickeable */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
+          <div style={{ transform: "scale(0.9)", transformOrigin: "top center" }}>
+            <DetailCard />
+          </div>
+          <div style={{ transform: "scale(0.5)", transformOrigin: "top center", marginTop: -8 }}>
+            <OfferShelf title="RECOMENDADOS" />
+          </div>
+        </div>
       </div>
     </div>
   );
