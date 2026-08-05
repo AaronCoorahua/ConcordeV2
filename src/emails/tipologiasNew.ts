@@ -6,7 +6,8 @@
  * propia tipología y se van creando una por una.
  *
  * La marca no se reconstruye con CSS: se usa el LOGO REAL
- * `public/logo-correos.png` (»vmc« + barra + SUBASTAS + powered by) como <img>.
+ * `public/logo-correos.svg` (»vmc« + barra + SUBASTAS + powered by) como <img>,
+ * y su variante `logo-correos2.svg` en los layouts de marca pequeña.
  *
  * Coordenadas ABSOLUTAS del SVG (viewBox 600×214). Anillos, glows, dots y pill
  * salen de los `<circle>`, `<filter>` y `<rect>`/`paint*` de cada SVG.
@@ -45,8 +46,14 @@ export interface TipoNew {
   style: TipoStyle;
 }
 
-/** Ruta del logo real (»vmc« + barra + SUBASTAS + powered by). */
-export const LOGO_CORREOS = "/logo-correos.png";
+/** Ruta del logo real (»vmc« + barra + SUBASTAS + powered by). 186×105. */
+export const LOGO_CORREOS = "/logo-correos.svg";
+
+/**
+ * Variante alterna del logo, usada por los layouts en que la marca va pequeña y
+ * en columna: banner «Texto apilado» y footers compacto y split. 153×64.
+ */
+export const LOGO_CORREOS_ALT = "/logo-correos2.svg";
 
 // ─── Estilo visual de cada tipología (fondo + formas + pill) ────────────────────
 
@@ -250,7 +257,7 @@ function stackedContent(s: TipoStyle): string {
   // Logo: arriba-izquierda. El PNG incluye VMC + barra + «powered by»; a 158px de
   // ancho su alto es ~89px, así que de top:32 baja hasta ~121 y la pill (top:132)
   // queda LIBRE debajo, sin solaparse con «powered by» (como en el SVG).
-  const logo = `<img src="${LOGO_CORREOS}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;top:32px;left:${L};width:158px;height:auto;border:0;display:block;">`;
+  const logo = `<img src="${LOGO_CORREOS_ALT}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;top:32px;left:${L};width:158px;height:auto;border:0;display:block;">`;
   // Pill — debajo del logo, misma columna izquierda.
   const pillBlock = `<div style="position:absolute;top:132px;left:${L};width:91px;">${pill(s)}</div>`;
   // Título + bajada en un bloque de FLUJO (no absoluto): un padding-top reserva el

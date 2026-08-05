@@ -7,8 +7,8 @@
    No editar a mano — si Concorde-Email cambia, volver a copiar.
 
    Únicas desviaciones respecto al original (reaplicar al resincronizar):
-    · `renderSection` lleva `export` — el editor visual (/correos/editor)
-      renderiza sección por sección para el canvas.
+    · `renderSection` lleva `export` — sectionPreviews.ts renderiza sección por
+      sección para el catálogo /correos/secciones.
    ───────────────────────────────────────────────────────────────────────────── */
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -143,13 +143,29 @@ export function createSection(type: Section['type']): Section {
 
 function esc(s: string) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-/** Escapa y aplica resaltado: **acento naranja 800** · __negrita oscura 700__ · [[número Poppins 800]].
-    Los merge tags {{variable}} quedan intactos. */
+/** Destino de los ((enlaces)) mientras la maquetación no define la URL real.
+    Es un merge tag, así que la plataforma de envío puede sustituirlo. */
+const LINK_PLACEHOLDER = '{{url}}';
+
+/** Escapa y aplica resaltado: **acento naranja 800** · __negrita oscura 700__ · [[número Poppins 800]]
+    · ((enlace subrayado)). Los merge tags {{variable}} quedan intactos.
+
+    Los ((enlaces)) salen como <a> real y subrayado. Dos formas:
+      ((texto))      → href = {{url}} (placeholder: la maquetación aún no define
+                       el destino, pero el HTML copiado ya es clicable).
+      ((texto|href)) → href explícito, para los enlaces cuyo destino ya se conoce. */
 function hl(s: string): string {
   return esc(s)
     .replace(/\*\*(.+?)\*\*/g, `<strong style="font-weight:800;color:${C.accent};">$1</strong>`)
     .replace(/__(.+?)__/g, `<strong style="font-weight:700;color:${C.dark};">$1</strong>`)
-    .replace(/\[\[(.+?)\]\]/g, `<strong style="font-weight:800;color:${C.purple};font-family:${FONT_NUMBER};">$1</strong>`);
+    .replace(/\[\[(.+?)\]\]/g, `<strong style="font-weight:800;color:${C.purple};font-family:${FONT_NUMBER};">$1</strong>`)
+    .replace(/\(\((.+?)\)\)/g, function link(_m, inner: string) {
+      // `esc` ya corrió, así que el separador se busca sobre el texto escapado.
+      const i = inner.lastIndexOf('|');
+      const label = i === -1 ? inner : inner.slice(0, i);
+      const href = i === -1 ? LINK_PLACEHOLDER : inner.slice(i + 1);
+      return `<a href="${href}" target="_blank" style="font-weight:700;color:${C.dark};text-decoration:underline;">${label}</a>`;
+    });
 }
 
 // panel lavanda Concorde (gradiente + borde + radio) — patrones: max-width 500
@@ -393,12 +409,12 @@ ${c.img ? `<img src="${esc(c.img)}" width="100%" alt="" style="display:block;">`
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:500px;"><tr>
 <td width="48%" valign="top" align="center" style="padding:0 6px;">
 <p style="margin:0 0 8px;font-size:12px;font-weight:800;color:${C.accent};font-family:${FONT_HEADING};">${esc(c.h1)}</p>
-<p style="margin:0;font-size:11px;line-height:1.6;color:${C.body};font-family:${FONT_HEADING};">${hl(c.body1)}</p>
+<p style="margin:0;font-size:11px;line-height:1.6;color:${C.body};font-family:${FONT_HEADING};">${hl(c.body1).replace(/\n/g, '<br>')}</p>
 </td>
 <td width="4%"></td>
 <td width="48%" valign="top" align="center" style="padding:0 6px;">
 <p style="margin:0 0 8px;font-size:12px;font-weight:800;color:${C.accent};font-family:${FONT_HEADING};">${esc(c.h2)}</p>
-<p style="margin:0;font-size:11px;line-height:1.6;color:${C.body};font-family:${FONT_HEADING};">${hl(c.body2)}</p>
+<p style="margin:0;font-size:11px;line-height:1.6;color:${C.body};font-family:${FONT_HEADING};">${hl(c.body2).replace(/\n/g, '<br>')}</p>
 </td>
 </tr></table></td></tr>`;
     case 'list': {

@@ -1,5 +1,7 @@
 import type { JSX } from "react";
 import { Suspense } from "react";
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { notFound } from "next/navigation";
 import Header from "@/app/_components/Header";
 import BannerLab from "./BannerLab";
@@ -13,6 +15,21 @@ import { EMAIL_GROUPS, getEmailReal, type EmailGroup, type EmailReal } from "@/s
  * El header del correo es intercambiable (BannerLab): un tab elige la tipología
  * de banner y otro el fondo; el botón copia la combinación activa.
  */
+
+/** Dónde viven los SVG de Figma (ver public/figma/correos/README.md). */
+const FIGMA_DIR = path.join(process.cwd(), "public", "figma", "correos");
+
+/**
+ * Ruta pública de la referencia de Figma de un correo, o null si aún no se ha
+ * exportado. Se resuelve en el servidor (el cliente no puede mirar el disco);
+ * `.svg` gana sobre `.png` cuando existen ambos.
+ */
+function figmaRefFor(id: string): string | null {
+  for (const ext of ["svg", "png"]) {
+    if (existsSync(path.join(FIGMA_DIR, `${id}.${ext}`))) return `/figma/correos/${id}.${ext}`;
+  }
+  return null;
+}
 
 export function generateStaticParams(): Array<{ id: string }> {
   return EMAIL_GROUPS.flatMap(function toParams(g) {
@@ -56,13 +73,6 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
               {group.label} · {correo.stage}
             </span>
           )}
-          <div style={{ flex: 1 }} />
-          <a
-            href={`/correos/editor?desde=${correo.id}`}
-            style={{ display: "inline-flex", alignItems: "center", gap: 6, height: 32, padding: "0 14px", borderRadius: 8, border: "1px solid #e2e8f0", background: "#ffffff", color: "#0f172a", fontSize: 12, fontWeight: 700, textDecoration: "none" }}
-          >
-            ✏️ Abrir en editor
-          </a>
         </div>
 
         <div style={{ margin: "0 0 6px", display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
@@ -71,8 +81,15 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
         </div>
         <p style={{ fontSize: 13, color: "#64748b", margin: "0 0 24px", lineHeight: 1.5, maxWidth: 640 }}>{correo.desc}</p>
 
-        <Suspense fallback={<div style={{ height: 400, display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", fontSize: 13 }}>Cargando editor…</div>}>
-          <BannerLab html={correo.html} title={correo.name} subject={correo.subject} categoria={group?.label ?? "General"} />
+        <Suspense fallback={<div style={{ height: 400, display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", fontSize: 13 }}>Cargando preview…</div>}>
+          <BannerLab
+            html={correo.html}
+            title={correo.name}
+            subject={correo.subject}
+            categoria={group?.label ?? "General"}
+            figmaSrc={figmaRefFor(correo.id)}
+            figmaFileName={`${correo.id}.svg`}
+          />
         </Suspense>
 
         {siguientes.length > 0 && (

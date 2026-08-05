@@ -13,8 +13,10 @@
  *  · Cuerpo editable inline (B6): el EmailFrame marca el texto del cuerpo como
  *    contenteditable; «Copiar HTML» lee el estado VIVO del iframe.
  *
- *  · Comparar con el original (A3): botón «hold to compare» — mientras se
- *    mantiene presionado, el preview muestra el correo original intacto.
+ *  · Comparar Figma: parte la vista en dos columnas — el correo maquetado a la
+ *    izquierda y la referencia exportada de Figma a la derecha. Ambos se escalan
+ *    para caber juntos en pantalla. Si el SVG aún no existe, la derecha muestra
+ *    un skeleton con el nombre del archivo que falta.
  *
  *  · Estado en la URL (C9): banner/footer/tono viven en el query string, así el
  *    preview es enlazable y sobrevive a recargas.
@@ -39,7 +41,17 @@ export interface BannerLabProps {
   subject: string;
   /** Nombre de la categoría — default del pill del banner. */
   categoria: string;
+  /**
+   * Ruta pública del SVG/PNG exportado de Figma, o null si aún no existe (la
+   * resuelve el Server Component leyendo public/figma/correos/).
+   */
+  figmaSrc?: string | null;
+  /** Nombre del archivo esperado — lo muestra el skeleton cuando falta. */
+  figmaFileName?: string;
 }
+
+/** Escala del preview en modo comparación, para que ambas columnas quepan. */
+const COMPARE_SCALE = 0.62;
 
 // ─── UI atoms ─────────────────────────────────────────────────────────────────
 
@@ -93,9 +105,73 @@ function Field({ label, value, onChange, placeholder }: { label: string; value: 
   );
 }
 
+/** Encabezado de cada columna en la vista de comparación. */
+function ColumnLabel({ color, children }: { color: string; children: string }): JSX.Element {
+  return (
+    <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", color: "#ffffff", background: color, padding: "3px 9px", borderRadius: 9999, alignSelf: "flex-start" }}>
+      {children}
+    </span>
+  );
+}
+
+/**
+ * Panel derecho del modo comparación: la referencia de Figma. Mientras el SVG no
+ * exista, se pinta un skeleton que dice qué archivo hay que dejar y dónde — así
+ * la vista ya es usable antes de tener los exports.
+ *
+ * `matchHeight` iguala el alto al del correo maquetado: los exports de Figma
+ * vienen en cualquier tamaño y con otra proporción, así que se ajustan por ALTO
+ * (no por ancho) y se centran — que es como se comparan dos maquetas.
+ */
+function FigmaPanel({ src, fileName, matchHeight }: { src?: string | null; fileName: string; matchHeight: number | null }): JSX.Element {
+  if (src) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- export estático
+            de Figma de tamaño arbitrario; next/image exigiría medidas fijas. */}
+        <img
+          src={src}
+          alt={`Referencia de Figma — ${fileName}`}
+          style={{
+            // Con alto conocido manda el alto; si no, cae a ancho completo.
+            height: matchHeight ? matchHeight : "auto",
+            width: matchHeight ? "auto" : "100%",
+            maxWidth: "100%",
+            objectFit: "contain",
+            display: "block", borderRadius: 8, boxShadow: "0 6px 18px rgba(15,23,42,0.10)", background: "#ffffff",
+          }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        width: "100%", height: matchHeight ?? undefined, minHeight: matchHeight ? undefined : 420,
+        borderRadius: 8, display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center", gap: 10, padding: 24, textAlign: "center",
+        background: "repeating-linear-gradient(135deg, #f1f5f9 0 12px, #e9eef5 12px 24px)",
+        border: "1px dashed #cbd5e1",
+      }}
+    >
+      <span style={{ fontSize: 12, fontWeight: 800, color: "#64748b", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+        Sin referencia de Figma
+      </span>
+      <span style={{ fontSize: 12, color: "#94a3b8", lineHeight: 1.6, maxWidth: 280 }}>
+        Exporta el frame como SVG y déjalo en
+        <br />
+        <code style={{ fontFamily: "monospace", fontSize: 11, color: "#475569", background: "#ffffff", padding: "2px 6px", borderRadius: 4, display: "inline-block", marginTop: 6, border: "1px solid #e2e8f0" }}>
+          public/figma/correos/{fileName}
+        </code>
+      </span>
+    </div>
+  );
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function BannerLab({ html, title, subject, categoria }: BannerLabProps): JSX.Element {
+export default function BannerLab({ html, title, subject, categoria, figmaSrc, figmaFileName = "correo.svg" }: BannerLabProps): JSX.Element {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -125,7 +201,10 @@ export default function BannerLab({ html, title, subject, categoria }: BannerLab
   }, []);
 
   const [editBody, setEditBody] = useState(false);
-  const [comparing, setComparing] = useState(false); // A3: hold-to-compare
+  // Vista dividida correo ↔ Figma (toggle, no hold: hay que poder mirar ambos).
+  const [comparing, setComparing] = useState(false);
+  // Alto ya escalado del correo — la referencia de Figma se iguala a él.
+  const [previewH, setPreviewH] = useState<number | null>(null);
   const frameRef = useRef<EmailFrameHandle | null>(null);
 
   const bannerOn = bannerId !== ORIGINAL;
@@ -151,19 +230,20 @@ export default function BannerLab({ html, title, subject, categoria }: BannerLab
     return out;
   }, [html, bannerId, footerId, tone, text, subject, categoria, bannerOn, footerOn]);
 
-  // Lo que ve el preview: original mientras se compara (A3), si no el editado.
-  const previewHtml = comparing ? html : swappedHtml;
+  // El preview siempre muestra la composición activa: al comparar contra Figma la
+  // referencia va al lado, no en lugar del correo.
+  const previewHtml = swappedHtml;
 
   // Al re-montar el frame (cambia key), se pierde la edición inline: para B6 se
   // relee el frame vivo al copiar. Si no hay frame editado, cae al swappedHtml.
   const copyHtml = useCallback(function copyHtml(): string {
-    if (editBody && !comparing && frameRef.current) return frameRef.current.getHtml();
+    if (editBody && frameRef.current) return frameRef.current.getHtml();
     return swappedHtml;
-  }, [editBody, comparing, swappedHtml]);
+  }, [editBody, swappedHtml]);
 
   // La key del frame fuerza recarga del srcDoc cuando cambia la composición (no
   // en cada edición inline, que ocurre dentro del mismo documento).
-  const frameKey = `${bannerId}-${footerId}-${tone}-${text.titulo}-${text.bajada}-${text.pill}-${editBody}-${comparing}`;
+  const frameKey = `${bannerId}-${footerId}-${tone}-${text.titulo}-${text.bajada}-${text.pill}-${editBody}`;
 
   return (
     <div>
@@ -219,42 +299,57 @@ export default function BannerLab({ html, title, subject, categoria }: BannerLab
             {editBody && <span style={{ fontSize: 11, color: "#94a3b8", fontWeight: 500 }}>· clic en cualquier texto para editarlo</span>}
           </label>
           <div style={{ flex: 1 }} />
-          {!allOriginal && (
-            <button
-              type="button"
-              onMouseDown={function hold() { setComparing(true); }}
-              onMouseUp={function release() { setComparing(false); }}
-              onMouseLeave={function release() { setComparing(false); }}
-              onTouchStart={function hold() { setComparing(true); }}
-              onTouchEnd={function release() { setComparing(false); }}
-              style={{
-                height: 32, padding: "0 14px", borderRadius: 8, cursor: "pointer", fontFamily: "inherit", fontSize: 12, fontWeight: 700,
-                border: "1px solid #e2e8f0",
-                background: comparing ? "#4f2ed8" : "#ffffff",
-                color: comparing ? "#ffffff" : "#475569",
-                transition: "background 0.12s ease, color 0.12s ease",
-                userSelect: "none",
-              }}
-            >
-              {comparing ? "◀ Original" : "Mantén para ver el original"}
-            </button>
-          )}
+          <button
+            type="button"
+            aria-pressed={comparing}
+            onClick={function toggle() { setComparing(function prev(p) { return !p; }); }}
+            style={{
+              height: 32, padding: "0 14px", borderRadius: 8, cursor: "pointer", fontFamily: "inherit", fontSize: 12, fontWeight: 700,
+              border: "1px solid #e2e8f0",
+              background: comparing ? "#4f2ed8" : "#ffffff",
+              color: comparing ? "#ffffff" : "#475569",
+              transition: "background 0.12s ease, color 0.12s ease",
+              userSelect: "none",
+            }}
+          >
+            {comparing ? "✕ Cerrar comparación" : "⇄ Comparar Figma"}
+          </button>
         </div>
       </div>
 
-      <div style={{ position: "relative", display: "flex", justifyContent: "center", padding: 32, borderRadius: 12, background: "#f8fafc", border: "1px solid #f1f5f9", overflowX: "auto" }}>
-        {comparing && (
-          <span style={{ position: "absolute", top: 12, left: 12, zIndex: 2, fontSize: 10, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", color: "#fff", background: "#4f2ed8", padding: "3px 9px", borderRadius: 9999 }}>
-            Original
-          </span>
+      <div style={{ position: "relative", display: "flex", justifyContent: "center", padding: comparing ? 20 : 32, borderRadius: 12, background: "#f8fafc", border: "1px solid #f1f5f9", overflowX: "auto" }}>
+        {comparing ? (
+          /* Vista dividida: correo maquetado ↔ referencia de Figma, ambos
+             reducidos para caber juntos sin scroll horizontal. */
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, width: "100%", alignItems: "start" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0 }}>
+              <ColumnLabel color="#4f2ed8">Maquetado</ColumnLabel>
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <EmailFrame
+                  key={frameKey}
+                  ref={frameRef}
+                  html={previewHtml}
+                  editable={editBody}
+                  scale={COMPARE_SCALE}
+                  onHeightChange={setPreviewH}
+                  title={`${title} · ${allOriginal ? "original" : `${bannerId} / ${footerId}`}`}
+                />
+              </div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0 }}>
+              <ColumnLabel color="#c85a1e">Figma</ColumnLabel>
+              <FigmaPanel src={figmaSrc} fileName={figmaFileName} matchHeight={previewH} />
+            </div>
+          </div>
+        ) : (
+          <EmailFrame
+            key={frameKey}
+            ref={frameRef}
+            html={previewHtml}
+            editable={editBody}
+            title={`${title} · ${allOriginal ? "original" : `${bannerId} / ${footerId}`}`}
+          />
         )}
-        <EmailFrame
-          key={frameKey}
-          ref={frameRef}
-          html={previewHtml}
-          editable={editBody && !comparing}
-          title={`${title} · ${allOriginal ? "original" : `${bannerId} / ${footerId}`}`}
-        />
       </div>
     </div>
   );

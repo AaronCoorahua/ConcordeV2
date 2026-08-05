@@ -17,7 +17,7 @@
  * cristal se adapta.
  */
 
-import { LOGO_CORREOS, wrapTipoPreview } from "./tipologiasNew";
+import { LOGO_CORREOS, LOGO_CORREOS_ALT, wrapTipoPreview } from "./tipologiasNew";
 
 export const FOOTER_WIDTH = 600;
 export const FOOTER_HEIGHT = 214;
@@ -250,7 +250,7 @@ function compactContent(): string {
   // Derecha: marca vmc COMPLETA (glifos + «powered by» + barra), centrada sobre el
   // botón. PNG 84px anclado der, arriba (top:6); el botón (top:58) queda debajo sin
   // solaparse con el «powered by».
-  const logo = `<img src="${LOGO_CORREOS}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;right:66px;top:6px;width:84px;height:auto;border:0;display:block;">`;
+  const logo = `<img src="${LOGO_CORREOS_ALT}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;right:66px;top:6px;width:84px;height:auto;border:0;display:block;">`;
   // Dos dots entre columnas, como en el SVG.
   const dots = `<div style="position:absolute;left:398px;top:44px;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.55);"></div>
 <div style="position:absolute;left:432px;top:70px;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.45);"></div>`;
@@ -279,7 +279,7 @@ ${gradientBorder(border, 20, 1.5)}
 function splitContent(): string {
   // IZQUIERDA: marca vmc COMPLETA arriba (glifos + «powered by» + barra) + eslogan
   // «¡Despierta al cazador de ofertas que hay en ti!» (2 líneas) debajo.
-  const logoIzq = `<img src="${LOGO_CORREOS}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;left:36px;top:24px;width:108px;height:auto;border:0;display:block;">`;
+  const logoIzq = `<img src="${LOGO_CORREOS_ALT}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;left:36px;top:24px;width:108px;height:auto;border:0;display:block;">`;
   // Eslogan con el MISMO grosor delgado (weight 500) que el resto del copy.
   const eslogan = `<div style="position:absolute;left:36px;top:86px;right:320px;text-align:left;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:500;color:rgba(255,255,255,0.95);line-height:1.3;">¡Despierta al cazador de ofertas que hay en ti!</div>`;
   // Divisor vertical (rect x=312 y=24 w=1 h=96, white 0.18).

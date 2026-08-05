@@ -42,31 +42,79 @@ export interface EmailFrameProps {
   fallbackHeight?: number;
   /** Si true, el cuerpo del correo se puede editar inline. */
   editable?: boolean;
+  /**
+   * Factor de escala visual (1 = tamaño real). El correo se sigue renderizando a
+   * 640px —así el layout email-safe no cambia— y solo se reduce con `transform`.
+   * El hueco que ocupa en la página se compensa (ver `wrapperRef`), porque un
+   * `transform` NO afecta al alto que el elemento reserva en el flujo.
+   */
+  scale?: number;
+  /**
+   * Avisa del alto YA ESCALADO (px) cada vez que se re-mide. Lo usa la vista de
+   * comparación para dar a la referencia de Figma exactamente el mismo alto.
+   */
+  onHeightChange?: (height: number) => void;
 }
 
 /** Atributo con el que se marca cada celda de cuerpo editable (para limpiarla al exportar). */
 const EDIT_ATTR = "data-lab-edit";
 
 function EmailFrameInner(
-  { html, title, fallbackHeight = 1200, editable = false }: EmailFrameProps,
+  { html, title, fallbackHeight = 1200, editable = false, scale = 1, onHeightChange }: EmailFrameProps,
   ref: ForwardedRef<EmailFrameHandle>,
 ): React.JSX.Element {
   const frameRef = useRef<HTMLIFrameElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
+  // El scale se lee dentro de `fit` (que no debe re-crearse en cada render, o el
+  // ResizeObserver se reengancharía); va por ref para leer siempre el valor vivo.
+  const scaleRef = useRef(scale);
+  // Igual con el callback: por ref para no reenganchar observers al cambiar.
+  const onHeightRef = useRef(onHeightChange);
+  onHeightRef.current = onHeightChange;
+  // Último alto emitido, para no disparar renders con el mismo valor.
+  const lastEmitRef = useRef(-1);
 
   const fit = useCallback(function fit(): void {
     const f = frameRef.current;
     if (!f) return;
+    const s = scaleRef.current;
+
+    function emit(scaledHeight: number): void {
+      if (scaledHeight === lastEmitRef.current) return;
+      lastEmitRef.current = scaledHeight;
+      onHeightRef.current?.(scaledHeight);
+    }
+
     try {
       const doc = f.contentDocument ?? f.contentWindow?.document;
       const body = doc?.body;
       if (!body) return;
       const h = Math.ceil(body.getBoundingClientRect().height);
-      if (h > 0) f.style.height = `${h}px`;
+      if (h > 0) {
+        f.style.height = `${h}px`;
+        const scaled = Math.ceil(h * s);
+        // `transform: scale()` no encoge el hueco en el flujo: el wrapper se
+        // dimensiona a mano al tamaño ya escalado para que no sobre espacio.
+        if (wrapperRef.current) {
+          wrapperRef.current.style.height = `${scaled}px`;
+          wrapperRef.current.style.width = `${Math.ceil(EMAIL_FRAME_W * s)}px`;
+        }
+        emit(scaled);
+      }
     } catch {
       f.style.height = `${fallbackHeight}px`;
+      const scaled = Math.ceil(fallbackHeight * s);
+      if (wrapperRef.current) wrapperRef.current.style.height = `${scaled}px`;
+      emit(scaled);
     }
   }, [fallbackHeight]);
+
+  // Al cambiar el scale se re-mide para que el wrapper siga el nuevo tamaño.
+  useEffect(function onScaleChange() {
+    scaleRef.current = scale;
+    fit();
+  }, [scale, fit]);
 
   /**
    * Marca como editable cada <td> del CUERPO que contiene texto directo. Cuerpo
@@ -165,7 +213,7 @@ function EmailFrameInner(
     };
   }, []);
 
-  return (
+  const frame = (
     <iframe
       ref={frameRef}
       title={title}
@@ -174,6 +222,26 @@ function EmailFrameInner(
       onLoad={onLoad}
       style={{ width: EMAIL_FRAME_W, height: fallbackHeight, border: "none", background: "#FFFFFF", borderRadius: 8, boxShadow: "0 6px 18px rgba(15,23,42,0.10)", flexShrink: 0, display: "block" }}
     />
+  );
+
+  // A tamaño real no se envuelve: se evita un nodo extra y cualquier borrosidad
+  // por composición de capas.
+  if (scale === 1) return frame;
+
+  return (
+    <div
+      ref={wrapperRef}
+      style={{
+        width: Math.ceil(EMAIL_FRAME_W * scale),
+        height: Math.ceil(fallbackHeight * scale),
+        flexShrink: 0,
+        overflow: "hidden",
+      }}
+    >
+      <div style={{ transform: `scale(${scale})`, transformOrigin: "top left", width: EMAIL_FRAME_W }}>
+        {frame}
+      </div>
+    </div>
   );
 }
 

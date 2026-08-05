@@ -33,15 +33,16 @@ export default function SeccionesPage(): JSX.Element {
           </span>
         </div>
         <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 24px", maxWidth: 720 }}>
-          Los bloques con los que se arman los correos, renderizados con el renderer real. Son los
-          mismos que usa el <a href="/correos/editor" style={{ color: "#4f2ed8", fontWeight: 700, textDecoration: "none" }}>Editor</a> —
-          ahí los arrastras al lienzo y editas sus textos e imágenes.
+          Los bloques con los que se arman los correos, renderizados con el renderer real de
+          producción. Cada correo de{" "}
+          <a href="/correos/variantes" style={{ color: "#4f2ed8", fontWeight: 700, textDecoration: "none" }}>Maquetar</a>{" "}
+          es una composición de estos bloques.
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
           {SECTION_TYPES.map(function renderCard(type) {
             return (
-              <a key={type} href={`/correos/editor?bloque=${type}`} className="cor-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", borderRadius: 12, overflow: "hidden", background: "#ffffff", border: "1px solid #e2e8f0", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
+              <div key={type} className="cor-card" style={{ display: "flex", flexDirection: "column", borderRadius: 12, overflow: "hidden", background: "#ffffff", border: "1px solid #e2e8f0" }}>
                 <div style={{ height: THUMB_H, display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", borderBottom: "1px solid #f1f5f9", overflow: "hidden" }}>
                   <div style={{ width: EMAIL_W * SCALE, height: THUMB_H - 20, position: "relative", overflow: "hidden", borderRadius: 4 }}>
                     <iframe
@@ -58,15 +59,15 @@ export default function SeccionesPage(): JSX.Element {
                   <span className="cor-name" style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", letterSpacing: "-0.01em" }}>{SECTION_LABELS[type]}</span>
                   <span style={{ fontSize: 12, color: "#94a3b8", lineHeight: 1.5 }}>{SECTION_DESCRIPTIONS[type]}</span>
                 </div>
-              </a>
+              </div>
             );
           })}
         </div>
       </main>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .cor-card:hover { box-shadow: 0 8px 30px -8px rgba(15,23,42,0.12), 0 2px 8px -2px rgba(15,23,42,0.05); border-color: #cbd5e1; transform: translateY(-2px); }
-        .cor-card:hover .cor-name { color: #4f2ed8; }
+        .cor-card { transition: box-shadow 0.2s ease, border-color 0.2s ease; }
+        .cor-card:hover { box-shadow: 0 8px 30px -8px rgba(15,23,42,0.12), 0 2px 8px -2px rgba(15,23,42,0.05); border-color: #cbd5e1; }
       `}} />
     </div>
   );

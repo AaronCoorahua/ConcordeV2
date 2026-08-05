@@ -7,6 +7,7 @@ import DetailCard from "@/src/components/DetailCard";
 import OfferShelf from "@/src/components/OfferShelf";
 import CardViewer from "@/src/components/CardViewer";
 import CardTitle from "@/src/components/CardTitle";
+import ProfileButton from "@/src/components/ProfileButton";
 import type { ReportEntry } from "../reportData";
 
 /**
@@ -467,13 +468,8 @@ function ActividadEmptyDemoPanel({ label, tone }: { label: string; tone: string 
             <p style={{ margin: 0, fontSize: 13, fontWeight: 500, color: "#3b1782", lineHeight: 1.3 }}>
               Aún no tienes participaciones en subastas.
             </p>
-            <a
-              href="#"
-              onClick={function (e) { e.preventDefault(); }}
-              style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 700, color: "#ED8936", textDecoration: "none" }}
-            >
-              Ver ofertas <span aria-hidden="true">›</span>
-            </a>
+            {/* Mismo botón que «Ir al Perfil» de las cards (ProfileButton) */}
+            <ProfileButton href="#" aria-label="Ver ofertas" onClick={function (e) { e.preventDefault(); }}>Ver ofertas</ProfileButton>
           </div>
         </section>
       </div>
