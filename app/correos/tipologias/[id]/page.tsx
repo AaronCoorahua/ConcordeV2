@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/app/_components/Header";
 import { TIPO_GROUPS, getTipoGroup } from "@/src/emails/tipologiasRegistry";
@@ -26,12 +27,12 @@ export default async function TipologiaBasicaPage({ params }: { params: Promise<
       <Header active="correos" />
 
       <main style={{ maxWidth: 1120, margin: "0 auto", padding: "40px 40px 80px" }}>
-        <a
+        <Link
           href="/correos/tipologias"
           style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "#64748b", textDecoration: "none", marginBottom: 16 }}
         >
           <span aria-hidden="true">←</span> Tipologías
-        </a>
+        </Link>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8, flexWrap: "wrap" }}>
           <span style={{ fontSize: 13, fontWeight: 800, fontFamily: "monospace", minWidth: 26, height: 26, padding: "0 7px", borderRadius: 8, background: "#f1edff", color: "#4f2ed8", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>{t.letra}</span>

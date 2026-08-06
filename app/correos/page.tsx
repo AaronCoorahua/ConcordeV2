@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import Link from "next/link";
 import Header from "@/app/_components/Header";
 import { TIPO_GROUPS } from "@/src/emails/tipologiasRegistry";
 import { EMAIL_GROUPS, EMAIL_PROD_TOTAL } from "@/src/emails/registry";
@@ -61,7 +62,7 @@ export default function CorreosPage(): JSX.Element {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 20 }}>
           {CARDS.map(function renderCard(c) {
             return (
-              <a key={c.href} href={c.href} className="cor-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", borderRadius: 14, overflow: "hidden", background: "#ffffff", border: "1px solid #e2e8f0", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
+              <Link key={c.href} href={c.href} className="cor-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", borderRadius: 14, overflow: "hidden", background: "#ffffff", border: "1px solid #e2e8f0", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
                 <div style={{ height: THUMB_H, display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
                   <div style={{ width: EMAIL_W * SCALE, height: THUMB_H - 40, position: "relative", overflow: "hidden", borderRadius: 6, boxShadow: "0 6px 18px rgba(15,23,42,0.12)", outline: "1px solid #e2e8f0", background: "#FAFAFA" }}>
                     <iframe
@@ -90,7 +91,7 @@ export default function CorreosPage(): JSX.Element {
                   <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 600, fontFamily: "monospace" }}>{c.meta}</span>
                   <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.5, margin: "4px 0 0" }}>{c.desc}</p>
                 </div>
-              </a>
+              </Link>
             );
           })}
         </div>

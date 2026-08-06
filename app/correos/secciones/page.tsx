@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import Link from "next/link";
 import Header from "@/app/_components/Header";
 import { SECTION_TYPES, SECTION_DESCRIPTIONS, sectionPreviewDoc } from "@/src/emails/sectionPreviews";
 import { SECTION_LABELS } from "@/src/emails/prodEmailTemplates";
@@ -19,12 +20,12 @@ export default function SeccionesPage(): JSX.Element {
       <Header active="correos" />
 
       <main style={{ maxWidth: 1120, margin: "0 auto", padding: "40px 40px 80px" }}>
-        <a
+        <Link
           href="/correos"
           style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "#64748b", textDecoration: "none", marginBottom: 16 }}
         >
           <span aria-hidden="true">←</span> Correos
-        </a>
+        </Link>
 
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
           <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>Secciones</h1>
@@ -35,7 +36,7 @@ export default function SeccionesPage(): JSX.Element {
         <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 24px", maxWidth: 720 }}>
           Los bloques con los que se arman los correos, renderizados con el renderer real de
           producción. Cada correo de{" "}
-          <a href="/correos/variantes" style={{ color: "#4f2ed8", fontWeight: 700, textDecoration: "none" }}>Maquetar</a>{" "}
+          <Link href="/correos/variantes" style={{ color: "#4f2ed8", fontWeight: 700, textDecoration: "none" }}>Maquetar</Link>{" "}
           es una composición de estos bloques.
         </p>
 

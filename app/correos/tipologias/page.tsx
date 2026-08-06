@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import Link from "next/link";
 import Header from "@/app/_components/Header";
 import { TIPO_GROUPS, type TipoGroup } from "@/src/emails/tipologiasRegistry";
 
@@ -22,7 +23,7 @@ function TipoCard({ g }: { g: TipoGroup }): JSX.Element {
   const innerH = g.plantillas[0].previewHeight;
   const boxH = Math.round(innerH * SCALE);
   return (
-    <a href={`/correos/tipologias/${g.tipologia.id}`} className="cor-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", borderRadius: 12, overflow: "hidden", background: "#ffffff", border: "1px solid #e2e8f0", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
+    <Link href={`/correos/tipologias/${g.tipologia.id}`} className="cor-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", borderRadius: 12, overflow: "hidden", background: "#ffffff", border: "1px solid #e2e8f0", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
       <div style={{ minHeight: THUMB_H, display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", borderBottom: "1px solid #f1f5f9", padding: "16px 0" }}>
         <div style={{ width: EMAIL_W * SCALE, height: boxH, position: "relative", overflow: "hidden", borderRadius: 4, boxShadow: "0 6px 18px rgba(15,23,42,0.12)", outline: "1px solid #e2e8f0", background: "#FAFAFA" }}>
           <iframe
@@ -53,7 +54,7 @@ function TipoCard({ g }: { g: TipoGroup }): JSX.Element {
         </div>
         <p style={{ fontSize: 12, color: "#94a3b8", lineHeight: 1.5, margin: 0 }}>{g.tipologia.descripcion}</p>
       </div>
-    </a>
+    </Link>
   );
 }
 
@@ -65,12 +66,12 @@ export default function TipologiasPage(): JSX.Element {
       <Header active="correos" />
 
       <main style={{ maxWidth: 1120, margin: "0 auto", padding: "40px 40px 80px" }}>
-        <a
+        <Link
           href="/correos"
           style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "#64748b", textDecoration: "none", marginBottom: 16 }}
         >
           <span aria-hidden="true">←</span> Correos
-        </a>
+        </Link>
 
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
           <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>Tipologías</h1>

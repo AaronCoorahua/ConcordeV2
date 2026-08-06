@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import Link from "next/link";
 import Header from "@/app/_components/Header";
 import { EMAIL_GROUPS, EMAIL_PROD_TOTAL } from "@/src/emails/registry";
 import VariantesCatalog from "./VariantesCatalog";
@@ -17,12 +18,12 @@ export default function VariantesPage(): JSX.Element {
       <Header active="correos" />
 
       <main style={{ maxWidth: 1280, margin: "0 auto", padding: "40px 40px 80px" }}>
-        <a
+        <Link
           href="/correos"
           style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "#64748b", textDecoration: "none", marginBottom: 16 }}
         >
           <span aria-hidden="true">←</span> Correos
-        </a>
+        </Link>
 
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
           <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>Variantes</h1>

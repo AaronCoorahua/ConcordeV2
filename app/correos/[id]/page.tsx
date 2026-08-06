@@ -2,6 +2,7 @@ import type { JSX } from "react";
 import { Suspense } from "react";
 import { existsSync } from "node:fs";
 import path from "node:path";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/app/_components/Header";
 import BannerLab from "./BannerLab";
@@ -59,12 +60,12 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
       <Header active="correos" />
 
       <main style={{ maxWidth: 1120, margin: "0 auto", padding: "40px 40px 80px" }}>
-        <a
+        <Link
           href="/correos/variantes"
           style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "#64748b", textDecoration: "none", marginBottom: 16 }}
         >
           <span aria-hidden="true">←</span> Variantes
-        </a>
+        </Link>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8, flexWrap: "wrap" }}>
           <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>{correo.name}</h1>
@@ -101,7 +102,7 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
               {siguientes.map(function renderNext(n) {
                 const nGroup = groupOf(n.id);
                 return (
-                  <a
+                  <Link
                     key={n.id}
                     href={`/correos/${n.id}`}
                     className="cor-flow"
@@ -114,7 +115,7 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
                     )}
                     <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>{n.name}</span>
                     <span aria-hidden="true" style={{ marginLeft: "auto", color: "#cbd5e1", fontSize: 13 }}>→</span>
-                  </a>
+                  </Link>
                 );
               })}
             </div>

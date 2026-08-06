@@ -16,6 +16,7 @@
 
 import { useMemo, useState } from "react";
 import type { JSX } from "react";
+import Link from "next/link";
 import { EMAILS, CATEGORY_GRADIENT, STAGE_ORDER, type EmailTemplate } from "@/src/emails/prodEmails";
 import { generateEmail } from "@/src/emails/prodEmailTemplates";
 import { FlowDiagram } from "./FlowDiagram";
@@ -65,16 +66,19 @@ function EmailCard({ email }: { email: EmailTemplate }): JSX.Element {
 
   return (
     <div className="cor-card" style={{ background: "#fff", borderRadius: 12, border: `1px solid ${DIVIDER}`, overflow: "hidden", display: "flex", flexDirection: "column", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
-      <a href={`/correos/${email.id}`} style={{ display: "block", position: "relative", height: 260, overflow: "hidden", background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
+      <Link href={`/correos/${email.id}`} style={{ display: "block", position: "relative", height: 260, overflow: "hidden", background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
+        {/* El iframe se renderiza a 640px y se reduce a la mitad. Se centra con
+            `left:50%` + `translateX(-50%)` en vez de `margin:auto`, que fallaba
+            cuando la celda de la grilla es más estrecha que esos 640px. */}
         <iframe
           srcDoc={html}
           title={email.name}
           scrolling="no"
           tabIndex={-1}
-          style={{ border: "none", width: EMAIL_W, transform: "scale(0.5)", transformOrigin: "top center", height: 1040, display: "block", margin: "0 auto", pointerEvents: "none", background: "#fff" }}
+          style={{ border: "none", width: EMAIL_W, height: 1040, position: "absolute", top: 0, left: "50%", transform: "translateX(-50%) scale(0.5)", transformOrigin: "top center", pointerEvents: "none", background: "#fff" }}
         />
         <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 70, background: "linear-gradient(180deg, rgba(248,250,252,0) 0%, #f8fafc 90%)" }} />
-      </a>
+      </Link>
       <div style={{ padding: "14px 16px 16px", display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
         <div>
           {email.stage && (
@@ -104,9 +108,9 @@ function EmailCard({ email }: { email: EmailTemplate }): JSX.Element {
           >
             {copied ? "¡Copiado!" : "Copiar HTML"}
           </button>
-          <a href={`/correos/${email.id}`} style={{ height: 34, padding: "0 16px", borderRadius: 8, border: `1px solid ${DIVIDER}`, background: "#fff", color: INK, fontSize: 12, fontWeight: 700, textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
+          <Link href={`/correos/${email.id}`} style={{ height: 34, padding: "0 16px", borderRadius: 8, border: `1px solid ${DIVIDER}`, background: "#fff", color: INK, fontSize: 12, fontWeight: 700, textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
             Abrir
-          </a>
+          </Link>
         </div>
       </div>
     </div>
@@ -115,7 +119,7 @@ function EmailCard({ email }: { email: EmailTemplate }): JSX.Element {
 
 function EmailGrid({ emails }: { emails: EmailTemplate[] }): JSX.Element {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
       {emails.map(function renderCard(email) { return <EmailCard key={email.id} email={email} />; })}
     </div>
   );
@@ -162,46 +166,67 @@ export default function VariantesCatalog(): JSX.Element {
 
   const showDiagram = Boolean(active.category) && Boolean(STAGE_ORDER[active.category ?? ""]) && !query.trim();
 
+  /** Pill de filtro: fila horizontal, no columna — libera el ancho del sidebar. */
   const pillStyle = function pillStyle(isActive: boolean) {
     return {
-      display: "block", width: "100%", textAlign: "left" as const, padding: "7px 10px", borderRadius: 8,
-      border: "none", cursor: "pointer", fontFamily: "inherit", fontSize: 13,
-      background: isActive ? PURPLE : "transparent", color: isActive ? "#fff" : BODY, fontWeight: isActive ? 700 : 600,
+      display: "inline-flex", alignItems: "center", gap: 5, flexShrink: 0,
+      height: 30, padding: "0 12px", borderRadius: 9999,
+      border: `1px solid ${isActive ? PURPLE : DIVIDER}`, cursor: "pointer", fontFamily: "inherit", fontSize: 12.5,
+      background: isActive ? PURPLE : "#ffffff", color: isActive ? "#fff" : BODY, fontWeight: 700,
+      transition: "background 0.15s ease, color 0.15s ease, border-color 0.15s ease",
     };
   };
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 40, alignItems: "start" }}>
-      {/* ── Sidebar ── */}
-      <div style={{ position: "sticky", top: 24, display: "flex", flexDirection: "column", gap: 4 }}>
-        <input
-          value={query}
-          onChange={function onChange(e) { setQuery(e.target.value); }}
-          placeholder="Buscar correo…"
-          style={{ padding: "10px 14px", borderRadius: 10, border: `1px solid ${DIVIDER}`, fontFamily: "inherit", fontSize: 13, color: INK, marginBottom: 12, outline: "none" }}
-        />
-        <button type="button" onClick={function all() { setActive({ category: null, stage: null }); }} style={pillStyle(!active.category)}>
-          Todos <span style={{ opacity: 0.7 }}>· {EMAILS.length}</span>
-        </button>
-        {categoryGroups.map(function renderPill([category, emails]) {
-          return (
+    <div>
+      {/* ── Barra de filtros: buscador + categorías en una fila ── */}
+      <div style={{ position: "sticky", top: 56, zIndex: 10, background: "#ffffff", paddingTop: 4, paddingBottom: 12, marginBottom: 12, borderBottom: `1px solid ${DIVIDER}` }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
+          <input
+            value={query}
+            onChange={function onChange(e) { setQuery(e.target.value); }}
+            placeholder="Buscar correo…"
+            style={{ flex: "1 1 260px", maxWidth: 380, height: 36, padding: "0 14px", borderRadius: 10, border: `1px solid ${DIVIDER}`, fontFamily: "inherit", fontSize: 13, color: INK, outline: "none" }}
+          />
+          <span style={{ fontSize: 12, fontWeight: 700, color: "#4f2ed8", letterSpacing: "0.06em", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+            {filtered.length} {filtered.length === 1 ? "correo" : "correos"}
+          </span>
+          {(active.category || active.stage || query) && (
             <button
-              key={category}
               type="button"
-              onClick={function pick() { setActive({ category, stage: null }); }}
-              style={{ ...pillStyle(active.category === category), fontWeight: 700 }}
+              onClick={function clear() { setActive({ category: null, stage: null }); setQuery(""); }}
+              style={{ marginLeft: "auto", height: 30, padding: "0 12px", borderRadius: 8, border: `1px solid ${DIVIDER}`, background: "#ffffff", color: BODY, fontFamily: "inherit", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
             >
-              {category} <span style={{ opacity: 0.6, fontWeight: 600 }}>· {emails.length}</span>
+              Limpiar filtros
             </button>
-          );
-        })}
+          )}
+        </div>
+
+        {/* Las 15 categorías caben en 2 filas; envuelven en pantallas estrechas. */}
+        <div role="tablist" aria-label="Categorías" style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+          <button type="button" role="tab" aria-selected={!active.category} onClick={function all() { setActive({ category: null, stage: null }); }} style={pillStyle(!active.category)}>
+            Todos <span style={{ opacity: 0.65, fontWeight: 600 }}>{EMAILS.length}</span>
+          </button>
+          {categoryGroups.map(function renderPill([category, emails]) {
+            const on = active.category === category;
+            return (
+              <button
+                key={category}
+                type="button"
+                role="tab"
+                aria-selected={on}
+                onClick={function pick() { setActive({ category, stage: null }); }}
+                style={pillStyle(on)}
+              >
+                {category} <span style={{ opacity: 0.65, fontWeight: 600 }}>{emails.length}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* ── Main ── */}
       <main>
-        <h2 style={{ fontSize: 13, fontWeight: 700, color: "#4f2ed8", letterSpacing: "0.07em", textTransform: "uppercase", margin: "0 0 20px" }}>
-          {filtered.length} {filtered.length === 1 ? "correo" : "correos"}
-        </h2>
 
         {showDiagram && active.category && (
           <FlowDiagram
