@@ -44,18 +44,18 @@ export default function CopyHtmlButton({ html }: { html: string | (() => string)
         gap: 6,
         height: 32,
         padding: "0 14px",
-        borderRadius: 8,
-        border: "none",
+        borderRadius: "var(--ui-radius-control)",
+        border: "1px solid var(--ui-border)",
         cursor: "pointer",
-        background: copied ? "#00AEB1" : "#2E0F70",
-        color: "#ffffff",
+        background: copied ? "#ecfdf5" : "var(--ui-surface)",
+        color: copied ? "var(--ui-success)" : "var(--ui-accent)",
         fontSize: 12,
         fontWeight: 700,
         fontFamily: "inherit",
-        transition: "background 0.2s ease",
+        transition: "background 0.2s ease, color 0.2s ease",
       }}
     >
-      {copied ? "¡Copiado!" : "Copiar HTML"}
+      <span aria-hidden="true">{copied ? "✓" : "⧉"}</span> {copied ? "¡Copiado!" : "Copiar HTML"}
     </button>
   );
 }

@@ -15,7 +15,7 @@ export default function Home(): JSX.Element {
       style={{
         minHeight: "100vh",
         background: "#ffffff",
-        color: "#0f172a",
+        color: "var(--ui-ink)",
         fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)",
         display: "flex",
         flexDirection: "column",
@@ -62,7 +62,7 @@ export default function Home(): JSX.Element {
         <p
           style={{
             fontSize: 18,
-            color: "#64748b",
+            color: "var(--ui-body)",
             lineHeight: 1.6,
             margin: "24px 0 0",
             maxWidth: 520,
@@ -80,7 +80,7 @@ export default function Home(): JSX.Element {
               gap: 8,
               padding: "12px 22px",
               borderRadius: 10,
-              background: "#0f172a",
+              background: "var(--ui-ink)",
               color: "#ffffff",
               fontSize: 14,
               fontWeight: 600,
@@ -98,8 +98,8 @@ export default function Home(): JSX.Element {
               padding: "12px 22px",
               borderRadius: 10,
               background: "#ffffff",
-              color: "#0f172a",
-              border: "1px solid #e2e8f0",
+              color: "var(--ui-ink)",
+              border: "1px solid var(--ui-border)",
               fontSize: 14,
               fontWeight: 600,
               textDecoration: "none",
@@ -110,7 +110,7 @@ export default function Home(): JSX.Element {
         </div>
 
         <div style={{ marginTop: 24, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-          <p style={{ fontSize: 13, color: "#94a3b8", margin: 0, fontWeight: 500 }}>
+          <p style={{ fontSize: 13, color: "var(--ui-muted)", margin: 0, fontWeight: 500 }}>
             Conecta tu IA al design system:
           </p>
           <InstallCommand command={`npx ${CLI_SPEC} skill`} />

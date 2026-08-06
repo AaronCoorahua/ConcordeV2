@@ -21,10 +21,10 @@ import { EMAILS, CATEGORY_GRADIENT, STAGE_ORDER, type EmailTemplate } from "@/sr
 import { generateEmail } from "@/src/emails/prodEmailTemplates";
 import { FlowDiagram } from "./FlowDiagram";
 
-const INK = "#0f172a";
-const BODY = "#64748b";
-const MUTED = "#94a3b8";
-const DIVIDER = "#e2e8f0";
+const INK = "var(--ui-ink)";
+const BODY = "var(--ui-body)";
+const MUTED = "var(--ui-muted)";
+const DIVIDER = "var(--ui-border)";
 const PURPLE = "#2E0F70";
 const STAGE_ACCENT = "#c85a1e";
 const GENERAL = "General";
@@ -34,6 +34,28 @@ const EMAIL_W = 640;
 
 function categoryOf(e: EmailTemplate): string {
   return e.category ?? GENERAL;
+}
+
+/**
+ * Texto buscable de un correo: nombre, asunto y TODO el copy de sus secciones
+ * (`content` es un Record<string,string>, así que se aplanan sus valores). Así
+ * buscar «garantía» o «Hilux» encuentra el correo aunque esas palabras solo
+ * estén en el cuerpo. Se quitan los marcadores de formato (**, __, (( )) ) para
+ * que no estorben, y se cachea por id: son 45 correos y el índice no cambia.
+ */
+const searchIndex = new Map<string, string>();
+
+function searchableText(e: EmailTemplate): string {
+  const hit = searchIndex.get(e.id);
+  if (hit !== undefined) return hit;
+  const body = e.sections
+    .flatMap(function values(s) { return Object.values(s.content ?? {}); })
+    .join(" ");
+  const text = `${e.name} ${e.subject} ${e.desc} ${body}`
+    .replace(/\*\*|__|\(\(|\)\)|\[\[|\]\]/g, " ")
+    .toLowerCase();
+  searchIndex.set(e.id, text);
+  return text;
 }
 
 function copyText(text: string, done: () => void): void {
@@ -66,7 +88,7 @@ function EmailCard({ email }: { email: EmailTemplate }): JSX.Element {
 
   return (
     <div className="cor-card" style={{ background: "#fff", borderRadius: 12, border: `1px solid ${DIVIDER}`, overflow: "hidden", display: "flex", flexDirection: "column", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
-      <Link href={`/correos/${email.id}`} style={{ display: "block", position: "relative", height: 260, overflow: "hidden", background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
+      <Link href={`/correos/${email.id}`} style={{ display: "block", position: "relative", height: 260, overflow: "hidden", background: "var(--ui-subtle)", borderBottom: "1px solid var(--ui-border-soft)" }}>
         {/* El iframe se renderiza a 640px y se reduce a la mitad. Se centra con
             `left:50%` + `translateX(-50%)` en vez de `margin:auto`, que fallaba
             cuando la celda de la grilla es más estrecha que esos 640px. */}
@@ -77,7 +99,7 @@ function EmailCard({ email }: { email: EmailTemplate }): JSX.Element {
           tabIndex={-1}
           style={{ border: "none", width: EMAIL_W, height: 1040, position: "absolute", top: 0, left: "50%", transform: "translateX(-50%) scale(0.5)", transformOrigin: "top center", pointerEvents: "none", background: "#fff" }}
         />
-        <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 70, background: "linear-gradient(180deg, rgba(248,250,252,0) 0%, #f8fafc 90%)" }} />
+        <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 70, background: "linear-gradient(180deg, rgba(248,250,252,0) 0%, var(--ui-subtle) 90%)" }} />
       </Link>
       <div style={{ padding: "14px 16px 16px", display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
         <div>
@@ -104,9 +126,9 @@ function EmailCard({ email }: { email: EmailTemplate }): JSX.Element {
                 setTimeout(function reset() { setCopied(false); }, 1800);
               });
             }}
-            style={{ flex: 1, height: 34, borderRadius: 8, border: "none", cursor: "pointer", background: copied ? "#00AEB1" : PURPLE, color: "#fff", fontFamily: "inherit", fontSize: 12, fontWeight: 700, transition: "background .2s" }}
+            style={{ flex: 1, height: 34, borderRadius: "var(--ui-radius-control)", border: "1px solid var(--ui-border)", cursor: "pointer", background: copied ? "#ecfdf5" : "var(--ui-surface)", color: copied ? "var(--ui-success)" : "var(--ui-accent)", fontFamily: "inherit", fontSize: 12, fontWeight: 700, transition: "background .2s, color .2s" }}
           >
-            {copied ? "¡Copiado!" : "Copiar HTML"}
+            {copied ? "✓ ¡Copiado!" : "⧉ Copiar HTML"}
           </button>
           <Link href={`/correos/${email.id}`} style={{ height: 34, padding: "0 16px", borderRadius: 8, border: `1px solid ${DIVIDER}`, background: "#fff", color: INK, fontSize: 12, fontWeight: 700, textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
             Abrir
@@ -142,7 +164,8 @@ export default function VariantesCatalog(): JSX.Element {
   const filtered = useMemo(function filter() {
     const q = query.trim().toLowerCase();
     return EMAILS.filter(function matches(e) {
-      const matchesQuery = !q || e.name.toLowerCase().includes(q) || e.subject.toLowerCase().includes(q) || e.desc.toLowerCase().includes(q);
+      // Busca en nombre, asunto y CUERPO del correo (ver searchableText).
+      const matchesQuery = !q || searchableText(e).includes(q);
       const matchesCategory = !active.category || categoryOf(e) === active.category;
       const matchesStage = !active.stage || e.stage === active.stage;
       return matchesQuery && matchesCategory && matchesStage;
@@ -185,12 +208,16 @@ export default function VariantesCatalog(): JSX.Element {
           <input
             value={query}
             onChange={function onChange(e) { setQuery(e.target.value); }}
-            placeholder="Buscar correo…"
+            placeholder="Buscar por nombre, asunto o contenido…"
             style={{ flex: "1 1 260px", maxWidth: 380, height: 36, padding: "0 14px", borderRadius: 10, border: `1px solid ${DIVIDER}`, fontFamily: "inherit", fontSize: 13, color: INK, outline: "none" }}
           />
-          <span style={{ fontSize: 12, fontWeight: 700, color: "#4f2ed8", letterSpacing: "0.06em", textTransform: "uppercase", whiteSpace: "nowrap" }}>
-            {filtered.length} {filtered.length === 1 ? "correo" : "correos"}
-          </span>
+          {/* Al buscar sí importa cuántos hay: sin resultados visibles arriba, el
+              contador es la única señal de que la búsqueda encontró algo. */}
+          {query.trim() && (
+            <span style={{ fontSize: 12, fontWeight: 700, color: "var(--ui-accent)", letterSpacing: "0.06em", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+              {filtered.length} {filtered.length === 1 ? "resultado" : "resultados"}
+            </span>
+          )}
           {(active.category || active.stage || query) && (
             <button
               type="button"
@@ -267,8 +294,8 @@ export default function VariantesCatalog(): JSX.Element {
       </main>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .cor-card:hover { box-shadow: 0 8px 30px -8px rgba(15,23,42,0.12), 0 2px 8px -2px rgba(15,23,42,0.05); border-color: #cbd5e1; transform: translateY(-2px); }
-        .cor-card:hover .cor-name { color: #4f2ed8; }
+        .cor-card:hover { box-shadow: 0 8px 30px -8px rgba(15,23,42,0.12), 0 2px 8px -2px rgba(15,23,42,0.05); border-color: var(--ui-border-hover); transform: translateY(-2px); }
+        .cor-card:hover .cor-name { color: var(--ui-accent); }
       `}} />
     </div>
   );

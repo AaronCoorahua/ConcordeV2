@@ -14,8 +14,8 @@ import { useLayoutEffect, useRef, useState } from "react";
 import type { JSX } from "react";
 import { STAGE_ORDER, CATEGORY_SOLID, type EmailTemplate } from "@/src/emails/prodEmails";
 
-const INK = "#0f172a";
-const DIVIDER = "#e2e8f0";
+const INK = "var(--ui-ink)";
+const DIVIDER = "var(--ui-border)";
 
 interface Line {
   fromId: string;
@@ -95,7 +95,7 @@ export function FlowDiagram({ category, emails, activeStage, onSelectStage }: Fl
       ref={containerRef}
       style={{
         position: "relative", display: "flex", gap: 28, padding: 24, marginBottom: 32,
-        background: "#f8fafc", border: `1px solid ${DIVIDER}`, borderRadius: 12, overflowX: "auto",
+        background: "var(--ui-subtle)", border: `1px solid ${DIVIDER}`, borderRadius: 12, overflowX: "auto",
       }}
     >
       <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>

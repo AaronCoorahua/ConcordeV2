@@ -40,9 +40,9 @@ const CHIP_BASE = {
 function chipStyle(active: boolean): CSSProperties {
   return {
     ...CHIP_BASE,
-    border: active ? "1px solid #4f2ed8" : "1px solid #e2e8f0",
-    background: active ? "#f1edff" : "#ffffff",
-    color: active ? "#4f2ed8" : "#3f3f46",
+    border: active ? "1px solid var(--ui-accent)" : "1px solid var(--ui-border)",
+    background: active ? "var(--ui-accent-soft)" : "#ffffff",
+    color: active ? "var(--ui-accent)" : "#3f3f46",
   };
 }
 
@@ -51,7 +51,7 @@ const GROUP_LABEL: CSSProperties = {
   fontWeight: 700,
   letterSpacing: "0.04em",
   textTransform: "uppercase",
-  color: "#a1a1aa",
+  color: "var(--ui-muted)",
   marginRight: 2,
 };
 

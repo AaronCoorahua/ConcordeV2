@@ -51,9 +51,9 @@ const CHIP_BASE = {
 function chipStyle(active: boolean): CSSProperties {
   return {
     ...CHIP_BASE,
-    border: active ? "1px solid #4f2ed8" : "1px solid #e2e8f0",
-    background: active ? "#f1edff" : "#ffffff",
-    color: active ? "#4f2ed8" : "#3f3f46",
+    border: active ? "1px solid var(--ui-accent)" : "1px solid var(--ui-border)",
+    background: active ? "var(--ui-accent-soft)" : "#ffffff",
+    color: active ? "var(--ui-accent)" : "#3f3f46",
   };
 }
 
@@ -65,8 +65,8 @@ function tabStyle(active: boolean): CSSProperties {
     gap: 2,
     padding: "8px 14px",
     borderRadius: 10,
-    border: active ? "1.5px solid #8460E5" : "1px solid #e2e8f0",
-    background: active ? "linear-gradient(120deg, #f1edff, #fdf2ff)" : "#ffffff",
+    border: active ? "1.5px solid #8460E5" : "1px solid var(--ui-border)",
+    background: active ? "linear-gradient(120deg, var(--ui-accent-soft), #fdf2ff)" : "#ffffff",
     cursor: "pointer",
     fontFamily: "inherit",
     textAlign: "left",
@@ -77,12 +77,12 @@ function tabStyle(active: boolean): CSSProperties {
 const TAB_TITLE = (active: boolean): CSSProperties => ({
   fontSize: 13,
   fontWeight: 700,
-  color: active ? "#4f2ed8" : "#18181b",
+  color: active ? "var(--ui-accent)" : "#18181b",
 });
 
 const TAB_HINT: CSSProperties = {
   fontSize: 11,
-  color: "#71717a",
+  color: "var(--ui-body)",
   lineHeight: 1.35,
 };
 
@@ -91,7 +91,7 @@ const GROUP_LABEL: CSSProperties = {
   fontWeight: 700,
   letterSpacing: "0.04em",
   textTransform: "uppercase",
-  color: "#a1a1aa",
+  color: "var(--ui-muted)",
   marginRight: 2,
 };
 

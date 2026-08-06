@@ -20,13 +20,13 @@ const linkBase = {
 type Active = "home" | "components" | "blocks" | "banners" | "correos" | "reporte";
 
 export default function Header({ active, right }: { active?: Active; right?: ReactNode }): JSX.Element {
-  const activeStyle = { ...linkBase, color: "#4f2ed8", background: "#f1edff" };
-  const idleStyle = { ...linkBase, color: "#64748b", background: "transparent" };
+  const activeStyle = { ...linkBase, color: "var(--ui-accent)", background: "var(--ui-accent-soft)" };
+  const idleStyle = { ...linkBase, color: "var(--ui-body)", background: "transparent" };
 
   return (
     <header
       style={{
-        borderBottom: "1px solid #f1f5f9",
+        borderBottom: "1px solid var(--ui-border-soft)",
         padding: "0 40px",
         height: 56,
         display: "flex",
@@ -57,7 +57,7 @@ export default function Header({ active, right }: { active?: Active; right?: Rea
               <path d="M7 1L12.196 4V10L7 13L1.804 10V4L7 1Z" fill="white" fillOpacity="0.9" />
             </svg>
           </div>
-          <span style={{ fontSize: 15, fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em" }}>Concorde</span>
+          <span style={{ fontSize: 15, fontWeight: 800, color: "var(--ui-ink)", letterSpacing: "-0.02em" }}>Concorde</span>
         </a>
         <nav style={{ display: "flex", alignItems: "center", gap: 4, marginLeft: 24 }}>
           <a href="/components" style={active === "components" ? activeStyle : idleStyle}>Componentes</a>
@@ -76,8 +76,8 @@ export default function Header({ active, right }: { active?: Active; right?: Rea
             fontFamily: "monospace",
             padding: "3px 10px",
             borderRadius: 20,
-            background: "#f1f5f9",
-            color: "#64748b",
+            background: "var(--ui-border-soft)",
+            color: "var(--ui-body)",
             letterSpacing: "0.04em",
           }}
         >

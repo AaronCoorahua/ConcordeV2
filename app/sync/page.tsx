@@ -89,7 +89,7 @@ const STYLES = `
     min-height: 100vh;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 55%, #0f3460 100%);
     font-family: var(--vmc-font-display, "Plus Jakarta Sans", -apple-system, sans-serif);
-    color: #f8fafc;
+    color: var(--ui-subtle);
     padding: 56px 24px 96px;
   }
   .sync-wrap { max-width: 820px; margin: 0 auto; }
@@ -111,14 +111,14 @@ const STYLES = `
   .sync-input {
     width: 100%;
     background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.16); border-radius: 10px;
-    padding: 14px 16px; color: #f8fafc; font-size: 16px; font-family: monospace;
+    padding: 14px 16px; color: var(--ui-subtle); font-size: 16px; font-family: monospace;
     outline: none; transition: border-color 0.15s;
   }
   .sync-input:focus { border-color: oklch(0.72 0.18 285); }
   .sync-input::placeholder { color: rgba(255,255,255,0.25); font-size: 14px; }
   .sync-select {
     background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.16); border-radius: 10px;
-    padding: 14px 12px; color: #f8fafc; font-size: 15px; font-family: monospace;
+    padding: 14px 12px; color: var(--ui-subtle); font-size: 15px; font-family: monospace;
     outline: none; cursor: pointer; min-width: 130px;
   }
   .sync-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
@@ -155,11 +155,11 @@ const STYLES = `
   .sync-pre {
     background: #0b1020; border: 1px solid rgba(255,255,255,0.12); border-radius: 10px;
     padding: 18px 20px; font-family: monospace; font-size: 14.5px; line-height: 1.7;
-    color: #e2e8f0; white-space: pre-wrap; word-break: break-word; margin: 0;
+    color: var(--ui-border); white-space: pre-wrap; word-break: break-word; margin: 0;
   }
   .sync-copy {
     font-size: 13px; font-weight: 700; font-family: monospace; padding: 8px 18px; border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1); color: #f8fafc;
+    border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1); color: var(--ui-subtle);
     cursor: pointer; transition: background 0.15s;
   }
   .sync-copy:hover { background: rgba(255,255,255,0.2); }

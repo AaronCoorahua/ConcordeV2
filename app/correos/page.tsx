@@ -46,25 +46,25 @@ const CARDS: HubCard[] = [
 
 export default function CorreosPage(): JSX.Element {
   return (
-    <div style={{ minHeight: "100vh", background: "#ffffff", color: "#0f172a", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
+    <div style={{ minHeight: "100vh", background: "#ffffff", color: "var(--ui-ink)", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
       <Header active="correos" />
 
       <main style={{ maxWidth: 1120, margin: "0 auto", padding: "40px 40px 80px" }}>
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>Correos</h1>
+          <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--ui-ink)", margin: 0 }}>Correos</h1>
         </div>
-        <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 32px", maxWidth: 720 }}>
-          Sistema de mailing de VMC Subastas. Explora las <strong style={{ color: "#0f172a", fontWeight: 700 }}>tipologías</strong>{" "}
-          (layouts base del banner) o entra a <strong style={{ color: "#0f172a", fontWeight: 700 }}>maquetar</strong>{" "}
+        <p style={{ fontSize: 14, color: "var(--ui-body)", lineHeight: 1.6, margin: "0 0 32px", maxWidth: 720 }}>
+          Sistema de mailing de VMC Subastas. Explora las <strong style={{ color: "var(--ui-ink)", fontWeight: 700 }}>tipologías</strong>{" "}
+          (layouts base del banner) o entra a <strong style={{ color: "var(--ui-ink)", fontWeight: 700 }}>maquetar</strong>{" "}
           los correos que hoy están en producción, intercambiando su tipología de header, footer y fondo.
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 20 }}>
           {CARDS.map(function renderCard(c) {
             return (
-              <Link key={c.href} href={c.href} className="cor-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", borderRadius: 14, overflow: "hidden", background: "#ffffff", border: "1px solid #e2e8f0", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
-                <div style={{ height: THUMB_H, display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
-                  <div style={{ width: EMAIL_W * SCALE, height: THUMB_H - 40, position: "relative", overflow: "hidden", borderRadius: 6, boxShadow: "0 6px 18px rgba(15,23,42,0.12)", outline: "1px solid #e2e8f0", background: "#FAFAFA" }}>
+              <Link key={c.href} href={c.href} className="cor-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", borderRadius: "var(--ui-radius-card)", overflow: "hidden", background: "#ffffff", border: "1px solid var(--ui-border)", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
+                <div style={{ height: THUMB_H, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--ui-subtle)", borderBottom: "1px solid var(--ui-border-soft)" }}>
+                  <div style={{ width: EMAIL_W * SCALE, height: THUMB_H - 40, position: "relative", overflow: "hidden", borderRadius: 6, boxShadow: "0 6px 18px rgba(15,23,42,0.12)", outline: "1px solid var(--ui-border)", background: "var(--ui-subtle)" }}>
                     <iframe
                       title={c.title}
                       srcDoc={c.previewDoc}
@@ -85,11 +85,11 @@ export default function CorreosPage(): JSX.Element {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 6, padding: "18px 20px 20px" }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <span className="cor-name" style={{ fontSize: 17, fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em" }}>{c.title}</span>
-                    <span className="cor-arrow" aria-hidden="true" style={{ fontSize: 16, color: "#cbd5e1" }}>→</span>
+                    <span className="cor-name" style={{ fontSize: 17, fontWeight: 800, color: "var(--ui-ink)", letterSpacing: "-0.02em" }}>{c.title}</span>
+                    <span className="cor-arrow" aria-hidden="true" style={{ fontSize: 16, color: "var(--ui-border-hover)" }}>→</span>
                   </div>
-                  <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 600, fontFamily: "monospace" }}>{c.meta}</span>
-                  <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.5, margin: "4px 0 0" }}>{c.desc}</p>
+                  <span style={{ fontSize: 12, color: "var(--ui-muted)", fontWeight: 600, fontFamily: "monospace" }}>{c.meta}</span>
+                  <p style={{ fontSize: 13, color: "var(--ui-body)", lineHeight: 1.5, margin: "4px 0 0" }}>{c.desc}</p>
                 </div>
               </Link>
             );
@@ -98,9 +98,9 @@ export default function CorreosPage(): JSX.Element {
       </main>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .cor-card:hover { box-shadow: 0 8px 30px -8px rgba(15,23,42,0.12), 0 2px 8px -2px rgba(15,23,42,0.05); border-color: #cbd5e1; transform: translateY(-2px); }
-        .cor-card:hover .cor-name { color: #4f2ed8; }
-        .cor-card:hover .cor-arrow { color: #4f2ed8; transform: translateX(3px); transition: color 0.2s ease, transform 0.2s ease; }
+        .cor-card:hover { box-shadow: 0 8px 30px -8px rgba(15,23,42,0.12), 0 2px 8px -2px rgba(15,23,42,0.05); border-color: var(--ui-border-hover); transform: translateY(-2px); }
+        .cor-card:hover .cor-name { color: var(--ui-accent); }
+        .cor-card:hover .cor-arrow { color: var(--ui-accent); transform: translateX(3px); transition: color 0.2s ease, transform 0.2s ease; }
       `}} />
     </div>
   );

@@ -14,8 +14,8 @@ export default function ReportePage(): JSX.Element {
     <div
       style={{
         minHeight: "100vh",
-        background: "#f8fafc",
-        color: "#0f172a",
+        background: "var(--ui-subtle)",
+        color: "var(--ui-ink)",
         fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)",
         display: "flex",
         flexDirection: "column",
@@ -33,8 +33,8 @@ export default function ReportePage(): JSX.Element {
               fontWeight: 700,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: "#4f2ed8",
-              background: "#f1edff",
+              color: "var(--ui-accent)",
+              background: "var(--ui-accent-soft)",
               padding: "4px 12px",
               borderRadius: 20,
               marginBottom: 16,
@@ -45,9 +45,9 @@ export default function ReportePage(): JSX.Element {
           <h1 style={{ fontSize: "clamp(32px, 5vw, 44px)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1, margin: 0 }}>
             Catálogo de issues
           </h1>
-          <p style={{ fontSize: 17, color: "#64748b", lineHeight: 1.6, margin: "16px 0 0", maxWidth: 620 }}>
-            Correcciones entre <strong style={{ color: "#0f172a" }}>Producción</strong> y su implementación en{" "}
-            <strong style={{ color: "#0f172a" }}>Concorde</strong>. Haz click en un issue para ver el detalle.
+          <p style={{ fontSize: 17, color: "var(--ui-body)", lineHeight: 1.6, margin: "16px 0 0", maxWidth: 620 }}>
+            Correcciones entre <strong style={{ color: "var(--ui-ink)" }}>Producción</strong> y su implementación en{" "}
+            <strong style={{ color: "var(--ui-ink)" }}>Concorde</strong>. Haz click en un issue para ver el detalle.
           </p>
         </div>
 
@@ -55,7 +55,7 @@ export default function ReportePage(): JSX.Element {
         {REPORT_ENTRIES.length === 0 ? (
           <div
             style={{
-              border: "2px dashed #e2e8f0",
+              border: "2px dashed var(--ui-border)",
               borderRadius: 16,
               padding: "64px 24px",
               textAlign: "center",
@@ -63,8 +63,8 @@ export default function ReportePage(): JSX.Element {
             }}
           >
             <div style={{ fontSize: 40, marginBottom: 12 }}>📋</div>
-            <p style={{ fontSize: 16, fontWeight: 600, margin: 0, color: "#0f172a" }}>Aún no hay issues registrados</p>
-            <p style={{ fontSize: 14, color: "#94a3b8", margin: "8px 0 0" }}>
+            <p style={{ fontSize: 16, fontWeight: 600, margin: 0, color: "var(--ui-ink)" }}>Aún no hay issues registrados</p>
+            <p style={{ fontSize: 14, color: "var(--ui-muted)", margin: "8px 0 0" }}>
               Envía la imagen de Producción, la de Concorde, la explicación y el código para crear el primer issue.
             </p>
           </div>
@@ -72,7 +72,7 @@ export default function ReportePage(): JSX.Element {
           <div
             style={{
               background: "#ffffff",
-              border: "1px solid #e2e8f0",
+              border: "1px solid var(--ui-border)",
               borderRadius: 16,
               padding: 8,
               boxShadow: "0 1px 2px rgba(15,23,42,0.04)",
@@ -80,7 +80,7 @@ export default function ReportePage(): JSX.Element {
           >
             <div style={{ padding: "12px 16px 8px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <span style={{ fontSize: 13, fontWeight: 700, color: "#334155", letterSpacing: "0.02em" }}>Issues</span>
-              <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 600 }}>{REPORT_ENTRIES.length} total</span>
+              <span style={{ fontSize: 12, color: "var(--ui-muted)", fontWeight: 600 }}>{REPORT_ENTRIES.length} total</span>
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
               {REPORT_ENTRIES.map((entry, i) => (
@@ -104,8 +104,8 @@ export default function ReportePage(): JSX.Element {
                       width: 30,
                       height: 30,
                       borderRadius: 8,
-                      background: "#f1edff",
-                      color: "#4f2ed8",
+                      background: "var(--ui-accent-soft)",
+                      color: "var(--ui-accent)",
                       fontSize: 12,
                       fontWeight: 800,
                       fontFamily: "monospace",
@@ -122,7 +122,7 @@ export default function ReportePage(): JSX.Element {
                         display: "block",
                         fontSize: 15,
                         fontWeight: 600,
-                        color: "#0f172a",
+                        color: "var(--ui-ink)",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
@@ -130,9 +130,9 @@ export default function ReportePage(): JSX.Element {
                     >
                       {entry.title}
                     </span>
-                    <span style={{ fontSize: 12.5, color: "#94a3b8" }}>{entry.date}</span>
+                    <span style={{ fontSize: 12.5, color: "var(--ui-muted)" }}>{entry.date}</span>
                   </span>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, color: "#cbd5e1" }} aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, color: "var(--ui-border-hover)" }} aria-hidden="true">
                     <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </a>
@@ -142,7 +142,7 @@ export default function ReportePage(): JSX.Element {
         )}
       </main>
 
-      <style>{`.issue-row { transition: background 0.12s; } .issue-row:hover { background: #f8fafc; }`}</style>
+      <style>{`.issue-row { transition: background 0.12s; } .issue-row:hover { background: var(--ui-subtle); }`}</style>
     </div>
   );
 }

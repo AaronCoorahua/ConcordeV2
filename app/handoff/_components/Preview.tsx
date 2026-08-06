@@ -19,7 +19,7 @@ interface PreviewProps {
 }
 
 const DARK_BG = "linear-gradient(135deg, #1a1a2e 0%, #16213e 55%, #0f3460 100%)";
-const CODE_BG = "#fafafa";
+const CODE_BG = "var(--ui-subtle)";
 
 const toggleBtn: CSSProperties = {
   pointerEvents: "auto",
@@ -28,7 +28,7 @@ const toggleBtn: CSSProperties = {
   fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
   color: "#18181b",
   background: "#ffffff",
-  border: "1px solid #e4e4e7",
+  border: "1px solid var(--ui-border)",
   borderRadius: 8,
   padding: "6px 14px",
   cursor: "pointer",
@@ -52,7 +52,7 @@ export default function Preview({ children, code, tone = "light", minHeight = 22
   }
 
   return (
-    <div style={{ border: "1px solid #e4e4e7", borderRadius: 12, overflow: "hidden", background: "#ffffff" }}>
+    <div style={{ border: "1px solid var(--ui-border)", borderRadius: 12, overflow: "hidden", background: "#ffffff" }}>
       {/* Demo en vivo */}
       <div
         style={{
@@ -64,7 +64,7 @@ export default function Preview({ children, code, tone = "light", minHeight = 22
           gap: 16,
           padding: "40px 24px",
           background: tone === "dark" ? DARK_BG : "#ffffff",
-          backgroundImage: tone === "dark" ? DARK_BG : "radial-gradient(#e4e4e7 1px, transparent 1px)",
+          backgroundImage: tone === "dark" ? DARK_BG : "radial-gradient(var(--ui-border) 1px, transparent 1px)",
           backgroundSize: tone === "dark" ? undefined : "16px 16px",
         }}
       >
@@ -89,9 +89,9 @@ export default function Preview({ children, code, tone = "light", minHeight = 22
                 fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
                 padding: "4px 9px",
                 borderRadius: 6,
-                border: "1px solid #e4e4e7",
+                border: "1px solid var(--ui-border)",
                 background: "#ffffff",
-                color: copied ? "#16a34a" : "#71717a",
+                color: copied ? "#16a34a" : "var(--ui-body)",
                 cursor: "pointer",
               }}
             >
@@ -131,7 +131,7 @@ export default function Preview({ children, code, tone = "light", minHeight = 22
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                background: "linear-gradient(to bottom, rgba(250,250,250,0) 0%, rgba(250,250,250,0.9) 55%, #fafafa 100%)",
+                background: "linear-gradient(to bottom, rgba(250,250,250,0) 0%, rgba(250,250,250,0.9) 55%, var(--ui-subtle) 100%)",
                 pointerEvents: "none",
               }}
             >

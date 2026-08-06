@@ -51,7 +51,7 @@ export default function ProgressBarDemo(): JSX.Element {
   return (
     <div style={{ width: 360, maxWidth: "100%", display: "flex", flexDirection: "column", gap: 10 }}>
       <ProgressBar value={value} transitionMs={instant ? 0 : FILL_MS} />
-      <span style={{ fontSize: 12, color: "#71717a", fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", textAlign: "right" }}>
+      <span style={{ fontSize: 12, color: "var(--ui-body)", fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", textAlign: "right" }}>
         Llenado continuo · 0 → 100% en {FILL_MS / 1000}s
       </span>
     </div>

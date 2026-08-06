@@ -294,7 +294,7 @@ const REGISTRY: ComponentEntry[] = [
     preview: (
       <div style={{ width: 320, transform: "scale(0.86)" }}>
         <Accordion title="INFORMACIÓN GENERAL" defaultOpen>
-          <span style={{ fontSize: 12, color: "#94a3b8", fontFamily: "monospace" }}>{"{children}"} editable</span>
+          <span style={{ fontSize: 12, color: "var(--ui-muted)", fontFamily: "monospace" }}>{"{children}"} editable</span>
         </Accordion>
       </div>
     ),
@@ -565,7 +565,7 @@ const PAGE_STYLES = `
     min-height: 100vh;
     background: #ffffff;
     font-family: var(--vmc-font-display, "Plus Jakarta Sans", -apple-system, sans-serif);
-    color: #0f172a;
+    color: var(--ui-ink);
   }
 
   .cp-section {
@@ -583,12 +583,12 @@ const PAGE_STYLES = `
     font-size: 24px;
     font-weight: 800;
     letter-spacing: -0.02em;
-    color: #0f172a;
+    color: var(--ui-ink);
     margin: 0;
   }
   .cp-section-count {
     font-size: 13px;
-    color: #94a3b8;
+    color: var(--ui-muted);
     font-weight: 500;
   }
 
@@ -602,7 +602,7 @@ const PAGE_STYLES = `
     display: flex;
     flex-direction: column;
     border-radius: 12px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--ui-border);
     background: #ffffff;
     overflow: hidden;
     text-decoration: none;
@@ -610,12 +610,12 @@ const PAGE_STYLES = `
   }
   .cp-card:hover {
     box-shadow: 0 8px 30px -8px rgba(15,23,42,0.12), 0 2px 8px -2px rgba(15,23,42,0.05);
-    border-color: #cbd5e1;
+    border-color: var(--ui-border-hover);
     transform: translateY(-2px);
   }
   .cp-card-preview {
-    background: #f8fafc;
-    border-bottom: 1px solid #f1f5f9;
+    background: var(--ui-subtle);
+    border-bottom: 1px solid var(--ui-border-soft);
     padding: 32px 24px;
     min-height: 168px;
     display: flex;
@@ -631,16 +631,16 @@ const PAGE_STYLES = `
   .cp-card-name {
     font-size: 14px;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--ui-ink);
     letter-spacing: -0.01em;
   }
   .cp-card-arrow {
     font-size: 15px;
-    color: #cbd5e1;
+    color: var(--ui-border-hover);
     transition: color 0.2s ease, transform 0.2s ease;
   }
-  .cp-card:hover .cp-card-name { color: #4f2ed8; }
-  .cp-card:hover .cp-card-arrow { color: #4f2ed8; transform: translateX(3px); }
+  .cp-card:hover .cp-card-name { color: var(--ui-accent); }
+  .cp-card:hover .cp-card-arrow { color: var(--ui-accent); transform: translateX(3px); }
 
   @media (max-width: 768px) {
     .cp-section { padding: 28px 20px 60px; }

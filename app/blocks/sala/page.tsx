@@ -58,7 +58,7 @@ const FILES: BlockFile[] = [...BLOCK_FILES, ...COMPONENT_FILES];
 
 export default function SalaBlockPage(): JSX.Element {
   return (
-    <div style={{ minHeight: "100vh", background: "#ffffff", color: "#09090b", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
+    <div style={{ minHeight: "100vh", background: "#ffffff", color: "var(--ui-ink)", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
       <Header active="blocks" />
       <SalaViewer files={FILES} />
       <RequiredComponents items={REQUIRED} />

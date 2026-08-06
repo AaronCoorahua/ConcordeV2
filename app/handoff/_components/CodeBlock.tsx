@@ -26,9 +26,9 @@ export default function CodeBlock({ code, filename, maxHeight }: CodeBlockProps)
   }
 
   return (
-    <div style={{ position: "relative", border: "1px solid #e4e4e7", borderRadius: 10, background: "#fafafa", overflow: "hidden" }}>
+    <div style={{ position: "relative", border: "1px solid var(--ui-border)", borderRadius: 10, background: "var(--ui-subtle)", overflow: "hidden" }}>
       {filename ? (
-        <div style={{ display: "flex", alignItems: "center", padding: "8px 14px", borderBottom: "1px solid #ececee", background: "#f4f4f5" }}>
+        <div style={{ display: "flex", alignItems: "center", padding: "8px 14px", borderBottom: "1px solid #ececee", background: "var(--ui-border-soft)" }}>
           <span style={{ fontSize: 12, fontWeight: 600, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", color: "#52525b" }}>{filename}</span>
         </div>
       ) : null}
@@ -48,9 +48,9 @@ export default function CodeBlock({ code, filename, maxHeight }: CodeBlockProps)
           fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
           padding: "4px 9px",
           borderRadius: 6,
-          border: "1px solid #e4e4e7",
+          border: "1px solid var(--ui-border)",
           background: "#ffffff",
-          color: copied ? "#16a34a" : "#71717a",
+          color: copied ? "#16a34a" : "var(--ui-body)",
           cursor: "pointer",
           zIndex: 1,
         }}

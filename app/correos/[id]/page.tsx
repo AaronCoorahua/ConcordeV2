@@ -56,19 +56,19 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
     .filter(function exists(x): x is EmailReal { return Boolean(x); });
 
   return (
-    <div style={{ minHeight: "100vh", background: "#ffffff", color: "#0f172a", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
+    <div style={{ minHeight: "100vh", background: "#ffffff", color: "var(--ui-ink)", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
       <Header active="correos" />
 
       <main style={{ maxWidth: 1120, margin: "0 auto", padding: "40px 40px 80px" }}>
         <Link
           href="/correos/variantes"
-          style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "#64748b", textDecoration: "none", marginBottom: 16 }}
+          style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "var(--ui-body)", textDecoration: "none", marginBottom: 16 }}
         >
           <span aria-hidden="true">←</span> Variantes
         </Link>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8, flexWrap: "wrap" }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>{correo.name}</h1>
+          <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--ui-ink)", margin: 0 }}>{correo.name}</h1>
           {group && correo.stage && (
             <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", padding: "3px 10px", borderRadius: 9999, color: "#ffffff", backgroundImage: group.gradient }}>
               {group.label} · {correo.stage}
@@ -76,13 +76,12 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
           )}
         </div>
 
-        <div style={{ margin: "0 0 6px", display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
-          <span style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", letterSpacing: "0.04em", textTransform: "uppercase", flexShrink: 0 }}>Asunto</span>
-          <span style={{ fontSize: 13, color: "#0f172a", fontWeight: 600 }}>{correo.subject}</span>
+        <div style={{ margin: "0 0 24px", display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: "var(--ui-muted)", letterSpacing: "0.04em", textTransform: "uppercase", flexShrink: 0 }}>Asunto</span>
+          <span style={{ fontSize: 13, color: "var(--ui-ink)", fontWeight: 600 }}>{correo.subject}</span>
         </div>
-        <p style={{ fontSize: 13, color: "#64748b", margin: "0 0 24px", lineHeight: 1.5, maxWidth: 640 }}>{correo.desc}</p>
 
-        <Suspense fallback={<div style={{ height: 400, display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", fontSize: 13 }}>Cargando preview…</div>}>
+        <Suspense fallback={<div style={{ height: 400, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--ui-muted)", fontSize: 13 }}>Cargando preview…</div>}>
           <BannerLab
             html={correo.html}
             title={correo.name}
@@ -95,7 +94,7 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
 
         {siguientes.length > 0 && (
           <div style={{ marginTop: 20 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: "var(--ui-muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}>
               Sigue en el flujo
             </span>
             <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 10, maxWidth: 640 }}>
@@ -106,15 +105,15 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
                     key={n.id}
                     href={`/correos/${n.id}`}
                     className="cor-flow"
-                    style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", borderRadius: 10, border: "1px solid #e2e8f0", background: "#ffffff", textDecoration: "none", transition: "border-color 0.15s ease, box-shadow 0.15s ease" }}
+                    style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", borderRadius: 10, border: "1px solid var(--ui-border)", background: "#ffffff", textDecoration: "none", transition: "border-color 0.15s ease, box-shadow 0.15s ease" }}
                   >
                     {nGroup && n.stage && (
                       <span style={{ flexShrink: 0, padding: "3px 9px", borderRadius: 9999, fontSize: 10, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: "#ffffff", backgroundImage: nGroup.gradient }}>
                         {n.stage}
                       </span>
                     )}
-                    <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>{n.name}</span>
-                    <span aria-hidden="true" style={{ marginLeft: "auto", color: "#cbd5e1", fontSize: 13 }}>→</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "var(--ui-ink)" }}>{n.name}</span>
+                    <span aria-hidden="true" style={{ marginLeft: "auto", color: "var(--ui-border-hover)", fontSize: 13 }}>→</span>
                   </Link>
                 );
               })}
@@ -123,14 +122,14 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
         )}
 
         {correo.leadsTo.length === 0 && correo.stage && (
-          <p style={{ marginTop: 20, fontSize: 12, color: "#94a3b8", fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}>
+          <p style={{ marginTop: 20, fontSize: 12, color: "var(--ui-muted)", fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}>
             Correo final de este flujo
           </p>
         )}
       </main>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .cor-flow:hover { border-color: #cbd5e1; box-shadow: 0 4px 14px rgba(15,23,42,0.08); }
+        .cor-flow:hover { border-color: var(--ui-border-hover); box-shadow: 0 4px 14px rgba(15,23,42,0.08); }
       `}} />
     </div>
   );

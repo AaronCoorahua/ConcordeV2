@@ -55,13 +55,14 @@ const COMPARE_SCALE = 0.62;
 
 // ─── UI atoms ─────────────────────────────────────────────────────────────────
 
+/** Grupo de tabs. En el panel lateral se apila: etiqueta encima, opciones debajo. */
 function TabGroup({ label, children, dimmed }: { label: string; children: JSX.Element[]; dimmed?: boolean }): JSX.Element {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", opacity: dimmed ? 0.45 : 1, transition: "opacity 0.15s ease" }}>
-      <span style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", letterSpacing: "0.04em", textTransform: "uppercase", minWidth: 52 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 6, opacity: dimmed ? 0.45 : 1, transition: "opacity 0.15s ease" }}>
+      <span style={{ fontSize: 10, fontWeight: 700, color: "var(--ui-muted)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
         {label}
       </span>
-      <div role="tablist" aria-label={label} style={{ display: "inline-flex", gap: 4, padding: 4, borderRadius: 10, background: "#f1f5f9", flexWrap: "wrap" }}>
+      <div role="tablist" aria-label={label} style={{ display: "flex", gap: 4, padding: 4, borderRadius: 10, background: "var(--ui-border-soft)", flexWrap: "wrap" }}>
         {children}
       </div>
     </div>
@@ -77,10 +78,11 @@ function Tab({ on, onClick, children, disabled }: { on: boolean; onClick: () => 
       onClick={onClick}
       disabled={disabled}
       style={{
-        height: 28, padding: "0 12px", borderRadius: 7, border: "none",
+        height: 26, padding: "0 9px", borderRadius: 7, border: "none",
         cursor: disabled ? "default" : "pointer",
+        whiteSpace: "nowrap",
         background: on ? "#ffffff" : "transparent",
-        color: on ? "#0f172a" : "#64748b",
+        color: on ? "var(--ui-ink)" : "var(--ui-body)",
         fontSize: 12, fontWeight: on ? 700 : 600, fontFamily: "inherit",
         boxShadow: on ? "0 1px 3px rgba(15,23,42,0.10)" : "none",
         transition: "background 0.15s ease, color 0.15s ease",
@@ -91,15 +93,18 @@ function Tab({ on, onClick, children, disabled }: { on: boolean; onClick: () => 
   );
 }
 
-function Field({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (v: string) => void; placeholder: string }): JSX.Element {
+function Field({ label, value, onChange, placeholder, disabled }: { label: string; value: string; onChange: (v: string) => void; placeholder: string; disabled?: boolean }): JSX.Element {
   return (
-    <label style={{ display: "flex", flexDirection: "column", gap: 4, flex: "1 1 200px", minWidth: 160 }}>
-      <span style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", letterSpacing: "0.04em", textTransform: "uppercase" }}>{label}</span>
+    /* `flex: none` — en una fila los campos se reparten con `minWidth`; sin esto,
+       dentro de una columna el `flex-grow` los estiraba y abría huecos enormes. */
+    <label style={{ display: "flex", flexDirection: "column", gap: 4, flex: "1 1 180px", minWidth: 150 }}>
+      <span style={{ fontSize: 10, fontWeight: 700, color: "var(--ui-muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}>{label}</span>
       <input
         value={value}
         onChange={function onInput(e) { onChange(e.target.value); }}
         placeholder={placeholder}
-        style={{ height: 32, padding: "0 10px", borderRadius: 8, border: "1px solid #e2e8f0", fontFamily: "inherit", fontSize: 13, color: "#0f172a", outline: "none", background: "#fff" }}
+        disabled={disabled}
+        style={{ height: 32, padding: "0 10px", borderRadius: 8, border: "1px solid var(--ui-border)", fontFamily: "inherit", fontSize: 13, color: "var(--ui-ink)", outline: "none", background: disabled ? "var(--ui-border-soft)" : "#fff", cursor: disabled ? "not-allowed" : "text", minWidth: 0 }}
       />
     </label>
   );
@@ -151,17 +156,17 @@ function FigmaPanel({ src, fileName, matchHeight }: { src?: string | null; fileN
         width: "100%", height: matchHeight ?? undefined, minHeight: matchHeight ? undefined : 420,
         borderRadius: 8, display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center", gap: 10, padding: 24, textAlign: "center",
-        background: "repeating-linear-gradient(135deg, #f1f5f9 0 12px, #e9eef5 12px 24px)",
-        border: "1px dashed #cbd5e1",
+        background: "repeating-linear-gradient(135deg, var(--ui-border-soft) 0 12px, #e9eef5 12px 24px)",
+        border: "1px dashed var(--ui-border-hover)",
       }}
     >
-      <span style={{ fontSize: 12, fontWeight: 800, color: "#64748b", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+      <span style={{ fontSize: 12, fontWeight: 800, color: "var(--ui-body)", letterSpacing: "0.04em", textTransform: "uppercase" }}>
         Sin referencia de Figma
       </span>
-      <span style={{ fontSize: 12, color: "#94a3b8", lineHeight: 1.6, maxWidth: 280 }}>
+      <span style={{ fontSize: 12, color: "var(--ui-muted)", lineHeight: 1.6, maxWidth: 280 }}>
         Exporta el frame como SVG y déjalo en
         <br />
-        <code style={{ fontFamily: "monospace", fontSize: 11, color: "#475569", background: "#ffffff", padding: "2px 6px", borderRadius: 4, display: "inline-block", marginTop: 6, border: "1px solid #e2e8f0" }}>
+        <code style={{ fontFamily: "monospace", fontSize: 11, color: "#475569", background: "#ffffff", padding: "2px 6px", borderRadius: 4, display: "inline-block", marginTop: 6, border: "1px solid var(--ui-border)" }}>
           public/figma/correos/{fileName}
         </code>
       </span>
@@ -247,23 +252,74 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
 
   return (
     <div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 }}>
-        <div style={{ display: "flex", alignItems: "flex-start", gap: 10, flexWrap: "wrap" }}>
-          <TabGroup label="Banner">
-            {[
-              <Tab key={ORIGINAL} on={bannerId === ORIGINAL} onClick={function pick() { setBanner(ORIGINAL); }}>Original</Tab>,
-              ...BANNER_OPTIONS.map(function renderTab(opt) {
-                return <Tab key={opt.id} on={bannerId === opt.id} onClick={function pick() { setBanner(opt.id); }}>{opt.label}</Tab>;
-              }),
-            ]}
-          </TabGroup>
-          <div style={{ flex: 1 }} />
-          <CopyHtmlButton key={frameKey} html={copyHtml} />
-        </div>
+      {/* ── Barra superior: acciones + campos del banner ──────────────────────
+          Las acciones (copiar / comparar) van aquí, no en el panel: son de la
+          página entera y así no compiten por el alto del sidebar. Los campos de
+          texto son del BANNER, que es lo más alto del correo, así que se editan
+          desde arriba — es donde el ojo ya está mirando. */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 12 }}>
+        <button
+          type="button"
+          aria-pressed={comparing}
+          onClick={function toggle() { setComparing(function prev(p) { return !p; }); }}
+          style={{
+            height: 32, padding: "0 14px", borderRadius: "var(--ui-radius-control)", cursor: "pointer", fontFamily: "inherit", fontSize: 12, fontWeight: 700,
+            border: "1px solid var(--ui-border)",
+            background: comparing ? "var(--ui-accent)" : "var(--ui-surface)",
+            color: comparing ? "#ffffff" : "var(--ui-body)",
+            transition: "background 0.12s ease, color 0.12s ease",
+            userSelect: "none",
+          }}
+        >
+          {comparing ? "✕ Cerrar comparación" : "⇄ Comparar Figma"}
+        </button>
+        <CopyHtmlButton key={frameKey} html={copyHtml} />
+        <label style={{ display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer", fontSize: 12, fontWeight: 600, color: "var(--ui-body)" }}>
+          <input type="checkbox" checked={editBody} onChange={function toggle(e) { setEditBody(e.target.checked); }} style={{ accentColor: "var(--ui-accent)", width: 15, height: 15 }} />
+          Editar cuerpo
+          {editBody && <span style={{ fontSize: 11, color: "var(--ui-muted)", fontWeight: 500 }}>· clic en cualquier texto</span>}
+        </label>
+      </div>
+
+      {/* Campos del banner: SIEMPRE montados, deshabilitados con «Basic».
+          Si entraran y salieran del DOM, el preview daría un salto de ~90px al
+          cambiar de tipología. Manteniéndolos, el alto es constante y además se
+          ve de un vistazo por qué no se pueden editar. */}
+      <div
+        aria-hidden={!bannerOn}
+        style={{
+          display: "flex", gap: 12, flexWrap: "wrap", padding: "12px 14px", marginBottom: 14,
+          background: "var(--ui-subtle)", border: "1px solid var(--ui-border-soft)", borderRadius: 10,
+          opacity: bannerOn ? 1 : 0.5, transition: "opacity 0.15s ease",
+        }}
+      >
+        <Field label="Título del banner" value={text.titulo} onChange={function set(v) { patchText("titulo", v); }} placeholder={bannerOn ? subject : "—"} disabled={!bannerOn} />
+        <Field label="Bajada" value={text.bajada} onChange={function set(v) { patchText("bajada", v); }} placeholder={bannerOn ? "Bajada breve del correo…" : "—"} disabled={!bannerOn} />
+        <Field label="Pill" value={text.pill} onChange={function set(v) { patchText("pill", v); }} placeholder={bannerOn ? categoria : "—"} disabled={!bannerOn} />
+      </div>
+
+    {/* Dos columnas: las tipologías viven en un panel STICKY a la izquierda, así
+        siguen a la vista mientras se recorre un correo largo. Al quedarse solo
+        con los tres grupos de tabs, el panel es corto y nunca necesita scroll. */}
+    <div style={{ display: "grid", gridTemplateColumns: "212px minmax(0, 1fr)", gap: 20, alignItems: "start" }}>
+      <aside
+        style={{
+          position: "sticky", top: 72, display: "flex", flexDirection: "column", gap: 14,
+          padding: 14, borderRadius: 12, background: "var(--ui-surface)", border: "1px solid var(--ui-border)",
+        }}
+      >
+        <TabGroup label="Banner">
+          {[
+            <Tab key={ORIGINAL} on={bannerId === ORIGINAL} onClick={function pick() { setBanner(ORIGINAL); }}>Basic</Tab>,
+            ...BANNER_OPTIONS.map(function renderTab(opt) {
+              return <Tab key={opt.id} on={bannerId === opt.id} onClick={function pick() { setBanner(opt.id); }}>{opt.label}</Tab>;
+            }),
+          ]}
+        </TabGroup>
 
         <TabGroup label="Footer">
           {[
-            <Tab key={ORIGINAL} on={footerId === ORIGINAL} onClick={function pick() { setFooter(ORIGINAL); }}>Original</Tab>,
+            <Tab key={ORIGINAL} on={footerId === ORIGINAL} onClick={function pick() { setFooter(ORIGINAL); }}>Basic</Tab>,
             ...FOOTER_OPTIONS.map(function renderTab(opt) {
               return <Tab key={opt.id} on={footerId === opt.id} onClick={function pick() { setFooter(opt.id); }}>{opt.label}</Tab>;
             }),
@@ -280,50 +336,15 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
           })}
         </TabGroup>
 
-        {/* Campos del banner editables (B4) — solo si hay un banner de tipología.
-            El estilo del pill (gradiente) es fijo por tono, pero su TEXTO se edita
-            junto al título y la bajada. */}
-        {bannerOn && (
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", padding: "12px 14px", background: "#f8fafc", border: "1px solid #f1f5f9", borderRadius: 10 }}>
-            <Field label="Título del banner" value={text.titulo} onChange={function set(v) { patchText("titulo", v); }} placeholder={subject} />
-            <Field label="Bajada" value={text.bajada} onChange={function set(v) { patchText("bajada", v); }} placeholder="Bajada breve del correo…" />
-            <Field label="Pill" value={text.pill} onChange={function set(v) { patchText("pill", v); }} placeholder={categoria} />
-          </div>
-        )}
+      </aside>
 
-        {/* Controles del preview: editar cuerpo (B6) + comparar original (A3). */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-          <label style={{ display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer", fontSize: 12, fontWeight: 600, color: "#475569" }}>
-            <input type="checkbox" checked={editBody} onChange={function toggle(e) { setEditBody(e.target.checked); }} style={{ accentColor: "#4f2ed8", width: 15, height: 15 }} />
-            Editar cuerpo del correo
-            {editBody && <span style={{ fontSize: 11, color: "#94a3b8", fontWeight: 500 }}>· clic en cualquier texto para editarlo</span>}
-          </label>
-          <div style={{ flex: 1 }} />
-          <button
-            type="button"
-            aria-pressed={comparing}
-            onClick={function toggle() { setComparing(function prev(p) { return !p; }); }}
-            style={{
-              height: 32, padding: "0 14px", borderRadius: 8, cursor: "pointer", fontFamily: "inherit", fontSize: 12, fontWeight: 700,
-              border: "1px solid #e2e8f0",
-              background: comparing ? "#4f2ed8" : "#ffffff",
-              color: comparing ? "#ffffff" : "#475569",
-              transition: "background 0.12s ease, color 0.12s ease",
-              userSelect: "none",
-            }}
-          >
-            {comparing ? "✕ Cerrar comparación" : "⇄ Comparar Figma"}
-          </button>
-        </div>
-      </div>
-
-      <div style={{ position: "relative", display: "flex", justifyContent: "center", padding: comparing ? 20 : 32, borderRadius: 12, background: "#f8fafc", border: "1px solid #f1f5f9", overflowX: "auto" }}>
+      <div style={{ position: "relative", display: "flex", justifyContent: "center", padding: comparing ? 20 : 32, borderRadius: 12, background: "var(--ui-subtle)", border: "1px solid var(--ui-border-soft)", overflowX: "auto" }}>
         {comparing ? (
           /* Vista dividida: correo maquetado ↔ referencia de Figma, ambos
              reducidos para caber juntos sin scroll horizontal. */
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, width: "100%", alignItems: "start" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0 }}>
-              <ColumnLabel color="#4f2ed8">Maquetado</ColumnLabel>
+              <ColumnLabel color="var(--ui-accent)">Maquetado</ColumnLabel>
               <div style={{ display: "flex", justifyContent: "center" }}>
                 <EmailFrame
                   key={frameKey}
@@ -351,6 +372,7 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
           />
         )}
       </div>
+    </div>
     </div>
   );
 }

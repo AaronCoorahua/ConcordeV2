@@ -29,10 +29,10 @@ export default function InstallCommand({ name, command }: InstallCommandProps): 
   }
 
   return (
-    <div style={{ border: "1px solid #e4e4e7", borderRadius: 10, overflow: "hidden", background: "#fafafa" }}>
+    <div style={{ border: "1px solid var(--ui-border)", borderRadius: 10, overflow: "hidden", background: "var(--ui-subtle)" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, padding: "12px 16px" }}>
         <code style={{ fontSize: 13, color: "#27272a", fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", overflowX: "auto", whiteSpace: "nowrap" }}>
-          <span style={{ color: "#a1a1aa" }}>$ </span>{cmd}
+          <span style={{ color: "var(--ui-muted)" }}>$ </span>{cmd}
         </code>
         <button
           type="button"
@@ -45,9 +45,9 @@ export default function InstallCommand({ name, command }: InstallCommandProps): 
             fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
             padding: "4px 9px",
             borderRadius: 6,
-            border: "1px solid #e4e4e7",
+            border: "1px solid var(--ui-border)",
             background: "#ffffff",
-            color: copied ? "#16a34a" : "#71717a",
+            color: copied ? "#16a34a" : "var(--ui-body)",
             cursor: "pointer",
           }}
         >

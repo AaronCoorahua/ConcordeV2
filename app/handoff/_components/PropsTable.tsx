@@ -15,10 +15,10 @@ const cellBorder = "1px solid #ececee";
 
 export default function PropsTable({ rows }: { rows: PropRow[] }): JSX.Element {
   return (
-    <div style={{ border: "1px solid #e4e4e7", borderRadius: 10, overflow: "hidden" }}>
+    <div style={{ border: "1px solid var(--ui-border)", borderRadius: 10, overflow: "hidden" }}>
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
         <thead>
-          <tr style={{ background: "#fafafa" }}>
+          <tr style={{ background: "var(--ui-subtle)" }}>
             <th style={{ textAlign: "left", padding: "10px 16px", borderBottom: cellBorder, fontSize: 12, fontWeight: 700, color: "#52525b" }}>Prop</th>
             <th style={{ textAlign: "left", padding: "10px 16px", borderBottom: cellBorder, fontSize: 12, fontWeight: 700, color: "#52525b" }}>Tipo</th>
             <th style={{ textAlign: "left", padding: "10px 16px", borderBottom: cellBorder, fontSize: 12, fontWeight: 700, color: "#52525b" }}>Default</th>
@@ -33,14 +33,14 @@ export default function PropsTable({ rows }: { rows: PropRow[] }): JSX.Element {
                 <td style={{ padding: "10px 16px", borderBottom: bb, verticalAlign: "top" }}>
                   <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 12.5, color: "#7c3aed", fontWeight: 600 }}>{r.name}</code>
                   {r.description ? (
-                    <div style={{ fontSize: 12, color: "#71717a", marginTop: 3, lineHeight: 1.5 }}>{r.description}</div>
+                    <div style={{ fontSize: 12, color: "var(--ui-body)", marginTop: 3, lineHeight: 1.5 }}>{r.description}</div>
                   ) : null}
                 </td>
                 <td style={{ padding: "10px 16px", borderBottom: bb, verticalAlign: "top" }}>
                   <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 12.5, color: "#0891b2" }}>{r.type}</code>
                 </td>
                 <td style={{ padding: "10px 16px", borderBottom: bb, verticalAlign: "top" }}>
-                  <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 12.5, color: "#a1a1aa" }}>{r.default ?? "—"}</code>
+                  <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: 12.5, color: "var(--ui-muted)" }}>{r.default ?? "—"}</code>
                 </td>
               </tr>
             );

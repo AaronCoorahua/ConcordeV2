@@ -70,7 +70,7 @@ const TEMPLATES: BannerTemplate[] = [
 
 export default function BannerCategoriaPage(): JSX.Element {
   return (
-    <div style={{ minHeight: "100vh", background: "#ffffff", color: "#0f172a", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
+    <div style={{ minHeight: "100vh", background: "#ffffff", color: "var(--ui-ink)", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
       <Header active="banners" />
       <BannerGallery
         title="Banner Categoría"

@@ -1,8 +1,46 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Tokens del CHROME de Concorde — el catálogo que envuelve al design system.
+
+   ALCANCE: solo `app/`. Los componentes y bloques de `src/` son la FUENTE DE
+   VERDAD y llevan sus propios colores inline; son autocontenidos (sin imports de
+   este archivo, con className prefijados) y NINGUNO de estos valores aparece en
+   ellos, así que estos tokens no pueden alcanzarlos. Verificable:
+   `git diff --stat src/` debe quedar vacío tras tokenizar.
+
+   El prefijo `--ui-` evita colisión con las vars locales de los componentes
+   (p. ej. `--pbid-*` de BidProposal).
+
+   Escala: Slate (matiz azulado) — la de los catálogos y el Header. Sustituye a
+   la escala Zinc que usaban las páginas de handoff.
+   ───────────────────────────────────────────────────────────────────────────── */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Texto */
+  --ui-ink: #0f172a;        /* títulos y texto principal */
+  --ui-body: #64748b;       /* párrafos y texto secundario */
+  --ui-muted: #94a3b8;      /* metadatos, contadores, placeholders */
+
+  /* Superficies y líneas */
+  --ui-surface: #ffffff;    /* fondo de cards y de página */
+  --ui-subtle: #f8fafc;     /* fondo sutil: previews, zonas hundidas */
+  --ui-border: #e2e8f0;     /* borde estándar de card/input/botón */
+  --ui-border-soft: #f1f5f9;/* separadores suaves y bordes internos */
+  --ui-border-hover: #cbd5e1;/* borde al pasar el cursor */
+
+  /* Acentos */
+  --ui-accent: #4f2ed8;     /* morado Concorde: enlaces, estado activo, hover */
+  --ui-accent-soft: #f1edff;/* fondo del estado activo (nav, chips) */
+  --ui-accent-vmc: #2e0f70; /* morado de marca VMC — mismo valor que usa `src/`,
+                               duplicado aquí a propósito: NO se toca `src/`. */
+  --ui-success: #16a34a;    /* confirmación («✓ Copiado») */
+
+  /* Radios */
+  --ui-radius-card: 12px;
+  --ui-radius-control: 8px;
 }
 
 @theme inline {

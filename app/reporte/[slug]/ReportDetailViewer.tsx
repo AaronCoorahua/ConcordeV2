@@ -20,8 +20,8 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
     <div
       style={{
         minHeight: "100vh",
-        background: "#f8fafc",
-        color: "#0f172a",
+        background: "var(--ui-subtle)",
+        color: "var(--ui-ink)",
         fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)",
         display: "flex",
         flexDirection: "column",
@@ -39,7 +39,7 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
             gap: 6,
             fontSize: 13,
             fontWeight: 600,
-            color: "#64748b",
+            color: "var(--ui-body)",
             textDecoration: "none",
             marginBottom: 24,
           }}
@@ -58,8 +58,8 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
               width: 38,
               height: 38,
               borderRadius: 10,
-              background: "#f1edff",
-              color: "#4f2ed8",
+              background: "var(--ui-accent-soft)",
+              color: "var(--ui-accent)",
               fontSize: 14,
               fontWeight: 800,
               fontFamily: "monospace",
@@ -72,7 +72,7 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
           </span>
           <div>
             <h1 style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em", margin: 0 }}>{entry.title}</h1>
-            <span style={{ fontSize: 13, color: "#94a3b8" }}>{entry.date}</span>
+            <span style={{ fontSize: 13, color: "var(--ui-muted)" }}>{entry.date}</span>
           </div>
         </div>
 
@@ -95,17 +95,17 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
                 <ImagePanel label="Producción" tone="#f97316" src={entry.originalImage} alt={`Producción — ${entry.title}`} />
               )}
               {soloProduccion ? null : entry.concordeComponent === "like-demo" ? (
-                <LikeDemoPanel label="Concorde" tone="#4f2ed8" />
+                <LikeDemoPanel label="Concorde" tone="var(--ui-accent)" />
               ) : entry.concordeComponent === "cardviewer-demo" ? (
-                <CardViewerDemoPanel label="Concorde" tone="#4f2ed8" />
+                <CardViewerDemoPanel label="Concorde" tone="var(--ui-accent)" />
               ) : entry.concordeComponent === "selector-fecha-demo" ? (
-                <SelectorFechaDemoPanel label="Concorde" tone="#4f2ed8" />
+                <SelectorFechaDemoPanel label="Concorde" tone="var(--ui-accent)" />
               ) : entry.concordeComponent === "actividad-empty-demo" ? (
-                <ActividadEmptyDemoPanel label="Concorde" tone="#4f2ed8" />
+                <ActividadEmptyDemoPanel label="Concorde" tone="var(--ui-accent)" />
               ) : entry.concordeEmbed ? (
-                <EmbedPanel label="Concorde" tone="#4f2ed8" src={entry.concordeEmbed} title={`Concorde — ${entry.title}`} />
+                <EmbedPanel label="Concorde" tone="var(--ui-accent)" src={entry.concordeEmbed} title={`Concorde — ${entry.title}`} />
               ) : (
-                <ImagePanel label="Concorde" tone="#4f2ed8" src={entry.concordeImage} alt={`Concorde — ${entry.title}`} />
+                <ImagePanel label="Concorde" tone="var(--ui-accent)" src={entry.concordeImage} alt={`Concorde — ${entry.title}`} />
               )}
             </div>
           );
@@ -135,7 +135,7 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
             {entry.codeConcorde && (
               <CodeBlock
                 label="Código Concorde"
-                tone="#4f2ed8"
+                tone="var(--ui-accent)"
                 code={entry.codeConcorde}
                 link={entry.codeLink}
                 handoffLink={entry.handoffLink}
@@ -156,7 +156,7 @@ function ImagePanel({ label, tone, src, alt }: { label: string; tone: string; sr
         <span style={{ width: 8, height: 8, borderRadius: "50%", background: tone }} />
         <span style={{ fontSize: 13, fontWeight: 700, color: "#334155", letterSpacing: "0.02em" }}>{label}</span>
         {sources.length > 1 && (
-          <span style={{ fontSize: 11, color: "#94a3b8", fontWeight: 600 }}>· {sources.length} capturas</span>
+          <span style={{ fontSize: 11, color: "var(--ui-muted)", fontWeight: 600 }}>· {sources.length} capturas</span>
         )}
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -166,8 +166,8 @@ function ImagePanel({ label, tone, src, alt }: { label: string; tone: string; sr
             style={{
               borderRadius: 12,
               overflow: "hidden",
-              border: "1px solid #e2e8f0",
-              background: "#f8fafc",
+              border: "1px solid var(--ui-border)",
+              background: "var(--ui-subtle)",
               aspectRatio: "16 / 10",
               display: "flex",
               alignItems: "center",
@@ -199,8 +199,8 @@ function EmbedPanel({ label, tone, src, title }: { label: string; tone: string; 
             fontWeight: 700,
             letterSpacing: "0.04em",
             textTransform: "uppercase",
-            color: "#4f2ed8",
-            background: "#f1edff",
+            color: "var(--ui-accent)",
+            background: "var(--ui-accent-soft)",
             padding: "2px 8px",
             borderRadius: 20,
           }}
@@ -232,8 +232,8 @@ function EmbedPanel({ label, tone, src, title }: { label: string; tone: string; 
         style={{
           borderRadius: 12,
           overflow: "hidden",
-          border: "1px solid #e2e8f0",
-          background: "#f8fafc",
+          border: "1px solid var(--ui-border)",
+          background: "var(--ui-subtle)",
           aspectRatio: "16 / 10",
         }}
       >
@@ -260,8 +260,8 @@ function PanelLabel({ label, tone, tag }: { label: string; tone: string; tag?: s
             fontWeight: 700,
             letterSpacing: "0.04em",
             textTransform: "uppercase",
-            color: "#4f2ed8",
-            background: "#f1edff",
+            color: "var(--ui-accent)",
+            background: "var(--ui-accent-soft)",
             padding: "2px 8px",
             borderRadius: 20,
           }}
@@ -281,8 +281,8 @@ function VideoPanel({ label, tone, src, title }: { label: string; tone: string; 
         style={{
           borderRadius: 12,
           overflow: "hidden",
-          border: "1px solid #e2e8f0",
-          background: "#0f172a",
+          border: "1px solid var(--ui-border)",
+          background: "var(--ui-ink)",
           aspectRatio: "16 / 10",
           maxHeight: 520,
           margin: "0 auto",
@@ -295,7 +295,7 @@ function VideoPanel({ label, tone, src, title }: { label: string; tone: string; 
           loop
           muted
           playsInline
-          style={{ width: "100%", height: "100%", objectFit: "contain", display: "block", background: "#0f172a" }}
+          style={{ width: "100%", height: "100%", objectFit: "contain", display: "block", background: "var(--ui-ink)" }}
         />
       </div>
     </div>
@@ -310,8 +310,8 @@ function LikeDemoPanel({ label, tone }: { label: string; tone: string }): JSX.El
       <div
         style={{
           borderRadius: 12,
-          border: "1px solid #e2e8f0",
-          background: "#f8fafc",
+          border: "1px solid var(--ui-border)",
+          background: "var(--ui-subtle)",
           aspectRatio: "16 / 10",
           overflow: "auto",
           display: "flex",
@@ -356,8 +356,8 @@ function CardViewerDemoPanel({ label, tone }: { label: string; tone: string }): 
       <div
         style={{
           borderRadius: 12,
-          border: "1px solid #e2e8f0",
-          background: "#f8fafc",
+          border: "1px solid var(--ui-border)",
+          background: "var(--ui-subtle)",
           aspectRatio: "16 / 10",
           display: "flex",
           alignItems: "center",
@@ -403,7 +403,7 @@ function ActividadEmptyIcon(): JSX.Element {
   return (
     <svg width="60" height="60" viewBox="0 0 64 64" fill="none" aria-hidden="true">
       {/* mancha de fondo suave */}
-      <ellipse cx="32" cy="34" rx="26" ry="16" fill="#F1EDFF" />
+      <ellipse cx="32" cy="34" rx="26" ry="16" fill="var(--ui-accent-soft)" />
       {/* trazos del martillo de subasta (icons8), en morado de marca */}
       <g fill="#5F3ED8">
         <path d="M0 0 C7.92 0 15.84 0 24 0 C24 2.31 24 4.62 24 7 C23.01 7 22.02 7 21 7 C21 8.32 21 9.64 21 11 C22.65 11 24.3 11 26 11 C26 11.66 26 12.32 26 13 C26.90355225 12.99476318 27.80710449 12.98952637 28.73803711 12.98413086 C32.07951489 12.96712314 35.42094692 12.95456667 38.76245117 12.94506836 C40.21070073 12.94002899 41.65894517 12.93319747 43.10717773 12.92456055 C45.18474588 12.91247753 47.26224697 12.90676789 49.33984375 12.90234375 C50.59144287 12.89710693 51.84304199 12.89187012 53.13256836 12.88647461 C56 13 56 13 57 14 C57.125 17 57.125 17 57 20 C56 21 56 21 53.13256836 21.11352539 C51.88096924 21.10828857 50.62937012 21.10305176 49.33984375 21.09765625 C48.34314415 21.09553383 48.34314415 21.09553383 47.3263092 21.09336853 C45.19666101 21.08775518 43.06711661 21.07520054 40.9375 21.0625 C39.49674631 21.05748671 38.05599097 21.05292351 36.61523438 21.04882812 C33.07678898 21.03778145 29.53840461 21.02050792 26 21 C26 21.66 26 22.32 26 23 C24.35 23 22.7 23 21 23 C21 24.32 21 25.64 21 27 C21.99 27 22.98 27 24 27 C24 29.31 24 31.62 24 34 C16.08 34 8.16 34 0 34 C0 31.69 0 29.38 0 27 C0.99 27 1.98 27 3 27 C3 20.4 3 13.8 3 7 C2.01 7 1.02 7 0 7 C0 4.69 0 2.38 0 0 Z" transform="translate(7,5)" />
@@ -432,8 +432,8 @@ function ActividadEmptyDemoPanel({ label, tone }: { label: string; tone: string 
       <div
         style={{
           borderRadius: 12,
-          border: "1px solid #e2e8f0",
-          background: "#f8fafc",
+          border: "1px solid var(--ui-border)",
+          background: "var(--ui-subtle)",
           minHeight: 300,
           display: "flex",
           alignItems: "center",
@@ -499,8 +499,8 @@ function SelectorFechaDemoPanel({ label, tone }: { label: string; tone: string }
       <div
         style={{
           borderRadius: 12,
-          border: "1px solid #e2e8f0",
-          background: "#f8fafc",
+          border: "1px solid var(--ui-border)",
+          background: "var(--ui-subtle)",
           minHeight: 420,
           display: "flex",
           alignItems: "flex-start",
@@ -572,7 +572,7 @@ function SelectorFechaDemoPanel({ label, tone }: { label: string; tone: string }
                         display: "flex", alignItems: "center", justifyContent: "space-between",
                         padding: "10px 12px", borderRadius: 10, cursor: "pointer",
                         fontSize: 14, color: "#191c1c",
-                        background: selected ? "#f1edff" : "transparent",
+                        background: selected ? "var(--ui-accent-soft)" : "transparent",
                       }}
                     >
                       <span>{f.label}</span>
@@ -673,14 +673,14 @@ function CodeBlock({ label, tone, code, link, handoffLink }: { label: string; to
           justifyContent: "space-between",
           gap: 8,
           padding: "8px 14px",
-          background: "#0f172a",
+          background: "var(--ui-ink)",
           borderBottom: "1px solid #1e293b",
           flexShrink: 0,
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ width: 8, height: 8, borderRadius: "50%", background: tone }} />
-          <span style={{ fontSize: 12, fontWeight: 700, color: "#e2e8f0", letterSpacing: "0.02em" }}>{label}</span>
+          <span style={{ fontSize: 12, fontWeight: 700, color: "var(--ui-border)", letterSpacing: "0.02em" }}>{label}</span>
         </div>
         {(link || handoffLink) && (
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -729,8 +729,8 @@ function CodeBlock({ label, tone, code, link, handoffLink }: { label: string; to
         style={{
           margin: 0,
           padding: 16,
-          background: "#0f172a",
-          color: "#e2e8f0",
+          background: "var(--ui-ink)",
+          color: "var(--ui-border)",
           fontSize: 12.5,
           lineHeight: 1.6,
           fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",

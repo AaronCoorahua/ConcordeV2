@@ -42,9 +42,9 @@ function CopySvgButton({ target }: { target: React.RefObject<HTMLDivElement | nu
       style={{
         marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 6,
         fontSize: 12, fontWeight: 700, fontFamily: "inherit", cursor: "pointer",
-        padding: "5px 12px", borderRadius: 8, border: "1px solid #e2e8f0",
+        padding: "5px 12px", borderRadius: 8, border: "1px solid var(--ui-border)",
         background: state === "done" ? "#ecfdf5" : "#ffffff",
-        color: state === "done" ? "#059669" : state === "error" ? "#dc2626" : "#4f2ed8",
+        color: state === "done" ? "#059669" : state === "error" ? "#dc2626" : "var(--ui-accent)",
       }}
     >
       <span aria-hidden="true">{state === "done" ? "✓" : "⧉"}</span> {label}
@@ -64,13 +64,13 @@ function TemplateSection({ t, index }: { t: BannerTemplate; index: number }): JS
   return (
     <section>
       <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 4 }}>
-        <span style={{ fontSize: 12, fontWeight: 700, fontFamily: "monospace", color: "#94a3b8" }}>
+        <span style={{ fontSize: 12, fontWeight: 700, fontFamily: "monospace", color: "var(--ui-muted)" }}>
           {String(index + 1).padStart(2, "0")}
         </span>
-        <h2 style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", color: "#0f172a", margin: 0 }}>{t.name}</h2>
+        <h2 style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", color: "var(--ui-ink)", margin: 0 }}>{t.name}</h2>
         <CopySvgButton target={ref} />
       </div>
-      <p style={{ fontSize: 13, color: "#64748b", margin: "0 0 16px 26px", lineHeight: 1.5 }}>{t.description}</p>
+      <p style={{ fontSize: 13, color: "var(--ui-body)", margin: "0 0 16px 26px", lineHeight: 1.5 }}>{t.description}</p>
       <div
         ref={ref}
         style={{
@@ -78,8 +78,8 @@ function TemplateSection({ t, index }: { t: BannerTemplate; index: number }): JS
           justifyContent: "center",
           padding: 32,
           borderRadius: 12,
-          background: "#f8fafc",
-          border: "1px solid #f1f5f9",
+          background: "var(--ui-subtle)",
+          border: "1px solid var(--ui-border-soft)",
           overflowX: "auto",
         }}
       >
@@ -112,22 +112,22 @@ export default function BannerGallery({
       {/* Breadcrumb */}
       <a
         href="/banners"
-        style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "#64748b", textDecoration: "none", marginBottom: 16 }}
+        style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "var(--ui-body)", textDecoration: "none", marginBottom: 16 }}
       >
         <span aria-hidden="true">←</span> Banners
       </a>
 
       {/* Encabezado */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0f172a", margin: 0 }}>{title}</h1>
-        <span style={{ fontSize: 11, fontWeight: 700, fontFamily: "monospace", padding: "3px 10px", borderRadius: 20, background: "#f1edff", color: "#4f2ed8", letterSpacing: "0.04em" }}>
+        <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--ui-ink)", margin: 0 }}>{title}</h1>
+        <span style={{ fontSize: 11, fontWeight: 700, fontFamily: "monospace", padding: "3px 10px", borderRadius: 20, background: "var(--ui-accent-soft)", color: "var(--ui-accent)", letterSpacing: "0.04em" }}>
           {format}
         </span>
-        <span style={{ fontSize: 11, fontWeight: 600, fontFamily: "monospace", padding: "3px 10px", borderRadius: 20, background: "#f1f5f9", color: "#64748b" }}>
+        <span style={{ fontSize: 11, fontWeight: 600, fontFamily: "monospace", padding: "3px 10px", borderRadius: 20, background: "var(--ui-border-soft)", color: "var(--ui-body)" }}>
           {slot}
         </span>
       </div>
-      <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: "0 0 40px", maxWidth: 640 }}>{description}</p>
+      <p style={{ fontSize: 14, color: "var(--ui-body)", lineHeight: 1.6, margin: "0 0 40px", maxWidth: 640 }}>{description}</p>
 
       {/* Plantillas */}
       <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>

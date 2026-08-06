@@ -31,10 +31,10 @@ export default function FondoTabs({ fondos, previewHeight, title }: FondoTabsPro
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+        <span style={{ fontSize: 11, fontWeight: 700, color: "var(--ui-muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}>
           Tono
         </span>
-        <div role="tablist" aria-label="Tono del banner" style={{ display: "inline-flex", gap: 4, padding: 4, borderRadius: 10, background: "#f1f5f9" }}>
+        <div role="tablist" aria-label="Tono del banner" style={{ display: "inline-flex", gap: 4, padding: 4, borderRadius: 10, background: "var(--ui-border-soft)" }}>
           {fondos.map(function renderTab(f, i) {
             const on = i === active;
             return (
@@ -51,7 +51,7 @@ export default function FondoTabs({ fondos, previewHeight, title }: FondoTabsPro
                   border: "none",
                   cursor: "pointer",
                   background: on ? "#ffffff" : "transparent",
-                  color: on ? "#0f172a" : "#64748b",
+                  color: on ? "var(--ui-ink)" : "var(--ui-body)",
                   fontSize: 12,
                   fontWeight: on ? 700 : 600,
                   fontFamily: "inherit",
@@ -68,12 +68,12 @@ export default function FondoTabs({ fondos, previewHeight, title }: FondoTabsPro
         <CopyHtmlButton key={fondo.tone} html={fondo.copyHtml} />
       </div>
 
-      <div style={{ display: "flex", justifyContent: "center", padding: 32, borderRadius: 12, background: "#f8fafc", border: "1px solid #f1f5f9", overflowX: "auto" }}>
+      <div style={{ display: "flex", justifyContent: "center", padding: 32, borderRadius: 12, background: "var(--ui-subtle)", border: "1px solid var(--ui-border-soft)", overflowX: "auto" }}>
         <iframe
           title={`${title} · ${fondo.label}`}
           srcDoc={fondo.previewDoc}
           scrolling="no"
-          style={{ width: 600, height: previewHeight, border: "none", background: "#FAFAFA", borderRadius: 8, boxShadow: "0 6px 18px rgba(15,23,42,0.10)", flexShrink: 0 }}
+          style={{ width: 600, height: previewHeight, border: "none", background: "var(--ui-subtle)", borderRadius: 8, boxShadow: "0 6px 18px rgba(15,23,42,0.10)", flexShrink: 0 }}
         />
       </div>
     </div>

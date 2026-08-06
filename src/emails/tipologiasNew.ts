@@ -305,8 +305,13 @@ export function buildTipoNewBanner(t: TipoNew): string {
   // Fondo: si hay bgSvgGradient, se pinta con una capa SVG IDÉNTICA al Figma
   // (rect con paint0 en userSpaceOnUse). Si no, se usa el CSS `bg`.
   const uid = `tipoBg_${t.id.replace(/[^a-z0-9]/gi, "")}`;
+  // `height:100%` además del atributo: el layout apilado CRECE cuando el título
+  // real envuelve en varias líneas (ver stackedContent), y con el alto fijo el
+  // gradiente se quedaba corto dejando una franja blanca al pie. Con inset:0 +
+  // height:100% la capa acompaña al contenedor; `preserveAspectRatio="none"`
+  // hace que el rect estire en vez de recortarse.
   const bgSvgLayer = s.bgSvgGradient
-    ? `<svg width="${TIPO_WIDTH}" height="${H}" viewBox="0 0 ${TIPO_WIDTH} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="position:absolute;inset:0;display:block;"><defs>${s.bgSvgGradient.replace(/id="[^"]*"/, `id="${uid}"`)}</defs><rect width="${TIPO_WIDTH}" height="${H}" fill="url(#${uid})"/></svg>`
+    ? `<svg width="${TIPO_WIDTH}" height="${H}" viewBox="0 0 ${TIPO_WIDTH} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;display:block;"><defs>${s.bgSvgGradient.replace(/id="[^"]*"/, `id="${uid}"`)}</defs><rect width="${TIPO_WIDTH}" height="${H}" fill="url(#${uid})"/></svg>`
     : "";
   const tdBg = s.bgSvgGradient ? "" : `background-image:${s.bg};`;
   // Espejo: en text-right el copy va a la derecha y la marca a la izquierda.
