@@ -147,16 +147,39 @@ function esc(s: string) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').re
     Es un merge tag, así que la plataforma de envío puede sustituirlo. */
 const LINK_PLACEHOLDER = '{{url}}';
 
-/** Escapa y aplica resaltado: **acento naranja 800** · __negrita oscura 700__ · [[número Poppins 800]]
-    · ((enlace subrayado)). Los merge tags {{variable}} quedan intactos.
+/** Escapa y aplica resaltado: **acento naranja 800** · __negrita oscura 700__ · %%negrita del color base%%
+    · [[número Poppins 800]] · ((enlace subrayado)). Los merge tags {{variable}} quedan intactos.
+
+    Las tres negritas son las tres que usa Figma, y se distinguen SOLO por color:
+    naranja de acento, navy oscuro y %% —que no fija color, así que hereda el del
+    cuerpo: negro en los correos con `ink: 'black'` y navy en el resto—. Sin %%
+    no había forma de escribir esa tercera y caía en __ (navy), que es lo que
+    descuadraba la comparación con Figma.
 
     Los ((enlaces)) salen como <a> real y subrayado. Dos formas:
       ((texto))      → href = {{url}} (placeholder: la maquetación aún no define
                        el destino, pero el HTML copiado ya es clicable).
       ((texto|href)) → href explícito, para los enlaces cuyo destino ya se conoce. */
 function hl(s: string): string {
-  return esc(s)
+  // Los merge tags se apartan ANTES de resaltar y se reponen al final: su
+  // contenido es dato, no marcado. Sin esto, una máscara de tarjeta como
+  // {{Tarjeta.Ejem: 4444 **** **** 1235}} veía sus asteriscos como negrita y
+  // salía con un <strong> naranja incrustado en medio del número.
+  // El centinela usa  , que no puede aparecer en el texto ni casar con
+  // ningún marcador, así que atraviesa los replace intacto.
+  const tags: string[] = [];
+  const guarded = esc(s).replace(/\{\{[\s\S]*?\}\}/g, function keep(m) {
+    return ` ${tags.push(m) - 1} `;
+  });
+
+  return guarded
     .replace(/\*\*(.+?)\*\*/g, `<strong style="font-weight:800;color:${C.accent};">$1</strong>`)
+    .replace(/%%(.+?)%%/g, `<strong style="font-weight:700;">$1</strong>`)
+    .replace(/~~(.+?)~~/g, `<span style="font-weight:400;color:${C.purple};">$1</span>`)
+    .replace(/\+\+(.+?)\+\+/g, `<span style="font-weight:400;color:#000000;">$1</span>`)
+    // !!…!! — subtítulo de sección: acento naranja un punto más grande que el
+    // cuerpo, para los «¿Qué es…?» que abren un bloque explicativo.
+    .replace(/!!(.+?)!!/g, `<span style="font-size:16px;font-weight:800;color:${C.accent};">$1</span>`)
     .replace(/__(.+?)__/g, `<strong style="font-weight:700;color:${C.dark};">$1</strong>`)
     .replace(/\[\[(.+?)\]\]/g, `<strong style="font-weight:800;color:${C.purple};font-family:${FONT_NUMBER};">$1</strong>`)
     .replace(/\(\((.+?)\)\)/g, function link(_m, inner: string) {
@@ -164,8 +187,9 @@ function hl(s: string): string {
       const i = inner.lastIndexOf('|');
       const label = i === -1 ? inner : inner.slice(0, i);
       const href = i === -1 ? LINK_PLACEHOLDER : inner.slice(i + 1);
-      return `<a href="${href}" target="_blank" style="font-weight:700;color:${C.dark};text-decoration:underline;word-break:break-word;overflow-wrap:break-word;">${label}</a>`;
-    });
+      return `<a href="${href}" target="_blank" style="font-weight:700;color:${C.accent};text-decoration:underline;word-break:break-word;overflow-wrap:break-word;">${label}</a>`;
+    })
+    .replace(/ (\d+) /g, function restore(_m, i: string) { return tags[Number(i)]; });
 }
 
 // panel lavanda Concorde (gradiente + borde + radio) — patrones: max-width 500
@@ -197,7 +221,11 @@ export function renderSection(s: Section): string {
     case 'text':
       // `word-break` evita que una cadena larguísima sin espacios (una URL de
       // reset, un token) estire la celda y desborde la tabla de 600px.
-      return `<tr><td align="${c.align || 'left'}" style="font-size:14px;font-family:${FONT_BODY};line-height:22px;color:${C.dark};padding:0 16px;word-break:break-word;overflow-wrap:break-word;">${hl(c.text)}</td></tr>`;
+      // `ink: 'black'` pinta el cuerpo en negro (los correos En vivo de Figma);
+      // sin el flag se mantiene el navy de siempre.
+      // `size: 'lg'` lo sube a 16px: lo usan los rótulos que encabezan un bloque
+      // («Resumen de transacción:»), que en Figma pesan más que el cuerpo.
+      return `<tr><td align="${c.align || 'left'}" style="font-size:${c.size === 'lg' ? '16px' : '14px'};font-family:${FONT_BODY};line-height:${c.size === 'lg' ? '24px' : '22px'};color:${c.ink === 'black' ? '#000000' : C.dark};padding:0 16px;word-break:break-word;overflow-wrap:break-word;">${hl(c.text)}</td></tr>`;
     case 'panel': {
       const titleP = c.title ? `<p style="margin:0${(c.body || c.iconUrl || c.imageUrl) ? ' 0 12px' : ''};font-size:14px;font-weight:700;line-height:1.35;color:${C.purple};font-family:${FONT_HEADING};">${hl(c.title)}</p>` : '';
       const bodyP = `<p style="margin:0;font-size:14px;line-height:1.45;color:${C.body};font-family:${FONT_HEADING};">${hl(c.body)}</p>`;
@@ -258,7 +286,10 @@ export function renderSection(s: Section): string {
 </table>${panelClose}</td></tr>`;
     case 'details': {
       const row = (l: string, v: string) => (l || v)
-        ? `<tr><td valign="top" width="38%" style="font-size:14px;font-weight:600;color:${C.accent};font-family:${FONT_HEADING};padding:7px 12px 7px 0;line-height:1.4;">${esc(l)}</td><td valign="top" style="font-size:14px;font-weight:700;color:${C.purple};font-family:${FONT_HEADING};padding:7px 0;line-height:1.4;">${hl(v)}</td></tr>`
+        // Figma: la ETIQUETA va en morado y en negrita; el VALOR en el mismo
+        // morado pero con peso normal (antes iba la etiqueta naranja y el valor
+        // en negrita, o sea justo al revés).
+        ? `<tr><td valign="top" width="38%" style="font-size:14px;font-weight:700;color:${C.purple};font-family:${FONT_HEADING};padding:7px 12px 7px 0;line-height:1.4;">${hl(l)}</td><td valign="top" style="font-size:14px;font-weight:500;color:${C.purple};font-family:${FONT_HEADING};padding:7px 0;line-height:1.4;">${hl(v)}</td></tr>`
         : '';
       return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};"><table border="0" cellpadding="0" cellspacing="0" width="100%" align="center" style="max-width:500px;">${row(c.l1, c.v1)}${row(c.l2, c.v2)}${row(c.l3, c.v3)}</table></td></tr>`;
     }
@@ -270,7 +301,7 @@ export function renderSection(s: Section): string {
 <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
 <td width="32" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="30" height="30" bgcolor="#fff0e2" style="border-radius:8px;"><tr><td align="center" valign="middle" width="30" height="30" style="font-size:17px;font-weight:800;color:${C.accent};font-family:${FONT_HEADING};line-height:1;">!</td></tr></table></td>
 <td width="10"></td>
-<td valign="middle"><p style="margin:0;font-size:13px;line-height:1.5;color:${C.body};font-family:${FONT_HEADING};">${c.title ? `<b style="color:${C.purple};">${esc(c.title)}</b> ` : ''}${hl(c.body)}</p></td>
+<td valign="middle"><p style="margin:0;font-size:13px;line-height:1.5;color:${C.body};font-family:${FONT_HEADING};">${c.title ? `<b style="color:${C.accent};">${hl(c.title)}</b> ` : ''}${hl(c.body)}</p></td>
 </tr></table></td></tr></table></td></tr>`;
     case 'amount':
       // borde gradiente de StatPill.tsx emulado con tabla wrapper (padding 1.5px ≈ 2px)
@@ -307,7 +338,7 @@ ${card(c.c1img, c.c1name, c.c1year)}<td width="2%"></td>${card(c.c2img, c.c2name
 <div style="position:relative;border-radius:12px;overflow:hidden;line-height:0;">
 ${c.img ? `<img src="${esc(c.img)}" width="100%" alt="" style="display:block;height:${MAIN_H}px;object-fit:cover;border-radius:12px;">` : `<div style="width:100%;height:${MAIN_H}px;background:${C.lavender};border-radius:12px;"></div>`}
 <span style="position:absolute;top:10px;left:10px;display:inline-block;white-space:nowrap;line-height:1;background:${TEAL};background-image:${G_TEAL_BAR};color:#fff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:9999px;font-family:${FONT_HEADING};">${esc(c.tag)}</span>
-${c.caption ? `<span style="position:absolute;bottom:10px;left:10px;display:inline-block;white-space:nowrap;line-height:1;background:rgba(34,0,92,0.72);color:#fff;font-size:11px;font-weight:600;padding:6px 12px;border-radius:9999px;font-family:${FONT_HEADING};">Ofrecido por ${esc(c.caption)}</span>` : ''}
+${c.caption ? `<span style="position:absolute;bottom:10px;left:10px;display:inline-block;white-space:nowrap;line-height:1;background:${c.tone === 'negotiable' ? TEAL : 'rgba(34,0,92,0.72)'};${c.tone === 'negotiable' ? `background-image:${G_TEAL_BAR};` : ''}color:#fff;font-size:11px;font-weight:600;padding:6px 12px;border-radius:9999px;font-family:${FONT_HEADING};">Ofrecido por ${esc(c.caption)}</span>` : ''}
 </div>
 </td>
 <td width="4%"></td>
@@ -351,22 +382,32 @@ ${thumbRow(c.thumb1)}${spacer}${thumbRow(c.thumb2)}${c.thumb3 ? spacer + thumbRo
       const QUOTE_SIDE_H = 92;
       const quoteSideCard = (w: string, label: string, value: string) => `<td width="${w}" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff" style="border-radius:16px;overflow:hidden;box-shadow:${WBC_SHADOW};"><tr>
 <td height="${QUOTE_SIDE_H}" align="center" valign="middle" style="padding:10px;">
-<span style="display:block;font-size:12px;font-weight:600;letter-spacing:0.02em;color:${C.body};font-family:${FONT_HEADING};">${esc(label)}</span>
-<span style="display:block;margin-top:6px;font-size:26px;font-weight:800;color:${WBC_VALUE};font-family:${FONT_NUMBER};">${esc(value)}</span>
+<span style="display:block;font-size:15px;font-weight:600;letter-spacing:0.02em;color:${C.body};font-family:${FONT_HEADING};">${esc(label)}</span>
+<span style="display:block;margin-top:6px;font-size:30px;font-weight:800;color:${WBC_VALUE};font-family:${FONT_NUMBER};">${esc(value)}</span>
 </td></tr></table></td>`;
       const hasPct = !!c.pctValue;
+      // Sin porcentaje, el card lateral («En garantía») no necesita la mitad del
+      // ancho: su valor es corto y quedaba perdido en una caja enorme. Se le da
+      // menos ancho y el de la propuesta se queda con el resto.
       const w = hasPct ? '32%' : '48%';
+      const wMain = hasPct ? w : '56%';
+      const wSide = hasPct ? w : '40%';
+      // El tono «negotiable» pinta la propuesta con el teal del flujo Negociable
+      // en vez del naranja de En vivo.
+      const neg = c.tone === 'negotiable';
+      const mainBg = neg ? TEAL : '#EF852E';
+      const mainGradient = neg ? G_TEAL_BAR : G_LIVE;
       const pctBox = hasPct ? `<td width="4%"></td><td width="${w}" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" height="100%" bgcolor="#32BA7C" style="border-radius:14px;box-shadow:${WBC_SHADOW};"><tr><td align="center" style="padding:14px 6px;">
 <span style="display:block;font-size:11px;color:#fff;font-family:${FONT_HEADING};">${esc(c.pctLabel)}</span><span style="display:block;font-size:19px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};">${esc(c.pctValue)}</span>
 </td></tr></table></td>` : '';
       return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:500px;"><tr>
-<td width="${w}" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-radius:14px;overflow:hidden;box-shadow:${WBC_SHADOW};"><tr>
-<td bgcolor="#EF852E" align="center" style="padding:12px 10px 10px;background-image:${G_LIVE};"><span style="display:block;font-size:11px;color:#fff;font-family:${FONT_HEADING};">${esc(c.proposalLabel)}</span><span style="display:block;font-size:19px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};">${esc(c.proposalValue)}</span></td>
-</tr><tr><td bgcolor="${C.navy}" align="center" style="padding:5px 10px;"><span style="font-size:10px;font-weight:700;color:#fff;font-family:${FONT_HEADING};">${esc(c.expiresLabel)} ${esc(c.expiresValue)}</span></td></tr>
+<td width="${wMain}" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-radius:14px;overflow:hidden;box-shadow:${WBC_SHADOW};"><tr>
+<td bgcolor="${mainBg}" align="center" style="padding:12px 10px 10px;background-image:${mainGradient};"><span style="display:block;font-size:15px;color:#fff;font-family:${FONT_HEADING};">${esc(c.proposalLabel)}</span><span style="display:block;font-size:30px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};">${esc(c.proposalValue)}</span></td>
+</tr><tr><td bgcolor="${C.purple}" align="center" style="padding:7px 10px;background-image:${G_ROW_VAULT};"><span style="font-size:13px;font-weight:700;color:#fff;font-family:${FONT_HEADING};">${esc(c.expiresLabel)} ${esc(c.expiresValue)}</span></td></tr>
 </table></td>
 <td width="4%"></td>
-${quoteSideCard(w, c.guaranteeLabel, c.guaranteeValue)}
+${quoteSideCard(wSide, c.guaranteeLabel, c.guaranteeValue)}
 ${pctBox}
 </tr></table></td></tr>`;
     }

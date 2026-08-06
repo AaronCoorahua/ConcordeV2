@@ -22,13 +22,13 @@
  *    preview es enlazable y sobrevive a recargas.
  */
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { JSX } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CopyHtmlButton from "@/app/correos/_components/CopyHtmlButton";
 import EmailFrame, { type EmailFrameHandle } from "@/app/correos/_components/EmailFrame";
-import { BANNER_OPTIONS, FOOTER_OPTIONS, buildBannerFor, buildFooterFor, swapEmailHeader, swapEmailFooter, type BannerText } from "@/src/emails/headerSwap";
-import { V2_TONE_OPTIONS, V2_DEFAULT_TONE, type V2Tone } from "@/src/emails/tipologiasV2";
+import { BANNER_OPTIONS, FOOTER_OPTIONS, buildBannerFor, buildFooterFor, swapEmailHeader, swapEmailFooter, stripBodyTitle, presetForCategory, hasFixedTone, toneLabelForCategory, type BannerText } from "@/src/emails/headerSwap";
+import { V2_TONE_OPTIONS, type V2Tone } from "@/src/emails/tipologiasV2";
 
 const ORIGINAL = "original";
 const TONE_IDS = new Set(V2_TONE_OPTIONS.map(function id(o) { return o.tone; }));
@@ -69,7 +69,13 @@ function TabGroup({ label, children, dimmed }: { label: string; children: JSX.El
   );
 }
 
-function Tab({ on, onClick, children, disabled }: { on: boolean; onClick: () => void; children: string; disabled?: boolean }): JSX.Element {
+/**
+ * `recommended` marca la opción del preset de la categoría (ver
+ * CATEGORY_PRESETS en headerSwap). Se señala con un punto y con el título
+ * accesible, no con un texto largo: los tabs comparten fila y una etiqueta
+ * «recomendado» completa los desbordaría.
+ */
+function Tab({ on, onClick, children, disabled, recommended }: { on: boolean; onClick: () => void; children: string; disabled?: boolean; recommended?: boolean }): JSX.Element {
   return (
     <button
       type="button"
@@ -77,10 +83,13 @@ function Tab({ on, onClick, children, disabled }: { on: boolean; onClick: () => 
       aria-selected={on}
       onClick={onClick}
       disabled={disabled}
+      title={recommended ? `${children} — recomendado para esta categoría` : undefined}
       style={{
+        position: "relative",
         height: 26, padding: "0 9px", borderRadius: 7, border: "none",
         cursor: disabled ? "default" : "pointer",
         whiteSpace: "nowrap",
+        display: "inline-flex", alignItems: "center", gap: 5,
         background: on ? "#ffffff" : "transparent",
         color: on ? "var(--ui-ink)" : "var(--ui-body)",
         fontSize: 12, fontWeight: on ? 700 : 600, fontFamily: "inherit",
@@ -89,6 +98,13 @@ function Tab({ on, onClick, children, disabled }: { on: boolean; onClick: () => 
       }}
     >
       {children}
+      {recommended && (
+        <span
+          aria-hidden="true"
+          style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--ui-accent)", flexShrink: 0 }}
+        />
+      )}
+      {recommended && <span style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)" }}>recomendado</span>}
     </button>
   );
 }
@@ -107,6 +123,63 @@ function Field({ label, value, onChange, placeholder, disabled }: { label: strin
         style={{ height: 32, padding: "0 10px", borderRadius: 8, border: "1px solid var(--ui-border)", fontFamily: "inherit", fontSize: 13, color: "var(--ui-ink)", outline: "none", background: disabled ? "var(--ui-border-soft)" : "#fff", cursor: disabled ? "not-allowed" : "text", minWidth: 0 }}
       />
     </label>
+  );
+}
+
+/**
+ * Aviso de tono de marca. Las categorías «En vivo» y «Negociable» tienen un
+ * color asignado; cambiarlo rompe el código visual del flujo. No se prohíbe —a
+ * veces se quiere comparar—, solo se advierte antes de la primera vez.
+ */
+function ToneAlert({ categoria, toneLabel, onCancel, onConfirm }: { categoria: string; toneLabel: string; onCancel: () => void; onConfirm: () => void }): JSX.Element {
+  // Escape cierra sin aplicar el tono, como en cualquier diálogo.
+  useEffect(function onEsc() {
+    function handler(e: KeyboardEvent): void { if (e.key === "Escape") onCancel(); }
+    document.addEventListener("keydown", handler);
+    return function off() { document.removeEventListener("keydown", handler); };
+  }, [onCancel]);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tone-alert-title"
+      onClick={onCancel}
+      style={{ position: "fixed", inset: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 24, background: "rgba(15,23,42,0.45)", backdropFilter: "blur(2px)" }}
+    >
+      <div
+        onClick={function stop(e) { e.stopPropagation(); }}
+        style={{ width: "100%", maxWidth: 400, background: "var(--ui-surface)", borderRadius: 14, border: "1px solid var(--ui-border)", boxShadow: "0 20px 50px -12px rgba(15,23,42,0.35)", padding: 22, display: "flex", flexDirection: "column", gap: 12 }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span aria-hidden="true" style={{ width: 30, height: 30, flexShrink: 0, borderRadius: 9, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#fff0e6", color: "#c85a1e", fontSize: 15 }}>!</span>
+          <h2 id="tone-alert-title" style={{ fontSize: 15, fontWeight: 800, letterSpacing: "-0.01em", color: "var(--ui-ink)", margin: 0 }}>
+            Este correo es de {categoria}
+          </h2>
+        </div>
+        <p style={{ fontSize: 13, color: "var(--ui-body)", lineHeight: 1.55, margin: 0 }}>
+          Su fondo <strong style={{ color: "var(--ui-ink)", fontWeight: 700 }}>{toneLabel}</strong> es el color de la categoría.
+          Si lo cambias, el correo dejará de seguir el código de color de su flujo.
+        </p>
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 4 }}>
+          <button
+            type="button"
+            onClick={onCancel}
+            style={{ height: 34, padding: "0 14px", borderRadius: "var(--ui-radius-control)", border: "1px solid var(--ui-border)", background: "var(--ui-surface)", color: "var(--ui-body)", fontFamily: "inherit", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            autoFocus
+            onClick={onConfirm}
+            style={{ height: 34, padding: "0 16px", borderRadius: "var(--ui-radius-control)", border: "none", background: "var(--ui-accent)", color: "#ffffff", fontFamily: "inherit", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}
+          >
+            Entiendo, cambiar
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -181,11 +254,19 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
   const pathname = usePathname();
   const params = useSearchParams();
 
-  // Estado en la URL (C9): banner / footer / tono se leen del query string.
-  const bannerId = params.get("banner") ?? ORIGINAL;
-  const footerId = params.get("footer") ?? ORIGINAL;
+  // La composición con la que abre el correo si la URL no dice otra cosa: las
+  // categorías del flujo de subasta arrancan ya maquetadas (ver headerSwap).
+  const preset = useMemo(function resolvePreset() { return presetForCategory(categoria); }, [categoria]);
+  // Solo las categorías con preset propio marcan opción «recomendada»; en el
+  // resto, «Basic» es el default por descarte y señalarlo sería ruido.
+  const hasPreset = useMemo(function withPreset() { return hasFixedTone(categoria); }, [categoria]);
+
+  // Estado en la URL (C9): banner / footer / tono se leen del query string y,
+  // si no están, caen al preset de la categoría.
+  const bannerId = params.get("banner") ?? preset.banner;
+  const footerId = params.get("footer") ?? preset.footer;
   const toneParam = params.get("tono");
-  const tone: V2Tone = toneParam && TONE_IDS.has(toneParam as V2Tone) ? (toneParam as V2Tone) : V2_DEFAULT_TONE;
+  const tone: V2Tone = toneParam && TONE_IDS.has(toneParam as V2Tone) ? (toneParam as V2Tone) : preset.tone;
 
   const setParam = useCallback(function setParam(key: string, value: string, isDefault: boolean): void {
     const next = new URLSearchParams(params.toString());
@@ -195,9 +276,30 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   }, [params, router, pathname]);
 
-  const setBanner = useCallback(function setBanner(id: string) { setParam("banner", id, id === ORIGINAL); }, [setParam]);
-  const setFooter = useCallback(function setFooter(id: string) { setParam("footer", id, id === ORIGINAL); }, [setParam]);
-  const setTone = useCallback(function setTone(t: V2Tone) { setParam("tono", t, t === V2_DEFAULT_TONE); }, [setParam]);
+  // El valor que se omite de la URL es el del PRESET, no «original»: así la URL
+  // limpia significa «como abre este correo» y volver al preset la deja limpia.
+  const setBanner = useCallback(function setBanner(id: string) { setParam("banner", id, id === preset.banner); }, [setParam, preset.banner]);
+  const setFooter = useCallback(function setFooter(id: string) { setParam("footer", id, id === preset.footer); }, [setParam, preset.footer]);
+  const applyTone = useCallback(function applyTone(t: V2Tone) { setParam("tono", t, t === preset.tone); }, [setParam, preset.tone]);
+
+  // Aviso de tono de marca: «En vivo» y «Negociable» tienen color propio, así que
+  // la primera vez que se intenta cambiar el fondo se pide confirmación. Al
+  // aceptar queda desbloqueado para el resto de la visita a ESTE correo (el
+  // estado se reinicia al navegar a otro, que es cuando conviene recordarlo).
+  const toneLocked = useMemo(function locked() { return hasFixedTone(categoria); }, [categoria]);
+  const [toneUnlocked, setToneUnlocked] = useState(false);
+  const [pendingTone, setPendingTone] = useState<V2Tone | null>(null);
+
+  const setTone = useCallback(function setTone(t: V2Tone) {
+    if (toneLocked && !toneUnlocked && t !== preset.tone) { setPendingTone(t); return; }
+    applyTone(t);
+  }, [toneLocked, toneUnlocked, preset.tone, applyTone]);
+
+  const confirmTone = useCallback(function confirmTone() {
+    setToneUnlocked(true);
+    if (pendingTone) applyTone(pendingTone);
+    setPendingTone(null);
+  }, [pendingTone, applyTone]);
 
   // Textos editables del banner (B4). Vacío = usa su default (asunto/categoría).
   const [text, setText] = useState<BannerText>({ titulo: "", bajada: "", pill: "" });
@@ -215,6 +317,9 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
   const bannerOn = bannerId !== ORIGINAL;
   const footerOn = footerId !== ORIGINAL;
   const allOriginal = !bannerOn && !footerOn;
+  // Las tipologías vigentes solo tienen TÍTULO; la bajada y el pill son piezas
+  // de la composición original, así que sus campos solo aparecen con `-legacy`.
+  const usaBajadaYPill = bannerOn && bannerId.endsWith("-legacy");
 
   // HTML con las tipologías aplicadas (los defaults de texto se resuelven aquí).
   const swappedHtml = useMemo(function compute() {
@@ -226,7 +331,9 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
         pill: text.pill.trim() || categoria,
       };
       const bannerHtml = buildBannerFor(bannerId, tone, resolved);
-      if (bannerHtml) out = swapEmailHeader(out, bannerHtml);
+      // El banner de tipología YA rotula el título de campaña: dejar además el
+      // bloque `title` del cuerpo lo repetiría justo debajo.
+      if (bannerHtml) out = stripBodyTitle(swapEmailHeader(out, bannerHtml));
     }
     if (footerOn) {
       const footerHtml = buildFooterFor(footerId, tone);
@@ -282,9 +389,10 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
       </div>
 
       {/* Campos del banner: SIEMPRE montados, deshabilitados con «Basic».
-          Si entraran y salieran del DOM, el preview daría un salto de ~90px al
-          cambiar de tipología. Manteniéndolos, el alto es constante y además se
-          ve de un vistazo por qué no se pueden editar. */}
+          Si entraran y salieran del DOM, el preview daría un salto al cambiar de
+          tipología. Manteniéndolos, el alto es constante y además se ve de un
+          vistazo por qué no se pueden editar. Con las tipologías vigentes solo
+          hay título; bajada y pill se suman en las `-legacy`. */}
       <div
         aria-hidden={!bannerOn}
         style={{
@@ -294,8 +402,13 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
         }}
       >
         <Field label="Título del banner" value={text.titulo} onChange={function set(v) { patchText("titulo", v); }} placeholder={bannerOn ? subject : "—"} disabled={!bannerOn} />
-        <Field label="Bajada" value={text.bajada} onChange={function set(v) { patchText("bajada", v); }} placeholder={bannerOn ? "Bajada breve del correo…" : "—"} disabled={!bannerOn} />
-        <Field label="Pill" value={text.pill} onChange={function set(v) { patchText("pill", v); }} placeholder={bannerOn ? categoria : "—"} disabled={!bannerOn} />
+        {/* Bajada y pill solo existen en la composición legacy. */}
+        {usaBajadaYPill && (
+          <>
+            <Field label="Bajada" value={text.bajada} onChange={function set(v) { patchText("bajada", v); }} placeholder="Bajada breve del correo…" />
+            <Field label="Pill" value={text.pill} onChange={function set(v) { patchText("pill", v); }} placeholder={categoria} />
+          </>
+        )}
       </div>
 
     {/* Dos columnas: las tipologías viven en un panel STICKY a la izquierda, así
@@ -310,18 +423,18 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
       >
         <TabGroup label="Banner">
           {[
-            <Tab key={ORIGINAL} on={bannerId === ORIGINAL} onClick={function pick() { setBanner(ORIGINAL); }}>Basic</Tab>,
+            <Tab key={ORIGINAL} on={bannerId === ORIGINAL} recommended={hasPreset && preset.banner === ORIGINAL} onClick={function pick() { setBanner(ORIGINAL); }}>Basic</Tab>,
             ...BANNER_OPTIONS.map(function renderTab(opt) {
-              return <Tab key={opt.id} on={bannerId === opt.id} onClick={function pick() { setBanner(opt.id); }}>{opt.label}</Tab>;
+              return <Tab key={opt.id} on={bannerId === opt.id} recommended={hasPreset && preset.banner === opt.id} onClick={function pick() { setBanner(opt.id); }}>{opt.label}</Tab>;
             }),
           ]}
         </TabGroup>
 
-        <TabGroup label="Footer">
+        <TabGroup label="Banner 2">
           {[
-            <Tab key={ORIGINAL} on={footerId === ORIGINAL} onClick={function pick() { setFooter(ORIGINAL); }}>Basic</Tab>,
+            <Tab key={ORIGINAL} on={footerId === ORIGINAL} recommended={hasPreset && preset.footer === ORIGINAL} onClick={function pick() { setFooter(ORIGINAL); }}>Basic</Tab>,
             ...FOOTER_OPTIONS.map(function renderTab(opt) {
-              return <Tab key={opt.id} on={footerId === opt.id} onClick={function pick() { setFooter(opt.id); }}>{opt.label}</Tab>;
+              return <Tab key={opt.id} on={footerId === opt.id} recommended={hasPreset && preset.footer === opt.id} onClick={function pick() { setFooter(opt.id); }}>{opt.label}</Tab>;
             }),
           ]}
         </TabGroup>
@@ -329,12 +442,20 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
         <TabGroup label="Fondo" dimmed={allOriginal}>
           {V2_TONE_OPTIONS.map(function renderTone(opt) {
             return (
-              <Tab key={opt.tone} on={!allOriginal && tone === opt.tone} disabled={allOriginal} onClick={function pick() { setTone(opt.tone); }}>
+              <Tab key={opt.tone} on={!allOriginal && tone === opt.tone} recommended={hasPreset && preset.tone === opt.tone} disabled={allOriginal} onClick={function pick() { setTone(opt.tone); }}>
                 {opt.label}
               </Tab>
             );
           })}
         </TabGroup>
+
+        {/* Pista permanente del tono propio: el modal solo sale la primera vez,
+            así que esta línea recuerda cuál es el color de la categoría. */}
+        {toneLocked && (
+          <span style={{ fontSize: 11, color: "var(--ui-muted)", lineHeight: 1.45, marginTop: -6 }}>
+            {categoria} usa <strong style={{ color: "var(--ui-body)", fontWeight: 700 }}>{toneLabelForCategory(categoria)}</strong> como fondo de marca.
+          </span>
+        )}
 
       </aside>
 
@@ -373,6 +494,15 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
         )}
       </div>
     </div>
+
+    {pendingTone && (
+      <ToneAlert
+        categoria={categoria}
+        toneLabel={toneLabelForCategory(categoria)}
+        onCancel={function cancel() { setPendingTone(null); }}
+        onConfirm={confirmTone}
+      />
+    )}
     </div>
   );
 }

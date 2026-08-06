@@ -28,17 +28,29 @@ import {
   buildFooter,
   type FooterLayoutKind,
 } from "./tipologiasFooter";
-import { V2_TONE_OPTIONS, type V2Tone } from "./tipologiasV2";
+import { V2_TONE_OPTIONS, V2_DEFAULT_TONE, type V2Tone } from "./tipologiasV2";
 
 export interface BannerOption {
   id: string;
   label: string;
 }
 
-/** Las tipologías de BANNER header disponibles, en el orden del tab. */
-export const BANNER_OPTIONS: BannerOption[] = TIPOLOGIAS_LAYOUT.map(function toOption(t) {
-  return { id: t.id, label: t.label };
-});
+/**
+ * Las tipologías de BANNER header disponibles, en el orden del tab: primero las
+ * vigentes (solo marca + título) y después las originales, sufijadas `-legacy`,
+ * que siguen disponibles para los correos ya maquetados con ellas.
+ */
+export const BANNER_OPTIONS: BannerOption[] = [
+  ...TIPOLOGIAS_LAYOUT.map(function toOption(t) {
+    return { id: t.id, label: t.label };
+  }),
+  ...TIPOLOGIAS_LAYOUT.map(function toLegacyOption(t) {
+    return { id: `${t.id}-legacy`, label: `${t.label} (legacy)` };
+  }),
+];
+
+/** Sufijo con el que se marcan las tipologías de la composición original. */
+const LEGACY_SUFFIX = "-legacy";
 
 function escHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -81,14 +93,19 @@ const PH_PILL = "{{ PILL }}";
  * campo viene vacío se conserva el placeholder, para no dejar huecos.
  */
 export function buildBannerFor(id: string, tone: V2Tone, text: BannerText): string | null {
-  const layout: TipoLayoutDef | undefined = TIPOLOGIAS_LAYOUT.find(function byId(t) { return t.id === id; });
+  // Los ids `…-legacy` piden la composición original; el resto, la limpia.
+  const isLegacy = id.endsWith(LEGACY_SUFFIX);
+  const baseId = isLegacy ? id.slice(0, -LEGACY_SUFFIX.length) : id;
+  const layout: TipoLayoutDef | undefined = TIPOLOGIAS_LAYOUT.find(function byId(t) { return t.id === baseId; });
   if (!layout) return null;
 
   const titulo = text.titulo.trim() ? escHtml(text.titulo) : PH_TITULO;
   const bajada = text.bajada.trim() ? escHtml(text.bajada) : PH_BAJADA;
   const pill = text.pill.trim() ? escHtml(text.pill) : PH_PILL;
 
-  return buildBanner(layout, bannerTone(tone))
+  // En la variante limpia no hay pill ni bajada que sustituir: los `replace`
+  // simplemente no encuentran su marcador y no hacen nada.
+  return buildBanner(layout, bannerTone(tone), isLegacy ? "legacy" : "clean")
     .replace(PH_TITULO, titulo)
     .replace(PH_BAJADA, bajada)
     .replace(PH_PILL, pill);
@@ -122,6 +139,55 @@ export function swapEmailHeader(emailHtml: string, bannerHtml: string): string {
   return `${emailHtml.slice(0, start)}<tr><td align="center" style="padding:0;">
 ${bannerHtml}
 </td></tr>${emailHtml.slice(end)}`;
+}
+
+/**
+ * Marcadores del bloque `title` del cuerpo (renderSection case 'title'):
+ *  · la fila del título lleva esta firma de estilo, única en el correo (24px +
+ *    800 + letter-spacing negativo); el resto de títulos del cuerpo (panel,
+ *    note, list…) son de 13-14px y no colisionan
+ *  · si hay eyebrow, va en la fila INMEDIATAMENTE anterior, con su pill naranja
+ */
+const BODY_TITLE_MARK = 'style="font-size:24px;font-weight:800;line-height:1.25;';
+const BODY_EYEBROW_MARK = "text-transform:uppercase;color:#";
+const ROW_OPEN = "<tr>";
+
+/**
+ * Quita el título del CUERPO cuando el banner de tipología ya lo muestra.
+ *
+ * Todas las tipologías de banner (no la «Basic» original) rotulan el título de
+ * campaña dentro del banner; dejar además el `title` del cuerpo lo repite dos
+ * veces seguidas. Se elimina esa fila —y su eyebrow, si lo tiene— junto al
+ * spacer que la separa de lo que sigue.
+ *
+ * Solo toca la PRIMERA aparición: es la del bloque `title` de cabecera. Si el
+ * HTML no la trae, devuelve el correo intacto.
+ */
+export function stripBodyTitle(emailHtml: string): string {
+  const mark = emailHtml.indexOf(BODY_TITLE_MARK);
+  if (mark === -1) return emailHtml;
+
+  // Retroceder al <tr> que abre la fila del título.
+  const rowStart = emailHtml.lastIndexOf(ROW_OPEN, mark);
+  if (rowStart === -1) return emailHtml;
+  const rowEnd = emailHtml.indexOf(ROW_CLOSE, mark);
+  if (rowEnd === -1) return emailHtml;
+  let start = rowStart;
+  const end = rowEnd + ROW_CLOSE.length;
+
+  // El eyebrow (pill naranja) es la fila anterior y pertenece al mismo bloque:
+  // si está pegada al título, cae con él.
+  const prevRow = emailHtml.lastIndexOf(ROW_OPEN, rowStart - 1);
+  if (prevRow !== -1) {
+    const between = emailHtml.slice(prevRow, rowStart);
+    if (between.includes(BODY_EYEBROW_MARK)) start = prevRow;
+  }
+
+  // El spacer que seguía al título sobra al quitarlo: sin él, el cuerpo arranca
+  // pegado al banner; con él, queda el hueco de siempre. Se conserva el spacer
+  // ANTERIOR (el `height="20"` que generateEmail pone tras el header) y se
+  // descarta solo la fila del título.
+  return emailHtml.slice(0, start) + emailHtml.slice(end);
 }
 
 // ─── Footer «Centro de Ayuda» ────────────────────────────────────────────────
@@ -184,4 +250,87 @@ export function swapEmailFooter(emailHtml: string, footerHtml: string): string {
 ${footerHtml}
 </td></tr>
 ${emailHtml.slice(whiteStart)}`;
+}
+
+// ─── Presets por categoría ───────────────────────────────────────────────────
+
+/** La composición con la que abre un correo antes de tocar ningún tab. */
+export interface LabPreset {
+  banner: string;
+  footer: string;
+  tone: V2Tone;
+}
+
+/** Composición «Basic»: el header y el footer originales del correo. */
+export const PRESET_ORIGINAL: LabPreset = { banner: "original", footer: "original", tone: V2_DEFAULT_TONE };
+
+/**
+ * Composición por defecto según la CATEGORÍA del correo (la `label` del grupo en
+ * registry.ts: "En vivo", "Negociable"…). Todos los correos abren ya maquetados
+ * con banner de texto centrado + footer split; lo único que cambia es el TONO:
+ * «En vivo» y «Negociable» usan el color de su flujo, y el resto el morado.
+ *
+ * Es solo el punto de partida: los tabs siguen mandando, y al tocar uno el
+ * estado pasa a la URL (ver BannerLab), así que un enlace compartido gana sobre
+ * el preset. En los tabs, la opción del preset se marca como «recomendado».
+ */
+const PRESET_LAYOUT = { banner: "texto-centrado", footer: "footer-split" } as const;
+
+const CATEGORY_PRESETS: Record<string, LabPreset> = {
+  "En vivo": { ...PRESET_LAYOUT, tone: "live" },
+  Negociable: { ...PRESET_LAYOUT, tone: "negotiable" },
+};
+
+/**
+ * Preset por defecto de las categorías sin tono propio (Registro, SubasCoins,
+ * Mapfre, Usuarios Internos…): misma composición, en morado.
+ */
+const PRESET_DEFAULT: LabPreset = { ...PRESET_LAYOUT, tone: "proximas" };
+
+/** Preset de una categoría; las que no tienen tono propio abren en morado. */
+export function presetForCategory(categoria: string): LabPreset {
+  return CATEGORY_PRESETS[categoria] ?? PRESET_DEFAULT;
+}
+
+/**
+ * Aplica una composición sobre el HTML de un correo: sustituye banner y footer
+ * y quita el título duplicado del cuerpo. Es la misma operación que hace el
+ * BannerLab al abrir, extraída aquí para que el CATÁLOGO pinte sus miniaturas
+ * con la composición real y no con el correo crudo.
+ */
+export function applyPreset(
+  emailHtml: string,
+  preset: LabPreset,
+  text: { titulo: string; pill: string },
+): string {
+  let out = emailHtml;
+  if (preset.banner !== "original") {
+    const bannerHtml = buildBannerFor(preset.banner, preset.tone, {
+      titulo: text.titulo,
+      bajada: "",
+      pill: text.pill,
+    });
+    // El banner de tipología ya rotula el título: sin esto saldría dos veces.
+    if (bannerHtml) out = stripBodyTitle(swapEmailHeader(out, bannerHtml));
+  }
+  if (preset.footer !== "original") {
+    const footerHtml = buildFooterFor(preset.footer, preset.tone);
+    if (footerHtml) out = swapEmailFooter(out, footerHtml);
+  }
+  return out;
+}
+
+/**
+ * ¿La categoría tiene un tono de marca propio? «En vivo» y «Negociable» son
+ * flujos con color asignado, así que cambiarles el fondo rompe el código visual
+ * del correo. No se bloquea —a veces se quiere probar—, pero el Lab avisa antes.
+ */
+export function hasFixedTone(categoria: string): boolean {
+  return Object.prototype.hasOwnProperty.call(CATEGORY_PRESETS, categoria);
+}
+
+/** Etiqueta del tono propio de la categoría, para el texto del aviso. */
+export function toneLabelForCategory(categoria: string): string {
+  const t = CATEGORY_PRESETS[categoria]?.tone;
+  return V2_TONE_OPTIONS.find(function byTone(o) { return o.tone === t; })?.label ?? "";
 }

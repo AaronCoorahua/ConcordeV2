@@ -25,6 +25,20 @@ export const TIPO_CENTERED_HEIGHT = 340;
 export const TIPO_STACKED_HEIGHT = 260;
 
 /**
+ * Generación de la tipología:
+ *   · "legacy" — la composición original: pill + título + bajada.
+ *   · "clean"  — solo marca + título. Sin pill ni bajada; el título se recentra
+ *                y el banner encoge, porque sobra el espacio de las dos piezas.
+ * Ambas comparten fondo, anillos, chevrons y logo: solo cambia el bloque de copy.
+ */
+export type TipoVariant = "legacy" | "clean";
+
+/** Altos de la variante «clean»: sin pill ni bajada el banner necesita menos alto. */
+export const TIPO_CLEAN_HEIGHT = 170;
+export const TIPO_CLEAN_CENTERED_HEIGHT = 250;
+export const TIPO_CLEAN_STACKED_HEIGHT = 190;
+
+/**
  * Layout = composición marca↔copy:
  *   · text-left  — copy a la izquierda, marca a la derecha (anillos der).
  *   · text-right — ESPEJO: copy a la derecha, marca a la izquierda (anillos izq).
@@ -44,6 +58,8 @@ export interface TipoNew {
   descripcion: string;
   layout: TipoLayout;
   style: TipoStyle;
+  /** Composición del copy. Por defecto "legacy" (con pill y bajada). */
+  variant?: TipoVariant;
 }
 
 /** Ruta del logo real (»vmc« + barra + SUBASTAS + powered by). 186×105. */
@@ -210,13 +226,57 @@ function copyBlock(s: TipoStyle, yPill: number, side: "left" | "right"): string 
 }
 
 /**
+ * Copy de la variante CLEAN para text-left / text-right: SOLO el título.
+ * Sin pill ni bajada, el bloque se centra en vertical y el título gana tamaño —
+ * al ser la única pieza de copy, puede pesar más sin competir con nada.
+ */
+function copyBlockClean(side: "left" | "right"): string {
+  const pos = side === "left" ? "left:48px" : "right:40px";
+  const align = side === "left" ? "left" : "right";
+  return `<div style="position:absolute;${pos};top:50%;transform:translateY(-50%);width:300px;max-width:300px;text-align:${align};">
+<div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.02em;line-height:1.15;color:#FFFFFF;">{{ Título del correo }}</div>
+</div>`;
+}
+
+/** Copy CLEAN centrado: logo arriba y título debajo, sin pill ni bajada. */
+function centeredContentClean(): string {
+  // Logo y título viven en UN SOLO bloque de flujo, centrado en el banner con
+  // `min-height` + flex. Antes el logo iba en absoluto (top fijo) y solo el
+  // título crecía: con un título de 2 líneas el conjunto se desplazaba hacia
+  // abajo (66px de aire arriba contra 32 abajo). Así crecen juntos y el grupo
+  // queda siempre equilibrado, sea cual sea el largo del título.
+  return `<div style="position:relative;min-height:${TIPO_CLEAN_CENTERED_HEIGHT}px;box-sizing:border-box;padding:26px 40px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+<img src="${LOGO_CORREOS_ALT}" alt="vmc Subastas — powered by SUBASTOP .Co" style="width:158px;height:auto;border:0;display:block;">
+<div style="height:18px;line-height:18px;font-size:1px;">&nbsp;</div>
+<div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:30px;font-weight:800;letter-spacing:-0.02em;line-height:1.15;color:#FFFFFF;">{{ Título del correo }}</div>
+</div>`;
+}
+
+/** Copy CLEAN apilado a la izquierda: logo arriba y título debajo. */
+function stackedContentClean(): string {
+  const L = "40px";
+  // Mismo criterio que el centrado: logo y título en UN bloque de flujo centrado
+  // en vertical, alineados a la izquierda. Con el logo en absoluto, un título de
+  // 2 líneas empujaba el conjunto hacia abajo en vez de crecer equilibrado.
+  return `<div style="position:relative;min-height:${TIPO_CLEAN_STACKED_HEIGHT}px;box-sizing:border-box;padding:26px 24px 26px ${L};display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;">
+<img src="${LOGO_CORREOS_ALT}" alt="vmc Subastas — powered by SUBASTOP .Co" style="width:158px;height:auto;border:0;display:block;">
+<div style="height:16px;line-height:16px;font-size:1px;">&nbsp;</div>
+<div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:30px;font-weight:800;letter-spacing:-0.02em;line-height:1.15;color:#FFFFFF;">{{ Título del correo }}</div>
+</div>`;
+}
+
+/**
  * Marca real — el logo PNG. En `text-left` va anclado a la derecha (right≈24);
  * en `text-right` (espejo) a la izquierda (left≈24). Centrado vertical con
  * el desplazamiento `logoDy` del SVG.
  */
-function brandLogo(dy: number, side: "left" | "right"): string {
+function brandLogo(dy: number, side: "left" | "right", variant: TipoVariant = "legacy"): string {
   const pos = side === "right" ? "right:24px" : "left:24px";
-  return `<img src="${LOGO_CORREOS}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;${pos};top:calc(50% + ${dy}px);transform:translateY(-50%);width:186px;height:auto;border:0;display:block;">`;
+  // La variante limpia usa el logo alterno (el mismo del layout apilado), más
+  // compacto; la legacy conserva el original para no alterar lo ya maquetado.
+  const src = variant === "clean" ? LOGO_CORREOS_ALT : LOGO_CORREOS;
+  const w = variant === "clean" ? 158 : 186;
+  return `<img src="${src}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;${pos};top:calc(50% + ${dy}px);transform:translateY(-50%);width:${w}px;height:auto;border:0;display:block;">`;
 }
 
 /**
@@ -286,7 +346,12 @@ function chevronFillLayer(op: number | undefined, w: number, h: number): string 
 // ─── Ensamblado ───────────────────────────────────────────────────────────────
 
 /** Alto real del banner según su layout (214 izq/der · 340 centrado · 260 apilado). */
-export function tipoNewHeight(layout: TipoLayout = "text-left"): number {
+export function tipoNewHeight(layout: TipoLayout = "text-left", variant: TipoVariant = "legacy"): number {
+  if (variant === "clean") {
+    if (layout === "centered") return TIPO_CLEAN_CENTERED_HEIGHT;
+    if (layout === "stacked") return TIPO_CLEAN_STACKED_HEIGHT;
+    return TIPO_CLEAN_HEIGHT;
+  }
   if (layout === "centered") return TIPO_CENTERED_HEIGHT;
   if (layout === "stacked") return TIPO_STACKED_HEIGHT;
   return TIPO_HEIGHT;
@@ -300,7 +365,8 @@ export function buildTipoNewBanner(t: TipoNew): string {
   const s = t.style;
   const centered = t.layout === "centered";
   const stacked = t.layout === "stacked";
-  const H = tipoNewHeight(t.layout);
+  const variant = t.variant ?? "legacy";
+  const H = tipoNewHeight(t.layout, variant);
   const yPill = Math.round((TIPO_HEIGHT - 22) / 2 - 32); // pill sobre el centro (izq/der)
   // Fondo: si hay bgSvgGradient, se pinta con una capa SVG IDÉNTICA al Figma
   // (rect con paint0 en userSpaceOnUse). Si no, se usa el CSS `bg`.
@@ -317,13 +383,28 @@ export function buildTipoNewBanner(t: TipoNew): string {
   // Espejo: en text-right el copy va a la derecha y la marca a la izquierda.
   const copySide = t.layout === "text-right" ? "right" : "left";
   const brandSide = t.layout === "text-right" ? "left" : "right";
-  const ringsCy = s.ringsCy ?? (centered ? 8 : stacked ? 125 : 112);
+  // Centro vertical de los anillos. Los valores base están calibrados para los
+  // altos LEGACY (214 · 260 · 340); en la variante limpia el banner encoge, así
+  // que se escalan por la razón de alturas para que sigan cayendo en el mismo
+  // punto relativo — si no, quedarían bajos respecto al banner.
+  const legacyH = tipoNewHeight(t.layout, "legacy");
+  const baseCy = s.ringsCy ?? (centered ? 8 : stacked ? 125 : 112);
+  const ringsCy = variant === "clean" ? Math.round((baseCy * H) / legacyH) : baseCy;
   const bg = `${bgSvgLayer}${glowLayers(s.glows)}${chevronFillLayer(s.chevronFillOpacity, TIPO_WIDTH, H)}${ringsAndDots(s.ringsCx, s.dots, s.ringsOpacityMul ?? 1, ringsCy)}${chevronLayer(s.chevrons, TIPO_WIDTH, H)}`;
-  const content = centered
-    ? centeredContent(s)
-    : stacked
-      ? stackedContent(s)
-      : `${copyBlock(s, yPill, copySide)}${brandLogo(s.logoDy, brandSide)}`;
+  const content = variant === "clean"
+    ? (centered
+        ? centeredContentClean()
+        : stacked
+          ? stackedContentClean()
+          // `logoDy` se ignora en la variante limpia: era el micro-ajuste que
+          // pedía cada SVG de Figma (el morado bajaba 6px) y hacía que el logo
+          // «saltara» al cambiar de tono. Aquí va centrado igual en los 5.
+          : `${copyBlockClean(copySide)}${brandLogo(0, brandSide, "clean")}`)
+    : (centered
+        ? centeredContent(s)
+        : stacked
+          ? stackedContent(s)
+          : `${copyBlock(s, yPill, copySide)}${brandLogo(s.logoDy, brandSide)}`);
   return `<!-- Tipología: ${t.label} (${t.id}) — Concorde -->
 <table border="0" width="${TIPO_WIDTH}" cellspacing="0" cellpadding="0" align="center" style="border-collapse:separate;">
 <tr><td bgcolor="${s.bgFallback}" style="background-color:${s.bgFallback};${tdBg}padding:0;border-radius:18px;">
@@ -540,15 +621,21 @@ const STYLE_R_NEGOCIABLE: TipoStyle = {
 
 /** 04 · SubasCoins espejo — «Var A · VOYAGER-1» (fondo de marca). */
 const STYLE_R_SUBASCOINS: TipoStyle = {
-  bg: "linear-gradient(132deg,#FF9639 0%,#EF852E 50%,#BE3D00 100%)",
-  bgSvgGradient: `<linearGradient id="tipoBg" x1="101.764" y1="-112.87" x2="539.155" y2="281.485" gradientUnits="userSpaceOnUse"><stop stop-color="#FF9639"/><stop offset="0.5" stop-color="#EF852E"/><stop offset="1" stop-color="#BE3D00"/></linearGradient>`,
-  bgFallback: "#EF852E",
+  // Mismo fondo de MARCA que la versión izquierda (STYLE_SUBASCOINS): antes este
+  // espejo llevaba por error el gradiente naranja de «En Vivo», así que el tono
+  // SubasCoins se veía distinto según el layout.
+  bg: "linear-gradient(132deg,#FFFFFF 0%,#F4AC59 22%,#8460E5 74.5%,#FFFFFF 100%)",
+  bgSvgGradient: `<linearGradient id="tipoBg" x1="101.764" y1="-112.87" x2="539.155" y2="281.485" gradientUnits="userSpaceOnUse"><stop stop-color="white"/><stop offset="0.221154" stop-color="#F4AC59"/><stop offset="0.745192" stop-color="#8460E5"/><stop offset="1" stop-color="white"/></linearGradient>`,
+  bgFallback: "#B58BC0",
+  // Glows del izquierdo, espejados en X (600 - x) porque aquí la marca va a la
+  // izquierda y el copy a la derecha.
   glows: [
-    { hex: "#ED8936", op: 0.3, x: 52, y: 12, r: 160 },
-    { hex: "#ED8936", op: 0.3, x: 600, y: 212, r: 160 },
+    { hex: "#FFC53D", op: 0.5, x: 600, y: 214, r: 120 },
+    { hex: "#FFC53D", op: 0.5, x: 10, y: 3, r: 120 },
+    { hex: "#8460E5", op: 0.3, x: 20, y: 40, r: 110 },
   ],
-  ringsCx: -20,
-  dots: [...R_DOTS_BASE, [128, 192, 2, 0.6], [494, 32, 2, 0.6], [62, 34, 2, 0.6]],
+  ringsCx: 90,
+  dots: [], // SubasCoins no tiene dots (igual que su versión izquierda).
   logoDy: 0,
   pill: "glass",
   pillBorder: R_PILL_BORDER_BRAND,
@@ -899,7 +986,7 @@ export const TIPOLOGIAS_LAYOUT: TipoLayoutDef[] = [
 ];
 
 /** Construye el banner de un tono para un layout dado. */
-export function buildBanner(layout: TipoLayoutDef, tone: TipoTone): string {
+export function buildBanner(layout: TipoLayoutDef, tone: TipoTone, variant: TipoVariant = "legacy"): string {
   const style =
     layout.layout === "centered"
       ? tone.center
@@ -909,11 +996,12 @@ export function buildBanner(layout: TipoLayoutDef, tone: TipoTone): string {
           ? tone.right
           : tone.left;
   return buildTipoNewBanner({
-    id: `${layout.id}-${tone.id}`,
+    id: `${layout.id}-${tone.id}${variant === "clean" ? "-clean" : ""}`,
     letra: layout.letra,
     label: `${layout.label} · ${tone.label}`,
     descripcion: layout.descripcion,
     layout: layout.layout,
     style,
+    variant,
   });
 }

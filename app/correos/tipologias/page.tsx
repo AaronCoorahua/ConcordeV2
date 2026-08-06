@@ -59,8 +59,9 @@ function TipoCard({ g }: { g: TipoGroup }): JSX.Element {
 }
 
 export default function TipologiasPage(): JSX.Element {
-  const banners = TIPO_GROUPS.filter(function isBanner(g) { return g.kind === "banner"; });
+  const banners = TIPO_GROUPS.filter(function isBanner(g) { return g.kind === "banner" && g.variant === "clean"; });
   const footers = TIPO_GROUPS.filter(function isFooter(g) { return g.kind === "footer"; });
+  const legacy = TIPO_GROUPS.filter(function isLegacy(g) { return g.kind === "banner" && g.variant === "legacy"; });
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff", color: "var(--ui-ink)", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
       <Header active="correos" />
@@ -103,12 +104,12 @@ export default function TipologiasPage(): JSX.Element {
           </>
         )}
 
-        {/* ── Footers Centro de Ayuda ── */}
+        {/* ── Banner 2 (cierre del correo) ── */}
         {footers.length > 0 && (
           <>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20, background: "#fff0e6", color: "#c85a1e" }}>Footer</span>
-              <h2 style={{ fontSize: 17, fontWeight: 800, letterSpacing: "-0.01em", color: "var(--ui-ink)", margin: 0 }}>Centro de Ayuda</h2>
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20, background: "#fff0e6", color: "#c85a1e" }}>Cierre</span>
+              <h2 style={{ fontSize: 17, fontWeight: 800, letterSpacing: "-0.01em", color: "var(--ui-ink)", margin: 0 }}>Banner 2</h2>
               <span style={{ fontSize: 12, color: "var(--ui-muted)", fontWeight: 500 }}>· {footers.length} layouts</span>
             </div>
             <p style={{ fontSize: 13, color: "var(--ui-muted)", lineHeight: 1.5, margin: "0 0 18px", maxWidth: 640 }}>
@@ -116,6 +117,24 @@ export default function TipologiasPage(): JSX.Element {
             </p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
               {footers.map(function renderTipo(g) { return <TipoCard key={g.tipologia.id} g={g} />; })}
+            </div>
+          </>
+        )}
+
+        {/* ── Legacy: la composición anterior, con pill y bajada ── */}
+        {legacy.length > 0 && (
+          <>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 48, marginBottom: 4 }}>
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20, background: "var(--ui-border-soft)", color: "var(--ui-body)" }}>Legacy</span>
+              <h2 style={{ fontSize: 17, fontWeight: 800, letterSpacing: "-0.01em", color: "var(--ui-ink)", margin: 0 }}>Banner con pill y bajada</h2>
+              <span style={{ fontSize: 12, color: "var(--ui-muted)", fontWeight: 500 }}>· {legacy.length} layouts</span>
+            </div>
+            <p style={{ fontSize: 13, color: "var(--ui-muted)", lineHeight: 1.5, margin: "0 0 18px", maxWidth: 640 }}>
+              La composición anterior, que además del título llevaba la pill de categoría y una bajada.
+              Se conserva para los correos ya maquetados con ella.
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
+              {legacy.map(function renderTipo(g) { return <TipoCard key={g.tipologia.id} g={g} />; })}
             </div>
           </>
         )}

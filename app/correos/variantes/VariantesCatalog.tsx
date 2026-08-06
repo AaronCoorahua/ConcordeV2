@@ -19,6 +19,7 @@ import type { JSX } from "react";
 import Link from "next/link";
 import { EMAILS, CATEGORY_GRADIENT, STAGE_ORDER, type EmailTemplate } from "@/src/emails/prodEmails";
 import { generateEmail } from "@/src/emails/prodEmailTemplates";
+import { applyPreset, presetForCategory } from "@/src/emails/headerSwap";
 import { FlowDiagram } from "./FlowDiagram";
 
 const INK = "var(--ui-ink)";
@@ -83,7 +84,14 @@ function groupBy<T>(items: T[], key: (item: T) => string): Array<[string, T[]]> 
 
 function EmailCard({ email }: { email: EmailTemplate }): JSX.Element {
   const [copied, setCopied] = useState(false);
-  const html = useMemo(function render() { return generateEmail(email.sections, email.subject); }, [email]);
+  // La miniatura muestra la composición con la que ABRE el correo (banner de
+  // tipología + footer + tono de su categoría), no el HTML crudo: así el
+  // catálogo y el detalle enseñan lo mismo.
+  const html = useMemo(function render() {
+    const cat = categoryOf(email);
+    const base = generateEmail(email.sections, email.subject);
+    return applyPreset(base, presetForCategory(cat), { titulo: email.subject, pill: cat });
+  }, [email]);
   const gradient = CATEGORY_GRADIENT[categoryOf(email)];
 
   return (

@@ -17,6 +17,7 @@ import {
   buildBanner,
   tipoNewHeight,
   wrapTipoPreview,
+  type TipoVariant,
 } from "./tipologiasNew";
 import {
   FOOTER_TONOS,
@@ -60,34 +61,53 @@ export interface TipoGroup {
   tipologia: TipoMeta;
   /** "banner" = header hero · "footer" = consola Centro de Ayuda. */
   kind: "banner" | "footer";
+  /** "clean" = solo marca + título · "legacy" = con pill y bajada. */
+  variant: TipoVariant;
   plantillas: TipoPlantilla[];
 }
 
-/** Cada tipología de layout, con los 5 tonos renderizados como fondos. */
-const GROUPS: TipoGroup[] = TIPOLOGIAS_LAYOUT.map(function toGroup(layout): TipoGroup {
-  const fondos: TipoFondo[] = TONOS.map(function toFondo(tone): TipoFondo {
-    const banner = buildBanner(layout, tone);
+/**
+ * Construye los grupos de banner de una variante. Los ids de la variante
+ * «legacy» llevan sufijo `-legacy` para no colisionar con los limpios, que
+ * conservan el id corto por ser los principales.
+ */
+function bannerGroups(variant: TipoVariant): TipoGroup[] {
+  return TIPOLOGIAS_LAYOUT.map(function toGroup(layout): TipoGroup {
+    const legacy = variant === "legacy";
+    const id = legacy ? `${layout.id}-legacy` : layout.id;
+    const fondos: TipoFondo[] = TONOS.map(function toFondo(tone): TipoFondo {
+      const banner = buildBanner(layout, tone, variant);
+      return {
+        tone: tone.id,
+        label: tone.label,
+        previewDoc: wrapTipoPreview(banner, `${layout.label} · ${tone.label}`),
+        copyHtml: banner,
+      };
+    });
+    const desc = legacy
+      ? `${layout.descripcion} Composición original, con pill y bajada.`
+      : `${layout.descripcion.replace(/\(pill \+ título \+ bajada\)|pill, título y bajada/g, "título")} Solo marca y título.`;
     return {
-      tone: tone.id,
-      label: tone.label,
-      previewDoc: wrapTipoPreview(banner, `${layout.label} · ${tone.label}`),
-      copyHtml: banner,
+      tipologia: { id, letra: layout.letra, label: layout.label, descripcion: desc },
+      kind: "banner",
+      variant,
+      plantillas: [
+        {
+          id: `${id}-banner`,
+          name: "Banner header",
+          description: `${desc} Elige el tono con el tab y pégalo como header de cualquier plantilla.`,
+          previewHeight: tipoNewHeight(layout.layout, variant) + 20,
+          fondos,
+        },
+      ],
     };
   });
-  return {
-    tipologia: { id: layout.id, letra: layout.letra, label: layout.label, descripcion: layout.descripcion },
-    kind: "banner",
-    plantillas: [
-      {
-        id: `${layout.id}-banner`,
-        name: "Banner header",
-        description: `${layout.descripcion} Elige el tono con el tab y pégalo como header de cualquier plantilla.`,
-        previewHeight: tipoNewHeight(layout.layout) + 20,
-        fondos,
-      },
-    ],
-  };
-});
+}
+
+/** Tipologías principales: solo marca + título. */
+const GROUPS: TipoGroup[] = bannerGroups("clean");
+/** Tipologías originales, conservadas para consulta y para los correos ya maquetados. */
+const LEGACY_GROUPS: TipoGroup[] = bannerGroups("legacy");
 
 /** Los layouts de footer disponibles (cada uno es una tipología con 5 tonos). */
 interface FooterLayoutMeta {
@@ -103,7 +123,7 @@ const FOOTER_LAYOUTS: FooterLayoutMeta[] = [
   {
     id: "footer-centro-ayuda",
     letra: "F1",
-    label: "Centro de Ayuda",
+    label: "Banner 2",
     descripcion:
       "El cierre del correo: panel glass con «¿Quieres saber más?», el botón ¡Vamos! y la marca vmc, sobre el gradiente del tono.",
     name: "Footer glass",
@@ -112,7 +132,7 @@ const FOOTER_LAYOUTS: FooterLayoutMeta[] = [
   {
     id: "footer-centro-ayuda-centrado",
     letra: "F2",
-    label: "Centro de Ayuda · Centrado",
+    label: "Banner 2 · Centrado",
     descripcion:
       "Cierre centrado y sin panel: la marca vmc arriba, el título, la invitación al Centro de Ayuda y el botón ¡Vamos! apilados y centrados.",
     name: "Footer centrado",
@@ -121,7 +141,7 @@ const FOOTER_LAYOUTS: FooterLayoutMeta[] = [
   {
     id: "footer-centro-ayuda-compacto",
     letra: "F3",
-    label: "Centro de Ayuda · Compacto",
+    label: "Banner 2 · Compacto",
     descripcion:
       "El cierre más compacto (110px): la invitación al Centro de Ayuda a la izquierda y la marca vmc con el botón ¡Vamos! a la derecha, en una sola franja.",
     name: "Footer compacto",
@@ -130,7 +150,7 @@ const FOOTER_LAYOUTS: FooterLayoutMeta[] = [
   {
     id: "footer-centro-ayuda-split",
     letra: "F4",
-    label: "Centro de Ayuda · Split",
+    label: "Banner 2 · Split",
     descripcion:
       "Dos columnas divididas por una línea vertical: la marca vmc y su eslogan a la izquierda, la invitación al Centro de Ayuda y el botón ¡Vamos! a la derecha.",
     name: "Footer split",
@@ -148,6 +168,9 @@ const FOOTER_GROUPS: TipoGroup[] = FOOTER_LAYOUTS.map(function toFooterGroup(lay
       descripcion: layout.descripcion,
     },
     kind: "footer",
+    // Los footers no llevan pill ni bajada, así que el cambio no les afecta:
+    // hay un único juego, compartido por ambas variantes.
+    variant: "clean",
     plantillas: [
       {
         id: `${layout.id}-banner`,
@@ -168,7 +191,12 @@ const FOOTER_GROUPS: TipoGroup[] = FOOTER_LAYOUTS.map(function toFooterGroup(lay
   };
 });
 
-export const TIPO_GROUPS: TipoGroup[] = [...GROUPS, ...FOOTER_GROUPS];
+export const TIPO_GROUPS: TipoGroup[] = [...GROUPS, ...FOOTER_GROUPS, ...LEGACY_GROUPS];
+
+/** Solo las tipologías vigentes (sin las legacy) — lo que se ofrece por defecto. */
+export const TIPO_GROUPS_CLEAN: TipoGroup[] = [...GROUPS, ...FOOTER_GROUPS];
+/** Las tipologías originales, con pill y bajada. */
+export const TIPO_GROUPS_LEGACY: TipoGroup[] = LEGACY_GROUPS;
 
 export function getTipoGroup(id: string): TipoGroup | undefined {
   return TIPO_GROUPS.find(function byId(g) { return g.tipologia.id === id; });

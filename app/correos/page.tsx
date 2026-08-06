@@ -1,6 +1,7 @@
 import type { JSX } from "react";
 import Link from "next/link";
 import Header from "@/app/_components/Header";
+import { applyPreset, presetForCategory } from "@/src/emails/headerSwap";
 import { TIPO_GROUPS } from "@/src/emails/tipologiasRegistry";
 import { EMAIL_GROUPS, EMAIL_PROD_TOTAL } from "@/src/emails/registry";
 
@@ -27,6 +28,15 @@ interface HubCard {
 /** Primer correo real de producción — sirve de preview de la card «Maquetar». */
 const SAMPLE_EMAIL = EMAIL_GROUPS[0]?.correos[0];
 
+/** Se muestra con su composición por defecto, igual que en el catálogo. */
+const SAMPLE_HTML = SAMPLE_EMAIL
+  ? applyPreset(
+      SAMPLE_EMAIL.html,
+      presetForCategory(EMAIL_GROUPS[0]?.label ?? ""),
+      { titulo: SAMPLE_EMAIL.subject, pill: EMAIL_GROUPS[0]?.label ?? "" },
+    )
+  : null;
+
 const CARDS: HubCard[] = [
   {
     href: "/correos/tipologias",
@@ -40,7 +50,7 @@ const CARDS: HubCard[] = [
     title: "Maquetar",
     meta: `${EMAIL_PROD_TOTAL} correos en producción`,
     desc: "Los correos reales en producción. Elige uno e intercambia la tipología de su header, footer y fondo con preview en vivo; edita el copy y copia el HTML listo para enviar.",
-    previewDoc: SAMPLE_EMAIL?.html ?? TIPO_GROUPS[0].plantillas[0].fondos[0].previewDoc,
+    previewDoc: SAMPLE_HTML ?? TIPO_GROUPS[0].plantillas[0].fondos[0].previewDoc,
   },
 ];
 

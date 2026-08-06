@@ -17,7 +17,7 @@
  * cristal se adapta.
  */
 
-import { LOGO_CORREOS, LOGO_CORREOS_ALT, wrapTipoPreview } from "./tipologiasNew";
+import { LOGO_CORREOS_ALT, wrapTipoPreview } from "./tipologiasNew";
 
 export const FOOTER_WIDTH = 600;
 export const FOOTER_HEIGHT = 214;
@@ -78,7 +78,7 @@ function footerRings(kind: FooterLayoutKind): string {
 }
 
 // ─── Chevron stroke — asoma por los bordes ──────────────────────────────────────
-// console: paint1 gradiente (white→#4DDCDC→#6445DF→white), 2px, forma `M309.976…`.
+// console: stroke plano #AE93E1, 2px, forma `M309.976…`.
 // centered: chevron blanco 0.12, 1.2px, forma `M504.693…`.
 // compact: DOS chevrons blancos 0.12 (uno a la der `M362.838…`, otro a la izq
 //   `M-65.8381…`), 1.2px.
@@ -103,9 +103,10 @@ function footerChevron(kind: FooterLayoutKind, w: number, h: number): string {
 <path d="M504.693 173.646L647.477 316.43C669.415 338.368 704.983 338.368 726.921 316.43C748.858 294.493 748.858 258.925 726.921 236.987L630.235 140.302L737.273 33.2644C757.968 12.5691 757.968 -20.9841 737.273 -41.6793C716.578 -62.3744 683.024 -62.375 662.329 -41.68L504.693 115.956C488.763 131.886 488.763 157.715 504.693 173.646Z" stroke="white" stroke-opacity="0.12" stroke-width="1.2"/>
 </svg>`;
   }
+  // El SVG de Figma pinta este chevron con un stroke PLANO #AE93E1 (morado bajo)
+  // a 2px, no con el gradiente turquesa→violeta que había aquí.
   return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;overflow:visible;pointer-events:none;opacity:0.7;">
-<defs><linearGradient id="footChev" x1="161.324" y1="318.712" x2="476.314" y2="508.553" gradientUnits="userSpaceOnUse"><stop stop-color="white"/><stop offset="0.25" stop-color="#4DDCDC"/><stop offset="0.75" stop-color="#6445DF"/><stop offset="1" stop-color="white"/></linearGradient></defs>
-<path d="M309.976 150.363L452.761 293.147C474.542 314.928 509.856 314.928 531.637 293.147C553.419 271.366 553.42 236.051 531.638 214.269L434.67 117.301L541.99 9.98124C562.529 -10.5578 562.529 -43.8572 541.99 -64.3962C521.451 -84.9351 488.151 -84.9356 467.612 -64.3969L309.976 93.2389C294.202 109.013 294.202 134.588 309.976 150.363Z" stroke="url(#footChev)" stroke-width="2"/>
+<path d="M309.976 150.363L452.761 293.147C474.542 314.928 509.856 314.928 531.637 293.147C553.419 271.366 553.42 236.051 531.638 214.269L434.67 117.301L541.99 9.98124C562.529 -10.5578 562.529 -43.8572 541.99 -64.3962C521.451 -84.9351 488.151 -84.9356 467.612 -64.3969L309.976 93.2389C294.202 109.013 294.202 134.588 309.976 150.363Z" stroke="#AE93E1" stroke-width="2"/>
 </svg>`;
 }
 
@@ -139,7 +140,9 @@ function glassPanel(inner: string, darken: number): string {
   const darkTint = `linear-gradient(190deg,rgba(20,4,40,${a(0.16)}) 0%,rgba(20,4,40,${a(0.1)}) 55%,rgba(20,4,40,${a(0.07)}) 100%)`;
   const sheen =
     "linear-gradient(190deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0.03) 45%,rgba(255,255,255,0.015) 100%)";
-  return `<div style="position:absolute;left:7px;top:14px;width:568px;height:186px;border-radius:20px;background:${sheen},${darkTint};-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);box-shadow:0 10px 30px rgba(26,0,51,0.28),inset 0 1px 10px rgba(255,255,255,0.30);">
+  // left:16 centra el panel de 568px en los 600 del banner ((600-568)/2). Antes
+  // iba en 7, así que quedaba pegado a la izquierda: 7px de margen contra 25.
+  return `<div style="position:absolute;left:16px;top:14px;width:568px;height:186px;border-radius:20px;background:${sheen},${darkTint};-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);box-shadow:0 10px 30px rgba(26,0,51,0.28),inset 0 1px 10px rgba(255,255,255,0.30);">
 ${gradientBorder(border20(), 20, 1.2)}
 ${inner}
 </div>`;
@@ -152,11 +155,32 @@ function border20(): string {
 
 // ─── El botón GLASS «¡Vamos!» (rect 98×40 rx20) ─────────────────────────────────
 // paint5+paint6 (relleno): white 18%/35% → 8% → 3%/0% vertical.
-// paint7 (borde): white → #4DDCDC(25%) → #6445DF(75%) → white ≈ 33°, 1.5px.
-function glassButton(): string {
+// paint7 (borde): depende del TONO —ver BUTTON_BORDERS—, 1.5px.
+
+/**
+ * Borde del botón por tono. En «En Vivo» y «Morado» es el naranja→morado de
+ * marca (panel VYStrokes1); en el resto, el turquesa→violeta del SVG Default
+ * (paint2: white → #4DDCDC(25%) → #6445DF(75%) → white).
+ */
+const BUTTON_BORDER_BRAND = "linear-gradient(38deg,#FFFFFF 0%,#F4AC59 22%,#8460E5 74.5%,#FFFFFF 100%)";
+const BUTTON_BORDER_COOL = "linear-gradient(33deg,#FFFFFF 0%,#4DDCDC 25%,#6445DF 75%,#FFFFFF 100%)";
+
+const BUTTON_BORDERS: Record<string, string> = {
+  "en-vivo": BUTTON_BORDER_BRAND,
+  morado: BUTTON_BORDER_BRAND,
+  negociable: BUTTON_BORDER_COOL,
+  subascoins: BUTTON_BORDER_COOL,
+  dark: BUTTON_BORDER_COOL,
+};
+
+function buttonBorder(toneId: string): string {
+  return BUTTON_BORDERS[toneId] ?? BUTTON_BORDER_BRAND;
+}
+
+function glassButton(toneId: string): string {
   const fill =
     "linear-gradient(180deg,rgba(255,255,255,0.18) 0%,rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.02) 100%)";
-  const border = "linear-gradient(33deg,#FFFFFF 0%,#4DDCDC 25%,#6445DF 75%,#FFFFFF 100%)";
+  const border = buttonBorder(toneId);
   return `<div style="position:absolute;left:24px;top:131px;width:98px;height:40px;border-radius:20px;background:${fill};-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);box-shadow:0 8px 24px rgba(0,0,0,0.10),inset 0 1px 3px rgba(255,255,255,0.45);display:flex;align-items:center;justify-content:center;">
 ${gradientBorder(border, 20, 1.5)}
 <span style="position:relative;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#FFFFFF;letter-spacing:-0.01em;white-space:nowrap;">¡Vamos!</span>
@@ -167,9 +191,8 @@ ${gradientBorder(border, 20, 1.5)}
 // En el SVG el logo va a la derecha (glifos x≈369-551, barra en y≈120). El PNG lo
 // anclamos a la derecha del banner, centrado en vertical con el bloque de texto.
 function footerLogo(): string {
-  // Logo 186×105 (Hug de Figma), MÁS a la derecha (right:20), pegado al borde del
-  // panel como en Figma.
-  return `<img src="${LOGO_CORREOS}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;right:20px;top:50%;transform:translateY(-50%);width:186px;height:auto;border:0;display:block;">`;
+  // Logo alterno (el mismo del banner apilado), anclado a la derecha del panel.
+  return `<img src="${LOGO_CORREOS_ALT}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;right:20px;top:50%;transform:translateY(-50%);width:158px;height:auto;border:0;display:block;">`;
 }
 
 // ─── Contenido de la IZQUIERDA (coords absolutas del banner) ────────────────────
@@ -196,10 +219,10 @@ function footerCopy(): string {
  * Igual que el otro botón pero con borde de gradiente DE MARCA (paint3:
  * white→#F4AC59(22%)→#8460E5(74.5%)→white ≈ 38°), como en el SVG.
  */
-function centeredGlassButton(): string {
+function centeredGlassButton(toneId: string): string {
   const fill =
     "linear-gradient(180deg,rgba(255,255,255,0.30) 0%,rgba(255,255,255,0.08) 45%,rgba(255,255,255,0.02) 100%)";
-  const border = "linear-gradient(38deg,#FFFFFF 0%,#F4AC59 22%,#8460E5 74.5%,#FFFFFF 100%)";
+  const border = buttonBorder(toneId);
   return `<div style="position:absolute;left:50%;top:180px;transform:translateX(-50%);width:98px;height:40px;border-radius:20px;background:${fill};-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);box-shadow:0 8px 24px rgba(0,0,0,0.10),inset 0 1px 3px rgba(255,255,255,0.45);display:flex;align-items:center;justify-content:center;">
 ${gradientBorder(border, 20, 1.5)}
 <span style="position:relative;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#FFFFFF;letter-spacing:-0.01em;white-space:nowrap;">¡Vamos!</span>
@@ -207,17 +230,22 @@ ${gradientBorder(border, 20, 1.5)}
 }
 
 /** Contenido del layout centrado (logo + título + divisor + ayuda + botón). */
-function centeredContent(): string {
-  // Logo centrado arriba (glifos y≈30-67, barra y≈73). PNG 140px centrado.
-  const logo = `<img src="${LOGO_CORREOS}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;top:20px;left:50%;transform:translateX(-50%);width:140px;height:auto;border:0;display:block;">`;
+function centeredContent(toneId: string): string {
+  // Logo alterno centrado arriba, a 120px (el alterno es más ancho de proporción).
+  const logo = `<img src="${LOGO_CORREOS_ALT}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;top:20px;left:50%;transform:translateX(-50%);width:120px;height:auto;border:0;display:block;">`;
   // Título centrado (y≈115-129 del SVG).
   const titulo = `<div style="position:absolute;top:104px;left:0;right:0;text-align:center;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#FFFFFF;line-height:1.2;white-space:nowrap;">¡Despierta al cazador de ofertas que hay en ti!</div>`;
   // Divisor centrado (rect x=190 w=220 y=131, white 0.22).
   const divisor = `<div style="position:absolute;top:131px;left:50%;transform:translateX(-50%);width:220px;height:1px;background:rgba(255,255,255,0.22);"></div>`;
   // «¿Quieres saber más? ¡Visita nuestro Centro de Ayuda!» en UNA sola línea
-  // centrada (uno al lado del otro), todo con el MISMO grosor delgado (weight 500).
-  const ayuda = `<div style="position:absolute;top:146px;left:0;right:0;text-align:center;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:13px;font-weight:500;color:rgba(255,255,255,0.92);line-height:1.2;white-space:nowrap;">¿Quieres saber más? ¡Visita nuestro Centro de Ayuda!</div>`;
-  return `${logo}${titulo}${divisor}${ayuda}${centeredGlassButton()}`;
+  // centrada, con el MISMO grosor delgado (weight 500). A 17px su línea es MÁS
+  // LARGA que la del título de arriba, como en el SVG (el título es el corto).
+  const ayuda = `<div style="position:absolute;top:146px;left:0;right:0;text-align:center;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:17px;font-weight:500;color:rgba(255,255,255,0.92);line-height:1.2;white-space:nowrap;">¿Quieres saber más? ¡Visita nuestro Centro de Ayuda!</div>`;
+  // Dos dots flotantes, como en los otros layouts: uno arriba-derecha y otro
+  // abajo-izquierda, sobre el fondo (no sobre el copy).
+  const dots = `<div style="position:absolute;left:504px;top:82px;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.55);pointer-events:none;"></div>
+<div style="position:absolute;left:96px;top:186px;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.45);pointer-events:none;"></div>`;
+  return `${logo}${titulo}${divisor}${ayuda}${dots}${centeredGlassButton(toneId)}`;
 }
 
 // ─── Layout COMPACTO (SVG «Compacto», 600×110) ──────────────────────────────────
@@ -226,11 +254,11 @@ function centeredContent(): string {
 // debajo. Entre columnas, dos dots pequeños (como en el SVG).
 
 /** Botón glass «¡Vamos!» del compacto (rect 98×40 rx20, a la derecha en x=450). */
-function compactGlassButton(): string {
+function compactGlassButton(toneId: string): string {
   const fill =
     "linear-gradient(180deg,rgba(255,255,255,0.30) 0%,rgba(255,255,255,0.08) 45%,rgba(255,255,255,0.02) 100%)";
   // paint4: white→#F4AC59(22%)→#8460E5(74.5%)→white ≈ 38° (borde de marca).
-  const border = "linear-gradient(38deg,#FFFFFF 0%,#F4AC59 22%,#8460E5 74.5%,#FFFFFF 100%)";
+  const border = buttonBorder(toneId);
   return `<div style="position:absolute;left:450px;top:58px;width:98px;height:40px;border-radius:20px;background:${fill};-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);box-shadow:0 8px 24px rgba(0,0,0,0.10),inset 0 1px 3px rgba(255,255,255,0.45);display:flex;align-items:center;justify-content:center;">
 ${gradientBorder(border, 20, 1.5)}
 <span style="position:relative;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#FFFFFF;letter-spacing:-0.01em;white-space:nowrap;">¡Vamos!</span>
@@ -238,7 +266,7 @@ ${gradientBorder(border, 20, 1.5)}
 }
 
 /** Contenido del layout compacto (copy izq · marca vmc + botón der). */
-function compactContent(): string {
+function compactContent(toneId: string): string {
   // Izquierda (como en el SVG, sin «Voyager Subastas»): dos líneas centradas
   // verticalmente en la franja — «¿Quieres saber más?» + «¡Visita nuestro Centro
   // de Ayuda!». Énfasis cálido en «¡Visita nuestro»; «Centro de Ayuda» en BLANCO.
@@ -247,14 +275,15 @@ function compactContent(): string {
 <div style="height:6px;line-height:6px;font-size:1px;">&nbsp;</div>
 <div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;white-space:nowrap;color:rgba(255,233,216,0.90);font-weight:500;">¡Visita nuestro <span style="color:#FFFFFF;font-weight:700;">Centro de Ayuda</span>!</div>
 </div>`;
-  // Derecha: marca vmc COMPLETA (glifos + «powered by» + barra), centrada sobre el
-  // botón. PNG 84px anclado der, arriba (top:6); el botón (top:58) queda debajo sin
-  // solaparse con el «powered by».
-  const logo = `<img src="${LOGO_CORREOS_ALT}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;right:66px;top:6px;width:84px;height:auto;border:0;display:block;">`;
+  // Derecha: marca vmc sobre el botón, como un bloque CENTRADO en la franja de
+  // 110px. El logo a 84px de ancho mide ~35 de alto; con el botón (40) y 8 de
+  // separación suman 83, así que el bloque arranca en top:14 y deja 13 abajo.
+  // (Antes iba en top:6, pegado al borde: heredado del SVG con el logo antiguo.)
+  const logo = `<img src="${LOGO_CORREOS_ALT}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;right:66px;top:14px;width:84px;height:auto;border:0;display:block;">`;
   // Dos dots entre columnas, como en el SVG.
   const dots = `<div style="position:absolute;left:398px;top:44px;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.55);"></div>
 <div style="position:absolute;left:432px;top:70px;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.45);"></div>`;
-  return `${copy}${dots}${logo}${compactGlassButton()}`;
+  return `${copy}${dots}${logo}${compactGlassButton(toneId)}`;
 }
 
 // ─── Layout SPLIT (SVG «Split», 600×144) ────────────────────────────────────────
@@ -264,11 +293,11 @@ function compactContent(): string {
 //          glass «¡Vamos!» debajo.
 
 /** Botón glass «¡Vamos!» del split (rect 98×40 rx20; flujo normal dentro del bloque der). */
-function splitGlassButton(): string {
+function splitGlassButton(toneId: string): string {
   const fill =
     "linear-gradient(180deg,rgba(255,255,255,0.30) 0%,rgba(255,255,255,0.08) 45%,rgba(255,255,255,0.02) 100%)";
   // paint4: white→#F4AC59(22%)→#8460E5(74.5%)→white ≈ 38° (borde de marca).
-  const border = "linear-gradient(38deg,#FFFFFF 0%,#F4AC59 22%,#8460E5 74.5%,#FFFFFF 100%)";
+  const border = buttonBorder(toneId);
   return `<div style="position:relative;width:98px;height:40px;border-radius:20px;background:${fill};-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);box-shadow:0 8px 24px rgba(0,0,0,0.10),inset 0 1px 3px rgba(255,255,255,0.45);display:flex;align-items:center;justify-content:center;">
 ${gradientBorder(border, 20, 1.5)}
 <span style="position:relative;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#FFFFFF;letter-spacing:-0.01em;white-space:nowrap;">¡Vamos!</span>
@@ -276,7 +305,7 @@ ${gradientBorder(border, 20, 1.5)}
 }
 
 /** Contenido del layout split (izq marca+eslogan · divisor · der ayuda+botón). */
-function splitContent(): string {
+function splitContent(toneId: string): string {
   // IZQUIERDA: marca vmc COMPLETA arriba (glifos + «powered by» + barra) + eslogan
   // «¡Despierta al cazador de ofertas que hay en ti!» (2 líneas) debajo.
   const logoIzq = `<img src="${LOGO_CORREOS_ALT}" alt="vmc Subastas — powered by SUBASTOP .Co" style="position:absolute;left:36px;top:24px;width:108px;height:auto;border:0;display:block;">`;
@@ -284,6 +313,9 @@ function splitContent(): string {
   const eslogan = `<div style="position:absolute;left:36px;top:86px;right:320px;text-align:left;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;font-weight:500;color:rgba(255,255,255,0.95);line-height:1.3;">¡Despierta al cazador de ofertas que hay en ti!</div>`;
   // Divisor vertical (rect x=312 y=24 w=1 h=96, white 0.18).
   const divisor = `<div style="position:absolute;left:312px;top:24px;width:1px;height:96px;background:rgba(255,255,255,0.18);"></div>`;
+  // Dos dots flotantes sobre el fondo, como en el resto de layouts.
+  const dots = `<div style="position:absolute;left:236px;top:26px;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.5);pointer-events:none;"></div>
+<div style="position:absolute;left:470px;top:118px;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.4);pointer-events:none;"></div>`;
   // DERECHA: texto + botón CENTRADOS (vertical Y horizontal) al medio de su columna
   // (x∈[352,600], alto 144). «¿Quieres saber más?» + «¡Visita nuestro Centro de
   // Ayuda!» (énfasis cálido en «¡Visita nuestro»; «Centro de Ayuda» en BLANCO) +
@@ -294,9 +326,9 @@ function splitContent(): string {
 <div style="height:6px;line-height:6px;font-size:1px;">&nbsp;</div>
 <div style="font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;white-space:nowrap;color:rgba(255,233,216,0.90);font-weight:500;">¡Visita nuestro <span style="color:#FFFFFF;font-weight:700;">Centro de Ayuda</span>!</div>
 </div>
-${splitGlassButton()}
+${splitGlassButton(toneId)}
 </div>`;
-  return `${logoIzq}${eslogan}${divisor}${der}`;
+  return `${logoIzq}${eslogan}${divisor}${dots}${der}`;
 }
 
 /** Alto real del footer según su layout (214 console · 250 centrado · 110 compacto · 144 split). */
@@ -312,12 +344,22 @@ export function buildFooter(id: string, style: FooterStyle, kind: FooterLayoutKi
   const H = footerHeight(kind);
   const uid = `footBg_${id.replace(/[^a-z0-9]/gi, "")}`;
   const bgSvgLayer = `<svg width="${FOOTER_WIDTH}" height="${H}" viewBox="0 0 ${FOOTER_WIDTH} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="position:absolute;inset:0;display:block;"><defs>${style.bgSvgGradient.replace(/id="[^"]*"/, `id="${uid}"`)}</defs><rect width="${FOOTER_WIDTH}" height="${H}" fill="url(#${uid})"/></svg>`;
+  // `id` ES el id del tono (en-vivo · morado · negociable · subascoins · dark):
+  // decide el borde del botón «¡Vamos!» (ver BUTTON_BORDERS).
+  const toneId = id;
   // console: panel glass · centered/compact/split: contenido suelto sin panel.
   let content: string;
-  if (kind === "centered") content = centeredContent();
-  else if (kind === "compact") content = compactContent();
-  else if (kind === "split") content = splitContent();
-  else content = glassPanel(`${footerCopy()}${footerLogo()}${glassButton()}`, style.glassDarken ?? 1);
+  if (kind === "centered") content = centeredContent(toneId);
+  else if (kind === "compact") content = compactContent(toneId);
+  else if (kind === "split") content = splitContent(toneId);
+  else {
+    // Los dos dots van FUERA del panel, sobre el fondo: el cristal es
+    // translúcido, así que se leen a través de él (si fueran hijos del panel
+    // quedarían por encima del vidrio y se verían planos).
+    const dots = `<div style="position:absolute;left:300px;top:22px;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.5);pointer-events:none;"></div>
+<div style="position:absolute;left:560px;top:176px;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.4);pointer-events:none;"></div>`;
+    content = `${dots}${glassPanel(`${footerCopy()}${footerLogo()}${glassButton(toneId)}`, style.glassDarken ?? 1)}`;
+  }
   return `<!-- Footer: Centro de Ayuda ${kind} (${id}) — Concorde -->
 <table border="0" width="${FOOTER_WIDTH}" cellspacing="0" cellpadding="0" align="center" style="border-collapse:separate;">
 <tr><td bgcolor="${style.bgFallback}" style="background-color:${style.bgFallback};padding:0;border-radius:18px;">
@@ -346,18 +388,21 @@ const FOOTER_EN_VIVO: FooterStyle = {
 };
 
 const FOOTER_MORADO: FooterStyle = {
-  bgSvgGradient: `<linearGradient id="footBg" x1="101.764" y1="-112.87" x2="539.155" y2="281.485" gradientUnits="userSpaceOnUse"><stop stop-color="#2E0F70"/><stop offset="0.5" stop-color="#5F3ED8"/><stop offset="1" stop-color="#8460E5"/></linearGradient>`,
+  bgSvgGradient: `<linearGradient id="footBg" x1="121.528" y1="106.291" x2="522.057" y2="499.049" gradientUnits="userSpaceOnUse"><stop stop-color="#340091"/><stop offset="0.668548" stop-color="#8460E5"/><stop offset="1" stop-color="#ED8936"/></linearGradient>`,
   bgFallback: "#5F3ED8",
+  // filter0_f / filter4_f del SVG: dos círculos r160 de #ED8936 al 30%, uno por
+  // esquina (der-centro e izq-arriba). Son NARANJAS, no morados: es el calor que
+  // asoma por los lados y lo que faltaba para que cuadre con Figma.
   glows: [
-    { hex: "#AE8EFF", op: 0.3, x: 538, y: 111, r: 160 },
-    { hex: "#7A50E0", op: 0.35, x: -94, y: -28, r: 160 },
+    { hex: "#ED8936", op: 0.3, x: 538, y: 111, r: 160 },
+    { hex: "#ED8936", op: 0.3, x: -94, y: -28, r: 160 },
   ],
   glassDarken: 0.4, // morado ya es oscuro: poco tinte para que se vea el fondo.
 };
 
 const FOOTER_NEGOCIABLE: FooterStyle = {
-  bgSvgGradient: `<linearGradient id="footBg" x1="0" y1="107" x2="600" y2="107" gradientUnits="userSpaceOnUse"><stop stop-color="#00DAE0"/><stop offset="1" stop-color="#008688"/></linearGradient>`,
-  bgFallback: "#00A6A8",
+  bgSvgGradient: `<linearGradient id="footBg" x1="0" y1="0" x2="600" y2="250" gradientUnits="userSpaceOnUse"><stop stop-color="#0FA38C"/><stop offset="0.34" stop-color="#2E7DA8"/><stop offset="0.7" stop-color="#5B3EC8"/><stop offset="1" stop-color="#340091"/></linearGradient>`,
+  bgFallback: "#2E7DA8",
   glows: [
     { hex: "#8460E5", op: 0.3, x: 538, y: 111, r: 160 },
     { hex: "#17C2A6", op: 0.35, x: -94, y: -28, r: 160 },
@@ -366,7 +411,7 @@ const FOOTER_NEGOCIABLE: FooterStyle = {
 };
 
 const FOOTER_SUBASCOINS: FooterStyle = {
-  bgSvgGradient: `<linearGradient id="footBg" x1="101.764" y1="-112.87" x2="539.155" y2="281.485" gradientUnits="userSpaceOnUse"><stop stop-color="white"/><stop offset="0.221154" stop-color="#F4AC59"/><stop offset="0.745192" stop-color="#8460E5"/><stop offset="1" stop-color="white"/></linearGradient>`,
+  bgSvgGradient: `<linearGradient id="footBg" x1="101.764" y1="-112.87" x2="539.155" y2="281.485" gradientUnits="userSpaceOnUse"><stop stop-color="white"/><stop offset="0.221154" stop-color="#F4AC59"/><stop offset="0.88" stop-color="#8460E5"/><stop offset="1" stop-color="white"/></linearGradient>`,
   bgFallback: "#B58BC0",
   glows: [
     { hex: "#8460E5", op: 0.3, x: 538, y: 111, r: 160 },
