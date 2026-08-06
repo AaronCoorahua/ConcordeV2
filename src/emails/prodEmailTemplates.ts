@@ -164,7 +164,7 @@ function hl(s: string): string {
       const i = inner.lastIndexOf('|');
       const label = i === -1 ? inner : inner.slice(0, i);
       const href = i === -1 ? LINK_PLACEHOLDER : inner.slice(i + 1);
-      return `<a href="${href}" target="_blank" style="font-weight:700;color:${C.dark};text-decoration:underline;">${label}</a>`;
+      return `<a href="${href}" target="_blank" style="font-weight:700;color:${C.dark};text-decoration:underline;word-break:break-word;overflow-wrap:break-word;">${label}</a>`;
     });
 }
 
@@ -195,7 +195,9 @@ export function renderSection(s: Section): string {
       return `${eyebrow}<tr><td align="center" style="font-size:24px;font-weight:800;line-height:1.25;color:${C.purple};letter-spacing:-0.02em;font-family:${FONT_HEADING};padding:0 16px;"><b>${esc(c.text)}</b></td></tr>`;
     }
     case 'text':
-      return `<tr><td align="${c.align || 'left'}" style="font-size:14px;font-family:${FONT_BODY};line-height:22px;color:${C.dark};padding:0 16px;">${hl(c.text)}</td></tr>`;
+      // `word-break` evita que una cadena larguísima sin espacios (una URL de
+      // reset, un token) estire la celda y desborde la tabla de 600px.
+      return `<tr><td align="${c.align || 'left'}" style="font-size:14px;font-family:${FONT_BODY};line-height:22px;color:${C.dark};padding:0 16px;word-break:break-word;overflow-wrap:break-word;">${hl(c.text)}</td></tr>`;
     case 'panel': {
       const titleP = c.title ? `<p style="margin:0${(c.body || c.iconUrl || c.imageUrl) ? ' 0 12px' : ''};font-size:14px;font-weight:700;line-height:1.35;color:${C.purple};font-family:${FONT_HEADING};">${hl(c.title)}</p>` : '';
       const bodyP = `<p style="margin:0;font-size:14px;line-height:1.45;color:${C.body};font-family:${FONT_HEADING};">${hl(c.body)}</p>`;
