@@ -102,7 +102,12 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
             // ahí queda pegado al preview que se está revisando, que es lo que se
             // mira justo antes de pasar al siguiente correo.
             nav={
+              /* El `key` NO es decorativo: al cruzar de Server a Client Component,
+                 este elemento viaja serializado y React lo reconcilia como hijo de
+                 lista — sin key avisa de «unique key prop». El id del correo además
+                 fuerza el remontaje al navegar, que es justo lo que se quiere. */
               <CorreoNav
+                key={correo.id}
                 anteriorId={vecinos.anterior?.id ?? null}
                 anteriorNombre={vecinos.anterior?.name ?? null}
                 siguienteId={vecinos.siguiente?.id ?? null}

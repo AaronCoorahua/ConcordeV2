@@ -188,7 +188,7 @@ export const EMAILS: EmailTemplate[] = [
       SP('16'),
       S('text', { ink: 'black', text: '!!¿Qué es la oportunidad de compra?!!' }),
       SP('12'),
-      S('text', { ink: 'black', text: 'La oportunidad de compra es %%una condición obtenida por el mejor postor%% en una oferta \'En Vivo\' con reserva y por el %%2do o 3er lugar en un proceso sin reserva%%.' }),
+      S('text', { ink: 'black', text: 'La oportunidad de compra es %%una condicional obtenida por el mejor postor%% en una oferta \'En Vivo\' con reserva y por el %%2do o 3er lugar en un proceso sin reserva%%.' }),
       SP('12'),
       S('text', { ink: 'black', text: 'En caso de %%activarse la oportunidad de compra%% el participante adquirirá las **responsabilidades de ganador directo habilitado** siendo responsable de seguir con el proceso de compra, bajo pena de sanción en caso de incumplimiento.' }),
       SP('30'),
