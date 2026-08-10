@@ -279,6 +279,12 @@ const PRESET_LAYOUT = { banner: "texto-centrado", footer: "footer-split" } as co
 const CATEGORY_PRESETS: Record<string, LabPreset> = {
   "En vivo": { ...PRESET_LAYOUT, tone: "live" },
   Negociable: { ...PRESET_LAYOUT, tone: "negotiable" },
+  // Los correos de saldo hablan de SubasCoins, así que abren con ese tono.
+  "Adquisición de SubasCoins": { ...PRESET_LAYOUT, tone: "coins" },
+  Recarga: { ...PRESET_LAYOUT, tone: "coins" },
+  // Las bajas y sanciones abren en dark: son avisos, no promoción.
+  "Inhabilitación de Usuario": { ...PRESET_LAYOUT, tone: "dark" },
+  "Baja de Cuenta": { ...PRESET_LAYOUT, tone: "dark" },
 };
 
 /**

@@ -42,6 +42,7 @@ const WBC_SHADOW = '0 0 8px 4px rgba(0,0,0,0.08)'; // sombra de card — concord
 // bordes gradiente Concorde (capa border-box) — se emulan email-safe con tabla wrapper de padding 2px
 const B_PRIMARY = 'linear-gradient(135deg,#ffffff 0%,#fbc47d 25%,#ae8eff 75%,#ffffff 100%)';    // Button.tsx .pvbtn
 const B_NEGOTIABLE = 'linear-gradient(135deg,#ffffff 0%,#4ddcdc 25%,#6445df 75%,#ffffff 100%)'; // Button.tsx .pneg
+const B_NEG_EDGE = 'linear-gradient(135deg,#ffffff 0%,#4DDCDC 25%,#6445DF 75%,#ffffff 100%)'; // borde negociable — CardViewer.tsx (.pcardv--negotiable)
 const B_STAT = 'linear-gradient(125deg,#ffffff 0%,#F4AC59 22%,#8460E5 74.5%,#ffffff 100%)';     // StatPill.tsx borde glass
 const TXT_SHADOW = 'rgba(0,0,0,0.25) 0 1px 3px';        // Button.tsx text-shadow
 const GLOW_PRIMARY = 'rgba(237,137,54,0.3) 0 2px 6px';  // Button.tsx .pvbtn box-shadow glow
@@ -51,6 +52,7 @@ const G_CONSOLE = 'linear-gradient(157deg,#5F3ED8 0%,#340091 50%,#140046 100%)';
 const G_CONSOLE_NAVY = 'linear-gradient(157deg,#22005c 0%,#00005E 55%,#000042 100%)'; // variante navy, mismo ángulo
 const B_GLASS_EDGE = 'linear-gradient(135deg,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0.10) 45%,rgba(255,255,255,0.40) 100%)'; // canto de vidrio iluminado (::before glass de Concorde)
 const G_STRIPE = 'linear-gradient(90deg,#ed8936 0%,#8460e5 55%,#3b1782 100%)'; // franja firma orange→vault (barra inferior de OfferCard)
+const G_GREEN = 'linear-gradient(180deg,#4ED397 0%,#32BA7C 50%,#1E9E63 100%)'; // caja «De tu expectativa»
 const GREEN = '#32BA7C'; // verde éxito ya usado en quote/won-vehicle
 const WBC_VALUE = '#3B1782'; // label/value morado — concorde/components/WalletBalanceCard.tsx (.wbc__row-label/value)
 const PCARD_NAME = '#4c1ebc';  // OfferCard .pcard__name
@@ -64,7 +66,7 @@ function likeBadge(): string {
 
 export interface Section {
   id: string;
-  type: 'title' | 'text' | 'panel' | 'features' | 'icon-text' | 'stats' | 'cta' | 'image' | 'spacer' | 'table' | 'details' | 'divider' | 'note' | 'amount' | 'offers' | 'vehicle' | 'negotiation' | 'quote' | 'won-vehicle' | 'costs' | 'list' | 'success' | 'columns';
+  type: 'title' | 'text' | 'panel' | 'features' | 'icon-text' | 'stats' | 'cta' | 'image' | 'spacer' | 'table' | 'details' | 'divider' | 'note' | 'amount' | 'offers' | 'vehicle' | 'negotiation' | 'quote' | 'won-vehicle' | 'costs' | 'list' | 'success' | 'columns' | 'action-card';
   content: Record<string, string>;
 }
 
@@ -92,6 +94,7 @@ export const SECTION_LABELS: Record<Section['type'], string> = {
   list: 'Lista con viñetas',
   success: 'Confirmación con check',
   columns: 'Dos columnas de texto',
+  'action-card': 'Card de acción (copy + botón + icono)',
 };
 
 export function createSection(type: Section['type']): Section {
@@ -137,6 +140,7 @@ export function createSection(type: Section['type']): Section {
     list: { title: '', i1: 'Item 1', i2: '', i3: '' },
     success: { title: '¡Listo!', value: '', caption: '' },
     columns: { h1: 'Columna 1', body1: 'Texto 1', h2: 'Columna 2', body2: 'Texto 2' },
+    'action-card': { text: 'Descripción de la acción.', btnText: 'VAMOS', url: 'https://', svg: '', bare: '' },
   };
   return { id, type, content: { ...defaults[type] } };
 }
@@ -146,6 +150,18 @@ function esc(s: string) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').re
 /** Destino de los ((enlaces)) mientras la maquetación no define la URL real.
     Es un merge tag, así que la plataforma de envío puede sustituirlo. */
 const LINK_PLACEHOLDER = '{{url}}';
+
+/**
+ * Un enlace `<a>` con el color que pida el correo. `inner` es «texto» o
+ * «texto|href»; sin href explícito se usa el merge tag {{url}}.
+ */
+function linkTag(inner: string, color: string): string {
+  // `esc` ya corrió, así que el separador se busca sobre el texto escapado.
+  const i = inner.lastIndexOf('|');
+  const label = i === -1 ? inner : inner.slice(0, i);
+  const href = i === -1 ? LINK_PLACEHOLDER : inner.slice(i + 1);
+  return `<a href="${href}" target="_blank" style="font-weight:700;color:${color};text-decoration:underline;word-break:break-word;overflow-wrap:break-word;">${label}</a>`;
+}
 
 /** Escapa y aplica resaltado: **acento naranja 800** · __negrita oscura 700__ · %%negrita del color base%%
     · [[número Poppins 800]] · ((enlace subrayado)). Los merge tags {{variable}} quedan intactos.
@@ -177,17 +193,32 @@ function hl(s: string): string {
     .replace(/%%(.+?)%%/g, `<strong style="font-weight:700;">$1</strong>`)
     .replace(/~~(.+?)~~/g, `<span style="font-weight:400;color:${C.purple};">$1</span>`)
     .replace(/\+\+(.+?)\+\+/g, `<span style="font-weight:400;color:#000000;">$1</span>`)
+    // ^^…^^ — mismo texto de cuerpo, un punto más grande (16px). Sin color
+    // propio: hereda el de la celda, así que sirve en cuerpos negros o navy.
+    .replace(/\^\^(.+?)\^\^/g, `<span style="font-size:16px;">$1</span>`)
+    // @@…@@ — un escalón más que ^^ (18px), mismo criterio: sin color propio.
+    .replace(/@@(.+?)@@/g, `<span style="font-size:18px;">$1</span>`)
     // !!…!! — subtítulo de sección: acento naranja un punto más grande que el
     // cuerpo, para los «¿Qué es…?» que abren un bloque explicativo.
-    .replace(/!!(.+?)!!/g, `<span style="font-size:16px;font-weight:800;color:${C.accent};">$1</span>`)
+    // Greedy a propósito: un subtítulo que TERMINA en «!» («…activar tu
+    // cuenta!!!») dejaría el signo fuera con `+?`, que cerraría en el primer
+    // `!!` disponible. Al ser uno por línea, tomar hasta el último es correcto.
+    .replace(/!!(.+)!!/g, `<span style="font-size:16px;font-weight:800;color:${C.accent};">$1</span>`)
+    // ###…### y ##…## — subtítulo morado, dos escalones por encima del cuerpo.
+    // El de 3 almohadillas va PRIMERO: con `##` delante, `###x###` casaría como
+    // `#` + `#x#` + `#` y dejaría almohadillas sueltas en el texto.
+    .replace(/####(.+)####/g, `<span style="font-size:26px;font-weight:800;color:${C.purple};">$1</span>`)
+    .replace(/###(.+)###/g, `<span style="font-size:22px;font-weight:800;color:${C.purple};">$1</span>`)
+    .replace(/##(.+)##/g, `<span style="font-size:19px;font-weight:800;color:${C.purple};">$1</span>`)
     .replace(/__(.+?)__/g, `<strong style="font-weight:700;color:${C.dark};">$1</strong>`)
     .replace(/\[\[(.+?)\]\]/g, `<strong style="font-weight:800;color:${C.purple};font-family:${FONT_NUMBER};">$1</strong>`)
+    // ((texto)) enlace naranja · [[texto]] enlace morado — el color es del
+    // correo, no del sistema: cada correo elige el suyo según su Figma.
     .replace(/\(\((.+?)\)\)/g, function link(_m, inner: string) {
-      // `esc` ya corrió, así que el separador se busca sobre el texto escapado.
-      const i = inner.lastIndexOf('|');
-      const label = i === -1 ? inner : inner.slice(0, i);
-      const href = i === -1 ? LINK_PLACEHOLDER : inner.slice(i + 1);
-      return `<a href="${href}" target="_blank" style="font-weight:700;color:${C.accent};text-decoration:underline;word-break:break-word;overflow-wrap:break-word;">${label}</a>`;
+      return linkTag(inner, C.accent);
+    })
+    .replace(/\{\[(.+?)\]\}/g, function purpleLink(_m, inner: string) {
+      return linkTag(inner, C.dark);
     })
     .replace(/ (\d+) /g, function restore(_m, i: string) { return tags[Number(i)]; });
 }
@@ -225,10 +256,19 @@ export function renderSection(s: Section): string {
       // sin el flag se mantiene el navy de siempre.
       // `size: 'lg'` lo sube a 16px: lo usan los rótulos que encabezan un bloque
       // («Resumen de transacción:»), que en Figma pesan más que el cuerpo.
-      return `<tr><td align="${c.align || 'left'}" style="font-size:${c.size === 'lg' ? '16px' : '14px'};font-family:${FONT_BODY};line-height:${c.size === 'lg' ? '24px' : '22px'};color:${c.ink === 'black' ? '#000000' : C.dark};padding:0 16px;word-break:break-word;overflow-wrap:break-word;">${hl(c.text)}</td></tr>`;
+      // `narrow` estrecha la columna de texto (px) y la centra: para los avisos
+      // que en Figma no ocupan todo el ancho del correo.
+      return c.narrow
+        ? `<tr><td align="center" style="padding:0 16px;"><table border="0" cellpadding="0" cellspacing="0" align="center" style="max-width:${esc(c.narrow)}px;"><tr><td align="${c.align || 'left'}" style="font-size:${c.size === 'lg' ? '16px' : '14px'};font-family:${FONT_BODY};line-height:${c.size === 'lg' ? '24px' : '22px'};color:${c.ink === 'black' ? '#000000' : C.dark};word-break:break-word;overflow-wrap:break-word;">${hl(c.text)}</td></tr></table></td></tr>`
+        : `<tr><td align="${c.align || 'left'}" style="font-size:${c.size === 'lg' ? '16px' : '14px'};font-family:${FONT_BODY};line-height:${c.size === 'lg' ? '24px' : '22px'};color:${c.ink === 'black' ? '#000000' : C.dark};padding:0 16px;word-break:break-word;overflow-wrap:break-word;">${hl(c.text)}</td></tr>`;
     case 'panel': {
-      const titleP = c.title ? `<p style="margin:0${(c.body || c.iconUrl || c.imageUrl) ? ' 0 12px' : ''};font-size:14px;font-weight:700;line-height:1.35;color:${C.purple};font-family:${FONT_HEADING};">${hl(c.title)}</p>` : '';
-      const bodyP = `<p style="margin:0;font-size:14px;line-height:1.45;color:${C.body};font-family:${FONT_HEADING};">${hl(c.body)}</p>`;
+      // `size: 'lg'` sube la tipografía del panel y `align: 'center'` centra su
+      // contenido: el bloque de vehículo de los correos Mapfre, que en Figma
+      // pesa más que un panel normal.
+      const pLg = c.size === 'lg';
+      const pAlign = c.align === 'center' ? 'text-align:center;' : '';
+      const titleP = c.title ? `<p style="margin:0${(c.body || c.iconUrl || c.imageUrl) ? ' 0 6px' : ''};font-size:${pLg ? '20' : '14'}px;font-weight:${pLg ? '800' : '700'};line-height:1.35;color:${C.purple};font-family:${FONT_HEADING};${pAlign}">${hl(c.title)}</p>` : '';
+      const bodyP = `<p style="margin:0;font-size:${pLg ? '20' : '14'}px;font-weight:${pLg ? '800' : '400'};line-height:1.45;color:${pLg ? C.purple : C.body};font-family:${FONT_HEADING};${pAlign}">${hl(c.body)}</p>`;
       const inner = (c.iconUrl || c.imageUrl)
         ? `${titleP}<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>${c.iconUrl ? badgeCell(c.iconUrl, c.badge === 'white') + '<td width="14"></td>' : ''}<td valign="middle">${bodyP}</td>${c.imageUrl ? `<td width="8"></td><td width="${esc(c.imageW || '85')}" valign="middle" align="right"><img src="${esc(c.imageUrl)}" width="${esc(c.imageW || '85')}" height="${esc(c.imageH || '57')}" alt="" border="0" style="display:block;"></td>` : ''}</tr></table>`
         : `${titleP}${bodyP}`;
@@ -248,12 +288,44 @@ export function renderSection(s: Section): string {
 <td width="2%" align="center" valign="top">${vDivider}</td>
 <td width="32%" align="center" valign="top" style="padding:0 6px;font-size:12px;line-height:1.35;color:${C.body};font-family:${FONT_HEADING};">${hl(c.t3)}</td>
 </tr></table></td></tr></table></td></tr>`;
+    case 'action-card': {
+      // Card con la acción a la IZQUIERDA (copy + botón) y el icono a la
+      // derecha. `bare: 'true'` lo saca del panel lavanda y lo deja suelto en
+      // el cuerpo, para el bloque que en Figma no va dentro de card.
+      const bare = c.bare === 'true';
+      const btn = c.btnText
+        ? `<table border="0" cellpadding="0" cellspacing="0" align="left" style="border-radius:9999px;background-image:${B_PRIMARY};box-shadow:${GLOW_PRIMARY};"><tr><td style="padding:2px;"><a href="${esc(c.url)}" target="_blank" style="display:inline-block;background:${C.purple};background-image:${G_PRIMARY};color:${C.white};border-radius:9999px;padding:13px 44px;font-family:${FONT_HEADING};font-size:15px;font-weight:700;text-decoration:none;text-shadow:${TXT_SHADOW};box-shadow:inset 0 1px 0 rgba(255,255,255,0.30);">${esc(c.btnText)}</a></td></tr></table>`
+        : '';
+      const size = c.size === 'lg' ? { text: 17, icon: 116 } : { text: 14, icon: 72 };
+      // `items` (separados por |) pinta una fila de condiciones con punto naranja
+      // debajo del copy, centrada — el bloque «Activación alternativa» de Figma.
+      const items = c.items
+        ? `<table border="0" cellpadding="0" cellspacing="0" align="center" style="margin-top:10px;"><tr>${c.items.split('|').map(function cell(v) {
+            return `<td valign="top" style="padding:0 10px;font-size:13px;line-height:1.6;color:${C.dark};font-family:${FONT_HEADING};white-space:nowrap;"><span style="color:${C.accent};">&bull;</span> ${hl(v.trim())}</td>`;
+          }).join('')}</tr></table>`
+        : '';
+      const inner = `<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+<td valign="middle" align="${c.align === 'center' ? 'center' : 'left'}"><p style="margin:0;font-size:${size.text}px;line-height:1.45;color:${c.ink === 'black' ? '#000000' : C.body};font-family:${FONT_HEADING};">${hl(c.text).replace(/\n/g, '<br>')}</p>${btn ? `<table border="0" cellpadding="0" cellspacing="0"><tr><td height="14"></td></tr><tr><td>${btn}</td></tr></table>` : ''}${items}</td>
+${c.svg ? `<td width="16"></td><td width="${size.icon}" valign="middle" align="right" style="line-height:0;">${c.svg}</td>` : ''}
+</tr></table>`;
+      // `full: 'true'` deja el card a los 600px del correo (el panel de serie
+      // se queda en 500 y aquí la fila copy+botón+icono necesita el ancho).
+      const open = c.full === 'true' ? panelOpen.replace('max-width:500px;', '') : panelOpen;
+      return bare
+        ? `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">${inner}</td></tr>`
+        : `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">${open}${inner}${panelClose}</td></tr>`;
+    }
     case 'icon-text':
+      // `svg` gana al emoji: se inyecta TAL CUAL (ya es markup de confianza,
+      // copiado de un componente del sistema) y va sin el disco morado, porque
+      // el icono trae su propia forma y color.
       return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">${panelOpen}
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td width="48" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="48" height="48" bgcolor="${C.purple}" style="border-radius:50%;background-image:${G_VAULT};box-shadow:${GLOSS};"><tr><td align="center" valign="middle"><span style="font-size:22px;">${esc(c.icon)}</span></td></tr></table></td>
+<tr>${c.svg
+  ? `<td width="60" valign="middle" style="line-height:0;">${c.svg}</td>`
+  : `<td width="48" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="48" height="48" bgcolor="${C.purple}" style="border-radius:50%;background-image:${G_VAULT};box-shadow:${GLOSS};"><tr><td align="center" valign="middle"><span style="font-size:22px;">${esc(c.icon)}</span></td></tr></table></td>`}
 <td width="14"></td>
-<td valign="top"><p style="margin:0;font-size:14px;line-height:1.45;color:${C.body};font-family:${FONT_HEADING};">${c.title ? `<b style="color:${C.purple};">${esc(c.title)}</b><br>` : ''}${hl(c.text).replace(/\n/g, '<br>')}</p></td>
+<td valign="middle"><p style="margin:0;font-size:14px;line-height:1.45;color:${c.ink === 'black' ? '#000000' : C.body};font-family:${FONT_HEADING};">${c.title ? `<b style="color:${C.purple};">${esc(c.title)}</b><br>` : ''}${hl(c.text).replace(/\n/g, '<br>')}</p></td>
 </tr></table>${panelClose}</td></tr>`;
     case 'stats':
       return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">${panelOpen}
@@ -274,7 +346,12 @@ export function renderSection(s: Section): string {
       return `<tr><td align="center"><table border="0" cellpadding="0" cellspacing="0" align="center" style="border-radius:9999px;background-image:${border};box-shadow:${glow};"><tr><td style="padding:2px;"><a href="${esc(c.url)}" target="_blank" style="display:inline-block;background:${C.purple};background-image:${gradient};color:${C.white};border-radius:9999px;padding:13px 44px;font-family:${FONT_HEADING};font-size:15px;font-weight:700;text-decoration:none;text-shadow:${TXT_SHADOW};box-shadow:inset 0 1px 0 rgba(255,255,255,0.30);">${esc(c.text)}</a></td></tr></table></td></tr>`;
     }
     case 'image':
-      return `<tr><td align="center" style="padding:0 16px;"><img src="${esc(c.url)}" alt="${esc(c.alt)}" style="display:block;margin:0 auto;max-width:100%;height:auto;border-radius:12px;"></td></tr>`;
+      // `width` fija el ancho en px (un logo, no una foto): además del atributo
+      // —que es lo que respeta Outlook— se quita el radio, que en una marca
+      // recortaría las esquinas.
+      return c.width
+        ? `<tr><td align="center" style="padding:0 16px;"><img src="${esc(c.url)}" alt="${esc(c.alt)}" width="${esc(c.width)}" style="display:block;margin:0 auto;width:${esc(c.width)}px;max-width:100%;height:auto;"></td></tr>`
+        : `<tr><td align="center" style="padding:0 16px;"><img src="${esc(c.url)}" alt="${esc(c.alt)}" style="display:block;margin:0 auto;max-width:100%;height:auto;border-radius:12px;"></td></tr>`;
     case 'spacer':
       return `<tr><td height="${esc(c.height)}"></td></tr>`;
     case 'table':
@@ -289,9 +366,14 @@ export function renderSection(s: Section): string {
         // Figma: la ETIQUETA va en morado y en negrita; el VALOR en el mismo
         // morado pero con peso normal (antes iba la etiqueta naranja y el valor
         // en negrita, o sea justo al revés).
-        ? `<tr><td valign="top" width="38%" style="font-size:14px;font-weight:700;color:${C.purple};font-family:${FONT_HEADING};padding:7px 12px 7px 0;line-height:1.4;">${hl(l)}</td><td valign="top" style="font-size:14px;font-weight:500;color:${C.purple};font-family:${FONT_HEADING};padding:7px 0;line-height:1.4;">${hl(v)}</td></tr>`
+        // `boldValues` sube el VALOR a negrita (Figma lo pide en algunos
+        // correos); sin el flag conserva el peso normal de siempre.
+        ? `<tr><td valign="top" width="38%" style="font-size:14px;font-weight:700;color:${C.purple};font-family:${FONT_HEADING};padding:7px 12px 7px 0;line-height:1.4;">${hl(l)}</td><td valign="top" style="font-size:14px;font-weight:${c.boldValues === 'true' ? '700' : '500'};color:${C.purple};font-family:${FONT_HEADING};padding:7px 0;line-height:1.4;">${hl(v)}</td></tr>`
         : '';
-      return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};"><table border="0" cellpadding="0" cellspacing="0" width="100%" align="center" style="max-width:500px;">${row(c.l1, c.v1)}${row(c.l2, c.v2)}${row(c.l3, c.v3)}</table></td></tr>`;
+      // `indent` mete la tabla hacia dentro (Figma la sangra respecto al
+      // resto del cuerpo); sin el flag arranca en el margen de siempre.
+      const pad = c.indent ? `0 16px 0 ${esc(c.indent)}px` : '0 16px';
+      return `<tr><td align="center" style="padding:${pad};font-family:${FONT_HEADING};"><table border="0" cellpadding="0" cellspacing="0" width="100%" align="center" style="max-width:500px;">${row(c.l1, c.v1)}${row(c.l2, c.v2)}${row(c.l3, c.v3)}</table></td></tr>`;
     }
     case 'divider':
       return `<tr><td align="center" style="padding:0 16px;"><table border="0" cellpadding="0" cellspacing="0" width="100%" align="center" style="max-width:500px;"><tr><td style="border-top:1px solid ${C.border};font-size:1px;line-height:1px;height:1px;">&nbsp;</td></tr></table></td></tr>`;
@@ -301,26 +383,26 @@ export function renderSection(s: Section): string {
 <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
 <td width="32" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="30" height="30" bgcolor="#fff0e2" style="border-radius:8px;"><tr><td align="center" valign="middle" width="30" height="30" style="font-size:17px;font-weight:800;color:${C.accent};font-family:${FONT_HEADING};line-height:1;">!</td></tr></table></td>
 <td width="10"></td>
-<td valign="middle"><p style="margin:0;font-size:13px;line-height:1.5;color:${C.body};font-family:${FONT_HEADING};">${c.title ? `<b style="color:${C.accent};">${hl(c.title)}</b> ` : ''}${hl(c.body)}</p></td>
+<td valign="middle"><p style="margin:0;font-size:13px;line-height:1.5;color:${c.bodyTone === 'accent' ? C.accent : c.bodyTone === 'purple' ? C.purple : C.body};font-family:${FONT_HEADING};">${c.title ? `<b style="color:${C.accent};">${hl(c.title)}</b> ` : ''}${hl(c.body)}</p></td>
 </tr></table></td></tr></table></td></tr>`;
     case 'amount':
       // borde gradiente de StatPill.tsx emulado con tabla wrapper (padding 1.5px ≈ 2px)
       return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">
-<table border="0" cellpadding="0" cellspacing="0" align="center" style="border-radius:16px;background-image:${B_STAT};box-shadow:${WBC_SHADOW};"><tr><td style="padding:2px;">
+<table border="0" cellpadding="0" cellspacing="0" align="center" style="border-radius:16px;background-image:${c.edge === 'negotiable' ? B_NEG_EDGE : B_STAT};box-shadow:${WBC_SHADOW};"><tr><td style="padding:2px;">
 <table border="0" cellpadding="0" cellspacing="0" align="center" bgcolor="${C.lavender}" style="border-radius:14px;background-image:${G_PANEL};"><tr><td align="center" style="padding:14px 26px;">
-<p style="margin:0 0 4px;font-size:12px;color:${C.body};font-family:${FONT_HEADING};">${esc(c.label)}</p>
+<p style="margin:0 0 4px;font-size:${c.labelTone ? '18' : '12'}px;${c.labelTone ? 'font-weight:800;' : ''}color:${c.labelTone === 'accent' ? C.accent : c.labelTone === 'purple' ? C.purple : C.body};font-family:${FONT_HEADING};">${esc(c.label)}</p>
 <p style="margin:0;font-size:24px;font-weight:800;color:${C.purple};font-family:${FONT_NUMBER};">${esc(c.value)}</p>
 </td></tr></table></td></tr></table></td></tr>`;
     case 'offers': {
-      const card = (img: string, name: string, year: string) => `<td width="24%" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-radius:8px;box-shadow:0 0 16px 4px rgba(0,0,0,0.07);">
+      const card = (img: string, name: string, year: string) => `<td width="24%" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff" style="border-radius:8px;box-shadow:0 0 16px 4px rgba(0,0,0,0.07);">
 <tr><td>${img ? `<img src="${esc(img)}" width="100%" alt="" style="display:block;height:70px;object-fit:cover;border-radius:8px 8px 0 0;">` : `<div style="height:70px;background:${C.lavender};border-radius:8px 8px 0 0;"></div>`}</td></tr>
-<tr><td style="padding:8px 8px 2px;"><span style="display:block;font-size:13px;font-weight:700;color:${PCARD_NAME};font-family:${FONT_HEADING};">${esc(name)}</span><span style="display:block;font-size:10px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:${PCARD_YEAR};font-family:${FONT_HEADING};">${esc(year)}</span></td></tr>
+<tr><td style="padding:8px 8px 2px;"><span style="display:block;font-size:15px;font-weight:700;line-height:20px;color:${PCARD_NAME};font-family:${FONT_HEADING};">${esc(name)}</span><span style="display:block;margin-top:2px;font-size:11px;font-weight:500;line-height:16px;letter-spacing:0.06em;text-transform:uppercase;color:${PCARD_YEAR};font-family:${FONT_HEADING};">${esc(year)}</span></td></tr>
 <tr><td align="right" style="padding:4px 8px 8px;">${likeBadge()}</td></tr>
 <tr><td height="6" style="background-image:${G_TEAL_BAR};font-size:1px;line-height:1px;border-radius:0 0 8px 8px;">&nbsp;</td></tr>
 </table></td>`;
       return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">
-<span style="display:block;font-size:16px;font-weight:800;color:${C.purple};text-align:center;margin-bottom:6px;">${esc(c.heading)}</span>
-<span style="display:block;font-size:12px;color:${C.body};text-align:center;margin-bottom:14px;">${esc(c.sub)}</span>
+<span style="display:block;font-size:16px;font-weight:800;color:${C.purple};text-align:center;margin-bottom:14px;">${esc(c.heading)}</span>
+<span style="display:block;font-size:14px;color:${C.body};text-align:center;margin-bottom:16px;">${esc(c.sub)}</span>
 <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
 ${card(c.c1img, c.c1name, c.c1year)}<td width="2%"></td>${card(c.c2img, c.c2name, c.c2year)}<td width="2%"></td>${card(c.c3img, c.c3name, c.c3year)}<td width="2%"></td>${card(c.c4img, c.c4name, c.c4year)}
 </tr></table></td></tr>`;
@@ -349,43 +431,61 @@ ${thumbRow(c.thumb1)}${spacer}${thumbRow(c.thumb2)}${c.thumb3 ? spacer + thumbRo
 </td>
 </tr></table></td></tr>`;
     }
-    case 'negotiation':
-      // colores 1:1 con concorde/components/BidPosition.tsx: fila "vault" (morado + borde slate)
-      // para tu propuesta, fila "live" (gradiente naranja, ya usado como G_LIVE en 'quote') para
-      // la propuesta que manda — antes esta última usaba un coral (#f1705d) fuera del sistema
+    case 'negotiation': {
+      // Colores 1:1 con concorde/components/BidPosition.tsx. `tone:
+      // 'negotiable'` pinta la columna del vendedor con el teal del flujo
+      // Negociable en vez del naranja de En vivo, y sube un escalón las
+      // tipografías, que en Figma pesan más que las de la fila estándar.
+      const nNeg = c.tone === 'negotiable';
+      const sellerBg = nNeg ? TEAL : '#EF852E';
+      const sellerGradient = nNeg ? G_TEAL_BAR : G_LIVE;
+      // Con tono negociable las tipografías suben un escalón (Figma); sin el
+      // flag se conservan las de la fila estándar.
+      const nLbl = nNeg ? 14 : 11;
+      const nVal = nNeg ? 23 : 16;
+      const nRound = nNeg ? 13 : 12;
+      const nRoundNum = nNeg ? 19 : 12;
+      const nRoundBox = nNeg ? 34 : 26;
+      const nExpH = nNeg ? 22 : 0;
       return `<tr><td style="padding:0 16px;font-family:${FONT_HEADING};">
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-radius:10px;overflow:hidden;"><tr>
 <td width="30%" bgcolor="${TEAL}" valign="middle" style="background-image:${G_TEAL_BAR};padding:12px 10px;">
-<table border="0" cellpadding="0" cellspacing="0"><tr>
-<td width="26" valign="middle"><table border="0" cellpadding="0" cellspacing="0" width="26" height="26" bgcolor="#ffffff" style="border-radius:50%;"><tr><td align="center" valign="middle" style="font-size:12px;font-weight:800;color:${TEAL};font-family:${FONT_NUMBER};">${esc(c.round)}</td></tr></table></td>
+<table border="0" cellpadding="0" cellspacing="0" align="${nNeg ? 'center' : 'left'}"><tr>
+<td width="${nRoundBox}" valign="middle"><table border="0" cellpadding="0" cellspacing="0" width="${nRoundBox}" height="${nRoundBox}" bgcolor="#ffffff" style="border-radius:50%;"><tr><td align="center" valign="middle" style="font-size:${nRoundNum}px;font-weight:800;color:${TEAL};font-family:${FONT_NUMBER};">${esc(c.round)}</td></tr></table></td>
 <td width="8"></td>
-<td style="font-size:11px;font-weight:700;color:#fff;line-height:1.3;font-family:${FONT_HEADING};">${esc(c.roundLabel)}</td>
+<td style="font-size:${nRound}px;font-weight:700;color:#fff;line-height:1.3;font-family:${FONT_HEADING};">${esc(c.roundLabel)}</td>
 </tr></table>
 </td>
 <td width="35%" bgcolor="${C.navy}" align="center" valign="middle" style="background-image:${G_ROW_VAULT};border-top:1px solid ${SLATE};border-bottom:1px solid ${SLATE};padding:12px 6px;">
-<span style="display:block;font-size:11px;color:#fff;font-family:${FONT_HEADING};">${esc(c.yourLabel)}</span>
-<span style="display:block;font-size:16px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};">${esc(c.yourValue)}</span>
+<span style="display:block;font-size:${nLbl}px;color:#fff;font-family:${FONT_HEADING};white-space:nowrap;">${esc(c.yourLabel)}</span>
+<span style="display:block;font-size:${nVal}px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};white-space:nowrap;">${esc(c.yourValue)}</span>
 </td>
 <td width="35%" valign="top">
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td bgcolor="#EF852E" align="center" style="background-image:${G_LIVE};padding:8px 6px 4px;">
-<span style="display:block;font-size:11px;color:#fff;font-family:${FONT_HEADING};">${esc(c.sellerLabel)}</span>
-<span style="display:block;font-size:16px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};">${esc(c.sellerValue)}</span>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" height="100%">
+<tr><td bgcolor="${sellerBg}" align="center" style="background-image:${sellerGradient};padding:10px 6px 6px;">
+<span style="display:block;font-size:${nLbl}px;color:#fff;font-family:${FONT_HEADING};white-space:nowrap;">${esc(c.sellerLabel)}</span>
+<span style="display:block;font-size:${nVal}px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};white-space:nowrap;">${esc(c.sellerValue)}</span>
 </td></tr>
-<tr><td bgcolor="${C.navy}" align="center" style="padding:4px 6px;"><span style="font-size:10px;font-weight:700;color:#fff;font-family:${FONT_HEADING};">${esc(c.expiresLabel)} ${esc(c.expiresValue)}</span></td></tr>
+<tr><td bgcolor="${C.navy}" align="center" valign="middle"${nExpH ? ` height="${nExpH}"` : ''} style="padding:${nNeg ? '3px 6px' : '4px 6px'};"><span style="font-size:12px;font-weight:700;color:#fff;font-family:${FONT_HEADING};white-space:nowrap;">${esc(c.expiresLabel)} ${esc(c.expiresValue)}</span></td></tr>
 </table>
 </td>
 </tr></table></td></tr>`;
+    }
     case 'quote': {
       // altura fija (atributo height, no %) igual al alto natural del card de propuesta — más
       // confiable en clientes de email que depender del contenido; adentro, todo centrado verticalmente
       const QUOTE_SIDE_H = 92;
-      const quoteSideCard = (w: string, label: string, value: string) => `<td width="${w}" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff" style="border-radius:16px;overflow:hidden;box-shadow:${WBC_SHADOW};"><tr>
-<td height="${QUOTE_SIDE_H}" align="center" valign="middle" style="padding:10px;">
-<span style="display:block;font-size:15px;font-weight:600;letter-spacing:0.02em;color:${C.body};font-family:${FONT_HEADING};">${esc(label)}</span>
-<span style="display:block;margin-top:6px;font-size:30px;font-weight:800;color:${WBC_VALUE};font-family:${FONT_NUMBER};">${esc(value)}</span>
-</td></tr></table></td>`;
       const hasPct = !!c.pctValue;
+      // Con bloque de porcentaje son TRES cajas en la fila (~150px cada una) y
+      // el monto a 30px se parte en dos líneas; se baja un escalón para que
+      // «US$ 20,000» entre de una sola pieza, como en Figma.
+      const sideLabel = hasPct ? 13 : 15;
+      const sideValue = hasPct ? 21 : 30;
+      const quoteSideCard = (w: string, label: string, value: string) => `<td width="${w}" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff" style="border-radius:16px;overflow:hidden;box-shadow:${WBC_SHADOW};"><tr>
+<td height="${hasPct ? 78 : QUOTE_SIDE_H}" align="center" valign="middle" style="padding:10px 6px;">
+<span style="display:block;font-size:${sideLabel}px;font-weight:600;letter-spacing:0.02em;color:${C.body};font-family:${FONT_HEADING};white-space:nowrap;">${esc(label)}</span>
+<span style="display:block;margin-top:4px;font-size:${sideValue}px;font-weight:800;color:${WBC_VALUE};font-family:${FONT_NUMBER};white-space:nowrap;">${esc(value)}</span>
+</td></tr></table></td>`;
       // Sin porcentaje, el card lateral («En garantía») no necesita la mitad del
       // ancho: su valor es corto y quedaba perdido en una caja enorme. Se le da
       // menos ancho y el de la propuesta se queda con el resto.
@@ -397,13 +497,13 @@ ${thumbRow(c.thumb1)}${spacer}${thumbRow(c.thumb2)}${c.thumb3 ? spacer + thumbRo
       const neg = c.tone === 'negotiable';
       const mainBg = neg ? TEAL : '#EF852E';
       const mainGradient = neg ? G_TEAL_BAR : G_LIVE;
-      const pctBox = hasPct ? `<td width="4%"></td><td width="${w}" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" height="100%" bgcolor="#32BA7C" style="border-radius:14px;box-shadow:${WBC_SHADOW};"><tr><td align="center" style="padding:14px 6px;">
+      const pctBox = hasPct ? `<td width="4%"></td><td width="${w}" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" height="100%" bgcolor="${neg ? TEAL : GREEN}" style="border-radius:14px;background-image:${neg ? G_TEAL_BAR : G_GREEN};box-shadow:${WBC_SHADOW};"><tr><td align="center" style="padding:14px 6px;">
 <span style="display:block;font-size:11px;color:#fff;font-family:${FONT_HEADING};">${esc(c.pctLabel)}</span><span style="display:block;font-size:19px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};">${esc(c.pctValue)}</span>
 </td></tr></table></td>` : '';
       return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:500px;"><tr>
 <td width="${wMain}" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-radius:14px;overflow:hidden;box-shadow:${WBC_SHADOW};"><tr>
-<td bgcolor="${mainBg}" align="center" style="padding:12px 10px 10px;background-image:${mainGradient};"><span style="display:block;font-size:15px;color:#fff;font-family:${FONT_HEADING};">${esc(c.proposalLabel)}</span><span style="display:block;font-size:30px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};">${esc(c.proposalValue)}</span></td>
+<td bgcolor="${mainBg}" align="center" style="padding:12px 8px 10px;background-image:${mainGradient};"><span style="display:block;font-size:${hasPct ? '13' : '15'}px;color:#fff;font-family:${FONT_HEADING};white-space:nowrap;">${esc(c.proposalLabel)}</span><span style="display:block;font-size:${hasPct ? '21' : '30'}px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};white-space:nowrap;">${esc(c.proposalValue)}</span></td>
 </tr><tr><td bgcolor="${C.purple}" align="center" style="padding:7px 10px;background-image:${G_ROW_VAULT};"><span style="font-size:13px;font-weight:700;color:#fff;font-family:${FONT_HEADING};">${esc(c.expiresLabel)} ${esc(c.expiresValue)}</span></td></tr>
 </table></td>
 <td width="4%"></td>
@@ -419,52 +519,101 @@ ${pctBox}
 ${c.img ? `<img src="${esc(c.img)}" width="100%" alt="" style="display:block;">` : `<div style="width:100%;height:150px;background:${C.lavender};"></div>`}
 <span style="position:absolute;top:10px;left:10px;display:inline-block;white-space:nowrap;line-height:1;background:${TEAL};background-image:${G_TEAL_BAR};color:#fff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:9999px;font-family:${FONT_HEADING};">${esc(c.tag)}</span>
 </td></tr>
-<tr><td bgcolor="${C.navy}" style="padding:10px 12px;"><table border="0" cellpadding="0" cellspacing="0"><tr>
-<td width="26" valign="middle"><table border="0" cellpadding="0" cellspacing="0" width="26" height="26" bgcolor="#ffffff" style="border-radius:50%;"><tr><td align="center" valign="middle" width="26" height="26" style="font-size:13px;line-height:1;">🏆</td></tr></table></td>
+<tr><td style="padding:8px 0 0;"><table border="0" cellpadding="0" cellspacing="0" width="70%" align="right" bgcolor="${C.navy}" style="border-radius:9999px;background-image:${G_ROW_VAULT};"><tr>
+<td width="30" valign="middle" style="padding:8px 0 8px 12px;"><table border="0" cellpadding="0" cellspacing="0" width="26" height="26" bgcolor="#ffffff" style="border-radius:50%;"><tr><td align="center" valign="middle" width="26" height="26" style="font-size:13px;line-height:1;">🏆</td></tr></table></td>
 <td width="8"></td>
-<td valign="middle"><span style="display:block;font-size:10px;color:#d8d2ec;font-family:${FONT_HEADING};">${esc(c.winLabel)}</span><span style="display:block;font-size:14px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};">${esc(c.winValue)}</span></td>
+<td valign="middle" align="left" style="padding:8px 0;"><span style="display:block;font-size:12px;line-height:1.25;color:#d8d2ec;font-family:${FONT_HEADING};">${esc(c.winLabel)}</span></td>
+<td valign="middle" align="right" style="padding:8px 14px 8px 8px;"><span style="display:block;font-size:17px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};white-space:nowrap;">${esc(c.winValue)}</span></td>
 </tr></table></td></tr>
 </table></td>
 <td width="4%"></td>
-<td width="22%" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td bgcolor="${C.purple}" style="border-radius:12px;background-image:${G_VAULT};box-shadow:${GLOSS};padding:12px 6px;" align="center">
-<span style="display:block;font-size:11px;color:#d8d2ec;font-family:${FONT_HEADING};">${esc(c.statLabel)}</span><span style="display:block;font-size:18px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};">${esc(c.statValue)}</span>
-</td></tr>${c.pctValue ? `<tr><td height="6"></td></tr><tr><td bgcolor="#32BA7C" style="border-radius:12px;box-shadow:${GLOSS};padding:12px 6px;" align="center">
-<span style="display:block;font-size:11px;color:#eafff3;font-family:${FONT_HEADING};">${esc(c.pctLabel)}</span><span style="display:block;font-size:16px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};">${esc(c.pctValue)}</span>
+<td width="22%" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td bgcolor="${c.tone === 'negotiable' ? TEAL : C.purple}" style="border-radius:12px;background-image:${c.tone === 'negotiable' ? G_TEAL_BAR : G_VAULT};box-shadow:${GLOSS};padding:12px 6px;" align="center">
+<span style="display:block;font-size:12px;font-weight:600;color:#ffffff;font-family:${FONT_HEADING};">${esc(c.statLabel)}</span><span style="display:block;margin-top:2px;font-size:19px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};">${esc(c.statValue)}</span>
+</td></tr>${c.pctValue ? `<tr><td height="6"></td></tr><tr><td bgcolor="${c.tone === 'negotiable' ? TEAL : GREEN}" style="border-radius:12px;background-image:${c.tone === 'negotiable' ? G_TEAL_BAR : 'none'};box-shadow:${GLOSS};padding:12px 6px;" align="center">
+<span style="display:block;font-size:12px;font-weight:600;color:#ffffff;font-family:${FONT_HEADING};">${esc(c.pctLabel)}</span><span style="display:block;margin-top:2px;font-size:19px;font-weight:800;color:#fff;font-family:${FONT_NUMBER};">${esc(c.pctValue)}</span>
 </td></tr>` : ''}</table></td>
 </tr></table></td></tr>`;
     case 'costs': {
-      const box = (l: string, v: string, accent?: boolean) => `<td width="32%" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="${accent ? '#EF852E' : C.lavender}" style="border-radius:12px;${accent ? `background-image:${G_LIVE};` : `border:1px solid ${C.border};`}"><tr><td align="center" style="padding:12px 6px;">
-<span style="display:block;font-size:11px;color:${accent ? '#fff' : C.body};font-family:${FONT_HEADING};">${esc(l)}</span>
-<span style="display:block;font-size:16px;font-weight:800;color:${accent ? '#fff' : C.purple};font-family:${FONT_NUMBER};">${esc(v)}</span>
+      // `tone: 'negotiable'` pinta la caja de acento (la deuda) con el teal del
+      // flujo Negociable en vez del naranja de En vivo.
+      const cNeg = c.tone === 'negotiable';
+      // El tamaño sube un escalón cuando el correo pide tono negociable
+      // (Figma pesa más ahí); sin el flag conserva el tamaño de siempre.
+      const cLbl = cNeg ? 13 : 11;
+      const cVal = cNeg ? 22 : 16;
+      const box = (l: string, v: string, accent?: boolean) => `<td width="32%" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="${accent ? (cNeg ? TEAL : '#EF852E') : C.lavender}" style="border-radius:12px;${accent ? `background-image:${cNeg ? G_TEAL_BAR : G_LIVE};` : `border:1px solid ${C.border};`}"><tr><td align="center" style="padding:12px 6px;">
+<span style="display:block;font-size:${cLbl}px;color:${accent ? '#fff' : C.body};font-family:${FONT_HEADING};white-space:nowrap;">${esc(l)}</span>
+<span style="display:block;font-size:${cVal}px;font-weight:800;color:${accent ? '#fff' : C.purple};font-family:${FONT_NUMBER};white-space:nowrap;">${esc(v)}</span>
 </td></tr></table></td>`;
       return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:500px;"><tr>${box(c.l1, c.v1)}<td width="2%"></td>${box(c.l2, c.v2)}<td width="2%"></td>${box(c.l3, c.v3, true)}</tr></table></td></tr>`;
     }
-    case 'success':
+    case 'success': {
+      // `wide: 'true'` estira el card a todo el ancho y sube un escalón las
+      // tipografías; sin el flag, el card se ajusta a su contenido como siempre.
+      const wide = c.wide === 'true';
+      const sz = wide
+        ? { title: 18, value: 38, caption: 17, extra: 17 }
+        : { title: 13, value: 26, caption: 12, extra: 13 };
       return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">
-<table border="0" cellpadding="0" cellspacing="0" align="center" bgcolor="${C.lavender}" style="border-radius:14px;border:1px solid ${C.border};"><tr><td align="center" style="padding:20px 26px;">
+<table border="0" cellpadding="0" cellspacing="0" ${wide ? 'width="100%"' : 'align="center"'} bgcolor="${C.lavender}" style="border-radius:14px;border:1px solid ${C.border};"><tr><td align="center" style="padding:${wide ? '26px 30px' : '20px 26px'};">
 <table border="0" cellpadding="0" cellspacing="0" width="46" height="46" bgcolor="${GREEN}" style="border-radius:50%;box-shadow:${GLOSS};"><tr><td align="center" valign="middle" width="46" height="46"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></td></tr></table>
-<p style="margin:10px 0 0;font-size:13px;font-weight:600;color:${C.purple};font-family:${FONT_HEADING};">${esc(c.title)}</p>
-<p style="margin:2px 0 0;font-size:26px;font-weight:800;color:${C.purple};font-family:${FONT_NUMBER};">${esc(c.value)}</p>
-<p style="margin:4px 0 0;font-size:12px;color:${C.body};font-family:${FONT_HEADING};">${esc(c.caption)}</p>
+<p style="margin:10px 0 0;font-size:${sz.title}px;font-weight:${c.lightTitle === 'true' ? '400' : '600'};color:${C.purple};font-family:${FONT_HEADING};">${hl(c.title)}</p>
+<p style="margin:2px 0 0;font-size:${sz.value}px;font-weight:800;color:${C.purple};font-family:${FONT_NUMBER};">${esc(c.value)}</p>
+<p style="margin:4px 0 0;font-size:${sz.caption}px;color:${c.lightTitle === 'true' ? C.purple : C.body};font-family:${FONT_HEADING};">${esc(c.caption)}</p>
+${c.extra ? `<p style="margin:14px 0 0;font-size:${sz.extra}px;line-height:1.5;color:${C.purple};font-family:${FONT_HEADING};">${hl(c.extra).replace(/\n/g, '<br>')}</p>` : ''}
 </td></tr></table></td></tr>`;
+    }
     case 'columns':
-      return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">
-<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:500px;"><tr>
-<td width="48%" valign="top" align="center" style="padding:0 6px;">
-<p style="margin:0 0 8px;font-size:12px;font-weight:800;color:${C.accent};font-family:${FONT_HEADING};">${esc(c.h1)}</p>
-<p style="margin:0;font-size:11px;line-height:1.6;color:${C.body};font-family:${FONT_HEADING};">${hl(c.body1).replace(/\n/g, '<br>')}</p>
-</td>
+      // `card: 'true'` mete cada columna en su propio panel lavanda, con el
+      // título centrado y el cuerpo alineado a la izquierda (Figma).
+      {
+        const asCard = c.card === 'true';
+        // Las dos cards igualan su alto SIN fijarlo: el fondo va en el <td> de
+        // la columna, no en una tabla anidada dentro de él. Dos celdas hermanas
+        // de la misma fila ya comparten alto por definición de tabla, así que
+        // pintando ahí el panel, la card corta se estira sola hasta la larga.
+        // (Con la tabla anidada esto no pasaba: la tabla conserva su alto
+        // natural aunque su celda contenedora sea más alta.)
+        const col = (h: string, body: string) => asCard
+          ? `<td width="48%" valign="top" bgcolor="${C.lavender}" style="padding:16px 14px;border-radius:16px;border:1px solid ${C.border};background-image:${G_PANEL};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6), ${WBC_SHADOW};">
+<p style="margin:0 0 10px;font-size:15px;font-weight:800;color:${C.accent};font-family:${FONT_HEADING};text-align:center;">${esc(h)}</p>
+<p style="margin:0;font-size:12px;line-height:1.6;color:${C.purple};font-family:${FONT_HEADING};text-align:left;">${hl(body).replace(/\n/g, '<br>')}</p>
+</td>`
+          : `<td width="48%" valign="top" align="center" style="padding:0 6px;">
+<p style="margin:0 0 8px;font-size:12px;font-weight:800;color:${C.accent};font-family:${FONT_HEADING};">${esc(h)}</p>
+<p style="margin:0;font-size:11px;line-height:1.6;color:${C.body};font-family:${FONT_HEADING};">${hl(body).replace(/\n/g, '<br>')}</p>
+</td>`;
+        return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">
+<table border="0" cellpadding="0" cellspacing="0" width="100%"${asCard ? '' : ' style="max-width:500px;"'}><tr>
+${col(c.h1, c.body1)}
 <td width="4%"></td>
-<td width="48%" valign="top" align="center" style="padding:0 6px;">
-<p style="margin:0 0 8px;font-size:12px;font-weight:800;color:${C.accent};font-family:${FONT_HEADING};">${esc(c.h2)}</p>
-<p style="margin:0;font-size:11px;line-height:1.6;color:${C.body};font-family:${FONT_HEADING};">${hl(c.body2).replace(/\n/g, '<br>')}</p>
-</td>
+${col(c.h2, c.body2)}
 </tr></table></td></tr>`;
+      }
     case 'list': {
-      const item = (v: string) => v ? `<tr><td width="14" valign="top" style="font-size:13px;color:${C.dark};font-family:${FONT_HEADING};">•</td><td style="font-size:13px;line-height:1.6;color:${C.dark};font-family:${FONT_HEADING};">${hl(v)}</td></tr>` : '';
-      return `<tr><td style="padding:0 16px;font-family:${FONT_HEADING};">
+      // `align: 'center'` NO centra cada línea: centra el BLOQUE y deja los
+      // items alineados entre sí a la izquierda, que es como se leen en Figma.
+      // La viñeta va en naranja de acento.
+      const centered = c.align === 'center';
+      // `ink: 'black'` pinta los items en negro (el cuerpo de algunos correos).
+      const lInk = c.ink === 'black' ? '#000000' : C.dark;
+      const item = (v: string) => v
+        ? `<tr><td width="14" valign="top" style="font-size:13px;line-height:1.9;color:${centered ? C.accent : lInk};font-family:${FONT_HEADING};">•</td><td style="font-size:13px;line-height:${centered ? '1.9' : '1.6'};color:${lInk};font-family:${FONT_HEADING};">${hl(v)}</td></tr>`
+        : '';
+      // `layout: 'row'` pone los items en UNA fila —dos condiciones lado a lado,
+      // como en Figma— en vez de apilarlos.
+      if (c.layout === 'row') {
+        const cell = (v: string) => v
+          ? `<td valign="top" style="font-size:13px;line-height:1.6;color:${C.dark};font-family:${FONT_HEADING};"><span style="color:${C.accent};">&bull;</span> ${hl(v)}</td>`
+          : '';
+        return `<tr><td style="padding:0 16px;font-family:${FONT_HEADING};"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>${cell(c.i1)}${cell(c.i2)}${cell(c.i3)}</tr></table></td></tr>`;
+      }
+      const rows = `${item(c.i1)}${item(c.i2)}${item(c.i3)}`;
+      return `<tr><td align="${centered ? 'center' : 'left'}" style="padding:0 16px;font-family:${FONT_HEADING};">
 ${c.title ? `<p style="margin:0 0 6px;font-size:13px;font-weight:700;color:${C.purple};font-family:${FONT_HEADING};">${esc(c.title)}</p>` : ''}
-<table border="0" cellpadding="0" cellspacing="0" width="100%">${item(c.i1)}${item(c.i2)}${item(c.i3)}</table>
+${centered
+  ? `<table border="0" cellpadding="0" cellspacing="0" align="center">${rows}</table>`
+  : `<table border="0" cellpadding="0" cellspacing="0" width="100%">${rows}</table>`}
 </td></tr>`;
     }
     default: return '';

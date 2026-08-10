@@ -309,7 +309,9 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
 
   const [editBody, setEditBody] = useState(false);
   // Vista dividida correo ↔ Figma (toggle, no hold: hay que poder mirar ambos).
-  const [comparing, setComparing] = useState(false);
+  // Arranca ABIERTA: al entrar a un correo lo primero que se hace es cotejarlo
+  // contra su referencia, así que ahorra un clic en el caso normal.
+  const [comparing, setComparing] = useState(true);
   // Alto ya escalado del correo — la referencia de Figma se iguala a él.
   const [previewH, setPreviewH] = useState<number | null>(null);
   const frameRef = useRef<EmailFrameHandle | null>(null);

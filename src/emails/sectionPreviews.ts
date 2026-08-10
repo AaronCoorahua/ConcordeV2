@@ -38,6 +38,7 @@ export const SECTION_DESCRIPTIONS: Record<Section["type"], string> = {
   list: "Lista con viñetas.",
   success: "Confirmación con check verde.",
   columns: "Dos columnas de texto lado a lado.",
+  "action-card": "Card con copy y botón a la izquierda e ícono a la derecha.",
 };
 
 /** Assets demo para que los previews no salgan vacíos. */
