@@ -7,8 +7,7 @@
  *    de Ayuda» y el fondo (tono V2), que se sustituyen sobre el HTML generado
  *    sin tocar el cuerpo (ver src/emails/headerSwap.ts).
  *
- *  · Campos del banner editables (B4): título, bajada y pill del banner de
- *    tipología, para probar copy sin salir de la vista.
+ *  · Título del banner editable (B4), para probar copy sin salir de la vista.
  *
  *  · Cuerpo editable inline (B6): el EmailFrame marca el texto del cuerpo como
  *    contenteditable; «Copiar HTML» lee el estado VIVO del iframe.
@@ -20,15 +19,19 @@
  *
  *  · Estado en la URL (C9): banner/footer/tono viven en el query string, así el
  *    preview es enlazable y sobrevive a recargas.
+ *
+ *  · Slot `nav`: la navegación «anterior / siguiente» del recorrido de revisión,
+ *    que se pinta bajo el campo del título, pegada al preview.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { JSX } from "react";
+import type { JSX, ReactNode } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CopyHtmlButton from "@/app/correos/_components/CopyHtmlButton";
 import EmailFrame, { type EmailFrameHandle } from "@/app/correos/_components/EmailFrame";
 import { BANNER_OPTIONS, FOOTER_OPTIONS, buildBannerFor, buildFooterFor, swapEmailHeader, swapEmailFooter, stripBodyTitle, presetForCategory, hasFixedTone, toneLabelForCategory, type BannerText } from "@/src/emails/headerSwap";
 import { V2_TONE_OPTIONS, type V2Tone } from "@/src/emails/tipologiasV2";
+import type { RevisionEstado } from "@/src/emails/revisionStatus";
 
 const ORIGINAL = "original";
 const TONE_IDS = new Set(V2_TONE_OPTIONS.map(function id(o) { return o.tone; }));
@@ -48,6 +51,16 @@ export interface BannerLabProps {
   figmaSrc?: string | null;
   /** Nombre del archivo esperado — lo muestra el skeleton cuando falta. */
   figmaFileName?: string;
+  /** Estado de revisión del correo (ver src/emails/revisionStatus.ts). */
+  estado?: RevisionEstado;
+  /** Qué falta para poder revisarlo; null si está listo. */
+  nota?: string | null;
+  /**
+   * Navegación «anterior / siguiente» del recorrido de revisión. Se recibe como
+   * slot y se pinta bajo el campo del título del banner: quien la construye es la
+   * página (necesita el registry en el servidor), pero su sitio está aquí.
+   */
+  nav?: ReactNode;
 }
 
 /** Escala del preview en modo comparación, para que ambas columnas quepan. */
@@ -183,12 +196,39 @@ function ToneAlert({ categoria, toneLabel, onCancel, onConfirm }: { categoria: s
   );
 }
 
-/** Encabezado de cada columna en la vista de comparación. */
+/**
+ * Encabezado de cada columna en la vista de comparación. Texto llano con una
+ * línea de color, no una pill: eran dos pills más en una página que ya tenía
+ * demasiadas, y aquí solo hace falta saber qué lado es cuál.
+ */
 function ColumnLabel({ color, children }: { color: string; children: string }): JSX.Element {
   return (
-    <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", color: "#ffffff", background: color, padding: "3px 9px", borderRadius: 9999, alignSelf: "flex-start" }}>
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 7, alignSelf: "flex-start", fontSize: 11, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: "var(--ui-body)" }}>
+      <span aria-hidden="true" style={{ width: 14, height: 2, borderRadius: 1, background: color, flexShrink: 0 }} />
       {children}
     </span>
+  );
+}
+
+/**
+ * Nota de revisión: por qué este correo está PENDIENTE. Va en la columna derecha,
+ * donde iría la referencia de Figma — que es justo lo que falta en los dos casos
+ * pendientes, así que es donde el revisor la va a buscar.
+ */
+function NotaRevision({ nota }: { nota: string }): JSX.Element {
+  return (
+    <div
+      style={{
+        display: "flex", flexDirection: "column", gap: 8, padding: "14px 16px",
+        background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: 10,
+      }}
+    >
+      <span style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 11, fontWeight: 800, letterSpacing: "0.05em", textTransform: "uppercase", color: "#b45309" }}>
+        <span aria-hidden="true" style={{ width: 16, height: 16, flexShrink: 0, borderRadius: "50%", background: "#b45309", color: "#fff7ed", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800 }}>!</span>
+        Pendiente de revisión
+      </span>
+      <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6, color: "#7c2d12" }}>{nota}</p>
+    </div>
   );
 }
 
@@ -249,7 +289,7 @@ function FigmaPanel({ src, fileName, matchHeight }: { src?: string | null; fileN
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function BannerLab({ html, title, subject, categoria, figmaSrc, figmaFileName = "correo.svg" }: BannerLabProps): JSX.Element {
+export default function BannerLab({ html, title, subject, categoria, figmaSrc, figmaFileName = "correo.svg", estado = "listo", nota = null, nav = null }: BannerLabProps): JSX.Element {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -301,11 +341,9 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
     setPendingTone(null);
   }, [pendingTone, applyTone]);
 
-  // Textos editables del banner (B4). Vacío = usa su default (asunto/categoría).
-  const [text, setText] = useState<BannerText>({ titulo: "", bajada: "", pill: "" });
-  const patchText = useCallback(function patch(key: keyof BannerText, value: string) {
-    setText(function prev(p) { return { ...p, [key]: value }; });
-  }, []);
+  // Título editable del banner (B4). Vacío = usa su default (el asunto). Las
+  // tipologías vigentes solo rotulan el título, así que es el único campo.
+  const [titulo, setTitulo] = useState("");
 
   const [editBody, setEditBody] = useState(false);
   // Vista dividida correo ↔ Figma (toggle, no hold: hay que poder mirar ambos).
@@ -316,22 +354,17 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
   const [previewH, setPreviewH] = useState<number | null>(null);
   const frameRef = useRef<EmailFrameHandle | null>(null);
 
+  const pendiente = estado === "pendiente";
+
   const bannerOn = bannerId !== ORIGINAL;
   const footerOn = footerId !== ORIGINAL;
   const allOriginal = !bannerOn && !footerOn;
-  // Las tipologías vigentes solo tienen TÍTULO; la bajada y el pill son piezas
-  // de la composición original, así que sus campos solo aparecen con `-legacy`.
-  const usaBajadaYPill = bannerOn && bannerId.endsWith("-legacy");
 
-  // HTML con las tipologías aplicadas (los defaults de texto se resuelven aquí).
+  // HTML con las tipologías aplicadas (el default del título se resuelve aquí).
   const swappedHtml = useMemo(function compute() {
     let out = html;
     if (bannerOn) {
-      const resolved: BannerText = {
-        titulo: text.titulo.trim() || subject,
-        bajada: text.bajada,
-        pill: text.pill.trim() || categoria,
-      };
+      const resolved: BannerText = { titulo: titulo.trim() || subject };
       const bannerHtml = buildBannerFor(bannerId, tone, resolved);
       // El banner de tipología YA rotula el título de campaña: dejar además el
       // bloque `title` del cuerpo lo repetiría justo debajo.
@@ -342,7 +375,7 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
       if (footerHtml) out = swapEmailFooter(out, footerHtml);
     }
     return out;
-  }, [html, bannerId, footerId, tone, text, subject, categoria, bannerOn, footerOn]);
+  }, [html, bannerId, footerId, tone, titulo, subject, bannerOn, footerOn]);
 
   // El preview siempre muestra la composición activa: al comparar contra Figma la
   // referencia va al lado, no en lugar del correo.
@@ -357,7 +390,7 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
 
   // La key del frame fuerza recarga del srcDoc cuando cambia la composición (no
   // en cada edición inline, que ocurre dentro del mismo documento).
-  const frameKey = `${bannerId}-${footerId}-${tone}-${text.titulo}-${text.bajada}-${text.pill}-${editBody}`;
+  const frameKey = `${bannerId}-${footerId}-${tone}-${titulo}-${editBody}`;
 
   return (
     <div>
@@ -388,13 +421,35 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
           Editar cuerpo
           {editBody && <span style={{ fontSize: 11, color: "var(--ui-muted)", fontWeight: 500 }}>· clic en cualquier texto</span>}
         </label>
+
+        {/* Estado de revisión: la primera cosa que hay que saber del correo, así
+            que va en la barra de acciones y no enterrado más abajo. */}
+        <span
+          style={{
+            marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 6, flexShrink: 0,
+            padding: "4px 11px", borderRadius: 9999, fontSize: 11.5, fontWeight: 700,
+            background: pendiente ? "#fff7ed" : "#ecfdf5",
+            color: pendiente ? "#b45309" : "#047857",
+            border: `1px solid ${pendiente ? "#fed7aa" : "#a7f3d0"}`,
+          }}
+        >
+          <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: "50%", background: "currentColor", flexShrink: 0 }} />
+          {pendiente ? "Pendiente" : "Listo para revisar"}
+        </span>
       </div>
 
-      {/* Campos del banner: SIEMPRE montados, deshabilitados con «Basic».
-          Si entraran y salieran del DOM, el preview daría un salto al cambiar de
-          tipología. Manteniéndolos, el alto es constante y además se ve de un
-          vistazo por qué no se pueden editar. Con las tipologías vigentes solo
-          hay título; bajada y pill se suman en las `-legacy`. */}
+      {/* Con la comparación cerrada no hay columna derecha donde poner la nota, así
+          que se muestra a lo ancho, encima del preview. */}
+      {pendiente && nota && !comparing && (
+        <div style={{ marginBottom: 14 }}>
+          <NotaRevision nota={nota} />
+        </div>
+      )}
+
+      {/* Título del banner: SIEMPRE montado, deshabilitado con «Basic». Si entrara
+          y saliera del DOM, el preview daría un salto al cambiar de tipología.
+          Manteniéndolo, el alto es constante y además se ve de un vistazo por qué
+          no se puede editar. */}
       <div
         aria-hidden={!bannerOn}
         style={{
@@ -403,15 +458,11 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
           opacity: bannerOn ? 1 : 0.5, transition: "opacity 0.15s ease",
         }}
       >
-        <Field label="Título del banner" value={text.titulo} onChange={function set(v) { patchText("titulo", v); }} placeholder={bannerOn ? subject : "—"} disabled={!bannerOn} />
-        {/* Bajada y pill solo existen en la composición legacy. */}
-        {usaBajadaYPill && (
-          <>
-            <Field label="Bajada" value={text.bajada} onChange={function set(v) { patchText("bajada", v); }} placeholder="Bajada breve del correo…" />
-            <Field label="Pill" value={text.pill} onChange={function set(v) { patchText("pill", v); }} placeholder={categoria} />
-          </>
-        )}
+        <Field label="Título del banner" value={titulo} onChange={setTitulo} placeholder={bannerOn ? subject : "—"} disabled={!bannerOn} />
       </div>
+
+      {/* Recorrido de revisión: anterior · N de 45 · siguiente. */}
+      {nav}
 
     {/* Dos columnas: las tipologías viven en un panel STICKY a la izquierda, así
         siguen a la vista mientras se recorre un correo largo. Al quedarse solo
@@ -482,6 +533,9 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0 }}>
               <ColumnLabel color="#c85a1e">Figma</ColumnLabel>
+              {/* La nota va ARRIBA de la referencia: explica por qué lo que hay
+                  debajo no sirve todavía para dar el correo por bueno. */}
+              {pendiente && nota && <NotaRevision nota={nota} />}
               <FigmaPanel src={figmaSrc} fileName={figmaFileName} matchHeight={previewH} />
             </div>
           </div>

@@ -4,8 +4,12 @@
    hoy en producción (concorde-email.vercel.app) — no editar a mano aquí salvo
    para resincronizar contra el original.
 
-   Único cambio respecto al original: la ruta del import de `Section`
-   (./email-templates → ./prodEmailTemplates).
+   Cambios respecto al original (los ÚNICOS; conservarlos al resincronizar):
+     · la ruta del import de `Section` (./email-templates → ./prodEmailTemplates)
+     · los `name` están en ESPAÑOL — el catálogo lo revisan personas de negocio,
+       no ingeniería, así que los nombres se leen en su idioma
+     · se quitó el campo `desc` (la descripción en inglés de cada card): en el
+       catálogo de revisión el preview del correo ya dice de qué trata
 
    Si Concorde-Email cambia, este archivo y prodEmailTemplates.ts hay que
    volver a copiarlos. Ver src/emails/registry.ts, que los consume.
@@ -21,7 +25,6 @@ export interface EmailTemplate {
   id: string;        // slug para la URL
   name: string;      // nombre visible
   subject: string;   // asunto del correo
-  desc: string;      // descripción corta para la card
   category?: string; // agrupa la card en el catálogo (ej. "En vivo")
   stage?: string;     // paso dentro del flujo de la categoría (ej. "Negociación"), pinta el stepper
   leadsTo?: string[]; // ids de correos a los que puede derivar (dibuja las líneas del diagrama de flujo)
@@ -104,9 +107,8 @@ const SP = (height: string) => S('spacer', { height });
 export const EMAILS: EmailTemplate[] = [
   {
     id: 'fee-subascoins',
-    name: 'Fee Notice — SubasCoins',
+    name: 'Aviso de fee — SubasCoins',
     subject: 'Información importante sobre tus adquisiciones de SubasCoins',
-    desc: 'Announces the new gateway fee and the fee-free options (BCP / CUU).',
     sections: [
       // layout y distancias del correo original
       S('title', { eyebrow: '', text: 'Información importante sobre tus adquisiciones de SubasCoins' }),
@@ -136,9 +138,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'listo-participar',
-    name: 'Ready to Bid — Participation',
+    name: 'Listo para participar',
     subject: '¡Listo para participar en la oferta {{Toyota Hilux 2018}}!',
-    desc: 'Confirms participation: details (date, seller, consignment) + live-room reminder.',
     category: 'En vivo',
     stage: 'Inicio',
     leadsTo: ['mejor-postor', 'ganador-directo'],
@@ -169,9 +170,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'oportunidad-compra',
-    name: 'Purchase Opportunity — 2nd/3rd Place',
+    name: 'Oportunidad de compra — 2.º/3.er puesto',
     subject: '¡Tienes oportunidad de compra en la oferta {{Toyota Hilux 2018}}!',
-    desc: 'Notifies 2nd/3rd-place bidders of a purchase opportunity and explains eligibility conditions.',
     category: 'En vivo',
     stage: 'Resultado',
     leadsTo: ['habilitado-comprar'],
@@ -196,9 +196,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'ganador-directo',
-    name: 'Direct Winner — Purchase',
+    name: 'Eres ganador directo',
     subject: '¡Eres el Ganador Directo en la oferta {{Toyota Hilux 2018}}!',
-    desc: 'Notifies the direct winner, prompts to start the purchase, and states the sanctions.',
     category: 'En vivo',
     stage: 'Resultado',
     leadsTo: ['habilitado-comprar'],
@@ -223,9 +222,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'mejor-postor',
-    name: 'Best Bidder Notification',
+    name: 'Eres el mejor postor',
     subject: '¡Eres el Mejor Postor en la oferta {{Toyota Hilux 2018}}!',
-    desc: 'Notifies the current best bidder and explains what being top bidder means.',
     category: 'En vivo',
     stage: 'Resultado',
     leadsTo: ['contrapropuesta', 'opcion-compra', 'habilitado-comprar', 'oferta-terminada'],
@@ -246,9 +244,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'opcion-compra',
-    name: 'Purchase Option Notification',
+    name: 'Tienes opción de compra',
     subject: '¡Tienes opción de compra en la oferta {{Toyota Hilux 2018}}!',
-    desc: 'Notifies the buyer the seller granted a purchase option and prompts them to accept it.',
     category: 'En vivo',
     stage: 'Resultado',
     leadsTo: ['habilitado-comprar'],
@@ -275,9 +272,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'contrapropuesta',
-    name: 'Counteroffer Notification',
+    name: 'Recibiste una contrapropuesta',
     subject: '¡Recibiste una contrapropuesta en la oferta {{Toyota Hilux 2018}}!',
-    desc: 'Notifies the top bidder of a seller counteroffer and explains the counteroffer mechanic.',
     category: 'En vivo',
     stage: 'Negociación',
     leadsTo: ['propuesta-rechazada', 'habilitado-comprar'],
@@ -302,9 +298,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'propuesta-rechazada',
-    name: 'Rejected Proposal Notification',
+    name: 'Rechazaste la propuesta',
     subject: '¡Rechazaste la propuesta en la oferta {{Toyota Yaris 2018}}!',
-    desc: 'Confirms the bidder rejected the seller counteroffer and their consignment was released.',
     category: 'En vivo',
     stage: 'Negociación',
     leadsTo: ['oferta-terminada-postor'],
@@ -321,9 +316,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'habilitado-comprar',
-    name: 'Enabled to Buy Notification',
+    name: 'Habilitado para comprar',
     subject: '¡Has sido habilitado en la oferta {{Toyota Hilux 2018}}!',
-    desc: 'Notifies the participant they are enabled to buy, prompts the purchase flow, and states the sanctions.',
     category: 'En vivo',
     stage: 'Habilitación',
     sections: [
@@ -347,9 +341,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'oferta-terminada',
-    name: 'Offer Ended Notification',
+    name: 'Oferta terminada',
     subject: '¡Oferta terminada!',
-    desc: 'Notifies bidders the seller rejected the top proposal and the offer closed.',
     category: 'En vivo',
     stage: 'Cierre',
     sections: [
@@ -361,9 +354,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'oferta-terminada-postor',
-    name: 'Offer Ended — Buyer Rejected',
+    name: 'Oferta terminada — postor rechazó',
     subject: '¡Oferta terminada!',
-    desc: 'Notifies the seller that the top bidder (C.U.U) rejected their counteroffer and the offer closed.',
     category: 'En vivo',
     stage: 'Cierre',
     sections: [
@@ -375,9 +367,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'negociacion-iniciada',
-    name: 'Negotiation Started Notification',
+    name: 'Negociación iniciada',
     subject: '¡Negociación iniciada con éxito!',
-    desc: 'Confirms the bidder started a negotiation with the seller and shows the proposal + guarantee.',
     category: 'Negociable',
     stage: 'Inicio',
     leadsTo: ['contrapropuesta-negociable', 'ganaste-oferta-negociable', 'negociacion-finalizada', 'propuesta-expirara-hhmm'],
@@ -404,9 +395,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'nueva-negociacion-vendedor',
-    name: 'New Negotiation Started — Seller',
+    name: 'Nueva negociación — vendedor',
     subject: '¡Nueva negociación iniciada!',
-    desc: 'Notifies the seller a buyer started a new negotiation with a proposal, the expectation gap, and prompts a response.',
     category: 'Negociable',
     stage: 'Inicio',
     leadsTo: ['contrapropuesta-negociable', 'vendedor-acepta-propuesta', 'negociacion-finalizada', 'propuesta-expirara-hhmm'],
@@ -438,9 +428,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'contrapropuesta-negociable',
-    name: 'Negotiable Counteroffer Notification',
+    name: 'Contrapropuesta recibida — negociable',
     subject: '¡Recibiste una contrapropuesta en {{Toyota Hilux 2018}}!',
-    desc: 'Notifies the bidder of a seller counteroffer on a negotiable listing, with round comparison and deadline.',
     category: 'Negociable',
     stage: 'Negociación',
     leadsTo: ['contrapropuesta-hecha', 'contrapropuesta-aceptada-comprador', 'contrapropuesta-rechazada-comprador'],
@@ -473,9 +462,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'contrapropuesta-hecha',
-    name: 'Counteroffer Made — Buyer',
+    name: 'Hiciste una contrapropuesta',
     subject: '¡Hiciste una contrapropuesta en {{Toyota Hilux 2018}}!',
-    desc: 'Confirms the buyer made a counteroffer and is waiting for the seller response within the round deadline.',
     category: 'Negociable',
     stage: 'Negociación',
     leadsTo: ['negociacion-finalizada', 'ganaste-oferta-negociable', 'contrapropuesta-negociable', 'propuesta-expirara-hhmm'],
@@ -504,9 +492,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'propuesta-expirara-ultima-notificacion',
-    name: 'Proposal Expiring — Last Notice',
+    name: 'Propuesta por expirar — última notificación',
     subject: '¡Última notificación! ¡La propuesta expirará!',
-    desc: 'Final reminder that a negotiable proposal is about to expire, with the deadline penalty if no response is sent.',
     category: 'Negociable',
     stage: 'Alertas',
     leadsTo: ['negociacion-expirada'],
@@ -531,9 +518,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'propuesta-expirara-hhmm',
-    name: 'Proposal Expiring — Reminder',
+    name: 'Propuesta por expirar — recordatorio',
     subject: '¡Propuesta expirará {{hh:mm}}!',
-    desc: 'Reminds the recipient a negotiable proposal is waiting and will expire, prompting a response.',
     category: 'Negociable',
     stage: 'Alertas',
     leadsTo: ['propuesta-expirara-ultima-notificacion'],
@@ -556,9 +542,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'propuesta-por-expirar-muy-importante',
-    name: 'Proposal Expiring — Urgent',
+    name: 'Propuesta por expirar — urgente',
     subject: '¡Muy importante! ¡Propuesta por expirar {{hh:mm}}!',
-    desc: 'Urgent escalation that a negotiable proposal is about to expire, prompting an immediate response.',
     category: 'Negociable',
     stage: 'Alertas',
     leadsTo: ['negociacion-expirada'],
@@ -581,9 +566,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'negociacion-finalizada',
-    name: 'Negotiation Ended Notification',
+    name: 'Negociación finalizada',
     subject: 'Negociación finalizada {{oferta: Toyota Hilux 2018}}',
-    desc: 'Notifies the bidder the seller rejected their proposal, the negotiation ended, and the guarantee was released.',
     category: 'Negociable',
     stage: 'Resultado',
     sections: [
@@ -610,9 +594,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'ganaste-oferta-negociable',
-    name: 'Won Offer Notification — Negotiable',
+    name: 'Ganaste la oferta — negociable',
     subject: '¡Has ganado {{oferta.Ejem: Toyota Hilux 2018}}!',
-    desc: 'Confirms the seller accepted the proposal, shows the winning bid, and the commission/guarantee/debt breakdown to unlock the purchase.',
     category: 'Negociable',
     stage: 'Resultado',
     sections: [
@@ -638,9 +621,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'negociacion-expirada',
-    name: 'Negotiation Expired Notification',
+    name: 'Negociación expirada',
     subject: 'Negociación finalizada {{oferta: Toyota Hilux 2018}}',
-    desc: 'Notifies the bidder their proposal expired, the negotiation ended, and the guarantee was released.',
     category: 'Negociable',
     stage: 'Resultado',
     sections: [
@@ -667,9 +649,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'contrapropuesta-rechazada-comprador',
-    name: 'Counteroffer Rejected — Buyer',
+    name: 'Contrapropuesta rechazada — comprador',
     subject: 'Negociación finalizada {{oferta: Toyota Hilux 2018}}',
-    desc: 'Confirms the buyer rejected the seller counteroffer, the negotiation ended, and the guarantee was released.',
     category: 'Negociable',
     stage: 'Resultado',
     sections: [
@@ -696,9 +677,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'contrapropuesta-aceptada-comprador',
-    name: 'Counteroffer Accepted — Buyer',
+    name: 'Contrapropuesta aceptada — comprador',
     subject: '¡Has ganado {{oferta.Ejem: Toyota Hilux 2018}}!',
-    desc: 'Confirms the buyer accepted the seller counteroffer and won the offer, with the winning bid and the commission/guarantee/debt breakdown to unlock the purchase.',
     category: 'Negociable',
     stage: 'Resultado',
     sections: [
@@ -724,9 +704,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'vendedor-acepta-propuesta',
-    name: 'Proposal Accepted — Seller Confirmation',
+    name: 'Aceptaste la propuesta — vendedor',
     subject: '¡Aceptaste la propuesta en {{oferta.Ejem: Toyota Hilux 2018}}!',
-    desc: 'Confirms to the seller that they accepted the buyer proposal, showing the winning bid and how it compares to their expectation.',
     category: 'Negociable',
     stage: 'Resultado',
     sections: [
@@ -747,9 +726,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'adquisicion-subascoins-exitosa',
-    name: 'SubasCoins Purchase — Success',
+    name: 'Adquisición de SubasCoins exitosa',
     subject: '¡Adquisición de SubasCoins exitosa!',
-    desc: 'Confirms a successful SubasCoins purchase with the order summary (card, amount, date) and the final-sale notice.',
     category: 'Adquisición de SubasCoins',
     stage: 'Confirmación',
     sections: [
@@ -792,9 +770,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'recarga-exitosa',
-    name: 'Wallet Top-up — Success',
+    name: 'Recarga exitosa',
     subject: '¡Recarga exitosa!',
-    desc: 'Confirms a successful wallet top-up (recharge) with the recharged amount.',
     category: 'Recarga',
     stage: 'Confirmación',
     sections: [
@@ -810,9 +787,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'completa-proceso-compra',
-    name: 'Purchase Completion — Urgent Reminder',
+    name: 'Completa el proceso de compra',
     subject: '¡Muy urgente! Acción requerida en la oferta: {{Toyota Hilux 2018}}.',
-    desc: 'Urgent reminder to the enabled winner to complete the purchase process before the deadline, with the same sanctions as the enablement notice.',
     category: 'Proceso Compra y Venta',
     stage: 'Recordatorio',
     sections: [
@@ -836,9 +812,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'bienvenida-registro',
-    name: 'Welcome — Registration Confirmed',
+    name: 'Bienvenida — registro confirmado',
     subject: '¡Bienvenido Cazador de ofertas!',
-    desc: 'Welcomes the new user, shows their C.U.U. and registered data, and explains the two account-activation paths (SubasCoins vs. bank recharge).',
     category: 'Registro',
     stage: 'Bienvenida',
     sections: [
@@ -899,9 +874,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'canje-puntos-exitoso',
-    name: 'Points Redemption — Success',
+    name: 'Canje de puntos exitoso',
     subject: '¡Canje de Puntos VMC exitoso!',
-    desc: 'Confirms a successful SubasCoins-to-VMC-Points redemption, the new user risk category, and the final-sale notice.',
     category: 'Canje de Puntos',
     stage: 'Confirmación',
     sections: [
@@ -933,9 +907,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'nueva-contrasena',
-    name: 'Password Reset — Link',
+    name: 'Nueva contraseña',
     subject: 'Nueva contraseña',
-    desc: 'Sends the user a password-reset link via button, with a plain-text fallback URL.',
     category: 'Contraseña',
     stage: 'Recuperación',
     sections: [
@@ -957,9 +930,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'visita-agendada',
-    name: 'Scheduled Visit — Confirmation',
+    name: 'Visita agendada',
     subject: 'Visita agendada en la oferta {{Toyota Hilux 2018}}',
-    desc: 'Confirms a scheduled vehicle visit with location, address, reference and date/time, plus COVID-19 preventive measures.',
     category: 'Visita Agendada',
     stage: 'Confirmación',
     sections: [
@@ -987,9 +959,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'devolucion-saldo-exitosa',
-    name: 'Balance Refund — Success',
+    name: 'Devolución de saldo exitosa',
     subject: '¡Tu cuenta ha sido congelada!',
-    desc: 'Confirms the account freeze and refund request were processed successfully, with the refunded amount and date.',
     category: 'Devolución de Saldo',
     stage: 'Confirmación',
     sections: [
@@ -1005,9 +976,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'devolucion-saldo-error',
-    name: 'Balance Refund — Request Error',
+    name: 'Devolución de saldo — error en la solicitud',
     subject: '¡Hubo un problema con tu solicitud!',
-    desc: 'Notifies the user their refund request was cancelled due to a data issue, lists what to verify, and prompts a resubmission.',
     category: 'Devolución de Saldo',
     stage: 'Error',
     sections: [
@@ -1035,9 +1005,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'actualizar-correo',
-    name: 'Email Update — Verification Link',
+    name: 'Actualizar correo de contacto',
     subject: 'Nueva correo de contacto',
-    desc: 'Sends a verification link to confirm a new contact email, with a plain-text fallback URL.',
     category: 'Actualizar Correo',
     stage: 'Verificación',
     sections: [
@@ -1059,9 +1028,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'inhabilitacion-suplantacion-identidad',
-    name: 'Account Disabled — Identity Impersonation',
+    name: 'Inhabilitación — suplantación de identidad',
     subject: 'Inhabilitación de cuenta',
-    desc: 'Notifies the user their account was permanently disabled for impersonating another person or entity, citing the fraud-prevention policy clause.',
     category: 'Inhabilitación de Usuario',
     stage: 'Suplantación de Identidad',
     sections: [
@@ -1079,9 +1047,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'inhabilitacion-conducta-inapropiada',
-    name: 'Account Disabled — Inappropriate Conduct',
+    name: 'Inhabilitación — conducta inapropiada',
     subject: 'Inhabilitación de cuenta',
-    desc: 'Notifies the user their account was permanently disabled for offensive language or conduct on the platform, citing the corrective-measures policy clause.',
     category: 'Inhabilitación de Usuario',
     stage: 'Conducta Inapropiada',
     sections: [
@@ -1099,9 +1066,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'baja-cuenta-inactividad',
-    name: 'Account Deactivation Notice',
+    name: 'Baja de cuenta',
     subject: 'Tu cuenta en VMC Subastas ha sido dada de baja',
-    desc: 'Notifies the user their account was deactivated and states the reason (e.g. inactivity).',
     category: 'Baja de Cuenta',
     stage: 'Confirmación',
     sections: [
@@ -1117,9 +1083,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'cambio-contrasena-4panel',
-    name: 'Password Change — 4Panel (Internal)',
+    name: 'Cambio de contraseña — 4Panel',
     subject: 'Cambio de contraseña',
-    desc: 'Internal-tool password-reset link for 4Panel users, valid for 30 minutes, with a plain-text fallback URL.',
     category: 'Usuarios Internos',
     stage: '4 Panel',
     sections: [
@@ -1139,9 +1104,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'cambio-contrasena-console',
-    name: 'Password Change — Console (Internal)',
+    name: 'Cambio de contraseña — Console',
     subject: 'Cambio de contraseña',
-    desc: 'Internal-tool password-reset link for Console users, valid for 30 minutes, with a plain-text fallback URL.',
     category: 'Usuarios Internos',
     stage: 'Console',
     sections: [
@@ -1161,9 +1125,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'mapfre-invitacion-proceso',
-    name: 'Mapfre Internal Process — Invitation',
+    name: 'Mapfre — invitación al proceso',
     subject: 'Proceso interno de adquisición @MAPFRE',
-    desc: 'Invites MAPFRE staff to buy an offer directly at the "Valor de Restos" price without joining the live auction, with the enrollment deadline and CTA.',
     category: 'Proceso Interno Mapfre',
     stage: 'Invitación',
     leadsTo: ['mapfre-ofertas-publicadas'],
@@ -1198,9 +1161,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'mapfre-ofertas-publicadas',
-    name: 'Mapfre Internal Process — Offers Published',
+    name: 'Mapfre — ofertas publicadas',
     subject: 'Proceso interno de adquisición',
-    desc: 'Notifies MAPFRE staff the internal offer list was published and reminds them of the interest-submission deadline.',
     category: 'Proceso Interno Mapfre',
     stage: 'Invitación',
     leadsTo: ['mapfre-participacion-registrada'],
@@ -1221,9 +1183,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'mapfre-participacion-registrada',
-    name: 'Mapfre Internal Process — Participation Registered',
+    name: 'Mapfre — participación registrada',
     subject: 'Participación registrada',
-    desc: 'Confirms the staff member is registered to participate in the internal acquisition process for a specific vehicle.',
     category: 'Proceso Interno Mapfre',
     stage: 'Participación',
     leadsTo: ['mapfre-cierre-proceso'],
@@ -1244,9 +1205,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'mapfre-resultados-sin-interesados',
-    name: 'Mapfre Internal Process — No Interest Registered',
+    name: 'Mapfre — sin interesados',
     subject: 'Resultados proceso de adquisición',
-    desc: 'Notifies that no staff member registered interest in the internal acquisition process.',
     category: 'Proceso Interno Mapfre',
     stage: 'Resultado',
     sections: [
@@ -1262,9 +1222,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'mapfre-cierre-proceso',
-    name: 'Mapfre Internal Process — Closure Notice',
+    name: 'Mapfre — cierre del proceso',
     subject: 'Cierre proceso de adquisición',
-    desc: 'Notifies participating staff that the internal acquisition process closed and results will follow shortly.',
     category: 'Proceso Interno Mapfre',
     stage: 'Cierre',
     leadsTo: ['mapfre-resultados-finales'],
@@ -1281,9 +1240,8 @@ export const EMAILS: EmailTemplate[] = [
   },
   {
     id: 'mapfre-resultados-finales',
-    name: 'Mapfre Internal Process — Final Results',
+    name: 'Mapfre — resultados finales',
     subject: 'Resultados proceso de adquisición',
-    desc: 'Delivers the final results of the internal acquisition process carried out on a given date.',
     category: 'Proceso Interno Mapfre',
     stage: 'Resultado',
     sections: [

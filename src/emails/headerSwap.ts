@@ -36,21 +36,13 @@ export interface BannerOption {
 }
 
 /**
- * Las tipologías de BANNER header disponibles, en el orden del tab: primero las
- * vigentes (solo marca + título) y después las originales, sufijadas `-legacy`,
- * que siguen disponibles para los correos ya maquetados con ellas.
+ * Las tipologías de BANNER header disponibles, en el orden del tab. Solo las
+ * vigentes (marca + título): las «legacy» (con pill y bajada) se retiraron del
+ * catálogo, así que ya no se ofrecen aquí.
  */
-export const BANNER_OPTIONS: BannerOption[] = [
-  ...TIPOLOGIAS_LAYOUT.map(function toOption(t) {
-    return { id: t.id, label: t.label };
-  }),
-  ...TIPOLOGIAS_LAYOUT.map(function toLegacyOption(t) {
-    return { id: `${t.id}-legacy`, label: `${t.label} (legacy)` };
-  }),
-];
-
-/** Sufijo con el que se marcan las tipologías de la composición original. */
-const LEGACY_SUFFIX = "-legacy";
+export const BANNER_OPTIONS: BannerOption[] = TIPOLOGIAS_LAYOUT.map(function toOption(t) {
+  return { id: t.id, label: t.label };
+});
 
 function escHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -71,44 +63,31 @@ function bannerTone(tone: V2Tone): TipoTone {
   return TONOS[toneIndex(tone)] ?? TONOS[0];
 }
 
-/** Textos editables del banner de tipología (todos con default sensato). */
+/**
+ * Textos editables del banner de tipología. Las tipologías vigentes solo rotulan
+ * el TÍTULO; la bajada y el pill eran piezas de la composición legacy, retirada.
+ */
 export interface BannerText {
   /** Título grande del banner. */
   titulo: string;
-  /** Bajada bajo el título. */
-  bajada: string;
-  /** Texto del pill de contexto (el gradiente/estilo del pill sigue siendo fijo
-   *  por tono; solo cambia su texto). */
-  pill: string;
 }
 
-/** Placeholders originales dentro de las plantillas de banner nuevas. */
+/** Placeholder original dentro de las plantillas de banner nuevas. */
 const PH_TITULO = "{{ Título del correo }}";
-const PH_BAJADA = "{{ Bajada breve del correo va aquí }}";
-const PH_PILL = "{{ PILL }}";
 
 /**
- * Banner de la tipología `id` con el tono `tone`, personalizado con los textos
- * de `text` (título, bajada, pill). Cada campo reemplaza su placeholder; si un
- * campo viene vacío se conserva el placeholder, para no dejar huecos.
+ * Banner de la tipología `id` con el tono `tone`, con el título de `text`. Si el
+ * título viene vacío se conserva el placeholder, para no dejar un hueco.
  */
 export function buildBannerFor(id: string, tone: V2Tone, text: BannerText): string | null {
-  // Los ids `…-legacy` piden la composición original; el resto, la limpia.
-  const isLegacy = id.endsWith(LEGACY_SUFFIX);
-  const baseId = isLegacy ? id.slice(0, -LEGACY_SUFFIX.length) : id;
-  const layout: TipoLayoutDef | undefined = TIPOLOGIAS_LAYOUT.find(function byId(t) { return t.id === baseId; });
+  const layout: TipoLayoutDef | undefined = TIPOLOGIAS_LAYOUT.find(function byId(t) { return t.id === id; });
   if (!layout) return null;
 
   const titulo = text.titulo.trim() ? escHtml(text.titulo) : PH_TITULO;
-  const bajada = text.bajada.trim() ? escHtml(text.bajada) : PH_BAJADA;
-  const pill = text.pill.trim() ? escHtml(text.pill) : PH_PILL;
 
-  // En la variante limpia no hay pill ni bajada que sustituir: los `replace`
-  // simplemente no encuentran su marcador y no hacen nada.
-  return buildBanner(layout, bannerTone(tone), isLegacy ? "legacy" : "clean")
-    .replace(PH_TITULO, titulo)
-    .replace(PH_BAJADA, bajada)
-    .replace(PH_PILL, pill);
+  // Solo se construye la variante limpia (marca + título): la «legacy» con pill y
+  // bajada se retiró, así que sus placeholders ya no existen en la plantilla.
+  return buildBanner(layout, bannerTone(tone), "clean").replace(PH_TITULO, titulo);
 }
 
 /**
@@ -307,15 +286,11 @@ export function presetForCategory(categoria: string): LabPreset {
 export function applyPreset(
   emailHtml: string,
   preset: LabPreset,
-  text: { titulo: string; pill: string },
+  text: { titulo: string },
 ): string {
   let out = emailHtml;
   if (preset.banner !== "original") {
-    const bannerHtml = buildBannerFor(preset.banner, preset.tone, {
-      titulo: text.titulo,
-      bajada: "",
-      pill: text.pill,
-    });
+    const bannerHtml = buildBannerFor(preset.banner, preset.tone, { titulo: text.titulo });
     // El banner de tipología ya rotula el título: sin esto saldría dos veces.
     if (bannerHtml) out = stripBodyTitle(swapEmailHeader(out, bannerHtml));
   }

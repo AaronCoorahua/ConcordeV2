@@ -6,15 +6,21 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/app/_components/Header";
 import BannerLab from "./BannerLab";
-import { EMAIL_GROUPS, getEmailReal, type EmailGroup, type EmailReal } from "@/src/emails/registry";
+import CorreoNav from "./CorreoNav";
+import { EMAIL_GROUPS, getEmailReal, vecinosDe, type EmailGroup } from "@/src/emails/registry";
 
 /**
  * /correos/[id] — detalle de UN correo real de producción: preview completo a
- * tamaño real, asunto, «Copiar HTML» y los correos a los que deriva en el flujo
- * (`leadsTo`). Equivalente al /correo/[id] del catálogo de Concorde-Email.
+ * tamaño real, asunto y «Copiar HTML».
  *
  * El header del correo es intercambiable (BannerLab): un tab elige la tipología
  * de banner y otro el fondo; el botón copia la combinación activa.
+ *
+ * Para REVISAR se recorren los 45 correos uno tras otro, así que la página trae
+ * navegación «anterior / siguiente» (CorreoNav) en el orden del catálogo, y el
+ * estado de revisión con su nota junto a la referencia de Figma. NO se enlazan los
+ * correos del flujo (`leadsTo`): el recorrido de revisión es la lista, y esos
+ * enlaces confundían sobre por dónde se iba.
  */
 
 /** Dónde viven los SVG de Figma (ver public/figma/correos/README.md). */
@@ -38,7 +44,7 @@ export function generateStaticParams(): Array<{ id: string }> {
   });
 }
 
-/** El grupo (categoría) al que pertenece un correo, para su pill y gradiente. */
+/** El grupo (categoría) al que pertenece un correo, para su gradiente. */
 function groupOf(correoId: string): EmailGroup | undefined {
   return EMAIL_GROUPS.find(function contains(g) {
     return g.correos.some(function byId(c) { return c.id === correoId; });
@@ -51,9 +57,7 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
   if (!correo) notFound();
 
   const group = groupOf(correo.id);
-  const siguientes = correo.leadsTo
-    .map(function resolve(nextId) { return getEmailReal(nextId); })
-    .filter(function exists(x): x is EmailReal { return Boolean(x); });
+  const vecinos = vecinosDe(correo.id);
 
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff", color: "var(--ui-ink)", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
@@ -62,16 +66,19 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
       <main style={{ maxWidth: 1120, margin: "0 auto", padding: "40px 40px 80px" }}>
         <Link
           href="/correos/variantes"
-          style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "var(--ui-body)", textDecoration: "none", marginBottom: 16 }}
+          style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "var(--ui-body)", textDecoration: "none", marginBottom: 14 }}
         >
-          <span aria-hidden="true">←</span> Variantes
+          <span aria-hidden="true">←</span> Todos los correos
         </Link>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8, flexWrap: "wrap" }}>
           <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--ui-ink)", margin: 0 }}>{correo.name}</h1>
-          {group && correo.stage && (
-            <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", padding: "3px 10px", borderRadius: 9999, color: "#ffffff", backgroundImage: group.gradient }}>
-              {group.label} · {correo.stage}
+          {/* Categoría y paso en texto llano, no en pill: con 15 categorías de
+              colores, las pills convertían la página en un mosaico. */}
+          {group && (
+            <span style={{ fontSize: 12, fontWeight: 600, color: "var(--ui-muted)" }}>
+              {group.label}
+              {correo.stage ? ` · ${correo.stage}` : ""}
             </span>
           )}
         </div>
@@ -89,48 +96,25 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
             categoria={group?.label ?? "General"}
             figmaSrc={figmaRefFor(correo.id)}
             figmaFileName={`${correo.id}.svg`}
+            estado={correo.estado}
+            nota={correo.nota}
+            // El recorrido va DENTRO del Lab, bajo el campo «Título del banner»:
+            // ahí queda pegado al preview que se está revisando, que es lo que se
+            // mira justo antes de pasar al siguiente correo.
+            nav={
+              <CorreoNav
+                anteriorId={vecinos.anterior?.id ?? null}
+                anteriorNombre={vecinos.anterior?.name ?? null}
+                siguienteId={vecinos.siguiente?.id ?? null}
+                siguienteNombre={vecinos.siguiente?.name ?? null}
+                posicion={vecinos.posicion}
+                total={vecinos.total}
+              />
+            }
           />
         </Suspense>
 
-        {siguientes.length > 0 && (
-          <div style={{ marginTop: 20 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: "var(--ui-muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}>
-              Sigue en el flujo
-            </span>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 10, maxWidth: 640 }}>
-              {siguientes.map(function renderNext(n) {
-                const nGroup = groupOf(n.id);
-                return (
-                  <Link
-                    key={n.id}
-                    href={`/correos/${n.id}`}
-                    className="cor-flow"
-                    style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", borderRadius: 10, border: "1px solid var(--ui-border)", background: "#ffffff", textDecoration: "none", transition: "border-color 0.15s ease, box-shadow 0.15s ease" }}
-                  >
-                    {nGroup && n.stage && (
-                      <span style={{ flexShrink: 0, padding: "3px 9px", borderRadius: 9999, fontSize: 10, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: "#ffffff", backgroundImage: nGroup.gradient }}>
-                        {n.stage}
-                      </span>
-                    )}
-                    <span style={{ fontSize: 13, fontWeight: 700, color: "var(--ui-ink)" }}>{n.name}</span>
-                    <span aria-hidden="true" style={{ marginLeft: "auto", color: "var(--ui-border-hover)", fontSize: 13 }}>→</span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {correo.leadsTo.length === 0 && correo.stage && (
-          <p style={{ marginTop: 20, fontSize: 12, color: "var(--ui-muted)", fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}>
-            Correo final de este flujo
-          </p>
-        )}
       </main>
-
-      <style dangerouslySetInnerHTML={{ __html: `
-        .cor-flow:hover { border-color: var(--ui-border-hover); box-shadow: 0 4px 14px rgba(15,23,42,0.08); }
-      `}} />
     </div>
   );
 }

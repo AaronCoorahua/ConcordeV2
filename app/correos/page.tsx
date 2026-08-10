@@ -33,7 +33,7 @@ const SAMPLE_HTML = SAMPLE_EMAIL
   ? applyPreset(
       SAMPLE_EMAIL.html,
       presetForCategory(EMAIL_GROUPS[0]?.label ?? ""),
-      { titulo: SAMPLE_EMAIL.subject, pill: EMAIL_GROUPS[0]?.label ?? "" },
+      { titulo: SAMPLE_EMAIL.subject },
     )
   : null;
 

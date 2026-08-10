@@ -17,7 +17,6 @@ import {
   buildBanner,
   tipoNewHeight,
   wrapTipoPreview,
-  type TipoVariant,
 } from "./tipologiasNew";
 import {
   FOOTER_TONOS,
@@ -61,22 +60,17 @@ export interface TipoGroup {
   tipologia: TipoMeta;
   /** "banner" = header hero · "footer" = consola Centro de Ayuda. */
   kind: "banner" | "footer";
-  /** "clean" = solo marca + título · "legacy" = con pill y bajada. */
-  variant: TipoVariant;
   plantillas: TipoPlantilla[];
 }
 
 /**
- * Construye los grupos de banner de una variante. Los ids de la variante
- * «legacy» llevan sufijo `-legacy` para no colisionar con los limpios, que
- * conservan el id corto por ser los principales.
+ * Construye los grupos de banner. Solo existe la variante vigente («clean»:
+ * marca + título); las «legacy», con pill y bajada, se retiraron del catálogo.
  */
-function bannerGroups(variant: TipoVariant): TipoGroup[] {
+function bannerGroups(): TipoGroup[] {
   return TIPOLOGIAS_LAYOUT.map(function toGroup(layout): TipoGroup {
-    const legacy = variant === "legacy";
-    const id = legacy ? `${layout.id}-legacy` : layout.id;
     const fondos: TipoFondo[] = TONOS.map(function toFondo(tone): TipoFondo {
-      const banner = buildBanner(layout, tone, variant);
+      const banner = buildBanner(layout, tone, "clean");
       return {
         tone: tone.id,
         label: tone.label,
@@ -84,19 +78,16 @@ function bannerGroups(variant: TipoVariant): TipoGroup[] {
         copyHtml: banner,
       };
     });
-    const desc = legacy
-      ? `${layout.descripcion} Composición original, con pill y bajada.`
-      : `${layout.descripcion.replace(/\(pill \+ título \+ bajada\)|pill, título y bajada/g, "título")} Solo marca y título.`;
+    const desc = `${layout.descripcion.replace(/\(pill \+ título \+ bajada\)|pill, título y bajada/g, "título")} Solo marca y título.`;
     return {
-      tipologia: { id, letra: layout.letra, label: layout.label, descripcion: desc },
+      tipologia: { id: layout.id, letra: layout.letra, label: layout.label, descripcion: desc },
       kind: "banner",
-      variant,
       plantillas: [
         {
-          id: `${id}-banner`,
+          id: `${layout.id}-banner`,
           name: "Banner header",
           description: `${desc} Elige el tono con el tab y pégalo como header de cualquier plantilla.`,
-          previewHeight: tipoNewHeight(layout.layout, variant) + 20,
+          previewHeight: tipoNewHeight(layout.layout, "clean") + 20,
           fondos,
         },
       ],
@@ -104,10 +95,8 @@ function bannerGroups(variant: TipoVariant): TipoGroup[] {
   });
 }
 
-/** Tipologías principales: solo marca + título. */
-const GROUPS: TipoGroup[] = bannerGroups("clean");
-/** Tipologías originales, conservadas para consulta y para los correos ya maquetados. */
-const LEGACY_GROUPS: TipoGroup[] = bannerGroups("legacy");
+/** Las tipologías de banner header (marca + título). */
+const GROUPS: TipoGroup[] = bannerGroups();
 
 /** Los layouts de footer disponibles (cada uno es una tipología con 5 tonos). */
 interface FooterLayoutMeta {
@@ -168,9 +157,6 @@ const FOOTER_GROUPS: TipoGroup[] = FOOTER_LAYOUTS.map(function toFooterGroup(lay
       descripcion: layout.descripcion,
     },
     kind: "footer",
-    // Los footers no llevan pill ni bajada, así que el cambio no les afecta:
-    // hay un único juego, compartido por ambas variantes.
-    variant: "clean",
     plantillas: [
       {
         id: `${layout.id}-banner`,
@@ -191,12 +177,7 @@ const FOOTER_GROUPS: TipoGroup[] = FOOTER_LAYOUTS.map(function toFooterGroup(lay
   };
 });
 
-export const TIPO_GROUPS: TipoGroup[] = [...GROUPS, ...FOOTER_GROUPS, ...LEGACY_GROUPS];
-
-/** Solo las tipologías vigentes (sin las legacy) — lo que se ofrece por defecto. */
-export const TIPO_GROUPS_CLEAN: TipoGroup[] = [...GROUPS, ...FOOTER_GROUPS];
-/** Las tipologías originales, con pill y bajada. */
-export const TIPO_GROUPS_LEGACY: TipoGroup[] = LEGACY_GROUPS;
+export const TIPO_GROUPS: TipoGroup[] = [...GROUPS, ...FOOTER_GROUPS];
 
 export function getTipoGroup(id: string): TipoGroup | undefined {
   return TIPO_GROUPS.find(function byId(g) { return g.tipologia.id === id; });

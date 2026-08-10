@@ -6,29 +6,37 @@
  * correo se renderiza a HTML con generateEmail(sections, subject), el mismo
  * renderer de producción — aquí NO se inventa ni se maqueta nada.
  *
- * Los correos se agrupan por `category` (En vivo, Negociable, Registro…) y,
- * dentro de cada categoría, se ordenan por el paso del flujo (`stage`) según
- * STAGE_ORDER. Los `leadsTo` de cada correo dicen a qué correo deriva.
+ * El AGRUPADO y el ORDEN salen de catalogOrder.ts (módulo plano que comparte con
+ * el catálogo del cliente): categoría tras categoría y, dentro de cada una, por
+ * paso del flujo. Los `leadsTo` de cada correo dicen a qué correo deriva.
+ *
+ * Aquí se añade lo que el catálogo no necesita: el HTML renderizado, el estado de
+ * revisión (revisionStatus.ts) y los vecinos para navegar con anterior/siguiente.
  *
  * Complementa a src/emails/tipologiasRegistry.ts (las tipologías de banner,
  * que son propuestas de diseño, no correos de producción).
  */
 
-import { EMAILS, STAGE_ORDER, CATEGORY_GRADIENT, CATEGORY_SOLID, type EmailTemplate } from "./prodEmails";
+import { EMAILS, CATEGORY_GRADIENT, CATEGORY_SOLID, type EmailTemplate } from "./prodEmails";
 import { generateEmail } from "./prodEmailTemplates";
+import { estadoDe, notaDe, type RevisionEstado } from "./revisionStatus";
+import { CATEGORIAS_ORDENADAS } from "./catalogOrder";
 
 /** Un correo real listo para mostrar: metadata + su HTML de producción. */
 export interface EmailReal {
   id: string;
   name: string;
   subject: string;
-  desc: string;
   /** Paso dentro del flujo de su categoría (pinta el chip). */
   stage?: string;
   /** Ids de correos a los que deriva este (el flujo). */
   leadsTo: string[];
   /** HTML completo del correo (el que copia el botón y pinta el iframe). */
   html: string;
+  /** «listo» para revisar o «pendiente» (ver revisionStatus.ts). */
+  estado: RevisionEstado;
+  /** Qué falta, si está pendiente; null si está listo. */
+  nota: string | null;
 }
 
 /** Una categoría del catálogo con sus correos, en orden de flujo. */
@@ -52,79 +60,74 @@ function slug(label: string): string {
     .replace(/^-|-$/g, "");
 }
 
-/**
- * Correos sin `category` en el origen (p. ej. fee-subascoins) caen aquí — el
- * mismo nombre que usa el catálogo de Concorde-Email, y siempre al final.
- */
-const SIN_CATEGORIA = "General";
-
 const FALLBACK_GRADIENT = "linear-gradient(135deg,#8460e5 0%,#3b1782 100%)";
 const FALLBACK_SOLID = "#8460e5";
-
-/**
- * Posición de un correo dentro de su categoría: primero por el orden de flujo
- * de STAGE_ORDER; si su categoría no lo define, se respeta el orden del origen.
- */
-function stageIndex(category: string, stage: string | undefined): number {
-  const order = STAGE_ORDER[category];
-  if (!order || !stage) return Number.MAX_SAFE_INTEGER;
-  const i = order.indexOf(stage);
-  return i === -1 ? Number.MAX_SAFE_INTEGER : i;
-}
 
 function toReal(e: EmailTemplate): EmailReal {
   return {
     id: e.id,
     name: e.name,
     subject: e.subject,
-    desc: e.desc,
     stage: e.stage,
     leadsTo: e.leadsTo ?? [],
     html: generateEmail(e.sections, e.subject),
+    estado: estadoDe(e.id),
+    nota: notaDe(e.id),
   };
 }
 
-/** Agrupa los 45 correos por categoría, ordenados por flujo. */
-function buildGroups(): EmailGroup[] {
-  const byCategory = new Map<string, EmailTemplate[]>();
-  EMAILS.forEach(function collect(e) {
-    const cat = e.category ?? SIN_CATEGORIA;
-    const list = byCategory.get(cat);
-    if (list) list.push(e);
-    else byCategory.set(cat, [e]);
-  });
-
-  return Array.from(byCategory.entries())
-    .sort(function generalLast(a, b) {
-      if (a[0] === SIN_CATEGORIA) return 1;
-      if (b[0] === SIN_CATEGORIA) return -1;
-      return 0; // el resto conserva el orden de aparición en EMAILS
-    })
-    .map(function toGroup([label, list]): EmailGroup {
-    // Orden estable: el índice del origen desempata cuando dos correos comparten
-    // stage (o cuando la categoría no define STAGE_ORDER).
-    const ordered = list
-      .map(function withIndex(e, i) { return { e, i }; })
-      .sort(function byFlow(a, b) {
-        const d = stageIndex(label, a.e.stage) - stageIndex(label, b.e.stage);
-        return d !== 0 ? d : a.i - b.i;
-      })
-      .map(function unwrap(x) { return toReal(x.e); });
-
+/**
+ * Los grupos del catálogo, con el HTML de cada correo ya renderizado. El ORDEN
+ * (categorías y correos dentro de cada una) no se decide aquí: viene de
+ * catalogOrder.ts, que también lo usa el catálogo del cliente — así «siguiente»
+ * recorre exactamente lo que se ve en la galería.
+ */
+export const EMAIL_GROUPS: EmailGroup[] = CATEGORIAS_ORDENADAS.map(
+  function toGroup({ categoria, correos }): EmailGroup {
     return {
-      id: slug(label),
-      label,
-      gradient: CATEGORY_GRADIENT[label] ?? FALLBACK_GRADIENT,
-      solid: CATEGORY_SOLID[label] ?? FALLBACK_SOLID,
-      correos: ordered,
+      id: slug(categoria),
+      label: categoria,
+      gradient: CATEGORY_GRADIENT[categoria] ?? FALLBACK_GRADIENT,
+      solid: CATEGORY_SOLID[categoria] ?? FALLBACK_SOLID,
+      correos: correos.map(toReal),
     };
-  });
-}
-
-export const EMAIL_GROUPS: EmailGroup[] = buildGroups();
+  },
+);
 
 /** Total de correos reales en producción. */
 export const EMAIL_PROD_TOTAL: number = EMAILS.length;
+
+/**
+ * Los 45 correos en el MISMO orden en que se ven en el catálogo (categoría tras
+ * categoría, y dentro de cada una por paso del flujo). Es el orden que recorren
+ * los botones «anterior / siguiente» del detalle: quien revisa avanza como si
+ * bajara por la galería, no saltando por el flujo de negocio.
+ */
+export const EMAIL_ORDER: EmailReal[] = EMAIL_GROUPS.flatMap(function flat(g) { return g.correos; });
+
+/** Posición 1-based de un correo en el recorrido, o 0 si no está. */
+export function posicionDe(id: string): number {
+  return EMAIL_ORDER.findIndex(function byId(c) { return c.id === id; }) + 1;
+}
+
+/** Vecinos de un correo en el recorrido del catálogo (null en los extremos). */
+export interface Vecinos {
+  anterior: EmailReal | null;
+  siguiente: EmailReal | null;
+  /** Posición 1-based y total, para el rótulo «12 / 45». */
+  posicion: number;
+  total: number;
+}
+
+export function vecinosDe(id: string): Vecinos {
+  const i = EMAIL_ORDER.findIndex(function byId(c) { return c.id === id; });
+  return {
+    anterior: i > 0 ? EMAIL_ORDER[i - 1] : null,
+    siguiente: i !== -1 && i < EMAIL_ORDER.length - 1 ? EMAIL_ORDER[i + 1] : null,
+    posicion: i + 1,
+    total: EMAIL_ORDER.length,
+  };
+}
 
 export function getEmailGroup(id: string): EmailGroup | undefined {
   return EMAIL_GROUPS.find(function byId(g) { return g.id === id; });
