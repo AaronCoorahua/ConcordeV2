@@ -233,8 +233,15 @@ ${emailHtml.slice(whiteStart)}`;
 
 // ─── Zoom-card → PNG de Figma ────────────────────────────────────────────────
 
-/** Marca que el renderer pone en la fila de la `zoom-card` (ver prodEmailTemplates). */
+/** Marca que el renderer pone en las filas de la `zoom-card` (ver prodEmailTemplates). */
 const ZOOM_CARD_MARK = '<tr data-zoom-card="1">';
+
+/**
+ * ANCHO DEL PNG en el preview, en px. ← cambia este número para escalar la
+ * imagen del toggle PNG. El correo mide 600px de ancho, así que 600 es el
+ * máximo útil; por encima se recorta. Alto siempre proporcional (`height:auto`).
+ */
+export const ZOOM_CARD_PNG_W = 470;
 
 /**
  * Cambia la `zoom-card` maquetada por el PNG exportado de Figma.
