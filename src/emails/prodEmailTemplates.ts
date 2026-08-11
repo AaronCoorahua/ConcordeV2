@@ -9,6 +9,40 @@
    Únicas desviaciones respecto al original (reaplicar al resincronizar):
     · `renderSection` lleva `export` — sectionPreviews.ts renderiza sección por
       sección para el catálogo /correos/secciones.
+    · `list` acepta un cuarto item `i4` (el original solo pintaba i1..i3). Lo pide
+      el correo de bienvenida, que lista Correo · Celular · DNI · RUC.
+    · `list` acepta `bulletTone: 'ink'`. La viñeta es naranja de acento SIEMPRE;
+      antes su color estaba atado a `align: 'center'`, así que una lista alineada
+      a la izquierda perdía el naranja de Figma sin razón. `'ink'` recupera el
+      comportamiento viejo (viñeta del color del texto) si algún correo lo quiere.
+    · `list` acepta `indent` (px): tabula la lista bajo su rótulo, sangrándola como
+      una sub-lista en vez de dejarla al mismo margen que el texto que la titula.
+    · `action-card` acepta `svgLeft` (+`svgLeftW`): un icono en su propia columna a
+      la IZQUIERDA del copy. El original solo admitía `svg`, que va a la derecha;
+      la card «Más transparencia» de Figma lleva escudo a la izquierda Y celular a
+      la derecha, así que necesitaba ambos lados.
+    · `action-card` acepta `svgGap` (px): la separación entre el copy y el icono
+      derecho, antes fija en 16px.
+    · `columns` acepta `icon1`/`icon2`: una burbuja morada que asoma por la esquina
+      superior izquierda de cada card (los iconos BCP de Figma). La card gana
+      padding-top para dejarle el hueco.
+    · `action-card` acepta `svgW` y `svgAlign: 'bottom'` para el icono derecho. Con
+      `bottom` la imagen se ancla al canto inferior de la card y, con un margen
+      superior negativo, ASOMA por arriba — el mockup de celular de Figma, que
+      parece salirse de la tarjeta en vez de flotar centrado.
+    · Sección nueva `grid`: dos columnas donde CADA UNA apila sus propias cards,
+      con alto independiente. Distinta de `columns`, que solo admite una card por
+      lado y las obliga a igualar alto. La usa el correo de bienvenida para el
+      bloque «Agrega fondos» (SubasCoins + fee | recarga BCP + sin fee). Cada card
+      admite icono en burbuja que asoma por la esquina (default) o en columna
+      propia a la izquierda (`iconLeft`), CTA primary en cualquiera de las dos,
+      `l2Center` para centrar la segunda card de la izquierda, `rTitlePurple` para
+      los títulos en morado en vez del naranja de acento, y `r2Indent` para tabular
+      una lista de bullets bajo su título. Las cards oscuras van en COLOR PLANO
+      (CARD_DARK_END) y radio 8px: así la burbuja de la esquina se funde con la card
+      sin canto —dos gradientes en cajas distintas nunca calzan— igual que Figma.
+      Registrarla exige tocar 4 sitios: el tipo `Section`, SECTION_LABELS, los
+      `defaults` de createSection y SECTION_DESCRIPTIONS (en sectionPreviews.ts).
    ───────────────────────────────────────────────────────────────────────────── */
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -49,6 +83,8 @@ const GLOW_PRIMARY = 'rgba(237,137,54,0.3) 0 2px 6px';  // Button.tsx .pvbtn box
 const GLOW_NEGOTIABLE = 'rgba(0,174,177,0.35) 0 2px 6px'; // Button.tsx .pneg box-shadow glow
 const GLASS_SHEEN = 'linear-gradient(180deg,rgba(255,255,255,0.24) 0%,rgba(255,255,255,0.12) 45%,rgba(255,255,255,0.06) 100%)'; // StatPill.tsx glass base
 const G_CONSOLE = 'linear-gradient(157deg,#5F3ED8 0%,#340091 50%,#140046 100%)';      // DetailCard.tsx .pdetail__head
+/** Morado plano de las cards oscuras (el #391383 que usa el export de Figma). */
+const CARD_DARK_END = '#391383';
 const G_CONSOLE_NAVY = 'linear-gradient(157deg,#22005c 0%,#00005E 55%,#000042 100%)'; // variante navy, mismo ángulo
 const B_GLASS_EDGE = 'linear-gradient(135deg,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0.10) 45%,rgba(255,255,255,0.40) 100%)'; // canto de vidrio iluminado (::before glass de Concorde)
 const G_STRIPE = 'linear-gradient(90deg,#ed8936 0%,#8460e5 55%,#3b1782 100%)'; // franja firma orange→vault (barra inferior de OfferCard)
@@ -66,7 +102,7 @@ function likeBadge(): string {
 
 export interface Section {
   id: string;
-  type: 'title' | 'text' | 'panel' | 'features' | 'icon-text' | 'stats' | 'cta' | 'image' | 'spacer' | 'table' | 'details' | 'divider' | 'note' | 'amount' | 'offers' | 'vehicle' | 'negotiation' | 'quote' | 'won-vehicle' | 'costs' | 'list' | 'success' | 'columns' | 'action-card';
+  type: 'title' | 'text' | 'panel' | 'features' | 'icon-text' | 'stats' | 'cta' | 'image' | 'spacer' | 'table' | 'details' | 'divider' | 'note' | 'amount' | 'offers' | 'vehicle' | 'negotiation' | 'quote' | 'won-vehicle' | 'costs' | 'list' | 'success' | 'columns' | 'action-card' | 'grid' | 'zoom-card';
   content: Record<string, string>;
 }
 
@@ -95,6 +131,8 @@ export const SECTION_LABELS: Record<Section['type'], string> = {
   success: 'Confirmación con check',
   columns: 'Dos columnas de texto',
   'action-card': 'Card de acción (copy + botón + icono)',
+  grid: 'Grilla 2 columnas (cards apiladas)',
+  'zoom-card': 'Card zoom (cabecera + cuerpo + CTA + callouts)',
 };
 
 export function createSection(type: Section['type']): Section {
@@ -141,6 +179,16 @@ export function createSection(type: Section['type']): Section {
     success: { title: '¡Listo!', value: '', caption: '' },
     columns: { h1: 'Columna 1', body1: 'Texto 1', h2: 'Columna 2', body2: 'Texto 2' },
     'action-card': { text: 'Descripción de la acción.', btnText: 'VAMOS', url: 'https://', svg: '', bare: '' },
+    grid: { l1Title: 'Card izquierda 1', l1Body: 'Contenido.', l1Svg: '', l1Btn: '', l1Url: '', dark1: '',
+      l2Title: 'Card izquierda 2', l2Body: 'Contenido.',
+      r1Title: 'Card derecha 1', r1Body: 'Contenido.', r1Svg: '',
+      r2Title: 'Card derecha 2', r2Body: 'Contenido.', r2Svg: '' },
+    'zoom-card': {
+      headTitle: 'Cierre de inscripciones', headValue: 'Martes, 08 de Marzo 00:00 Hrs',
+      amountLabel: 'Valor de restos', amountValue: 'US$ 0',
+      note1: '', body: 'Texto del cuerpo.', btnText: 'ME INTERESA', url: 'https://',
+      note2: '', variant: '',
+    },
   };
   return { id, type, content: { ...defaults[type] } };
 }
@@ -274,6 +322,76 @@ export function renderSection(s: Section): string {
         : `${titleP}${bodyP}`;
       return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">${panelOpen}${inner}${panelClose}</td></tr>`;
     }
+    case 'zoom-card': {
+      // Card «con zoom» del Figma de Mapfre: cabecera morada + cuerpo crema con
+      // el monto, el copy y el CTA, y hasta dos callouts naranjas anclados AL
+      // ELEMENTO QUE EXPLICAN. En Figma los globos flotan a los lados con una
+      // linea; en email no hay position:absolute fiable (Outlook) ni ancho para
+      // una columna lateral en movil, asi que el globo va DEBAJO de su elemento
+      // y la punta del SVG apunta hacia arriba. Misma lectura, layout email-safe.
+      const zNeg = c.variant === 'negotiable';
+      const zBtn = c.btnText
+        ? `<table border="0" cellpadding="0" cellspacing="0" align="center" style="border-radius:9999px;background-image:${zNeg ? B_NEGOTIABLE : B_PRIMARY};box-shadow:${zNeg ? GLOW_NEGOTIABLE : GLOW_PRIMARY};"><tr><td style="padding:2px;"><a href="${esc(c.url)}" target="_blank" style="display:inline-block;background:${C.purple};background-image:${zNeg ? G_NEGOTIABLE : G_PRIMARY};color:${C.white};border-radius:9999px;padding:18px 46px;font-family:${FONT_HEADING};font-size:21px;font-weight:800;letter-spacing:0.01em;text-decoration:none;text-shadow:${TXT_SHADOW};box-shadow:inset 0 1px 0 rgba(255,255,255,0.30);">${esc(c.btnText)}</a></td></tr></table>`
+        : '';
+      // Globo naranja con la punta ABAJO (apunta al elemento que tiene debajo):
+      // el del sorteo, que va fuera de la card. SVG inline, sin imagen externa.
+      const callout = (txt: string) => txt
+        ? `<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center" style="max-width:470px;">
+<tr><td align="center" style="line-height:0;font-size:0;"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="11" viewBox="0 0 22 11" style="display:block;"><path d="M11 0 22 11H0z" fill="${C.accent}"/></svg></td></tr>
+<tr><td style="border:1.5px solid ${C.accent};border-radius:12px;padding:11px 16px;background-color:#FFFFFF;"><p style="margin:0;font-size:13px;line-height:1.5;color:${C.accent};font-family:${FONT_HEADING};text-align:center;">${hl(txt)}</p></td></tr>
+</table>`
+        : '';
+      // Globo LATERAL: caja naranja + punta a la IZQUIERDA, apuntando al monto
+      // que queda a su lado. Va en la 3ª columna de la fila del monto, asi que
+      // es una tabla de 2 celdas (punta | caja) alineada verticalmente al medio.
+      const sideCallout = (txt: string) => txt
+        ? `<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+<td width="11" valign="middle" style="line-height:0;font-size:0;"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="22" viewBox="0 0 11 22" style="display:block;"><path d="M0 11 11 0v22z" fill="${C.accent}"/></svg></td>
+<td valign="middle" style="border:1.5px solid ${C.accent};border-radius:10px;padding:9px 10px;background-color:#FFFFFF;"><p style="margin:0;font-size:11px;line-height:1.4;color:${C.accent};font-family:${FONT_HEADING};">${hl(txt)}</p></td>
+</tr></table>`
+        : '';
+      const gap = (h: string) => `<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td height="${h}" style="font-size:0;line-height:0;">&nbsp;</td></tr></table>`;
+      // `pngSrc` es SOLO para el Lab: el toggle PNG/HTML de /correos/[id] cambia
+      // esta card por el export de Figma para comparar maqueta contra diseno. El
+      // correo de produccion nunca lo lleva (la card va siempre en HTML).
+      if (c.pngSrc) {
+        return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};"><img src="${esc(c.pngSrc)}" alt="${esc(c.headTitle)}" width="400" style="display:block;margin:0 auto;width:400px;max-width:100%;height:auto;"></td></tr>`;
+      }
+      // Rejilla de 3 columnas: la card ocupa la CENTRAL y las laterales quedan
+      // libres para los globos, que asi apuntan de lado —como en Figma— en vez
+      // de apilarse debajo. La izquierda va vacia hoy: existe para equilibrar el
+      // centrado de la card (sin ella, la derecha la empujaria fuera de eje).
+      const COL_SIDE = 176;
+      const CARD_W = 300;
+      // El globo lateral se alinea con «Valor de restos» empujandolo con un
+      // spacer del alto de la cabecera. Es un numero calculado, no tanteado:
+      // padding 18*2 + titulo 16px*1.35 + margen 6 + fecha 15px*1.35 ≈ 85.
+      // La fecha va en UNA linea (`white-space:nowrap`), asi que la cabecera
+      // tiene alto fijo; si se cambia su tipografia, hay que recalcular esto.
+      const HEAD_H = 85;
+      return `<tr data-zoom-card="1"><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">
+<table border="0" cellpadding="0" cellspacing="0" align="center" style="max-width:${COL_SIDE * 2 + CARD_W}px;"><tr>
+<td width="${COL_SIDE}" valign="middle"></td>
+<td width="${CARD_W}" valign="top">
+<table border="0" cellpadding="0" cellspacing="0" width="${CARD_W}" style="border-radius:18px;box-shadow:${WBC_SHADOW};">
+<tr><td bgcolor="${C.purple}" align="center" style="border-radius:18px 18px 0 0;background-image:${G_CONSOLE};padding:18px 18px;">
+<p style="margin:0 0 6px;font-size:16px;font-weight:600;line-height:1.35;color:#D9CCFF;font-family:${FONT_HEADING};">${esc(c.headTitle)}</p>
+<p style="margin:0;font-size:15px;font-weight:800;line-height:1.35;color:${C.white};font-family:${FONT_HEADING};white-space:nowrap;">${esc(c.headValue)}</p>
+</td></tr>
+<tr><td bgcolor="${C.lavender}" align="center" style="border-radius:0 0 18px 18px;padding:22px 18px;">
+<p style="margin:0 0 4px;font-size:16px;font-weight:800;line-height:1.35;color:#000000;font-family:${FONT_HEADING};">${esc(c.amountLabel)}</p>
+<p style="margin:0;font-size:26px;font-weight:800;line-height:1.3;color:#000000;font-family:${FONT_NUMBER};">${esc(c.amountValue)}</p>
+${gap('18')}<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center" style="max-width:230px;"><tr><td style="border-top:1px solid ${C.border};font-size:1px;line-height:1px;height:1px;">&nbsp;</td></tr></table>${gap('18')}
+<p style="margin:0;font-size:14px;line-height:1.6;color:#000000;font-family:${FONT_HEADING};">${hl(c.body)}</p>
+${zBtn ? gap('20') + zBtn : ''}
+</td></tr>
+</table>
+</td>
+<td width="${COL_SIDE}" valign="top" style="padding-left:8px;">${c.note1 ? `${gap(String(HEAD_H))}${sideCallout(c.note1)}` : ''}</td>
+</tr></table>
+</td></tr>${c.note2 ? `
+<tr data-zoom-card="1"><td align="center" style="padding:16px 16px 0;font-family:${FONT_HEADING};">${callout(c.note2)}</td></tr>` : ''}`;
+    }
     case 'features':
       return `<tr><td align="center" style="padding:4px 16px 0;font-family:${FONT_HEADING};">
 <table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">
@@ -296,7 +414,11 @@ export function renderSection(s: Section): string {
       const btn = c.btnText
         ? `<table border="0" cellpadding="0" cellspacing="0" align="left" style="border-radius:9999px;background-image:${B_PRIMARY};box-shadow:${GLOW_PRIMARY};"><tr><td style="padding:2px;"><a href="${esc(c.url)}" target="_blank" style="display:inline-block;background:${C.purple};background-image:${G_PRIMARY};color:${C.white};border-radius:9999px;padding:13px 44px;font-family:${FONT_HEADING};font-size:15px;font-weight:700;text-decoration:none;text-shadow:${TXT_SHADOW};box-shadow:inset 0 1px 0 rgba(255,255,255,0.30);">${esc(c.btnText)}</a></td></tr></table>`
         : '';
-      const size = c.size === 'lg' ? { text: 17, icon: 116 } : { text: 14, icon: 72 };
+      // `sm` baja el cuerpo a 12px: para las cards donde el copy acompaña a un
+      // grafico que ya manda (el mockup de celular) y no debe competir con el.
+      const size = c.size === 'lg' ? { text: 17, icon: 116 }
+        : c.size === 'sm' ? { text: 12, icon: 72 }
+        : { text: 14, icon: 72 };
       // `items` (separados por |) pinta una fila de condiciones con punto naranja
       // debajo del copy, centrada — el bloque «Activación alternativa» de Figma.
       const items = c.items
@@ -305,12 +427,17 @@ export function renderSection(s: Section): string {
           }).join('')}</tr></table>`
         : '';
       const inner = `<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+${c.svgLeft ? `<td width="${esc(c.svgLeftW || '46')}" valign="middle" align="left" style="line-height:0;padding-right:10px;">${c.svgLeft}</td>` : ''}
 <td valign="middle" align="${c.align === 'center' ? 'center' : 'left'}"><p style="margin:0;font-size:${size.text}px;line-height:1.45;color:${c.ink === 'black' ? '#000000' : C.body};font-family:${FONT_HEADING};">${hl(c.text).replace(/\n/g, '<br>')}</p>${btn ? `<table border="0" cellpadding="0" cellspacing="0"><tr><td height="14"></td></tr><tr><td>${btn}</td></tr></table>` : ''}${items}</td>
-${c.svg ? `<td width="16"></td><td width="${size.icon}" valign="middle" align="right" style="line-height:0;">${c.svg}</td>` : ''}
+${c.svg ? `<td width="${c.svgGap || '16'}"></td><td width="${c.svgW || size.icon}" valign="${c.svgAlign === 'bottom' ? 'bottom' : 'middle'}" align="right" style="line-height:0;">${c.svg}</td>` : ''}
 </tr></table>`;
       // `full: 'true'` deja el card a los 600px del correo (el panel de serie
       // se queda en 500 y aquí la fila copy+botón+icono necesita el ancho).
-      const open = c.full === 'true' ? panelOpen.replace('max-width:500px;', '') : panelOpen;
+      let open = c.full === 'true' ? panelOpen.replace('max-width:500px;', '') : panelOpen;
+      // `padY` (px) baja el alto de la card apretando su padding vertical: lo pide
+      // la card cuyo icono ya ocupa todo el alto (el mockup de celular), donde el
+      // padding de serie solo agregaba aire muerto arriba y abajo.
+      if (c.padY) open = open.replace('padding:16px 16px;', `padding:${esc(c.padY)}px 16px;`);
       return bare
         ? `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">${inner}</td></tr>`
         : `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">${open}${inner}${panelClose}</td></tr>`;
@@ -574,8 +701,20 @@ ${c.extra ? `<p style="margin:14px 0 0;font-size:${sz.extra}px;line-height:1.5;c
         // pintando ahí el panel, la card corta se estira sola hasta la larga.
         // (Con la tabla anidada esto no pasaba: la tabla conserva su alto
         // natural aunque su celda contenedora sea más alta.)
-        const col = (h: string, body: string) => asCard
-          ? `<td width="48%" valign="top" bgcolor="${C.lavender}" style="padding:16px 14px;border-radius:16px;border:1px solid ${C.border};background-image:${G_PANEL};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6), ${WBC_SHADOW};">
+        // `icon1`/`icon2` ponen una burbuja que ASOMA por la esquina superior
+        // izquierda de la card, como en Figma: circulo de 40px con margenes
+        // negativos, y la card gana padding-top para dejarle el hueco.
+        //
+        // Lleva el GRADIENTE de consola (no un morado plano): aqui el circulo se
+        // apoya sobre la card lavanda, asi que no hay canto que disimular y el
+        // degradado le da el mismo volumen que a los demas iconos del correo. El
+        // `bgcolor` plano queda de respaldo para los clientes sin gradientes.
+        const bubble = (icon: string) => icon
+          ? `<table border="0" cellpadding="0" cellspacing="0" align="left" style="margin:-40px 0 10px -4px;"><tr><td align="center" valign="middle" width="40" height="40" bgcolor="${CARD_DARK_END}" style="border-radius:50%;background-color:${CARD_DARK_END};background-image:${G_CONSOLE};">${icon}</td></tr></table>`
+          : '';
+        const col = (h: string, body: string, icon = '') => asCard
+          ? `<td width="48%" valign="top" bgcolor="${C.lavender}" style="padding:${icon ? '28px 14px 16px' : '16px 14px'};border-radius:16px;border:1px solid ${C.border};background-image:${G_PANEL};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6), ${WBC_SHADOW};">
+${bubble(icon)}
 <p style="margin:0 0 10px;font-size:15px;font-weight:800;color:${C.accent};font-family:${FONT_HEADING};text-align:center;">${esc(h)}</p>
 <p style="margin:0;font-size:12px;line-height:1.6;color:${C.purple};font-family:${FONT_HEADING};text-align:left;">${hl(body).replace(/\n/g, '<br>')}</p>
 </td>`
@@ -585,11 +724,106 @@ ${c.extra ? `<p style="margin:14px 0 0;font-size:${sz.extra}px;line-height:1.5;c
 </td>`;
         return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">
 <table border="0" cellpadding="0" cellspacing="0" width="100%"${asCard ? '' : ' style="max-width:500px;"'}><tr>
-${col(c.h1, c.body1)}
+${col(c.h1, c.body1, c.icon1)}
 <td width="4%"></td>
-${col(c.h2, c.body2)}
+${col(c.h2, c.body2, c.icon2)}
 </tr></table></td></tr>`;
       }
+    case 'grid': {
+      // Dos COLUMNAS, cada una con sus propias cards apiladas: la izquierda lleva
+      // `l1..l2` y la derecha `r1..r2`. Distinto de `columns`, que solo admite una
+      // card por lado y las obliga a igualar alto entre si.
+      //
+      // Cada card es una tabla dentro de su celda (no el fondo de la celda misma):
+      // aqui SI se quiere que cada card conserve su alto natural, porque son piezas
+      // independientes apiladas, no dos mitades de una fila.
+      //
+      // `dark1` pinta la primera card de la izquierda en morado con texto blanco
+      // (la card destacada de Figma). `btnText`/`url` le agregan el boton primary.
+      //
+      // El ICONO admite dos colocaciones, ambas de Figma:
+      //  · `iconLeft` — icono en una COLUMNA propia a la izquierda del copy (las
+      //    cards de recarga BCP: banco y check).
+      //  · por defecto — burbuja circular que ASOMA por la esquina superior
+      //    izquierda, con el truco del original: un td redondo al que se le dan
+      //    margenes negativos para que se salga de la card.
+      interface GCard {
+        title?: string; body?: string; dark?: boolean; icon?: string;
+        iconLeft?: boolean; iconW?: string; btn?: string; url?: string; center?: boolean;
+        /** Titulo en morado en vez del naranja de acento. */
+        titlePurple?: boolean;
+        /** Sangria (px) del cuerpo: tabula una lista de bullets bajo su titulo. */
+        indent?: string;
+      }
+      const gcard = ({ title = '', body = '', dark = false, icon = '', iconLeft = false, iconW = '44', btn = '', url = '', center = false, titlePurple = false, indent = '' }: GCard): string => {
+        if (!title && !body) return '';
+        const fg = dark ? C.white : C.purple;
+        // Con burbuja en la esquina la card gana padding ARRIBA (el hueco por donde
+        // el circulo asoma), no a la izquierda: el copy debe arrancar al margen
+        // normal, alineado con el resto de la card.
+        const pad = !iconLeft && icon ? 'padding:22px 12px 12px 20px;' : 'padding:14px 12px;';
+        // La card oscura lleva GRADIENTE. La burbuja de la esquina usa el color
+        // donde ese gradiente empieza (arriba-izquierda, que es justo donde el
+        // circulo la toca), asi el canto no se nota — ver `bubbleBg`.
+        const bg = dark
+          ? `bgcolor="${C.purple}" style="${pad}border-radius:16px;background-color:${C.purple};background-image:${G_CONSOLE};box-shadow:${WBC_SHADOW};"`
+          : `bgcolor="${C.lavender}" style="${pad}border-radius:16px;border:1px solid ${C.border};background-image:${G_PANEL};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6), ${WBC_SHADOW};"`;
+        // Burbuja que asoma por la esquina (solo cuando el icono NO va en columna).
+        //
+        // Siempre en LAVANDA, tambien sobre las cards oscuras: al ser el fondo claro
+        // del correo, el circulo se recorta contra el morado y el icono queda
+        // enmarcado en vez de diluirse. Va en color plano —no en gradiente— porque
+        // dos gradientes en cajas distintas nunca calzan y dejarian un canto visible.
+        const bubbleBg = C.lavender;
+        // Se sale por ARRIBA y por la IZQUIERDA a la vez: asi queda montada en la
+        // esquina, como en el original, en vez de solo asomar por el borde superior.
+        const bubble = icon && !iconLeft
+          ? `<table border="0" cellpadding="0" cellspacing="0" align="left" style="margin:-34px 0 6px -26px;"><tr><td align="center" valign="middle" width="48" height="48" bgcolor="${bubbleBg}" style="border-radius:50%;background-color:${bubbleBg};">${icon}</td></tr></table>`
+          : '';
+        // Explicito siempre: el <td> de la columna hereda un `align="center"` del
+        // contenedor, asi que sin esto el copy de la card saldria centrado.
+        const ta = center ? 'text-align:center;' : 'text-align:left;';
+        const headColor = dark ? C.white : titlePurple ? C.purple : C.accent;
+        // El titulo respeta los saltos de linea (como el cuerpo): a veces se quiere
+        // decidir donde corta en vez de dejarlo al ajuste automatico.
+        const head = title ? `<p style="margin:0 0 6px;font-size:13px;font-weight:800;color:${headColor};font-family:${FONT_HEADING};${ta}">${hl(title).replace(/\n/g, '<br>')}</p>` : '';
+        const ind = indent ? `padding-left:${esc(indent)}px;` : '';
+        const copy = body ? `<p style="margin:0;font-size:11.5px;line-height:1.6;color:${fg};font-family:${FONT_HEADING};${ta}${ind}">${hl(body).replace(/\n/g, '<br>')}</p>` : '';
+        // El CTA va en UNA linea: `white-space:nowrap` evita que el texto largo
+        // («¡QUIERO ADQUIRIR SUBASCOINS!») se parta en dos dentro de la pastilla.
+        const cta = btn
+          ? `<table border="0" cellpadding="0" cellspacing="0" align="center" style="margin-top:12px;border-radius:9999px;background-image:${B_PRIMARY};box-shadow:${GLOW_PRIMARY};"><tr><td style="padding:2px;"><a href="${esc(url)}" target="_blank" style="display:inline-block;background:${C.purple};background-image:${G_PRIMARY};color:${C.white};border-radius:9999px;padding:10px 18px;font-family:${FONT_HEADING};font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;text-shadow:${TXT_SHADOW};box-shadow:inset 0 1px 0 rgba(255,255,255,0.30);">${esc(btn)}</a></td></tr></table>`
+          : '';
+        // Con `iconLeft` la card se parte en dos columnas: icono | copy.
+        const inner = iconLeft && icon
+          ? `<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td width="${esc(iconW)}" valign="top" style="line-height:0;padding-right:10px;">${icon}</td><td valign="top">${head}${copy}${cta}</td></tr></table>`
+          : `${bubble}${head}${copy}${cta}`;
+        return `<table border="0" cellpadding="0" cellspacing="0" width="100%" ${bg}><tr><td>${inner}</td></tr></table>`;
+      };
+      // Separacion entre las dos cards apiladas de una columna. `gapY` la ajusta:
+      // la burbuja de la card de abajo asoma por su borde superior, asi que un hueco
+      // corto las deja pegadas visualmente aunque el margen exista.
+      const gapY = c.gapY || '12';
+      const stack = (a: string, b: string): string => a && b
+        ? `${a}<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td height="${esc(gapY)}" style="font-size:0;line-height:${esc(gapY)}px;">&nbsp;</td></tr></table>${b}`
+        : `${a}${b}`;
+      const left = stack(
+        gcard({ title: c.l1Title, body: c.l1Body, dark: c.dark1 === 'true', icon: c.l1Svg }),
+        // El CTA vive en la SEGUNDA card de la izquierda (la del fee), no en la
+        // morada: asi es en Figma, y de paso el boton queda centrado bajo su copy.
+        gcard({ title: c.l2Title, body: c.l2Body, btn: c.l2Btn, url: c.l2Url, center: c.l2Center === 'true' }),
+      );
+      const right = stack(
+        gcard({ title: c.r1Title, body: c.r1Body, icon: c.r1Svg, iconLeft: true, iconW: c.r1SvgW, titlePurple: c.rTitlePurple === 'true' }),
+        gcard({ title: c.r2Title, body: c.r2Body, icon: c.r2Svg, iconLeft: true, iconW: c.r2SvgW, titlePurple: c.rTitlePurple === 'true', indent: c.r2Indent }),
+      );
+      return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+<td width="48%" valign="top">${left}</td>
+<td width="4%"></td>
+<td width="48%" valign="top">${right}</td>
+</tr></table></td></tr>`;
+    }
     case 'list': {
       // `align: 'center'` NO centra cada línea: centra el BLOQUE y deja los
       // items alineados entre sí a la izquierda, que es como se leen en Figma.
@@ -597,8 +831,12 @@ ${col(c.h2, c.body2)}
       const centered = c.align === 'center';
       // `ink: 'black'` pinta los items en negro (el cuerpo de algunos correos).
       const lInk = c.ink === 'black' ? '#000000' : C.dark;
+      // La vinieta va en naranja de acento salvo que se pida `bulletTone: 'ink'`.
+      // Antes su color estaba ligado a `centered`, asi que una lista alineada a la
+      // izquierda perdia el naranja de Figma sin motivo.
+      const bullet = c.bulletTone === 'ink' ? lInk : C.accent;
       const item = (v: string) => v
-        ? `<tr><td width="14" valign="top" style="font-size:13px;line-height:1.9;color:${centered ? C.accent : lInk};font-family:${FONT_HEADING};">•</td><td style="font-size:13px;line-height:${centered ? '1.9' : '1.6'};color:${lInk};font-family:${FONT_HEADING};">${hl(v)}</td></tr>`
+        ? `<tr><td width="14" valign="top" style="font-size:13px;line-height:1.9;color:${bullet};font-family:${FONT_HEADING};">•</td><td style="font-size:13px;line-height:${centered ? '1.9' : '1.6'};color:${lInk};font-family:${FONT_HEADING};">${hl(v)}</td></tr>`
         : '';
       // `layout: 'row'` pone los items en UNA fila —dos condiciones lado a lado,
       // como en Figma— en vez de apilarlos.
@@ -606,10 +844,13 @@ ${col(c.h2, c.body2)}
         const cell = (v: string) => v
           ? `<td valign="top" style="font-size:13px;line-height:1.6;color:${C.dark};font-family:${FONT_HEADING};"><span style="color:${C.accent};">&bull;</span> ${hl(v)}</td>`
           : '';
-        return `<tr><td style="padding:0 16px;font-family:${FONT_HEADING};"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>${cell(c.i1)}${cell(c.i2)}${cell(c.i3)}</tr></table></td></tr>`;
+        return `<tr><td style="padding:0 16px;font-family:${FONT_HEADING};"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>${cell(c.i1)}${cell(c.i2)}${cell(c.i3)}${cell(c.i4)}</tr></table></td></tr>`;
       }
-      const rows = `${item(c.i1)}${item(c.i2)}${item(c.i3)}`;
-      return `<tr><td align="${centered ? 'center' : 'left'}" style="padding:0 16px;font-family:${FONT_HEADING};">
+      const rows = `${item(c.i1)}${item(c.i2)}${item(c.i3)}${item(c.i4)}`;
+      // `indent` (px) tabula la lista bajo su rotulo: se suma al padding del lado
+      // por el que se lee, asi los items quedan sangrados como una sub-lista.
+      const lPad = c.indent ? `padding:0 16px 0 ${16 + Number(c.indent)}px;` : 'padding:0 16px;';
+      return `<tr><td align="${centered ? 'center' : 'left'}" style="${lPad}font-family:${FONT_HEADING};">
 ${c.title ? `<p style="margin:0 0 6px;font-size:13px;font-weight:700;color:${C.purple};font-family:${FONT_HEADING};">${esc(c.title)}</p>` : ''}
 ${centered
   ? `<table border="0" cellpadding="0" cellspacing="0" align="center">${rows}</table>`

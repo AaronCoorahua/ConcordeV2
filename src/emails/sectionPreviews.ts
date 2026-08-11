@@ -39,6 +39,8 @@ export const SECTION_DESCRIPTIONS: Record<Section["type"], string> = {
   success: "Confirmación con check verde.",
   columns: "Dos columnas de texto lado a lado.",
   "action-card": "Card con copy y botón a la izquierda e ícono a la derecha.",
+  grid: "Dos columnas, cada una con sus cards apiladas (alto independiente).",
+  "zoom-card": "Card con cabecera morada, monto, botón y globos que apuntan.",
 };
 
 /** Assets demo para que los previews no salgan vacíos. */
@@ -57,6 +59,12 @@ export function demoSection(type: Section["type"]): Section {
     if (/icon(Url)?$/i.test(k) && k !== "icon") content[k] = DEMO_ICON;
   });
   if (type === "image") content.url = DEMO_IMG;
+  // Los globos van vacios por defecto (son opcionales); en el catalogo la card
+  // se veria coja sin ellos, asi que el demo los rellena.
+  if (type === "zoom-card") {
+    content.note1 = "Este es el monto que deberás pagar de resultar ganador.";
+    content.note2 = "Al registrar tu interés, participarás en un sorteo interno.";
+  }
   return { ...s, content };
 }
 

@@ -13,9 +13,10 @@
  *    contenteditable; «Copiar HTML» lee el estado VIVO del iframe.
  *
  *  · Comparar Figma: parte la vista en dos columnas — el correo maquetado a la
- *    izquierda y la referencia exportada de Figma a la derecha. Ambos se escalan
- *    para caber juntos en pantalla. Si el SVG aún no existe, la derecha muestra
- *    un skeleton con el nombre del archivo que falta.
+ *    izquierda y la referencia exportada de Figma a la derecha (html · svg · png,
+ *    en ese orden de prioridad). Ambos se escalan para caber juntos en pantalla.
+ *    Si no hay ningún export, la derecha muestra un skeleton con el nombre del
+ *    archivo que falta.
  *
  *  · Estado en la URL (C9): banner/footer/tono viven en el query string, así el
  *    preview es enlazable y sobrevive a recargas.
@@ -28,12 +29,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { JSX, ReactNode } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CopyHtmlButton from "@/app/correos/_components/CopyHtmlButton";
-import EmailFrame, { type EmailFrameHandle } from "@/app/correos/_components/EmailFrame";
-import { BANNER_OPTIONS, FOOTER_OPTIONS, buildBannerFor, buildFooterFor, swapEmailHeader, swapEmailFooter, stripBodyTitle, presetForCategory, hasFixedTone, toneLabelForCategory, type BannerText } from "@/src/emails/headerSwap";
+import EmailFrame, { EMAIL_FRAME_W, type EmailFrameHandle } from "@/app/correos/_components/EmailFrame";
+import { BANNER_OPTIONS, FOOTER_OPTIONS, buildBannerFor, buildFooterFor, swapEmailHeader, swapEmailFooter, stripBodyTitle, swapZoomCardForPng, hasZoomCard, presetForCategory, toneLabelForCategory, type BannerText } from "@/src/emails/headerSwap";
 import { V2_TONE_OPTIONS, type V2Tone } from "@/src/emails/tipologiasV2";
 import type { RevisionEstado } from "@/src/emails/revisionStatus";
+import type { FigmaRef } from "@/src/emails/figmaRef";
 
 const ORIGINAL = "original";
+
+/** Export de Figma del bloque «Cierre de inscripciones» (toggle PNG del Lab). */
+const ZOOM_CARD_PNG = "/figma/correos/inscripciones.png";
 const TONE_IDS = new Set(V2_TONE_OPTIONS.map(function id(o) { return o.tone; }));
 
 export interface BannerLabProps {
@@ -45,12 +50,12 @@ export interface BannerLabProps {
   /** Nombre de la categoría — default del pill del banner. */
   categoria: string;
   /**
-   * Ruta pública del SVG/PNG exportado de Figma, o null si aún no existe (la
-   * resuelve el Server Component leyendo public/figma/correos/).
+   * La referencia exportada de Figma (html · svg · png), o null si aún no existe.
+   * La resuelve el Server Component leyendo public/figma/correos/.
    */
-  figmaSrc?: string | null;
-  /** Nombre del archivo esperado — lo muestra el skeleton cuando falta. */
-  figmaFileName?: string;
+  figmaRef?: FigmaRef | null;
+  /** Id del correo — el nombre base del archivo que el skeleton pide cuando falta. */
+  figmaBaseName?: string;
   /** Estado de revisión del correo (ver src/emails/revisionStatus.ts). */
   estado?: RevisionEstado;
   /** Qué falta para poder revisarlo; null si está listo. */
@@ -140,9 +145,9 @@ function Field({ label, value, onChange, placeholder, disabled }: { label: strin
 }
 
 /**
- * Aviso de tono de marca. Las categorías «En vivo» y «Negociable» tienen un
- * color asignado; cambiarlo rompe el código visual del flujo. No se prohíbe —a
- * veces se quiere comparar—, solo se advierte antes de la primera vez.
+ * Aviso de tono de marca. TODAS las categorías tienen un fondo asignado (el de su
+ * flujo, o el morado por defecto); cambiarlo rompe el código visual del correo. No
+ * se prohíbe —a veces se quiere comparar—, solo se advierte antes de la primera vez.
  */
 function ToneAlert({ categoria, toneLabel, onCancel, onConfirm }: { categoria: string; toneLabel: string; onCancel: () => void; onConfirm: () => void }): JSX.Element {
   // Escape cierra sin aplicar el tono, como en cualquier diálogo.
@@ -232,33 +237,69 @@ function NotaRevision({ nota }: { nota: string }): JSX.Element {
   );
 }
 
+
 /**
- * Panel derecho del modo comparación: la referencia de Figma. Mientras el SVG no
- * exista, se pinta un skeleton que dice qué archivo hay que dejar y dónde — así
- * la vista ya es usable antes de tener los exports.
+ * Panel derecho del modo comparación: la referencia de Figma. Mientras no exista
+ * ningún export, se pinta un skeleton que dice qué archivo hay que dejar y dónde
+ * — así la vista ya es usable antes de tener las referencias.
  *
  * `matchHeight` iguala el alto al del correo maquetado: los exports de Figma
  * vienen en cualquier tamaño y con otra proporción, así que se ajustan por ALTO
  * (no por ancho) y se centran — que es como se comparan dos maquetas.
+ *
+ * El HTML se pinta en un `<iframe>` y las imágenes en un `<img>`: son medios
+ * distintos, no un detalle de estilo. El iframe va con `sandbox` vacío —sin
+ * `allow-scripts`— porque una referencia de diseño no necesita ejecutar nada, y
+ * así un export con JS no puede tocar la página que lo enmarca.
+ *
+ * El HTML se renderiza a ANCHO DE CORREO (EMAIL_FRAME_W) y se reduce con
+ * `transform`, igual que el maquetado de la izquierda: un export de Figma es un
+ * correo de 600px, así que darle `width:100%` de una columna más estrecha no lo
+ * encoge, lo RECORTA. Escalando ambos lados por el mismo factor, además, quedan
+ * comparables 1:1 — que es el punto de esta vista.
  */
-function FigmaPanel({ src, fileName, matchHeight }: { src?: string | null; fileName: string; matchHeight: number | null }): JSX.Element {
-  if (src) {
+function FigmaPanel({ figmaRef, baseName, matchHeight, scale }: { figmaRef?: FigmaRef | null; baseName: string; matchHeight: number | null; scale: number }): JSX.Element {
+  if (figmaRef) {
+    const alt = `Referencia de Figma — ${baseName}.${figmaRef.kind}`;
+    /* Alto del iframe SIN escalar: el `transform` del padre lo reduce después.
+       `matchHeight` ya viene escalado, así que se le deshace la escala. */
+    const htmlH = matchHeight ? Math.ceil(matchHeight / scale) : 1600;
     return (
       <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- export estático
-            de Figma de tamaño arbitrario; next/image exigiría medidas fijas. */}
-        <img
-          src={src}
-          alt={`Referencia de Figma — ${fileName}`}
-          style={{
-            // Con alto conocido manda el alto; si no, cae a ancho completo.
-            height: matchHeight ? matchHeight : "auto",
-            width: matchHeight ? "auto" : "100%",
-            maxWidth: "100%",
-            objectFit: "contain",
-            display: "block", borderRadius: 8, boxShadow: "0 6px 18px rgba(15,23,42,0.10)", background: "#ffffff",
-          }}
-        />
+        {figmaRef.kind === "html" ? (
+          /* Wrapper al tamaño YA ESCALADO: `transform` no encoge el hueco que el
+             elemento reserva en el flujo, así que se fija a mano. */
+          <div style={{ width: Math.ceil(EMAIL_FRAME_W * scale), height: Math.ceil(htmlH * scale), flexShrink: 0, overflow: "hidden" }}>
+            <div style={{ transform: `scale(${scale})`, transformOrigin: "top left", width: EMAIL_FRAME_W }}>
+              <iframe
+                src={figmaRef.src}
+                title={alt}
+                sandbox=""
+                scrolling="no"
+                style={{
+                  width: EMAIL_FRAME_W, height: htmlH,
+                  border: "none", display: "block", borderRadius: 8,
+                  boxShadow: "0 6px 18px rgba(15,23,42,0.10)", background: "#ffffff",
+                }}
+              />
+            </div>
+          </div>
+        ) : (
+          /* eslint-disable-next-line @next/next/no-img-element -- export estático
+             de Figma de tamaño arbitrario; next/image exigiría medidas fijas. */
+          <img
+            src={figmaRef.src}
+            alt={alt}
+            style={{
+              // Con alto conocido manda el alto; si no, cae a ancho completo.
+              height: matchHeight ? matchHeight : "auto",
+              width: matchHeight ? "auto" : "100%",
+              maxWidth: "100%",
+              objectFit: "contain",
+              display: "block", borderRadius: 8, boxShadow: "0 6px 18px rgba(15,23,42,0.10)", background: "#ffffff",
+            }}
+          />
+        )}
       </div>
     );
   }
@@ -276,12 +317,16 @@ function FigmaPanel({ src, fileName, matchHeight }: { src?: string | null; fileN
       <span style={{ fontSize: 12, fontWeight: 800, color: "var(--ui-body)", letterSpacing: "0.04em", textTransform: "uppercase" }}>
         Sin referencia de Figma
       </span>
-      <span style={{ fontSize: 12, color: "var(--ui-muted)", lineHeight: 1.6, maxWidth: 280 }}>
-        Exporta el frame como SVG y déjalo en
+      <span style={{ fontSize: 12, color: "var(--ui-muted)", lineHeight: 1.6, maxWidth: 300 }}>
+        Exporta el frame y déjalo en
         <br />
         <code style={{ fontFamily: "monospace", fontSize: 11, color: "#475569", background: "#ffffff", padding: "2px 6px", borderRadius: 4, display: "inline-block", marginTop: 6, border: "1px solid var(--ui-border)" }}>
-          public/figma/correos/{fileName}
+          public/figma/correos/{baseName}.{"{html|svg|png}"}
         </code>
+        <br />
+        <span style={{ display: "inline-block", marginTop: 8 }}>
+          Si hay varios, gana el <strong style={{ color: "var(--ui-body)", fontWeight: 700 }}>html</strong>, luego svg y por último png.
+        </span>
       </span>
     </div>
   );
@@ -289,7 +334,7 @@ function FigmaPanel({ src, fileName, matchHeight }: { src?: string | null; fileN
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function BannerLab({ html, title, subject, categoria, figmaSrc, figmaFileName = "correo.svg", estado = "listo", nota = null, nav = null }: BannerLabProps): JSX.Element {
+export default function BannerLab({ html, title, subject, categoria, figmaRef, figmaBaseName = "correo", estado = "listo", nota = null, nav = null }: BannerLabProps): JSX.Element {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -297,9 +342,6 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
   // La composición con la que abre el correo si la URL no dice otra cosa: las
   // categorías del flujo de subasta arrancan ya maquetadas (ver headerSwap).
   const preset = useMemo(function resolvePreset() { return presetForCategory(categoria); }, [categoria]);
-  // Solo las categorías con preset propio marcan opción «recomendada»; en el
-  // resto, «Basic» es el default por descarte y señalarlo sería ruido.
-  const hasPreset = useMemo(function withPreset() { return hasFixedTone(categoria); }, [categoria]);
 
   // Estado en la URL (C9): banner / footer / tono se leen del query string y,
   // si no están, caen al preset de la categoría.
@@ -322,18 +364,18 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
   const setFooter = useCallback(function setFooter(id: string) { setParam("footer", id, id === preset.footer); }, [setParam, preset.footer]);
   const applyTone = useCallback(function applyTone(t: V2Tone) { setParam("tono", t, t === preset.tone); }, [setParam, preset.tone]);
 
-  // Aviso de tono de marca: «En vivo» y «Negociable» tienen color propio, así que
-  // la primera vez que se intenta cambiar el fondo se pide confirmación. Al
-  // aceptar queda desbloqueado para el resto de la visita a ESTE correo (el
-  // estado se reinicia al navegar a otro, que es cuando conviene recordarlo).
-  const toneLocked = useMemo(function locked() { return hasFixedTone(categoria); }, [categoria]);
+  // Aviso de tono de marca: TODA categoría tiene un fondo asignado (el de su flujo
+  // o el morado por defecto), así que la primera vez que se intenta cambiarlo se
+  // pide confirmación. Al aceptar queda desbloqueado para el resto de la visita a
+  // ESTE correo (el estado se reinicia al navegar a otro, que es cuando conviene
+  // recordarlo).
   const [toneUnlocked, setToneUnlocked] = useState(false);
   const [pendingTone, setPendingTone] = useState<V2Tone | null>(null);
 
   const setTone = useCallback(function setTone(t: V2Tone) {
-    if (toneLocked && !toneUnlocked && t !== preset.tone) { setPendingTone(t); return; }
+    if (!toneUnlocked && t !== preset.tone) { setPendingTone(t); return; }
     applyTone(t);
-  }, [toneLocked, toneUnlocked, preset.tone, applyTone]);
+  }, [toneUnlocked, preset.tone, applyTone]);
 
   const confirmTone = useCallback(function confirmTone() {
     setToneUnlocked(true);
@@ -360,9 +402,17 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
   const footerOn = footerId !== ORIGINAL;
   const allOriginal = !bannerOn && !footerOn;
 
+  // Toggle PNG/HTML — SOLO en los correos con `zoom-card` (hoy, Mapfre
+  // invitación). Cambia ese bloque por el export de Figma para compararlo
+  // contra la maqueta sin salir del correo. Arranca en HTML, que es lo que se
+  // envía; el PNG es la referencia.
+  const zoomCard = useMemo(function detect() { return hasZoomCard(html); }, [html]);
+  const [cardPng, setCardPng] = useState(false);
+
   // HTML con las tipologías aplicadas (el default del título se resuelve aquí).
   const swappedHtml = useMemo(function compute() {
     let out = html;
+    if (zoomCard && cardPng) out = swapZoomCardForPng(out, ZOOM_CARD_PNG);
     if (bannerOn) {
       const resolved: BannerText = { titulo: titulo.trim() || subject };
       const bannerHtml = buildBannerFor(bannerId, tone, resolved);
@@ -375,7 +425,7 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
       if (footerHtml) out = swapEmailFooter(out, footerHtml);
     }
     return out;
-  }, [html, bannerId, footerId, tone, titulo, subject, bannerOn, footerOn]);
+  }, [html, bannerId, footerId, tone, titulo, subject, bannerOn, footerOn, zoomCard, cardPng]);
 
   // El preview siempre muestra la composición activa: al comparar contra Figma la
   // referencia va al lado, no en lugar del correo.
@@ -390,7 +440,7 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
 
   // La key del frame fuerza recarga del srcDoc cuando cambia la composición (no
   // en cada edición inline, que ocurre dentro del mismo documento).
-  const frameKey = `${bannerId}-${footerId}-${tone}-${titulo}-${editBody}`;
+  const frameKey = `${bannerId}-${footerId}-${tone}-${titulo}-${editBody}-${cardPng}`;
 
   return (
     <div>
@@ -476,18 +526,18 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
       >
         <TabGroup label="Banner">
           {[
-            <Tab key={ORIGINAL} on={bannerId === ORIGINAL} recommended={hasPreset && preset.banner === ORIGINAL} onClick={function pick() { setBanner(ORIGINAL); }}>Basic</Tab>,
+            <Tab key={ORIGINAL} on={bannerId === ORIGINAL} recommended={preset.banner === ORIGINAL} onClick={function pick() { setBanner(ORIGINAL); }}>Basic</Tab>,
             ...BANNER_OPTIONS.map(function renderTab(opt) {
-              return <Tab key={opt.id} on={bannerId === opt.id} recommended={hasPreset && preset.banner === opt.id} onClick={function pick() { setBanner(opt.id); }}>{opt.label}</Tab>;
+              return <Tab key={opt.id} on={bannerId === opt.id} recommended={preset.banner === opt.id} onClick={function pick() { setBanner(opt.id); }}>{opt.label}</Tab>;
             }),
           ]}
         </TabGroup>
 
         <TabGroup label="Banner 2">
           {[
-            <Tab key={ORIGINAL} on={footerId === ORIGINAL} recommended={hasPreset && preset.footer === ORIGINAL} onClick={function pick() { setFooter(ORIGINAL); }}>Basic</Tab>,
+            <Tab key={ORIGINAL} on={footerId === ORIGINAL} recommended={preset.footer === ORIGINAL} onClick={function pick() { setFooter(ORIGINAL); }}>Basic</Tab>,
             ...FOOTER_OPTIONS.map(function renderTab(opt) {
-              return <Tab key={opt.id} on={footerId === opt.id} recommended={hasPreset && preset.footer === opt.id} onClick={function pick() { setFooter(opt.id); }}>{opt.label}</Tab>;
+              return <Tab key={opt.id} on={footerId === opt.id} recommended={preset.footer === opt.id} onClick={function pick() { setFooter(opt.id); }}>{opt.label}</Tab>;
             }),
           ]}
         </TabGroup>
@@ -495,20 +545,29 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
         <TabGroup label="Fondo" dimmed={allOriginal}>
           {V2_TONE_OPTIONS.map(function renderTone(opt) {
             return (
-              <Tab key={opt.tone} on={!allOriginal && tone === opt.tone} recommended={hasPreset && preset.tone === opt.tone} disabled={allOriginal} onClick={function pick() { setTone(opt.tone); }}>
+              <Tab key={opt.tone} on={!allOriginal && tone === opt.tone} recommended={preset.tone === opt.tone} disabled={allOriginal} onClick={function pick() { setTone(opt.tone); }}>
                 {opt.label}
               </Tab>
             );
           })}
         </TabGroup>
 
+        {/* Solo aparece donde hay una `zoom-card` que intercambiar: en el resto
+            de correos el toggle no tendría nada que hacer. */}
+        {zoomCard && (
+          <TabGroup label="Bloque inscripciones">
+            {[
+              <Tab key="html" on={!cardPng} onClick={function pickHtml() { setCardPng(false); }}>HTML</Tab>,
+              <Tab key="png" on={cardPng} onClick={function pickPng() { setCardPng(true); }}>PNG</Tab>,
+            ]}
+          </TabGroup>
+        )}
+
         {/* Pista permanente del tono propio: el modal solo sale la primera vez,
             así que esta línea recuerda cuál es el color de la categoría. */}
-        {toneLocked && (
-          <span style={{ fontSize: 11, color: "var(--ui-muted)", lineHeight: 1.45, marginTop: -6 }}>
-            {categoria} usa <strong style={{ color: "var(--ui-body)", fontWeight: 700 }}>{toneLabelForCategory(categoria)}</strong> como fondo de marca.
-          </span>
-        )}
+        <span style={{ fontSize: 11, color: "var(--ui-muted)", lineHeight: 1.45, marginTop: -6 }}>
+          {categoria} usa <strong style={{ color: "var(--ui-body)", fontWeight: 700 }}>{toneLabelForCategory(categoria)}</strong> como fondo de marca.
+        </span>
 
       </aside>
 
@@ -536,7 +595,7 @@ export default function BannerLab({ html, title, subject, categoria, figmaSrc, f
               {/* La nota va ARRIBA de la referencia: explica por qué lo que hay
                   debajo no sirve todavía para dar el correo por bueno. */}
               {pendiente && nota && <NotaRevision nota={nota} />}
-              <FigmaPanel src={figmaSrc} fileName={figmaFileName} matchHeight={previewH} />
+              <FigmaPanel figmaRef={figmaRef} baseName={figmaBaseName} matchHeight={previewH} scale={COMPARE_SCALE} />
             </div>
           </div>
         ) : (

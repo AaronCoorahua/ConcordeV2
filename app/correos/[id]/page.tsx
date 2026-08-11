@@ -8,6 +8,7 @@ import Header from "@/app/_components/Header";
 import BannerLab from "./BannerLab";
 import CorreoNav from "./CorreoNav";
 import { EMAIL_GROUPS, getEmailReal, vecinosDe, type EmailGroup } from "@/src/emails/registry";
+import type { FigmaKind, FigmaRef } from "@/src/emails/figmaRef";
 
 /**
  * /correos/[id] — detalle de UN correo real de producción: preview completo a
@@ -23,17 +24,30 @@ import { EMAIL_GROUPS, getEmailReal, vecinosDe, type EmailGroup } from "@/src/em
  * enlaces confundían sobre por dónde se iba.
  */
 
-/** Dónde viven los SVG de Figma (ver public/figma/correos/README.md). */
+/** Dónde viven las referencias de Figma (ver public/figma/correos/README.md). */
 const FIGMA_DIR = path.join(process.cwd(), "public", "figma", "correos");
 
 /**
- * Ruta pública de la referencia de Figma de un correo, o null si aún no se ha
- * exportado. Se resuelve en el servidor (el cliente no puede mirar el disco);
- * `.svg` gana sobre `.png` cuando existen ambos.
+ * Formatos aceptados como referencia, EN ORDEN DE PRIORIDAD: si un correo tiene
+ * varios archivos con el mismo nombre, gana el primero de esta lista.
+ *
+ * `html` va delante porque es el más fiel: un export de Figma a HTML conserva el
+ * texto como texto (se puede seleccionar y comparar palabra por palabra) y no se
+ * pixela al escalar. El `svg` es el siguiente por lo mismo —vectorial— y el `png`
+ * queda como último recurso, para los frames cuyos gradientes o `backdrop-filter`
+ * no sobreviven al export vectorial.
  */
-function figmaRefFor(id: string): string | null {
-  for (const ext of ["svg", "png"]) {
-    if (existsSync(path.join(FIGMA_DIR, `${id}.${ext}`))) return `/figma/correos/${id}.${ext}`;
+const FIGMA_EXTS: readonly FigmaKind[] = ["html", "svg", "png"];
+
+/**
+ * Referencia de Figma de un correo, o null si aún no se ha exportado ninguna. Se
+ * resuelve en el servidor porque el cliente no puede mirar el disco.
+ */
+function figmaRefFor(id: string): FigmaRef | null {
+  for (const ext of FIGMA_EXTS) {
+    if (existsSync(path.join(FIGMA_DIR, `${id}.${ext}`))) {
+      return { src: `/figma/correos/${id}.${ext}`, kind: ext };
+    }
   }
   return null;
 }
@@ -94,8 +108,8 @@ export default async function CorreoPage({ params }: { params: Promise<{ id: str
             title={correo.name}
             subject={correo.subject}
             categoria={group?.label ?? "General"}
-            figmaSrc={figmaRefFor(correo.id)}
-            figmaFileName={`${correo.id}.svg`}
+            figmaRef={figmaRefFor(correo.id)}
+            figmaBaseName={correo.id}
             estado={correo.estado}
             nota={correo.nota}
             // El recorrido va DENTRO del Lab, bajo el campo «Título del banner»:

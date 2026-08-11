@@ -48,6 +48,126 @@ const ICON = {
  */
 const SVG_SUBASCOINS = `<svg width="116" height="122" viewBox="0 0 36 38" fill="none" aria-hidden="true"> <g> <path d="M18 21.5L30 27L18 32.5L6 27L18 21.5Z" fill="url(#pi-d)" /> <path d="M18 21.5L30 27L18 32.5L6 27L18 21.5" stroke="url(#pi-ds)" stroke-width="2" stroke-linejoin="round" /> <g> <g clip-path="url(#pi-c0)"> <rect x="8" y="7" width="20" height="20" rx="10" fill="url(#pi-c)" /> <g clip-path="url(#pi-c1)"> <path d="M18 12.4165V21.5832" stroke="white" stroke-opacity="0.92" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M20.0833 14.0835H16.9583C16.1535 14.0835 15.5 14.737 15.5 15.5418C15.5 16.3467 16.1535 17.0002 16.9583 17.0002H19.0417C19.8465 17.0002 20.5 17.6536 20.5 18.4585C20.5 19.2634 19.8465 19.9168 19.0417 19.9168H15.5" stroke="white" stroke-opacity="0.92" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /> </g> <rect x="10" y="9" width="16" height="16" rx="8" fill="url(#pi-cg)" /> </g> <rect x="9" y="8" width="18" height="18" rx="9" stroke="url(#pi-cb)" stroke-width="2" /> </g> </g> <defs> <linearGradient id="pi-d" x1="6" y1="21.5" x2="29.121" y2="34.1115" gradientUnits="userSpaceOnUse"> <stop stop-color="#00A7A8" /><stop offset="0.4" stop-color="#86A4E4" /><stop offset="0.75" stop-color="#4C1EBC" /><stop offset="1" stop-color="#300089" /> </linearGradient> <linearGradient id="pi-ds" x1="6" y1="21.5" x2="29.121" y2="34.1115" gradientUnits="userSpaceOnUse"> <stop stop-color="#73DFDF" /><stop offset="0.0001" stop-color="#5C82DA" /><stop offset="0.283654" stop-color="white" stop-opacity="0.9" /><stop offset="0.875" stop-color="#452AA2" stop-opacity="0.6" /> </linearGradient> <linearGradient id="pi-c" x1="10.0116" y1="5.59144" x2="25.9884" y2="28.4086" gradientUnits="userSpaceOnUse"> <stop stop-color="#00ABAD" /><stop offset="0.4" stop-color="#86A4E4" /><stop offset="0.75" stop-color="#4C1EBC" /><stop offset="1" stop-color="#31008A" /> </linearGradient> <linearGradient id="pi-cg" x1="18" y1="9" x2="18" y2="25" gradientUnits="userSpaceOnUse"> <stop stop-color="white" stop-opacity="0.45" /><stop offset="0.5" stop-color="white" stop-opacity="0" /> </linearGradient> <linearGradient id="pi-cb" x1="10.0116" y1="5.59144" x2="25.9884" y2="28.4086" gradientUnits="userSpaceOnUse"> <stop stop-color="#44D6D6" /><stop offset="0.206731" stop-color="#E4EEFF" stop-opacity="0.5" /><stop offset="0.495192" stop-color="#567CD3" /><stop offset="1" stop-color="#3D0D9E" /> </linearGradient> <clipPath id="pi-c0"><rect x="8" y="7" width="20" height="20" rx="10" fill="white" /></clipPath> <clipPath id="pi-c1"><rect width="10" height="10" fill="white" transform="translate(13 12)" /></clipPath> </defs> </svg>`;
 
+/**
+ * La gema de SubasCoins en TAMAÑO CHICO, para el icono de una card (la grande es
+ * de 116px y ahí no cabe). Los `id` de <defs> son globales en el documento, así
+ * que se les pone el prefijo `ps-` para que no colisionen con la versión grande
+ * cuando ambas viven en el mismo correo.
+ */
+/**
+ * Iconos del bloque «Agrega fondos» del correo de bienvenida. Son los MISMOS
+ * assets del CDN que usa el export de Figma (public/figma/correos/
+ * bienvenida-registro.html), no equivalentes dibujados a mano: así el maquetado y
+ * la referencia comparan pixel a pixel.
+ */
+const img = (file: string, w: number, h: number): string =>
+  `<img src="https://cdn.vmcsubastas.com/services/boletin/assets/${file}" width="${w}" height="${h}" alt="" border="0" style="display:block;" />`;
+
+/**
+ * La gema de SubasCoins en tamaño de icono. Va en la burbuja de la card «Adquiere
+ * SubasCoins» — el Figma pone ahí una billetera, pero la gema es la marca del
+ * producto que la card vende, así que manda esa.
+ *
+ * Los `id` de <defs> son globales en el documento: se les cambia el prefijo a
+ * `ps-` para no colisionar con la versión grande si ambas coinciden en un correo.
+ */
+const SVG_SUBASCOINS_ICON = SVG_SUBASCOINS
+  .replace('width="116" height="122"', 'width="40" height="42"')
+  .replace(/pi-/g, 'ps-');
+
+/** Los dos iconos de «¿Cómo recargar vía BCP?», en su burbuja morada (ver Figma). */
+const IMG_BCP_ONLINE = img('icon-bcp-online.png', 22, 22);
+const IMG_BCP_VENTANILLA = img('icon-bcp-ventanilla.png', 22, 22);
+
+const IMG_BANK = img('bank-building.png', 46, 46);
+
+/**
+ * Check y escudo como SVG inline en vez de los PNG del CDN, para poder darles el
+ * DEGRADADO de marca: el `shield.png` original es morado plano y el `check-icon.png`
+ * trae su propio degradado quemado, así que ninguno se podía re-tintar desde el
+ * HTML. En SVG el gradiente es parte del icono y ambos quedan coherentes entre sí.
+ *
+ * Cada uno usa ids de <defs> propios (`gc-`, `gs-`): son globales en el documento y
+ * dos iconos con el mismo id se pisarían.
+ */
+const G_ICON_STOPS = `<stop stop-color="#5F3ED8" /><stop offset="0.55" stop-color="#3B1782" /><stop offset="1" stop-color="#2A0F60" />`;
+
+const IMG_CHECK = `<svg width="42" height="42" viewBox="0 0 40 40" fill="none" aria-hidden="true" style="display:block;">
+<circle cx="20" cy="20" r="20" fill="url(#gc-a)" />
+<path d="M12.5 20.5l5 5 10-11" stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" />
+<defs><linearGradient id="gc-a" x1="4" y1="2" x2="34" y2="38" gradientUnits="userSpaceOnUse">${G_ICON_STOPS}</linearGradient></defs>
+</svg>`;
+
+const IMG_SHIELD = `<svg width="60" height="66" viewBox="0 0 60 66" fill="none" aria-hidden="true" style="display:block;">
+<path d="M30 2l24 9v20c0 15-10 27-24 33C16 58 6 46 6 31V11l24-9z" fill="url(#gs-a)" />
+<circle cx="30" cy="31" r="12.5" stroke="#ffffff" stroke-width="3.2" fill="none" />
+<path d="M24.5 31l4 4 7.5-8" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />
+<defs><linearGradient id="gs-a" x1="6" y1="2" x2="52" y2="62" gradientUnits="userSpaceOnUse">${G_ICON_STOPS}</linearGradient></defs>
+</svg>`;
+
+/**
+ * El mockup del celular RECONSTRUIDO EN HTML (antes era phone-mockup.png).
+ *
+ * Se rehízo porque el PNG traía el botón «CONFIRMAR» rasterizado, así que no podía
+ * llevar el estilo primary del sistema (gradiente naranja→vault con glow y borde).
+ * En HTML sí: el botón de abajo es el mismo tratamiento que «¡Vamos!» y el resto de
+ * CTAs del correo. De paso el texto es texto —se puede leer, seleccionar y
+ * traducir— y no se pixela en pantallas retina.
+ *
+ * Es email-safe: tablas anidadas y estilos inline, sin flex ni position. El marco
+ * del teléfono son dos tablas concéntricas con `border-radius`; los clientes que no
+ * lo soportan (Outlook viejo) lo ven con esquinas rectas, que es una degradación
+ * aceptable para un adorno.
+ */
+const PHONE_W = 104;
+
+const PHONE_FONT = "'Plus Jakarta Sans', Arial, Helvetica, sans-serif";
+
+/** Una fila «etiqueta … valor» del resumen de compra dentro del mockup. */
+function phoneRow(label: string, value: string, muted: boolean): string {
+  return `<tr><td style="font-size:5.5px;line-height:10px;color:${muted ? '#8b7fa8' : '#5a4d75'};font-family:${PHONE_FONT};padding:1.5px 0;">${label}</td>
+<td align="right" style="font-size:5.5px;line-height:10px;color:#3b1782;font-weight:700;white-space:nowrap;font-family:${PHONE_FONT};padding:1.5px 0;">${value}</td></tr>`;
+}
+
+const HTML_PHONE = `<table border="0" cellpadding="0" cellspacing="0" width="${PHONE_W}" align="center" style="margin:-58px auto 0;">
+<tr><td bgcolor="#3b1782" style="background-color:#3b1782;border-radius:10px;padding:4px;">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#f5f3fe" style="background-color:#f5f3fe;border-radius:8px;">
+<!-- Isla del notch: pastilla oscura centrada que se MONTA sobre la pantalla, como
+     la Dynamic Island del iPhone. Va dentro de la pantalla (no en el marco) y con
+     margen negativo, asi el borde superior queda partido por ella en vez de
+     mostrar una barra suelta debajo del canto. -->
+<tr><td align="center" style="padding:0;line-height:0;"><table border="0" cellpadding="0" cellspacing="0" width="34" style="margin:-1px auto 0;"><tr><td height="7" bgcolor="#2a0f60" style="background-color:#2a0f60;border-radius:0 0 9999px 9999px;font-size:0;line-height:7px;">&nbsp;</td></tr></table></td></tr>
+<tr><td style="padding:8px 7px 7px;">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td align="center" style="font-size:8px;line-height:12px;font-weight:800;color:#ed8936;font-family:'Plus Jakarta Sans', Arial, Helvetica, sans-serif;">Resumen de compra</td></tr>
+<tr><td height="3" style="font-size:0;line-height:3px;">&nbsp;</td></tr>
+<tr><td align="center" style="font-size:13px;line-height:17px;font-weight:800;color:#3b1782;font-family:'Poppins', 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;">&gt;S&lt; 30</td></tr>
+<tr><td align="center" style="font-size:5.5px;line-height:8px;color:#8b7fa8;font-family:'Plus Jakarta Sans', Arial, Helvetica, sans-serif;">SubasCoins seleccionadas</td></tr>
+<tr><td height="5" style="font-size:0;line-height:5px;">&nbsp;</td></tr>
+<tr><td>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+${phoneRow('Monto de compra', 'US$ 30.00', false)}
+${phoneRow('Comisi&oacute;n pasarela', 'US$ 1.17', true)}
+<tr><td colspan="2" height="1" bgcolor="#e7e1f7" style="background-color:#e7e1f7;font-size:0;line-height:1px;">&nbsp;</td></tr>
+<tr><td style="font-size:6.5px;line-height:11px;font-weight:800;color:#3b1782;padding-top:3px;font-family:'Plus Jakarta Sans', Arial, Helvetica, sans-serif;">Total a pagar</td>
+<td align="right" style="font-size:7.5px;line-height:11px;font-weight:800;color:#ed8936;white-space:nowrap;padding-top:3px;font-family:'Poppins', 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;">US$ 31.17</td></tr>
+</table>
+</td></tr>
+<tr><td height="6" style="font-size:0;line-height:6px;">&nbsp;</td></tr>
+<tr><td>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-radius:9999px;background-image:linear-gradient(135deg,#ffffff 0%,#fbc47d 25%,#ae8eff 75%,#ffffff 100%);box-shadow:rgba(237,137,54,0.3) 0 2px 6px;">
+<tr><td style="padding:2px;"><table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#8460e5" style="border-radius:9999px;background-color:#8460e5;background-image:linear-gradient(135deg,#ed8936 0%,#8460e5 100%);">
+<tr><td align="center" style="padding:4px 0;font-size:6.5px;line-height:9px;font-weight:700;color:#ffffff;letter-spacing:0.05em;font-family:'Plus Jakarta Sans', Arial, Helvetica, sans-serif;text-shadow:rgba(0,0,0,0.25) 0 1px 3px;">CONFIRMAR</td></tr>
+</table></td></tr></table>
+</td></tr>
+</table>
+</td></tr></table>
+</td></tr></table>
+</td></tr></table>`;
+
+
 // orden real del flujo de negocio por categoría — no depende del orden de inserción en EMAILS
 export const STAGE_ORDER: Record<string, string[]> = {
   'En vivo': ['Inicio', 'Resultado', 'Negociación', 'Habilitación', 'Cierre'],
@@ -73,6 +193,7 @@ export const CATEGORY_GRADIENT: Record<string, string> = {
   'Baja de Cuenta': 'linear-gradient(135deg,#78716c 0%,#44403c 100%)',
   'Usuarios Internos': 'linear-gradient(135deg,#ec4899 0%,#9d174d 100%)',
   'Proceso Interno Mapfre': 'linear-gradient(135deg,#ef4444 0%,#991b1b 100%)',
+  SubasPass: 'linear-gradient(135deg,#8460e5 0%,#3b1782 100%)',
 };
 
 export const CATEGORY_SOLID: Record<string, string> = {
@@ -91,6 +212,7 @@ export const CATEGORY_SOLID: Record<string, string> = {
   'Baja de Cuenta': '#78716c',
   'Usuarios Internos': '#ec4899',
   'Proceso Interno Mapfre': '#ef4444',
+  SubasPass: '#8460e5',
 };
 
 // demo del design system Concorde (mismo asset que usan OfferCard/Detalle/Sala en concorde/bloques);
@@ -819,55 +941,90 @@ export const EMAILS: EmailTemplate[] = [
     sections: [
       S('title', { eyebrow: '', text: '¡Bienvenido Cazador de ofertas!' }),
       SP('24'),
-      S('text', { ink: 'black', text: '%%¡{{Subastin}} queremos informarte que ya estás registrado!%%' }),
-      SP('14'),
-      S('text', { ink: 'black', text: 'Este es tu Código Único de Usuario: __{{C.U.U.Ejem: ZOOY6U}}__' }),
-      SP('14'),
+      // Solo el nombre en negrita; el resto de la línea en negro normal.
+      S('text', { ink: 'black', align: 'center', text: '¡%%{{Subastin}}%% queremos informarte que ya estás registrado!' }),
+      SP('16'),
+      // El C.U.U. abre el correo: es el dato que el usuario viene a buscar, así que
+      // va en su card arriba y no enterrado en un párrafo a media página.
+      S('amount', { labelTone: 'accent', label: 'Código Único de Usuario:', value: '{{C.U.U.Ejem: ZOOY6U}}' }),
+      SP('16'),
+      // Este bloque va a la IZQUIERDA: son párrafos de lectura y una lista de datos,
+      // que centrados se leen peor que el resto de secciones (que sí van centradas).
       S('text', { ink: 'black', text: 'Tu Código Único de Usuario %%(C.U.U)%% te servirá en todos los procesos relacionados a participaciones, compras en nuestro Marketplace y también para proteger tu identidad.' }),
       SP('20'),
       S('text', { text: '**Estos son tus datos registrados:**' }),
       SP('8'),
+      // `indent` empuja la lista a la derecha, como una tabulación bajo su rótulo.
       S('list', {
-        align: 'center',
+        indent: '24',
         i1: '~~Correo :~~ __{{email.Ejem: subastin@tucorreo.com}}__',
         i2: '~~Celular:~~ __{{celular.Ejem: 987159725}}__',
         i3: '~~DNI:~~ __{{dni.Ejem: 23581321}}__',
+        i4: '~~RUC:~~ __{{ruc.Ejem: 15441022422}}__',
       }),
       SP('20'),
       S('divider', {}),
       SP('20'),
-      S('text', { text: '####¡Ahora solo debes activar tu cuenta!####', align: 'center' }),
+      S('text', { text: '####¡Agrega fondos y participa ahora!####', align: 'center' }),
+      SP('8'),
+      S('text', { ink: 'black', align: 'center', text: 'Consigna en las ofertas que más te gusten agregando fondos en tu billetera.' }),
       SP('16'),
-      S('action-card', {
-        bare: 'true', ink: 'black',
-        text: 'Activa tu cuenta %%adquiriendo SubasCoins%% o mediante recarga y participa de esa oferta que tanto te interesa.',
+      // Las dos vías de agregar fondos, en la grilla de Figma: a la IZQUIERDA la
+      // card destacada de SubasCoins (morada, con el icono y el CTA primary) y
+      // debajo el aviso del fee; a la DERECHA las dos cards de recarga BCP. Cada
+      // columna apila lo suyo con alto independiente — eso es lo que `grid` aporta
+      // sobre `columns`, que obliga a una sola card por lado.
+      S('grid', {
+        dark1: 'true', gapY: '22',
+        l1Title: 'Adquiere SubasCoins',
+        l1Body: 'Agrega SubasCoins a tu billetera con tu tarjeta de crédito o débito y participa al instante',
+        l1Svg: SVG_SUBASCOINS_ICON,
+        l2Body: 'Las compras realizadas mediante pasarelas de pago pueden incluir un **Fee por uso de pasarela**, el cual será detallado antes de confirmar la operación.',
+        l2Center: 'true',
+        l2Btn: '¡QUIERO ADQUIRIR SUBASCOINS!', l2Url: 'https://www.vmcsubastas.com/login?redirect_after_to=/zona',
+        // Títulos en morado, no en el naranja de acento del resto de cards.
+        rTitlePurple: 'true',
+        r1Title: 'Recarga dólares',
+        r1Body: 'Agrega saldo a tu billetera mediante tu app o ventanilla del BCP usando tu __C.U.U.__',
+        r1Svg: IMG_BANK, r1SvgW: '42',
+        // Los saltos son deliberados: «pasarela» y «hábiles» cierran su línea en vez
+        // de quedar colgando solas al ajustarse el texto (ver Figma).
+        r2Title: 'Sin Fee por uso de\npasarela',
+        // `r2Indent` tabula estos bullets bajo el título, como una sub-lista.
+        // Cada LÍNEA cierra su propio `~~`: los marcadores de formato no cruzan
+        // saltos, así que un `~~` abierto en una línea y cerrado en la siguiente se
+        // imprimiría crudo en vez de aplicar el estilo.
+        r2Body: '~~• Validación en hasta 24h~~\n~~hábiles~~\n~~• Disponible a través de pago de servicios del BCP~~',
+        r2Indent: '12',
+        r2Svg: IMG_CHECK, r2SvgW: '42',
       }),
-      SP('16'),
-      S('action-card', {
-        full: 'true', size: 'lg', svg: SVG_SUBASCOINS,
-        text: '~~Activación rápida con~~ __SubasCoins__ ~~aquí:~~',
-        btnText: 'VAMOS', url: 'https://www.vmcsubastas.com/login?redirect_after_to=/zona',
-      }),
-      SP('20'),
-      S('text', { text: '__Al activar tu cuenta con__ **SubasCoins** __participas de una manera práctica y eficiente en las ofertas de tu interés.__' }),
-      SP('20'),
-      S('divider', {}),
-      SP('20'),
-      S('action-card', {
-        full: 'true', align: 'center', size: 'lg',
-        text: '~~Activación alternativa mediante recarga:~~',
-        items: 'Hasta 24 horas para ser validada. | Menor capacidad de participación.',
-      }),
-      SP('16'),
-      S('amount', { labelTone: 'accent', label: 'Código Único de Usuario:', value: '{{C.U.U.Ejem: ZOOY6U}}' }),
-      SP('20'),
-      S('divider', {}),
+      SP('24'),
+      S('text', { text: '####¿Cómo recargar vía BCP?####', align: 'center' }),
       SP('16'),
       S('columns', {
         card: 'true',
+        icon1: IMG_BCP_ONLINE, icon2: IMG_BCP_VENTANILLA,
         h1: 'En línea', h2: 'En ventanilla',
-        body1: 'Ingresa a __ViaBCP.com__ para realizar la transferencia electrónica.\n\nHaz clic en __"Pagos y servicios"__, selecciona __"Empresas diversas"__ y busca __"VMC Subastas"__.\n\nEn __"Servicios"__, selecciona __"Recarga"__ y una vez seleccionado, se te solicitará tu __Código Único de Usuario__ y __el monto__ que deseas recargar.',
-        body2: 'Acércate a una agencia BCP.\n\nIndícale al cajero en ventanilla que quieres hacer un depósito a la __Cuenta recaudadora de VMC SUBASTAS servicio de recarga__.\n\nLuego se te solicitará tu __Código Único de Usuario__ y __el monto__ que deseas recargar.',
+        body1: 'Ingresa a tu banca por internet o a tu app del __banco BCP__.\n\nHaz clic en __"Pago de servicios"__.\n\nSelecciona __"Empresas Diversas"__ y busca __"VMC Subastas"__.\n\nEn __"Servicios"__, selecciona __"Recarga"__ y coloca tu __C.U.U.__ así como el monto que deseas recargar.',
+        body2: 'Acércate a la ventanilla o agente del __banco BCP__.\n\nIndícale al cajero que deseas hacer un __depósito a la cuenta recaudadora de VMC Subastas__, servicio de recarga.\n\nIndícale tu __C.U.U.__ así como el monto que deseas recargar.',
+      }),
+      // Más aire antes de «Más transparencia»: cierra el bloque de las cards BCP y,
+      // sobre todo, deja sitio al celular, que asoma bastante por encima de su card
+      // y sin este hueco se acercaría demasiado a las cards de arriba.
+      SP('64'),
+      // Escudo a la izquierda y el mockup de celular a la derecha, los dos assets
+      // del CDN que usa el export de Figma para esta card.
+      S('action-card', {
+        full: 'true', padY: '6', size: 'sm',
+        svgLeft: IMG_SHIELD, svgLeftW: '64',
+        text: '__Más transparencia en cada operación__\n~~Podrás visualizar de forma clara el detalle de cualquier Fee aplicable antes de confirmar una adquisición dentro de la plataforma.~~',
+        // El celular se ancla ABAJO y asoma por arriba (margen negativo en el propio
+        // mockup), como en Figma: parece salir de la card en vez de flotar centrado.
+        // Va en HTML, no como PNG, para que su botón «CONFIRMAR» sea el primary real
+        // del sistema y no un botón dibujado (ver HTML_PHONE).
+        // `svgW` incluye el marco del telefono (PHONE_W + su padding lateral): si se
+        // ajusta solo a PHONE_W, la celda recorta el borde morado del lado derecho.
+        svg: HTML_PHONE, svgW: '116', svgAlign: 'bottom', svgGap: '6',
       }),
       SP('30'),
     ],
@@ -937,7 +1094,7 @@ export const EMAILS: EmailTemplate[] = [
     sections: [
       S('title', { eyebrow: '', text: 'Visita agendada en la oferta {{Toyota Hilux 2018}}' }),
       SP('24'),
-      S('text', { ink: 'black', text: '{{Nombre usuario .Ejem: Gabriel Bruno}}, estos son los datos de tu visita:' }),
+      S('text', { ink: 'black', text: '%%{{Nombre usuario .Ejem: Gabriel Bruno}}%%, estos son los datos de tu visita:' }),
       SP('16'),
       S('details', {
         l1: 'Ubicación:', v1: '{{Ubicación.Ejem: SAN MARTIN DE PORRES}}',
@@ -960,11 +1117,11 @@ export const EMAILS: EmailTemplate[] = [
   {
     id: 'devolucion-saldo-exitosa',
     name: 'Devolución de saldo exitosa',
-    subject: '¡Tu cuenta ha sido congelada!',
+    subject: '¡Tu devolución ha sido procesada!',
     category: 'Devolución de Saldo',
     stage: 'Confirmación',
     sections: [
-      S('title', { eyebrow: '', text: '¡Tu cuenta ha sido congelada!' }),
+      S('title', { eyebrow: '', text: '¡Tu devolución ha sido procesada!' }),
       SP('24'),
       S('text', { ink: 'black', text: '{{Nombre usuario.Ejem: Gabriel}},' }),
       SP('14'),
@@ -1126,36 +1283,38 @@ export const EMAILS: EmailTemplate[] = [
   {
     id: 'mapfre-invitacion-proceso',
     name: 'Mapfre — invitación al proceso',
-    subject: 'Proceso interno de adquisición @MAPFRE',
+    subject: 'Proceso interno de adquisición',
     category: 'Proceso Interno Mapfre',
     stage: 'Invitación',
     leadsTo: ['mapfre-ofertas-publicadas'],
     sections: [
       S('title', { eyebrow: '', text: 'Proceso interno de adquisición' }),
       SP('8'),
-      S('text', { text: '**MAPFRE**', align: 'center' }),
+      S('image', { url: '/figma/correos/mapfre-logo.png', alt: 'MAPFRE', width: '150' }),
       SP('16'),
       S('divider', {}),
       SP('20'),
-      S('text', { text: '{{Nombre usuario.Ejem: Gabriel Bruno}},' }),
+      S('text', { ink: 'black', text: '{{Nombre usuario.Ejem: Gabriel Bruno}},' }),
       SP('14'),
-      S('text', { text: 'Como colaborador de MAPFRE, puedes realizar la compra de una oferta de tu interés sin necesidad de participar en el proceso En Vivo de VMC.' }),
-      SP('20'),
-      S('panel', { title: 'Cierre de inscripciones', body: '**{{Fecha y hora.Ejem: Martes, 08 de Marzo 00:00 Hrs}}**' }),
-      SP('16'),
-      S('amount', { label: 'Valor de restos', value: 'US$ {{X,XXX}}' }),
-      SP('20'),
-      S('text', { text: 'Para registrar tu propuesta de interés y participar del proceso interno, haz clic en el siguiente botón:', align: 'center' }),
-      SP('16'),
-      S('cta', { text: 'ME INTERESA', url: 'https://www.vmcsubastas.com/login?redirect_after_to=/zona' }),
-      SP('16'),
-      S('text', { text: 'Al registrar tu interés, participarás en un sorteo interno entre los colaboradores interesados. **El ganador podrá comprar la oferta al precio del "Valor de Restos".** ', align: 'center' }),
+      S('text', { text: '__Como colaborador de MAPFRE, puedes realizar la compra de una oferta de tu interés sin necesidad de participar en el proceso En Vivo de VMC.__' }),
       SP('24'),
-      S('text', { text: 'Ya puedes ver las ofertas ((aquí|https://www.vmcsubastas.com/mapfre.html)).' }),
+      S('zoom-card', {
+        headTitle: 'Cierre de inscripciones',
+        headValue: 'Martes, 08 de Marzo 00:00 Hrs',
+        amountLabel: 'Valor de restos',
+        amountValue: 'US$ {{X,XXX}}',
+        note1: 'Este es el monto que deberás pagar de resultar ganador.',
+        body: 'Para registrar tu propuesta de interés y participar del proceso interno, haz clic en el siguiente botón:',
+        btnText: 'ME INTERESA',
+        url: 'https://www.vmcsubastas.com/login?redirect_after_to=/zona',
+        note2: 'Al registrar tu interés, participarás en un sorteo interno entre los colaboradores interesados. **El ganador podrá comprar la oferta al precio del "Valor de Restos".**',
+      }),
+      SP('24'),
+      S('text', { text: 'Ya puedes ver las ofertas {[aquí|https://www.vmcsubastas.com/mapfre.html]}.' }),
       SP('14'),
-      S('text', { text: '**Recuerda:** Puedes indicar tu interés de compra hasta las **23:59 del día anterior** al día de inicio programado.' }),
+      S('text', { ink: 'black', text: '%%Recuerda:%% Puedes indicar tu interés de compra hasta las %%23:59 del día anterior%% al día de inicio programado.' }),
       SP('14'),
-      S('text', { text: 'De resultar ganador **deberás pagar el Valor de Restos,** que es el precio especial que se te brinda por ser colaborador de MAPFRE.' }),
+      S('text', { ink: 'black', text: 'De resultar ganador **deberás pagar el Valor de Restos,** que es el precio especial que se te brinda por ser colaborador de MAPFRE.' }),
       SP('30'),
     ],
   },
@@ -1252,6 +1411,23 @@ export const EMAILS: EmailTemplate[] = [
       S('divider', {}),
       SP('20'),
       S('text', { text: '~~Adjunto se encuentran los resultados del proceso interno de adquisición llevado a cabo el~~ __{{Fecha.Ejem: 15 de agosto de 2021}}__~~.~~' }),
+      SP('30'),
+    ],
+  },
+  {
+    id: 'subaspass-adquirido',
+    name: 'SubasPass adquirido',
+    subject: '¡Adquiriste tu Subaspass de forma exitosa!',
+    category: 'SubasPass',
+    stage: 'Confirmación',
+    sections: [
+      S('title', { eyebrow: '', text: '¡Adquiriste tu Subaspass de forma exitosa!' }),
+      SP('24'),
+      S('text', { text: '¡Felicidades! Tu SubasPass se activó con éxito y ahora tienes acceso exclusivo a participar en todas las ofertas disponibles del marketplace.' }),
+      SP('20'),
+      S('text', { text: 'Tu Subaspass es tu pase directo para bidear sin límites, este estará activo desde el __{{Fecha inicio.Ejem: 30/07/2026}}__ hasta el __{{Fecha fin.Ejem: 30/10/2026}}__.' }),
+      SP('20'),
+      S('text', { text: 'Es hora de arrancar ¡Encuentra la oferta que haga match contigo y empieza a bidear!' }),
       SP('30'),
     ],
   },

@@ -231,6 +231,72 @@ ${footerHtml}
 ${emailHtml.slice(whiteStart)}`;
 }
 
+// ─── Zoom-card → PNG de Figma ────────────────────────────────────────────────
+
+/** Marca que el renderer pone en la fila de la `zoom-card` (ver prodEmailTemplates). */
+const ZOOM_CARD_MARK = '<tr data-zoom-card="1">';
+
+/**
+ * Cambia la `zoom-card` maquetada por el PNG exportado de Figma.
+ *
+ * Es una ayuda de REVISIÓN, no una variante del correo: el toggle PNG/HTML del
+ * Lab permite ver el bloque como imagen —tal cual salió de Figma— sin salir del
+ * correo, para comparar contra la maqueta. El HTML que se copia y el que se
+ * envía siguen llevando la card en HTML.
+ *
+ * Si el correo no trae `zoom-card`, devuelve el HTML intacto: por eso el toggle
+ * solo se ofrece donde hay algo que cambiar.
+ */
+/**
+ * Fin de la fila que empieza en `from`, contando profundidad de `<tr>`.
+ *
+ * La card ANIDA tablas, así que su `</tr>` propio NO es el primero que aparece:
+ * con un indexOf directo el corte caía dentro de la card. Devuelve -1 si la
+ * fila no cierra.
+ */
+function rowEnd(html: string, from: number): number {
+  let depth = 0;
+  let i = from;
+  while (i < html.length) {
+    const open = html.indexOf("<tr", i);
+    const close = html.indexOf("</tr>", i);
+    if (close === -1) return -1;
+    if (open !== -1 && open < close) { depth += 1; i = open + 3; continue; }
+    depth -= 1;
+    if (depth === 0) return close + "</tr>".length;
+    i = close + 5;
+  }
+  return -1;
+}
+
+export function swapZoomCardForPng(emailHtml: string, pngSrc: string, widthPx: number = ZOOM_CARD_PNG_W): string {
+  const start = emailHtml.indexOf(ZOOM_CARD_MARK);
+  if (start === -1) return emailHtml;
+
+  // TODAS las filas marcadas caen, no solo la primera: la card y el globo del
+  // sorteo son filas distintas (el globo va fuera de la card) pero el PNG de
+  // Figma YA los trae ambos, así que dejar el globo lo duplicaba.
+  let out = emailHtml;
+  let first = -1;
+  for (;;) {
+    const at = out.indexOf(ZOOM_CARD_MARK);
+    if (at === -1) break;
+    const end = rowEnd(out, at);
+    if (end === -1) break;
+    if (first === -1) first = at;
+    out = out.slice(0, at) + out.slice(end);
+  }
+  if (first === -1) return emailHtml;
+
+  const img = `<tr><td align="center" style="padding:0 16px;"><img src="${pngSrc}" alt="Cierre de inscripciones" width="${widthPx}" style="display:block;margin:0 auto;width:${widthPx}px;max-width:100%;height:auto;"></td></tr>`;
+  return out.slice(0, first) + img + out.slice(first);
+}
+
+/** Si el correo trae una `zoom-card` (y por tanto tiene sentido el toggle PNG/HTML). */
+export function hasZoomCard(emailHtml: string): boolean {
+  return emailHtml.includes(ZOOM_CARD_MARK);
+}
+
 // ─── Presets por categoría ───────────────────────────────────────────────────
 
 /** La composición con la que abre un correo antes de tocar ningún tab. */
@@ -247,7 +313,10 @@ export const PRESET_ORIGINAL: LabPreset = { banner: "original", footer: "origina
  * Composición por defecto según la CATEGORÍA del correo (la `label` del grupo en
  * registry.ts: "En vivo", "Negociable"…). Todos los correos abren ya maquetados
  * con banner de texto centrado + footer split; lo único que cambia es el TONO:
- * «En vivo» y «Negociable» usan el color de su flujo, y el resto el morado.
+ * cada flujo usa su color y las categorías sin entrada propia caen en el morado
+ * de PRESET_DEFAULT. TODAS tienen tono asignado —el morado por defecto es tan «su
+ * color» como el naranja de «En vivo»—, así que en todas el tab del preset sale
+ * marcado y cambiar el fondo avisa antes.
  *
  * Es solo el punto de partida: los tabs siguen mandando, y al tocar uno el
  * estado pasa a la URL (ver BannerLab), así que un enlace compartido gana sobre
@@ -258,12 +327,13 @@ const PRESET_LAYOUT = { banner: "texto-centrado", footer: "footer-split" } as co
 const CATEGORY_PRESETS: Record<string, LabPreset> = {
   "En vivo": { ...PRESET_LAYOUT, tone: "live" },
   Negociable: { ...PRESET_LAYOUT, tone: "negotiable" },
-  // Los correos de saldo hablan de SubasCoins, así que abren con ese tono.
-  "Adquisición de SubasCoins": { ...PRESET_LAYOUT, tone: "coins" },
-  Recarga: { ...PRESET_LAYOUT, tone: "coins" },
   // Las bajas y sanciones abren en dark: son avisos, no promoción.
   "Inhabilitación de Usuario": { ...PRESET_LAYOUT, tone: "dark" },
   "Baja de Cuenta": { ...PRESET_LAYOUT, tone: "dark" },
+  // Contraseña y correo de contacto son correos transaccionales de seguridad:
+  // abren en dark, igual que los avisos, no con el morado de campaña.
+  Contraseña: { ...PRESET_LAYOUT, tone: "dark" },
+  "Actualizar Correo": { ...PRESET_LAYOUT, tone: "dark" },
 };
 
 /**
@@ -301,17 +371,8 @@ export function applyPreset(
   return out;
 }
 
-/**
- * ¿La categoría tiene un tono de marca propio? «En vivo» y «Negociable» son
- * flujos con color asignado, así que cambiarles el fondo rompe el código visual
- * del correo. No se bloquea —a veces se quiere probar—, pero el Lab avisa antes.
- */
-export function hasFixedTone(categoria: string): boolean {
-  return Object.prototype.hasOwnProperty.call(CATEGORY_PRESETS, categoria);
-}
-
-/** Etiqueta del tono propio de la categoría, para el texto del aviso. */
+/** Etiqueta del tono de la categoría, para el texto del aviso. */
 export function toneLabelForCategory(categoria: string): string {
-  const t = CATEGORY_PRESETS[categoria]?.tone;
+  const t = presetForCategory(categoria).tone;
   return V2_TONE_OPTIONS.find(function byTone(o) { return o.tone === t; })?.label ?? "";
 }
