@@ -186,7 +186,7 @@ export function createSection(type: Section['type']): Section {
     'zoom-card': {
       headTitle: 'Cierre de inscripciones', headValue: 'Martes, 08 de Marzo 00:00 Hrs',
       amountLabel: 'Valor de restos', amountValue: 'US$ 0',
-      note1: '', body: 'Texto del cuerpo.', btnText: 'ME INTERESA', url: 'https://',
+      note1: '', body: 'Texto del cuerpo.', btnText: 'Me interesa', url: 'https://',
       note2: '', variant: '',
     },
   };
@@ -330,8 +330,10 @@ export function renderSection(s: Section): string {
       // una columna lateral en movil, asi que el globo va DEBAJO de su elemento
       // y la punta del SVG apunta hacia arriba. Misma lectura, layout email-safe.
       const zNeg = c.variant === 'negotiable';
+      // Boton copiado de DetailCard.tsx (.pdetail__cta): 186x48, 16px/600 y el
+      // inset blanco de 2px que le da el canto iluminado.
       const zBtn = c.btnText
-        ? `<table border="0" cellpadding="0" cellspacing="0" align="center" style="border-radius:9999px;background-image:${zNeg ? B_NEGOTIABLE : B_PRIMARY};box-shadow:${zNeg ? GLOW_NEGOTIABLE : GLOW_PRIMARY};"><tr><td style="padding:2px;"><a href="${esc(c.url)}" target="_blank" style="display:inline-block;background:${C.purple};background-image:${zNeg ? G_NEGOTIABLE : G_PRIMARY};color:${C.white};border-radius:9999px;padding:18px 46px;font-family:${FONT_HEADING};font-size:21px;font-weight:800;letter-spacing:0.01em;text-decoration:none;text-shadow:${TXT_SHADOW};box-shadow:inset 0 1px 0 rgba(255,255,255,0.30);">${esc(c.btnText)}</a></td></tr></table>`
+        ? `<table border="0" cellpadding="0" cellspacing="0" align="center" style="border-radius:9999px;background-image:${zNeg ? B_NEGOTIABLE : B_PRIMARY};box-shadow:${zNeg ? GLOW_NEGOTIABLE : GLOW_PRIMARY};"><tr><td style="padding:2px;"><a href="${esc(c.url)}" target="_blank" style="display:inline-block;width:182px;background:${C.purple};background-image:${zNeg ? G_NEGOTIABLE : G_PRIMARY};color:${C.white};border-radius:9999px;padding:14px 0;font-family:${FONT_HEADING};font-size:16px;line-height:20px;font-weight:600;text-align:center;text-decoration:none;text-shadow:${TXT_SHADOW};box-shadow:inset 0 1px 0 2px rgba(255,255,255,0.28);">${esc(c.btnText)}</a></td></tr></table>`
         : '';
       // Globo naranja con la punta ABAJO (apunta al elemento que tiene debajo):
       // el del sorteo, que va fuera de la card. SVG inline, sin imagen externa.
@@ -356,28 +358,33 @@ export function renderSection(s: Section): string {
       // de apilarse debajo. La izquierda va vacia hoy: existe para equilibrar el
       // centrado de la card (sin ella, la derecha la empujaria fuera de eje).
       const COL_SIDE = 176;
-      const CARD_W = 300;
+      // 311 y el resto de medidas salen de DetailCard.tsx (.pdetail): mismo
+      // ancho, mismo radio SOLO abajo (arriba va recto) y la misma sombra.
+      const CARD_W = 311;
       // El globo lateral se alinea con «Valor de restos» empujandolo con un
       // spacer del alto de la cabecera. Es un numero calculado, no tanteado:
-      // padding 18*2 + titulo 16px*1.35 + margen 6 + fecha 15px*1.35 ≈ 85.
+      // padding 26*2 + rotulo 15px*1.45 + margen 5 + fecha 15px*1.35 ≈ 99.
       // La fecha va en UNA linea (`white-space:nowrap`), asi que la cabecera
       // tiene alto fijo; si se cambia su tipografia, hay que recalcular esto.
-      const HEAD_H = 85;
+      // OJO: 15px es el MAXIMO con el que una fecha larga («Miercoles, 12 de
+      // Agosto 00:00 Hrs» = 277px) sigue cabiendo en los 287px utiles; subirla
+      // mas la desborda, y con `nowrap` eso rompe el ancho de la card.
+      const HEAD_H = 99;
       return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">
 <table border="0" cellpadding="0" cellspacing="0" align="center" style="max-width:${COL_SIDE * 2 + CARD_W}px;"><tr>
 <td width="${COL_SIDE}" valign="middle"></td>
 <td width="${CARD_W}" valign="top">
-<table border="0" cellpadding="0" cellspacing="0" width="${CARD_W}" style="border-radius:18px;box-shadow:${WBC_SHADOW};">
-<tr><td bgcolor="${C.purple}" align="center" style="border-radius:18px 18px 0 0;background-image:${G_CONSOLE};padding:18px 18px;">
-<p style="margin:0 0 6px;font-size:16px;font-weight:600;line-height:1.35;color:#D9CCFF;font-family:${FONT_HEADING};">${esc(c.headTitle)}</p>
-<p style="margin:0;font-size:15px;font-weight:800;line-height:1.35;color:${C.white};font-family:${FONT_HEADING};white-space:nowrap;">${esc(c.headValue)}</p>
+<table border="0" cellpadding="0" cellspacing="0" width="${CARD_W}" style="border-radius:0 0 8px 8px;box-shadow:rgba(0,0,0,0.1) 0 0 16px 4px;">
+<tr><td bgcolor="#340091" align="center" style="background-image:${G_CONSOLE};padding:26px 12px;">
+<p style="margin:0 0 5px;font-size:15px;font-weight:400;line-height:1.45;color:${C.white};font-family:${FONT_HEADING};">${esc(c.headTitle)}</p>
+<p style="margin:0;font-size:15px;font-weight:700;line-height:1.35;letter-spacing:0.01em;color:${C.white};font-family:${FONT_HEADING};white-space:nowrap;">${esc(c.headValue)}</p>
 </td></tr>
-<tr><td bgcolor="${C.lavender}" align="center" style="border-radius:0 0 18px 18px;padding:22px 18px;">
-<p style="margin:0 0 4px;font-size:16px;font-weight:800;line-height:1.35;color:#000000;font-family:${FONT_HEADING};">${esc(c.amountLabel)}</p>
-<p style="margin:0;font-size:26px;font-weight:800;line-height:1.3;color:#000000;font-family:${FONT_NUMBER};">${esc(c.amountValue)}</p>
-${gap('18')}<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center" style="max-width:230px;"><tr><td style="border-top:1px solid ${C.border};font-size:1px;line-height:1px;height:1px;">&nbsp;</td></tr></table>${gap('18')}
-<p style="margin:0;font-size:14px;line-height:1.6;color:#000000;font-family:${FONT_HEADING};">${hl(c.body)}</p>
-${zBtn ? gap('20') + zBtn : ''}
+<tr><td bgcolor="#FFFFFF" align="center" style="border-radius:0 0 8px 8px;padding:24px 16px 48px;">
+<p style="margin:0 0 4px;font-size:16px;font-weight:800;line-height:1.35;color:${C.accent};font-family:${FONT_HEADING};">${esc(c.amountLabel)}</p>
+<p style="margin:0;font-size:26px;font-weight:800;line-height:1.3;color:${C.accent};font-family:${FONT_NUMBER};">${esc(c.amountValue)}</p>
+${gap('18')}<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center" style="max-width:240px;"><tr><td style="border-top:1px solid #E5E7EB;font-size:1px;line-height:1px;height:1px;">&nbsp;</td></tr></table>${gap('18')}
+<table border="0" cellpadding="0" cellspacing="0" align="center" style="max-width:216px;"><tr><td align="center" style="font-size:12px;line-height:16px;color:#191C1C;font-family:${FONT_HEADING};">${hl(c.body)}</td></tr></table>
+${zBtn ? gap('28') + zBtn : ''}
 </td></tr>
 </table>
 </td>

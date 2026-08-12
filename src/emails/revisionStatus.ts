@@ -21,13 +21,12 @@ export interface RevisionPendiente {
  * Correos que NO se pueden revisar todavía, por id. Añadir una entrada aquí lo
  * marca como pendiente en el catálogo y pinta su nota en el detalle; quitarla lo
  * devuelve a «listo para revisar».
+ *
+ * HOY ESTÁ VACÍO: los 45 correos están listos. El mecanismo se conserva porque
+ * es como se marca el siguiente que aparezca —basta con volver a añadir su id—;
+ * mientras esté vacío, el filtro «Pendientes» del catálogo no se pinta.
  */
-export const PENDIENTES: Record<string, RevisionPendiente> = {
-  "mapfre-invitacion-proceso": {
-    nota:
-      "En Figma el texto del cuerpo está entregado como imagen, no como texto editable. Es necesario rediseñarlo como contenido HTML antes de dar por válida la maqueta.",
-  },
-};
+export const PENDIENTES: Record<string, RevisionPendiente> = {};
 
 export function estadoDe(id: string): RevisionEstado {
   return Object.prototype.hasOwnProperty.call(PENDIENTES, id) ? "pendiente" : "listo";

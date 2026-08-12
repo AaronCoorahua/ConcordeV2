@@ -1265,7 +1265,7 @@ export const EMAILS: EmailTemplate[] = [
         amountValue: 'US$ {{X,XXX}}',
         note1: 'Este es el monto que deberás pagar de resultar ganador.',
         body: 'Para registrar tu propuesta de interés y participar del proceso interno, haz clic en el siguiente botón:',
-        btnText: 'ME INTERESA',
+        btnText: 'Me interesa',
         url: 'https://www.vmcsubastas.com/login?redirect_after_to=/zona',
         note2: 'Al registrar tu interés, participarás en un sorteo interno entre los colaboradores interesados. **El ganador podrá comprar la oferta al precio del "Valor de Restos".**',
       }),

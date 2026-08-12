@@ -296,22 +296,25 @@ export default function VariantesCatalog(): JSX.Element {
           />
 
           {/* Filtro por estado: el atajo a «qué me falta», que es la pregunta con
-              la que se abre este catálogo. */}
-          <button
-            type="button"
-            aria-pressed={soloPendientes}
-            onClick={function toggle() { setSoloPendientes(function p(v) { return !v; }); }}
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 6, flexShrink: 0, height: 28, padding: "0 11px", borderRadius: 9999,
-              cursor: "pointer", fontFamily: "inherit", fontSize: 12, fontWeight: 700,
-              border: `1px solid ${soloPendientes ? PENDIENTE.fg : PENDIENTE.border}`,
-              background: soloPendientes ? PENDIENTE.fg : PENDIENTE.bg,
-              color: soloPendientes ? "#fff" : PENDIENTE.fg,
-              transition: "background 0.15s ease, color 0.15s ease, border-color 0.15s ease",
-            }}
-          >
-            Pendientes <span style={{ opacity: 0.75, fontWeight: 600 }}>{PENDIENTES_TOTAL}</span>
-          </button>
+              la que se abre este catálogo. Sin pendientes NO se pinta: un filtro
+              a cero solo puede vaciar la galería. */}
+          {PENDIENTES_TOTAL > 0 && (
+            <button
+              type="button"
+              aria-pressed={soloPendientes}
+              onClick={function toggle() { setSoloPendientes(function p(v) { return !v; }); }}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6, flexShrink: 0, height: 28, padding: "0 11px", borderRadius: 9999,
+                cursor: "pointer", fontFamily: "inherit", fontSize: 12, fontWeight: 700,
+                border: `1px solid ${soloPendientes ? PENDIENTE.fg : PENDIENTE.border}`,
+                background: soloPendientes ? PENDIENTE.fg : PENDIENTE.bg,
+                color: soloPendientes ? "#fff" : PENDIENTE.fg,
+                transition: "background 0.15s ease, color 0.15s ease, border-color 0.15s ease",
+              }}
+            >
+              Pendientes <span style={{ opacity: 0.75, fontWeight: 600 }}>{PENDIENTES_TOTAL}</span>
+            </button>
+          )}
 
           {/* Al buscar sí importa cuántos hay: sin resultados visibles arriba, el
               contador es la única señal de que la búsqueda encontró algo. */}
