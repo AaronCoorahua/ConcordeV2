@@ -30,15 +30,12 @@ import type { JSX, ReactNode } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CopyHtmlButton from "@/app/correos/_components/CopyHtmlButton";
 import EmailFrame, { EMAIL_FRAME_W, type EmailFrameHandle } from "@/app/correos/_components/EmailFrame";
-import { BANNER_OPTIONS, FOOTER_OPTIONS, buildBannerFor, buildFooterFor, swapEmailHeader, swapEmailFooter, stripBodyTitle, swapZoomCardForPng, hasZoomCard, presetForCategory, toneLabelForCategory, type BannerText } from "@/src/emails/headerSwap";
+import { BANNER_OPTIONS, FOOTER_OPTIONS, buildBannerFor, buildFooterFor, swapEmailHeader, swapEmailFooter, stripBodyTitle, presetForCategory, toneLabelForCategory, type BannerText } from "@/src/emails/headerSwap";
 import { V2_TONE_OPTIONS, type V2Tone } from "@/src/emails/tipologiasV2";
 import type { RevisionEstado } from "@/src/emails/revisionStatus";
 import type { FigmaRef } from "@/src/emails/figmaRef";
 
 const ORIGINAL = "original";
-
-/** Export de Figma del bloque «Cierre de inscripciones» (toggle PNG del Lab). */
-const ZOOM_CARD_PNG = "/figma/correos/inscripciones.png";
 const TONE_IDS = new Set(V2_TONE_OPTIONS.map(function id(o) { return o.tone; }));
 
 export interface BannerLabProps {
@@ -402,17 +399,9 @@ export default function BannerLab({ html, title, subject, categoria, figmaRef, f
   const footerOn = footerId !== ORIGINAL;
   const allOriginal = !bannerOn && !footerOn;
 
-  // Toggle PNG/HTML — SOLO en los correos con `zoom-card` (hoy, Mapfre
-  // invitación). Cambia ese bloque por el export de Figma para compararlo
-  // contra la maqueta sin salir del correo. Arranca en HTML, que es lo que se
-  // envía; el PNG es la referencia.
-  const zoomCard = useMemo(function detect() { return hasZoomCard(html); }, [html]);
-  const [cardPng, setCardPng] = useState(false);
-
   // HTML con las tipologías aplicadas (el default del título se resuelve aquí).
   const swappedHtml = useMemo(function compute() {
     let out = html;
-    if (zoomCard && cardPng) out = swapZoomCardForPng(out, ZOOM_CARD_PNG);
     if (bannerOn) {
       const resolved: BannerText = { titulo: titulo.trim() || subject };
       const bannerHtml = buildBannerFor(bannerId, tone, resolved);
@@ -425,7 +414,7 @@ export default function BannerLab({ html, title, subject, categoria, figmaRef, f
       if (footerHtml) out = swapEmailFooter(out, footerHtml);
     }
     return out;
-  }, [html, bannerId, footerId, tone, titulo, subject, bannerOn, footerOn, zoomCard, cardPng]);
+  }, [html, bannerId, footerId, tone, titulo, subject, bannerOn, footerOn]);
 
   // El preview siempre muestra la composición activa: al comparar contra Figma la
   // referencia va al lado, no en lugar del correo.
@@ -440,7 +429,7 @@ export default function BannerLab({ html, title, subject, categoria, figmaRef, f
 
   // La key del frame fuerza recarga del srcDoc cuando cambia la composición (no
   // en cada edición inline, que ocurre dentro del mismo documento).
-  const frameKey = `${bannerId}-${footerId}-${tone}-${titulo}-${editBody}-${cardPng}`;
+  const frameKey = `${bannerId}-${footerId}-${tone}-${titulo}-${editBody}`;
 
   return (
     <div>
@@ -551,17 +540,6 @@ export default function BannerLab({ html, title, subject, categoria, figmaRef, f
             );
           })}
         </TabGroup>
-
-        {/* Solo aparece donde hay una `zoom-card` que intercambiar: en el resto
-            de correos el toggle no tendría nada que hacer. */}
-        {zoomCard && (
-          <TabGroup label="Bloque inscripciones">
-            {[
-              <Tab key="html" on={!cardPng} onClick={function pickHtml() { setCardPng(false); }}>HTML</Tab>,
-              <Tab key="png" on={cardPng} onClick={function pickPng() { setCardPng(true); }}>PNG</Tab>,
-            ]}
-          </TabGroup>
-        )}
 
         {/* Pista permanente del tono propio: el modal solo sale la primera vez,
             así que esta línea recuerda cuál es el color de la categoría. */}

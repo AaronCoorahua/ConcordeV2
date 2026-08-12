@@ -23,10 +23,6 @@ export interface RevisionPendiente {
  * devuelve a «listo para revisar».
  */
 export const PENDIENTES: Record<string, RevisionPendiente> = {
-  "fee-subascoins": {
-    nota:
-      "No se dispone del diseño original en Figma para este correo, por lo que no hay referencia contra la que cotejar la maqueta. Queda pendiente de revisión hasta recibirla.",
-  },
   "mapfre-invitacion-proceso": {
     nota:
       "En Figma el texto del cuerpo está entregado como imagen, no como texto editable. Es necesario rediseñarlo como contenido HTML antes de dar por válida la maqueta.",

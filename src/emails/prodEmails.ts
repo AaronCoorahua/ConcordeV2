@@ -31,15 +31,6 @@ export interface EmailTemplate {
   sections: Section[];
 }
 
-const ICON = {
-  calendar: 'https://cdn.vmcsubastas.com/services/boletin/assets/icon-calendar.png',
-  search: 'https://cdn.vmcsubastas.com/services/boletin/assets/icon-search.png',
-  eye: 'https://cdn.vmcsubastas.com/services/boletin/assets/icon-eye.png',
-  cards: 'https://cdn.vmcsubastas.com/services/boletin/assets/icon-cards.png',
-  bank: 'https://cdn.vmcsubastas.com/services/boletin/assets/icon-bank-building.png',
-  phone: 'https://cdn.vmcsubastas.com/services/boletin/assets/phone-bcp.png',
-};
-
 /**
  * Gema de subasta (SubasCoins) — SVG copiado de src/components/PriceIcon.tsx
  * (variante md `default`). Va inline en el HTML para que el correo copiado no
@@ -227,37 +218,6 @@ const S = (type: Section['type'], content: Record<string, string>): Section => (
 const SP = (height: string) => S('spacer', { height });
 
 export const EMAILS: EmailTemplate[] = [
-  {
-    id: 'fee-subascoins',
-    name: 'Aviso de fee — SubasCoins',
-    subject: 'Información importante sobre tus adquisiciones de SubasCoins',
-    sections: [
-      // layout y distancias del correo original
-      S('title', { eyebrow: '', text: 'Información importante sobre tus adquisiciones de SubasCoins' }),
-      SP('30'),
-      S('text', { text: 'Queremos contarte que hemos realizado una actualización en nuestros Términos y Condiciones relacionada con la adquisición de SubasCoins en plataforma.' }),
-      SP('20'),
-      S('panel', {
-        title: 'A partir del **1 de Julio** del presente año',
-        body: 'Las compras de SubasCoins realizadas a través de la plataforma utilizando tarjeta de Crédito o Débito podrán incluir un **Fee por uso de pasarela**, asociado al procesamiento de la transacción.',
-        iconUrl: ICON.calendar, badge: '', imageUrl: '', imageW: '85', imageH: '57',
-      }),
-      SP('20'),
-      S('features', {
-        heading: '¿Qué debes tener en cuenta sobre este Fee?',
-        i1: ICON.search, t1: 'El costo del fee equivale al [[3.9%]] del monto de tu adquisición de SubasCoins',
-        i2: ICON.eye, t2: 'Se te mostrará de manera clara y desagregada antes de realizar el pago',
-        i3: ICON.cards, t3: 'Si tu tarjeta es en soles, el tipo de cambio será determinado por tu proveedor',
-      }),
-      SP('20'),
-      S('panel', {
-        title: 'Opciones **SIN FEE** por uso de pasarela',
-        body: 'Puedes realizar tu recarga de saldo en dólares a través de ventanilla, agente o app del banco BCP utilizando tu CUU. Esta operación carece del cobro de este Fee.',
-        iconUrl: ICON.bank, badge: 'white', imageUrl: ICON.phone, imageW: '85', imageH: '57',
-      }),
-      SP('30'),
-    ],
-  },
   {
     id: 'listo-participar',
     name: 'Listo para participar',

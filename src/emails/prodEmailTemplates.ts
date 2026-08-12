@@ -347,16 +347,10 @@ export function renderSection(s: Section): string {
       const sideCallout = (txt: string) => txt
         ? `<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
 <td width="11" valign="middle" style="line-height:0;font-size:0;"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="22" viewBox="0 0 11 22" style="display:block;"><path d="M0 11 11 0v22z" fill="${C.accent}"/></svg></td>
-<td valign="middle" style="border:1.5px solid ${C.accent};border-radius:10px;padding:9px 10px;background-color:#FFFFFF;"><p style="margin:0;font-size:11px;line-height:1.4;color:${C.accent};font-family:${FONT_HEADING};">${hl(txt)}</p></td>
+<td valign="middle" align="center" style="border:1.5px solid ${C.accent};border-radius:10px;padding:9px 10px;background-color:#FFFFFF;"><p style="margin:0;font-size:11px;line-height:1.4;color:${C.accent};font-family:${FONT_HEADING};text-align:center;">${hl(txt)}</p></td>
 </tr></table>`
         : '';
       const gap = (h: string) => `<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td height="${h}" style="font-size:0;line-height:0;">&nbsp;</td></tr></table>`;
-      // `pngSrc` es SOLO para el Lab: el toggle PNG/HTML de /correos/[id] cambia
-      // esta card por el export de Figma para comparar maqueta contra diseno. El
-      // correo de produccion nunca lo lleva (la card va siempre en HTML).
-      if (c.pngSrc) {
-        return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};"><img src="${esc(c.pngSrc)}" alt="${esc(c.headTitle)}" width="400" style="display:block;margin:0 auto;width:400px;max-width:100%;height:auto;"></td></tr>`;
-      }
       // Rejilla de 3 columnas: la card ocupa la CENTRAL y las laterales quedan
       // libres para los globos, que asi apuntan de lado —como en Figma— en vez
       // de apilarse debajo. La izquierda va vacia hoy: existe para equilibrar el
@@ -369,7 +363,7 @@ export function renderSection(s: Section): string {
       // La fecha va en UNA linea (`white-space:nowrap`), asi que la cabecera
       // tiene alto fijo; si se cambia su tipografia, hay que recalcular esto.
       const HEAD_H = 85;
-      return `<tr data-zoom-card="1"><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">
+      return `<tr><td align="center" style="padding:0 16px;font-family:${FONT_HEADING};">
 <table border="0" cellpadding="0" cellspacing="0" align="center" style="max-width:${COL_SIDE * 2 + CARD_W}px;"><tr>
 <td width="${COL_SIDE}" valign="middle"></td>
 <td width="${CARD_W}" valign="top">
@@ -390,7 +384,7 @@ ${zBtn ? gap('20') + zBtn : ''}
 <td width="${COL_SIDE}" valign="top" style="padding-left:8px;">${c.note1 ? `${gap(String(HEAD_H))}${sideCallout(c.note1)}` : ''}</td>
 </tr></table>
 </td></tr>${c.note2 ? `
-<tr data-zoom-card="1"><td align="center" style="padding:16px 16px 0;font-family:${FONT_HEADING};">${callout(c.note2)}</td></tr>` : ''}`;
+<tr><td align="center" style="padding:16px 16px 0;font-family:${FONT_HEADING};">${callout(c.note2)}</td></tr>` : ''}`;
     }
     case 'features':
       return `<tr><td align="center" style="padding:4px 16px 0;font-family:${FONT_HEADING};">
@@ -937,8 +931,7 @@ function glassFooter(): string {
 </td></tr>
 </table></td>
 </tr></table></td></tr>
-<tr><td height="20"></td></tr>
-<tr><td align="center" style="font-size:8px;font-family:${FONT_BODY};line-height:13px;color:${C.dark};">El presente correo se envía de acuerdo a la Ley N° 28493 que regula el Uso de Correo Comercial sin ser solicitado y su reglamento. Si deseas dejar de recibir estos correos, haz clic en: <a href="https://services.subastop.com/subscribers/unsubscribe" style="font-weight:bold;text-decoration:none;color:${C.dark};" target="_blank">REMOVER SUSCRIPCIÓN</a></td></tr>
+
 <tr><td height="8"></td></tr>
 <tr><td align="center" style="font-size:8px;font-family:${FONT_BODY};line-height:22px;color:${C.dark};">2026 VMC Subastas. Todos los derechos reservados.</td></tr>
 <tr><td height="24"></td></tr>
