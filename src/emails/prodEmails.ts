@@ -20,6 +20,7 @@
    gradientes, coral) lo aplica el render de secciones según patrones.md. */
 
 import { Section } from './prodEmailTemplates';
+import { BOLETIN_MAF_PERU_HTML } from './boletines/mafPeru';
 
 export interface EmailTemplate {
   id: string;        // slug para la URL
@@ -29,6 +30,10 @@ export interface EmailTemplate {
   stage?: string;     // paso dentro del flujo de la categoría (ej. "Negociación"), pinta el stepper
   leadsTo?: string[]; // ids de correos a los que puede derivar (dibuja las líneas del diagrama de flujo)
   sections: Section[];
+  /** HTML crudo del correo. Si va, se usa TAL CUAL y se ignoran `sections`
+   *  (registry.toReal / VariantesCatalog). Para maquetas que no encajan en el
+   *  renderer de secciones — hero con foto de fondo, cards con CTA propia, etc. */
+  html?: string;
 }
 
 /**
@@ -1373,6 +1378,16 @@ export const EMAILS: EmailTemplate[] = [
       S('text', { text: '~~Adjunto se encuentran los resultados del proceso interno de adquisición llevado a cabo el~~ __{{Fecha.Ejem: 15 de agosto de 2021}}__~~.~~' }),
       SP('30'),
     ],
+  },
+  {
+    // Maqueta de boletín semanal: hero con foto + cards de unidad con CTA propia.
+    // No encaja en el renderer de secciones → HTML crudo por el campo `html`.
+    id: 'boletin-maf-peru',
+    name: 'Boletín — MAF viene con todo',
+    subject: 'Esta semana MAF viene con todo',
+    category: 'Proceso Interno Mapfre',
+    sections: [],
+    html: BOLETIN_MAF_PERU_HTML,
   },
   {
     id: 'subaspass-adquirido',

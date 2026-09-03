@@ -70,7 +70,7 @@ function toReal(e: EmailTemplate): EmailReal {
     subject: e.subject,
     stage: e.stage,
     leadsTo: e.leadsTo ?? [],
-    html: generateEmail(e.sections, e.subject),
+    html: e.html ?? generateEmail(e.sections, e.subject),
     estado: estadoDe(e.id),
     nota: notaDe(e.id),
   };

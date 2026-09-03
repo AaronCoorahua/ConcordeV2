@@ -106,6 +106,9 @@ function EstadoPill({ pendiente, compact }: { pendiente: boolean; compact?: bool
  */
 function EmailCard({ email }: { email: EmailTemplate }): JSX.Element {
   const html = useMemo(function render() {
+    // Correo con HTML crudo (maqueta que no usa secciones): se pinta tal cual,
+    // sin preset de header/footer.
+    if (email.html) return email.html;
     const cat = categoriaDe(email);
     const base = generateEmail(email.sections, email.subject);
     return applyPreset(base, presetForCategory(cat), { titulo: email.subject });
