@@ -19,8 +19,29 @@ const IMG = "/correos/boletin-maf-peru";
 
 const CAL_ICON =
   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;"><rect x="3" y="4.5" width="18" height="16" rx="2.5" stroke="#99a1af" stroke-width="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4" stroke="#99a1af" stroke-width="2" stroke-linecap="round"/></svg>';
-const USD_ICON =
-  '<span style="display:inline-block;width:16px;height:16px;border:1.5px solid #99a1af;border-radius:9999px;font-family:\'Poppins\',Arial,sans-serif;font-size:11px;font-weight:700;line-height:15px;text-align:center;color:#99a1af;">$</span>';
+
+/** Gema de precio — el mismo ícono de subasta que usa OfferCard en el catálogo real. */
+function priceGem(id: string): string {
+  return `<svg width="26" height="28" viewBox="30 199 28 30" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+    <defs>
+      <linearGradient id="${id}-d" gradientUnits="userSpaceOnUse" x1="32" y1="215.5" x2="55.12" y2="228.11"><stop stop-color="#00A7A8"/><stop offset="0.4" stop-color="#86A4E4"/><stop offset="0.75" stop-color="#4C1EBC"/><stop offset="1" stop-color="#300089"/></linearGradient>
+      <linearGradient id="${id}-ds" gradientUnits="userSpaceOnUse" x1="32" y1="215.5" x2="55.12" y2="228.11"><stop stop-color="#73DFDF"/><stop offset="0.28" stop-color="#ffffff" stop-opacity="0.9"/><stop offset="0.875" stop-color="#452AA2" stop-opacity="0.6"/></linearGradient>
+      <linearGradient id="${id}-c" gradientUnits="userSpaceOnUse" x1="36.01" y1="199.59" x2="51.99" y2="222.41"><stop stop-color="#00ABAD"/><stop offset="0.4" stop-color="#86A4E4"/><stop offset="0.75" stop-color="#4C1EBC"/><stop offset="1" stop-color="#31008A"/></linearGradient>
+      <linearGradient id="${id}-cg" gradientUnits="userSpaceOnUse" x1="44" y1="203" x2="44" y2="219"><stop stop-color="#ffffff" stop-opacity="0.45"/><stop offset="0.5" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+      <linearGradient id="${id}-cb" gradientUnits="userSpaceOnUse" x1="36.01" y1="199.59" x2="51.99" y2="222.41"><stop stop-color="#44D6D6"/><stop offset="0.207" stop-color="#E4EEFF" stop-opacity="0.5"/><stop offset="0.495" stop-color="#567CD3"/><stop offset="1" stop-color="#3D0D9E"/></linearGradient>
+    </defs>
+    <path d="M44 215.5L56 221L44 226.5L32 221L44 215.5Z" fill="url(#${id}-d)"/>
+    <path d="M44 215.5L56 221L44 226.5L32 221L44 215.5" stroke="url(#${id}-ds)" stroke-width="2" stroke-linejoin="round"/>
+    <rect x="34" y="201" width="20" height="20" rx="10" fill="url(#${id}-c)"/>
+    <rect x="36" y="203" width="16" height="16" rx="8" fill="url(#${id}-cg)"/>
+    <rect x="35" y="202" width="18" height="18" rx="9" stroke="url(#${id}-cb)" stroke-width="2"/>
+    <path d="M44 206.417V215.583" stroke="#ffffff" stroke-opacity="0.92" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M46.0833 208.083H42.9583C42.1535 208.083 41.5 208.737 41.5 209.542C41.5 210.347 42.1535 211 42.9583 211H45.0417C45.8465 211 46.5 211.653 46.5 212.458C46.5 213.263 45.8465 213.917 45.0417 213.917H41.5" stroke="#ffffff" stroke-opacity="0.92" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+/** Gradiente exacto de Button/primary (pvbtn): naranja sostenido hasta 40% → vault-500. */
+const CTA_GRADIENT = "linear-gradient(135deg,#ed8936 0%,#ed8936 40%,#8460e5 100%)";
 
 interface Unidad {
   img: string;
@@ -39,27 +60,65 @@ const UNIDADES: Unidad[] = [
 /** CTA «¡Participa Ahora!» del hero y del cierre — landing de ofertas MAF Perú. */
 const URL_PARTICIPA = "https://www.vmcsubastas.com/mafperu.html";
 
-function card(u: Unidad, first: boolean): string {
+function card(u: Unidad, i: number, first: boolean): string {
+  const gemId = `gem${i}`;
   return `  <tr><td class="px" style="padding-top:${first ? 26 : 22}px;">
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#FFFFFF" style="border-radius:16px;box-shadow:0 0 8px 4px rgba(0,0,0,0.08);">
-      <tr><td style="padding:0;"><img src="${u.img}" width="552" alt="${u.nombre}" style="width:100%;max-width:552px;height:auto;border-radius:16px 16px 0 0;"></td></tr>
-      <tr><td style="padding:20px 22px 22px;">
+
+      <!-- Foto con overlays: vendedor (arriba-izq) + precio (abajo-izq), como una OfferCard real -->
+      <tr><td style="padding:0;line-height:0;">
+        <div style="position:relative;line-height:0;">
+          <img src="${u.img}" width="552" alt="${u.nombre}" style="width:100%;max-width:552px;height:auto;border-radius:16px 16px 0 0;display:block;">
+
+          <div style="position:absolute;top:16px;left:16px;">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" style="border-radius:9999px;box-shadow:rgba(0,0,0,0.22) 0 2px 8px;"><tr>
+              <td valign="middle" style="padding:8px 12px;">
+                <img src="${IMG}/maf-logo.png" width="72" alt="MAF Innovación Financiera — Vendedor oficial" style="width:72px;height:auto;display:block;">
+              </td>
+            </tr></table>
+          </div>
+
+          <div style="position:absolute;bottom:16px;left:16px;">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-radius:9999px;background-image:linear-gradient(135deg,#8460e5 0%,#3b1782 100%);box-shadow:rgba(32,0,104,0.5) 0 2px 8px;"><tr>
+              <td valign="middle" style="padding:5px 14px 5px 6px;">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr>
+                  <td valign="middle" style="padding-right:5px;">${priceGem(gemId)}</td>
+                  <td valign="middle" style="font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;color:#FFFFFF;white-space:nowrap;">${u.precio}</td>
+                </tr></table>
+              </td>
+            </tr></table>
+          </div>
+        </div>
+      </td></tr>
+
+      <!-- Título — grupo "meta" tipo pcard__meta (name + año), gap chico -->
+      <tr><td style="padding:16px 22px 0;">
         <p style="margin:0;font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:19px;font-weight:800;letter-spacing:-0.01em;color:#3b1782;">${u.nombre}</p>
-        <p style="margin:8px 0 0;font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:13px;font-weight:600;color:#4c1ebc;">Vendedor: MAF Perú</p>
-        <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin-top:12px;">
-          <tr>
-            <td width="24" valign="middle" style="padding-right:2px;">${CAL_ICON}</td>
-            <td valign="middle" style="font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:13px;color:#5a4d75;line-height:2;">Fecha: <b style="color:#3b1782;">${u.hora}</b></td>
-          </tr>
-          <tr>
-            <td width="24" valign="middle" style="padding-right:2px;">${USD_ICON}</td>
-            <td valign="middle" style="font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:13px;color:#5a4d75;line-height:2;">Precio Base: <b style="color:#3b1782;font-family:'Poppins','Plus Jakarta Sans',Arial,sans-serif;">${u.precio}</b></td>
-          </tr>
-        </table>
-        <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" style="margin-top:16px;"><tr>
-          <td bgcolor="#ed8936" style="border-radius:9999px;background-image:linear-gradient(135deg,#ed8936 0%,#8460e5 100%);box-shadow:0 2px 6px rgba(237,137,54,0.30);">
-            <a href="${u.url}" target="_blank" style="display:inline-block;padding:11px 34px;font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:14px;font-weight:700;color:#FFFFFF;text-shadow:0 1px 3px rgba(0,0,0,0.25);">Ver subasta</a>
+      </td></tr>
+
+      <!-- Fila tipo pcard__price-row: info a la izquierda, acción a la derecha, space-between -->
+      <tr><td style="padding:8px 22px 0;">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+          <td align="left" valign="middle">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr>
+              <td width="20" valign="middle">${CAL_ICON}</td>
+              <td valign="middle" style="font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:13px;color:#5a4d75;white-space:nowrap;">${u.hora}</td>
+            </tr></table>
           </td>
+          <td align="right" valign="middle">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr>
+              <td bgcolor="#ed8936" style="border-radius:9999px;background-image:${CTA_GRADIENT};box-shadow:rgba(255,255,255,0.28) 0 1px 0 2px inset,0 2px 6px rgba(237,137,54,0.30);">
+                <a href="${u.url}" target="_blank" style="display:inline-block;padding:9px 22px;font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:13px;font-weight:700;color:#FFFFFF;text-shadow:0 1px 3px rgba(0,0,0,0.25);white-space:nowrap;">Ver subasta</a>
+              </td>
+            </tr></table>
+          </td>
+        </tr></table>
+      </td></tr>
+
+      <!-- Barra de estado — flush al borde inferior de la card, como el ::after de pcard--live (no una píldora flotando) -->
+      <tr><td style="padding:16px 0 0;">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+          <td height="8" style="border-radius:0 0 16px 16px;background-image:linear-gradient(90deg,#ff9639 0%,#ef852e 50%,#be3d00 100%);font-size:1px;line-height:1px;">&nbsp;</td>
         </tr></table>
       </td></tr>
     </table>
@@ -76,7 +135,7 @@ export const BOLETIN_MAF_PERU_HTML = `<!DOCTYPE html>
 <meta name="color-scheme" content="light">
 <meta name="supported-color-schemes" content="light">
 <title>Boletín — MAF Perú</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
 <style>
   body { margin:0; padding:0; width:100%; background-color:#FAFAFA; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
   table { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
@@ -119,9 +178,9 @@ export const BOLETIN_MAF_PERU_HTML = `<!DOCTYPE html>
                   <img src="${IMG}/vmc-logo.png" width="118" alt="VMC Subastas" style="width:118px;height:auto;">
                 </td>
                 <td align="right" valign="middle">
-                  <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="right" bgcolor="#FFFFFF" style="border-radius:9999px;"><tr>
-                    <td width="52" height="52" align="center" valign="middle" style="border-radius:9999px;">
-                      <img src="${IMG}/maf-logo.png" width="34" alt="MAF Innovación Financiera" style="width:34px;height:auto;">
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="right" bgcolor="#FFFFFF" style="border-radius:14px;"><tr>
+                    <td align="center" valign="middle" style="padding:8px 12px;">
+                      <img src="${IMG}/maf-logo.png" width="140" alt="MAF Innovación Financiera" style="width:140px;height:auto;display:block;">
                     </td>
                   </tr></table>
                 </td>
@@ -134,7 +193,7 @@ export const BOLETIN_MAF_PERU_HTML = `<!DOCTYPE html>
             </td></tr>
             <tr><td class="px" style="padding-top:20px;padding-bottom:26px;">
               <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr>
-                <td bgcolor="#ed8936" style="border-radius:9999px;background-image:linear-gradient(135deg,#ed8936 0%,#8460e5 100%);box-shadow:0 2px 6px rgba(237,137,54,0.35);">
+                <td bgcolor="#ed8936" style="border-radius:9999px;background-image:${CTA_GRADIENT};box-shadow:rgba(255,255,255,0.28) 0 1px 0 2px inset,0 2px 6px rgba(237,137,54,0.35);">
                   <a href="${URL_PARTICIPA}" target="_blank" style="display:inline-block;padding:12px 30px;font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:15px;font-weight:700;color:#FFFFFF;text-shadow:0 1px 3px rgba(0,0,0,0.25);">¡Participa Ahora!</a>
                 </td>
               </tr></table>
@@ -151,9 +210,10 @@ export const BOLETIN_MAF_PERU_HTML = `<!DOCTYPE html>
   <!-- INTRO -->
   <tr><td class="px" align="center" style="padding-top:34px;padding-bottom:8px;">
     <h2 class="sec-h" style="margin:0;font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:25px;line-height:1.3;font-weight:800;letter-spacing:-0.01em;color:#3b1782;">Sus mejores unidades salen a subasta con precios base que no vas a dejar pasar</h2>
+    <p style="margin:10px 0 0;font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:14px;line-height:1.5;color:#5a4d75;">Unidades de la flota corporativa de <b style="color:#3b1782;">MAF Perú</b> — respaldo y procedencia clara en cada oferta.</p>
   </td></tr>
 
-${UNIDADES.map((u, i) => card(u, i === 0)).join("\n\n")}
+${UNIDADES.map((u, i) => card(u, i, i === 0)).join("\n\n")}
 
   <!-- CIERRE -->
   <tr><td class="px" align="center" style="padding-top:40px;">
@@ -162,7 +222,7 @@ ${UNIDADES.map((u, i) => card(u, i === 0)).join("\n\n")}
   </td></tr>
   <tr><td align="center" style="padding-top:22px;padding-bottom:38px;">
     <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr>
-      <td bgcolor="#8460e5" style="border-radius:9999px;background-image:linear-gradient(135deg,#8460e5 0%,#3b1782 100%);box-shadow:0 2px 8px rgba(59,23,130,0.35);">
+      <td bgcolor="#8460e5" style="border-radius:9999px;background-image:linear-gradient(160deg,#8460e5 0%,#3b1782 100%);box-shadow:rgba(255,255,255,0.22) 0 1px 0 2px inset,0 2px 8px rgba(59,23,130,0.35);">
         <a href="${URL_PARTICIPA}" target="_blank" style="display:inline-block;padding:13px 36px;font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:15px;font-weight:700;color:#FFFFFF;text-shadow:0 1px 3px rgba(0,0,0,0.25);">¡Participa Ahora!</a>
       </td>
     </tr></table>
@@ -195,7 +255,7 @@ ${UNIDADES.map((u, i) => card(u, i === 0)).join("\n\n")}
         <td width="140" valign="middle" align="right">
           <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="right" style="border-radius:9999px;background-image:linear-gradient(135deg,#ffffff 0%,#fbc47d 25%,#ae8eff 75%,#ffffff 100%);"><tr><td style="padding:2px;">
             <table role="presentation" border="0" width="132" cellspacing="0" cellpadding="0"><tr>
-              <td width="132" height="38" bgcolor="#3b1782" align="center" valign="middle" style="border-radius:9999px;background-image:linear-gradient(135deg,#ed8936 0%,#8460e5 100%);font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:14px;font-weight:700;color:#FFFFFF;text-shadow:0 1px 3px rgba(0,0,0,0.25);">
+              <td width="132" height="38" bgcolor="#3b1782" align="center" valign="middle" style="border-radius:9999px;background-image:${CTA_GRADIENT};font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:14px;font-weight:700;color:#FFFFFF;text-shadow:0 1px 3px rgba(0,0,0,0.25);">
                 <a href="https://www.vmcsubastas.com/centro-de-ayuda" target="_blank" style="color:#FFFFFF;display:block;">¡Vamos!</a>
               </td>
             </tr></table>
