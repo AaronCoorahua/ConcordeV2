@@ -169,6 +169,7 @@ export const STAGE_ORDER: Record<string, string[]> = {
   'En vivo': ['Inicio', 'Resultado', 'Negociación', 'Habilitación', 'Cierre'],
   'Negociable': ['Inicio', 'Negociación', 'Alertas', 'Resultado'],
   'Proceso Interno Mapfre': ['Invitación', 'Participación', 'Cierre', 'Resultado'],
+  'Calificación de Compra': ['Invitación', 'Recordatorio', 'Último día'],
 };
 
 // mismos gradientes que ya usan los CTA de email-templates.ts (G_PRIMARY / G_NEGOTIABLE),
@@ -190,6 +191,7 @@ export const CATEGORY_GRADIENT: Record<string, string> = {
   'Usuarios Internos': 'linear-gradient(135deg,#ec4899 0%,#9d174d 100%)',
   'Proceso Interno Mapfre': 'linear-gradient(135deg,#ef4444 0%,#991b1b 100%)',
   SubasPass: 'linear-gradient(135deg,#8460e5 0%,#3b1782 100%)',
+  'Calificación de Compra': 'linear-gradient(135deg,#fbbf24 0%,#d97706 100%)',
 };
 
 export const CATEGORY_SOLID: Record<string, string> = {
@@ -209,6 +211,7 @@ export const CATEGORY_SOLID: Record<string, string> = {
   'Usuarios Internos': '#ec4899',
   'Proceso Interno Mapfre': '#ef4444',
   SubasPass: '#8460e5',
+  'Calificación de Compra': '#d97706',
 };
 
 // demo del design system Concorde (mismo asset que usan OfferCard/Detalle/Sala en concorde/bloques);
@@ -1403,6 +1406,67 @@ export const EMAILS: EmailTemplate[] = [
       S('text', { text: 'Tu Subaspass es tu pase directo para bidear sin límites, este estará activo desde el __{{Fecha inicio.Ejem: 30/07/2026}}__ hasta el __{{Fecha fin.Ejem: 30/10/2026}}__.' }),
       SP('20'),
       S('text', { text: 'Es hora de arrancar ¡Encuentra la oferta que haga match contigo y empieza a bidear!' }),
+      SP('30'),
+    ],
+  },
+  {
+    id: 'calificacion-invitacion',
+    name: 'Calificación — invitación',
+    subject: '¿Qué tal tu experiencia en VMC Subastas? Tu opinión importa',
+    category: 'Calificación de Compra',
+    stage: 'Invitación',
+    leadsTo: ['calificacion-recordatorio'],
+    sections: [
+      S('title', { eyebrow: '', text: '¡Qué buena decisión!' }),
+      SP('24'),
+      S('text', { ink: 'black', text: '{{Nombre usuario.Ejem: Gabriel Bruno}},' }),
+      SP('10'),
+      S('text', { ink: 'black', text: 'Nos alegra que hayas culminado tu proceso de compra por el __{{Toyota Hilux 2018}}__ de manera exitosa. En %%VMC Subastas%% queremos seguir mejorando para darte siempre la mejor experiencia. Por eso, nos encantaría conocer tu opinión sobre cómo fue tu proceso de compra con nosotros.' }),
+      SP('14'),
+      S('text', { ink: 'black', text: 'Tomará solo un par de minutos. Tienes **15 días calendario** para dejarnos tu calificación y reseña desde tu cuenta.' }),
+      SP('20'),
+      S('cta', { text: '¡Vamos!', url: 'https://www.vmcsubastas.com/login?redirect_after_to=/zona' }),
+      SP('30'),
+    ],
+  },
+  {
+    id: 'calificacion-recordatorio',
+    name: 'Calificación — quedan 7 días',
+    subject: 'Te quedan 7 días para contarnos tu experiencia ⭐',
+    category: 'Calificación de Compra',
+    stage: 'Recordatorio',
+    leadsTo: ['calificacion-ultimo-dia'],
+    sections: [
+      S('title', { eyebrow: '', text: '¡Tu opinión es importante!' }),
+      SP('24'),
+      S('text', { ink: 'black', text: '{{Nombre usuario.Ejem: Gabriel Bruno}},' }),
+      SP('10'),
+      S('text', { ink: 'black', text: 'Esperamos que todo vaya genial con tu compra.' }),
+      SP('14'),
+      S('text', { ink: 'black', text: 'Te escribimos para recordarte que aún estás a tiempo de calificar tu experiencia de compra por el __{{Toyota Hilux 2018}}__ en %%VMC Subastas%%. Te quedan **7 días** para dejarnos tus estrellas y comentarios.' }),
+      SP('14'),
+      S('text', { ink: 'black', text: 'Tu feedback nos ayuda muchísimo a seguir creciendo y a orientar a otros usuarios de la comunidad.' }),
+      SP('20'),
+      S('cta', { text: '¡Vamos!', url: 'https://www.vmcsubastas.com/login?redirect_after_to=/zona' }),
+      SP('30'),
+    ],
+  },
+  {
+    id: 'calificacion-ultimo-dia',
+    name: 'Calificación — último día',
+    subject: '¡Último día! Déjanos tu opinión sobre tu compra',
+    category: 'Calificación de Compra',
+    stage: 'Último día',
+    sections: [
+      S('title', { eyebrow: '', text: 'Comparte tu experiencia con los demás' }),
+      SP('24'),
+      S('text', { ink: 'black', text: '{{Nombre usuario.Ejem: Gabriel Bruno}},' }),
+      SP('10'),
+      S('text', { ink: 'black', text: '¡El tiempo vuela! **Hoy es el último día** disponible para ingresar tu calificación y reseña sobre tu proceso de compra por el __{{Toyota Hilux 2018}}__ en %%VMC Subastas%%.' }),
+      SP('14'),
+      S('text', { ink: 'black', text: 'Nos encantaría cerrar tu proceso conociendo tu opinión sincera para asegurarnos de que todo haya salido genial.' }),
+      SP('20'),
+      S('cta', { text: '¡Vamos!', url: 'https://www.vmcsubastas.com/login?redirect_after_to=/zona' }),
       SP('30'),
     ],
   },
