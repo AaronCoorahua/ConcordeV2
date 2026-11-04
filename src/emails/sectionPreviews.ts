@@ -41,6 +41,8 @@ export const SECTION_DESCRIPTIONS: Record<Section["type"], string> = {
   "action-card": "Card con copy y botón a la izquierda e ícono a la derecha.",
   grid: "Dos columnas, cada una con sus cards apiladas (alto independiente).",
   "zoom-card": "Card con cabecera morada, monto, botón y globos que apuntan.",
+  video: "Poster con botón de play que abre el video.",
+  steps: "Pasos numerados en una card oscura (título + detalle).",
 };
 
 /** Assets demo para que los previews no salgan vacíos. */
@@ -59,6 +61,7 @@ export function demoSection(type: Section["type"]): Section {
     if (/icon(Url)?$/i.test(k) && k !== "icon") content[k] = DEMO_ICON;
   });
   if (type === "image") content.url = DEMO_IMG;
+  if (type === "video") content.poster = "/correos/negociacion-tutorial/poster.jpg";
   // Los globos van vacios por defecto (son opcionales); en el catalogo la card
   // se veria coja sin ellos, asi que el demo los rellena.
   if (type === "zoom-card") {

@@ -102,7 +102,7 @@ function likeBadge(): string {
 
 export interface Section {
   id: string;
-  type: 'title' | 'text' | 'panel' | 'features' | 'icon-text' | 'stats' | 'cta' | 'image' | 'spacer' | 'table' | 'details' | 'divider' | 'note' | 'amount' | 'offers' | 'vehicle' | 'negotiation' | 'quote' | 'won-vehicle' | 'costs' | 'list' | 'success' | 'columns' | 'action-card' | 'grid' | 'zoom-card';
+  type: 'title' | 'text' | 'panel' | 'features' | 'icon-text' | 'stats' | 'cta' | 'image' | 'spacer' | 'table' | 'details' | 'divider' | 'note' | 'amount' | 'offers' | 'vehicle' | 'negotiation' | 'quote' | 'won-vehicle' | 'costs' | 'list' | 'success' | 'columns' | 'action-card' | 'grid' | 'zoom-card' | 'video' | 'steps';
   content: Record<string, string>;
 }
 
@@ -133,6 +133,8 @@ export const SECTION_LABELS: Record<Section['type'], string> = {
   'action-card': 'Card de acción (copy + botón + icono)',
   grid: 'Grilla 2 columnas (cards apiladas)',
   'zoom-card': 'Card zoom (cabecera + cuerpo + CTA + callouts)',
+  video: 'Video (poster con play → enlace)',
+  steps: 'Pasos numerados (card oscura)',
 };
 
 export function createSection(type: Section['type']): Section {
@@ -189,6 +191,8 @@ export function createSection(type: Section['type']): Section {
       note1: '', body: 'Texto del cuerpo.', btnText: 'Me interesa', url: 'https://',
       note2: '', variant: '',
     },
+    video: { url: 'https://', poster: '', width: '270', caption: '', alt: '' },
+    steps: { title: 'Tus pasos', s1: 'Paso uno|Detalle', s2: 'Paso dos|Detalle', s3: '', s4: '', s5: '', s6: '', s7: '', s8: '' },
   };
   return { id, type, content: { ...defaults[type] } };
 }
@@ -466,6 +470,11 @@ ${c.svg ? `<td width="${c.svgGap || '16'}"></td><td width="${c.svgW || size.icon
 <td width="32%" align="center"><span style="display:block;font-size:20px;font-weight:800;color:${C.purple};font-family:${FONT_NUMBER};">${esc(c.s3v)}</span><span style="font-size:10px;color:${C.body};text-transform:uppercase;">${esc(c.s3l)}</span></td>
 </tr></table>${panelClose}</td></tr>`;
     case 'cta': {
+      // `variant: 'glass'`: pastilla de vidrio teal→violeta con brillo arriba,
+      // borde blanco luminoso y flecha (correo oferta-publicada-vendedor).
+      if (c.variant === 'glass') {
+        return `<tr><td align="center"><table border="0" cellpadding="0" cellspacing="0" align="center" style="border-radius:9999px;background-image:linear-gradient(135deg,rgba(255,255,255,0.95) 0%,rgba(115,223,223,0.7) 45%,rgba(132,96,229,0.7) 100%);box-shadow:0 10px 28px rgba(0,174,177,0.32),0 4px 12px rgba(132,96,229,0.30);"><tr><td style="padding:2px;"><a href="${esc(c.url)}" target="_blank" style="display:inline-block;background:#3d8fd6;background-image:linear-gradient(180deg,rgba(255,255,255,0.30) 0%,rgba(255,255,255,0) 50%),linear-gradient(135deg,#00aeb1 0%,#5b6fe0 55%,#8460e5 100%);color:#ffffff;border-radius:9999px;padding:15px 48px;font-family:${FONT_HEADING};font-size:16px;font-weight:800;text-decoration:none;text-shadow:${TXT_SHADOW};box-shadow:inset 0 1px 0 rgba(255,255,255,0.55),inset 0 -6px 14px rgba(20,10,61,0.22);">${esc(c.text)} &rarr;</a></td></tr></table></td></tr>`;
+      }
       const neg = c.variant === 'negotiable';
       const gradient = neg ? G_NEGOTIABLE : G_PRIMARY;
       const border = neg ? B_NEGOTIABLE : B_PRIMARY;
@@ -857,6 +866,31 @@ ${centered
   ? `<table border="0" cellpadding="0" cellspacing="0" align="center">${rows}</table>`
   : `<table border="0" cellpadding="0" cellspacing="0" width="100%">${rows}</table>`}
 </td></tr>`;
+    }
+    case 'video':
+      // ponytail: Gmail y Outlook no reproducen <video>; el poster trae el play
+      // horneado y enlaza al MP4 (Litmus usa el mismo patrón). Apple Mail sí
+      // reproduce <video>: si pesa, se suma con este poster de fallback.
+      // El pie es una pastilla clicable (área táctil ≥ 40px), no un link suelto.
+      return `<tr><td align="center" style="padding:0 16px;"><a href="${esc(c.url)}" target="_blank" style="display:block;text-decoration:none;"><img src="${esc(c.poster)}" alt="${esc(c.alt || c.caption || 'Ver video')}" width="${esc(c.width || '270')}" border="0" style="display:block;margin:0 auto;width:${esc(c.width || '270')}px;max-width:100%;height:auto;border-radius:20px;box-shadow:0 16px 36px rgba(28,17,82,0.22);"></a>${c.caption ? `<table border="0" cellpadding="0" cellspacing="0" align="center" style="margin-top:14px;"><tr><td style="border-radius:9999px;background-color:${C.lavender};border:1px solid rgba(132,96,229,0.30);"><a href="${esc(c.url)}" target="_blank" style="display:inline-block;padding:10px 20px;font-size:14px;font-weight:700;line-height:20px;color:${C.purple};font-family:${FONT_HEADING};text-decoration:none;">&#9654;&nbsp; ${esc(c.caption)}</a></td></tr></table>` : ''}</td></tr>`;
+    case 'steps': {
+      // Card de VIDRIO CLARO (esmerilado lavanda): sobre el cuerpo blanco, para
+      // que los únicos bloques oscuros sean banner y footer y el CTA quede como
+      // foco. Halos teal/violeta muy suaves, cada paso en su lámina translúcida
+      // y el número en una «perla» con brillo. Sin backdrop-filter (ningún
+      // cliente de correo lo aplica): el vidrio se finge con gradientes.
+      // Cada paso es «Título|detalle»; hasta 8.
+      const items = [c.s1, c.s2, c.s3, c.s4, c.s5, c.s6, c.s7, c.s8].filter(Boolean);
+      const pearl = (n: number) => `<table border="0" cellpadding="0" cellspacing="0" width="32" height="32"><tr><td align="center" valign="middle" width="32" height="32" bgcolor="#6f86ee" style="border-radius:50%;background-image:radial-gradient(circle at 32% 28%,rgba(255,255,255,0.75) 0%,rgba(255,255,255,0) 42%),linear-gradient(135deg,#00aeb1 0%,#6f86ee 55%,#8460e5 100%);border:1px solid rgba(255,255,255,0.9);box-shadow:0 4px 10px rgba(91,111,224,0.35);font-size:14px;font-weight:800;color:#ffffff;font-family:${FONT_NUMBER};">${n}</td></tr></table>`;
+      const rows = items.map((v, i) => {
+        const [t, d] = v.split('|');
+        return `<tr><td style="padding:0 0 8px;"><table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff" style="border-radius:14px;background-color:rgba(255,255,255,0.78);border:1px solid rgba(132,96,229,0.18);box-shadow:inset 0 1px 0 #ffffff,0 2px 8px rgba(59,23,130,0.06);"><tr><td width="32" valign="middle" style="padding:12px 0 12px 14px;">${pearl(i + 1)}</td><td valign="middle" style="padding:12px 16px 12px 14px;font-family:${FONT_HEADING};"><p style="margin:0;font-size:15px;font-weight:800;line-height:1.3;color:${C.dark};">${hl(t)}</p>${d ? `<p style="margin:2px 0 0;font-size:13px;line-height:1.4;color:${C.body};">${hl(d)}</p>` : ''}</td></tr></table></td></tr>`;
+      }).join('');
+      const head = c.title
+        ? `<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 14px;"><tr><td><h2 style="margin:0;font-size:20px;font-weight:800;line-height:1.3;letter-spacing:-0.01em;color:${C.purple};font-family:${FONT_HEADING};">${esc(c.title)}</h2></td><td align="right" valign="middle"><span style="display:inline-block;border-radius:9999px;padding:4px 11px;background-color:rgba(0,174,177,0.10);border:1px solid rgba(0,174,177,0.35);font-size:12px;font-weight:800;color:#00797b;font-family:${FONT_HEADING};white-space:nowrap;">${items.length} pasos</span></td></tr></table>`
+        : '';
+      // Borde luminoso: wrapper de 1px con gradiente (mismo truco que el CTA).
+      return `<tr><td align="center" style="padding:0 16px;"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-radius:22px;background-image:linear-gradient(150deg,#ffffff 0%,rgba(0,174,177,0.35) 35%,rgba(132,96,229,0.40) 75%,#ffffff 100%);box-shadow:0 18px 40px rgba(59,23,130,0.14);"><tr><td style="padding:1px;"><table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#f5f3fe" style="border-radius:21px;background-image:radial-gradient(circle at 95% 0%,rgba(0,174,177,0.16) 0%,rgba(0,174,177,0) 40%),radial-gradient(circle at 0% 100%,rgba(132,96,229,0.18) 0%,rgba(132,96,229,0) 50%),linear-gradient(180deg,#fbfaff 0%,#f0ebff 100%);"><tr><td style="padding:22px 20px 14px;">${head}<table border="0" cellpadding="0" cellspacing="0" width="100%">${rows}</table></td></tr></table></td></tr></table></td></tr>`;
     }
     default: return '';
   }

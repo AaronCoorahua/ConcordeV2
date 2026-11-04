@@ -21,6 +21,7 @@
 
 import { Section } from './prodEmailTemplates';
 import { BOLETIN_MAF_PERU_HTML } from './boletines/mafPeru';
+import { glassNegociableEmail } from './boletines/glassNegociable';
 
 export interface EmailTemplate {
   id: string;        // slug para la URL
@@ -224,6 +225,47 @@ const S = (type: Section['type'], content: Record<string, string>): Section => (
   id: `${type}-${Math.random().toString(36).slice(2, 7)}`, type, content,
 });
 const SP = (height: string) => S('spacer', { height });
+
+/** Cuerpo de «oferta-publicada-vendedor»; banner y footer glass van aparte (boletines/glassNegociable.ts). */
+const OFERTA_PUBLICADA_SECTIONS: Section[] = [
+  // El banner ya dice «publicación realizada»: el cuerpo no lo repite, avanza al
+  // siguiente paso (pirámide invertida: qué pasó → qué hacer → cómo → acción).
+  // Cuerpo a 16px y en navy, no negro puro: legible en móvil y sobrevive a la
+  // inversión de modo oscuro de Gmail/Outlook.
+  S('title', { eyebrow: '', text: '¡Publicación realizada con éxito!' }),
+  SP('24'),
+  S('text', { size: 'lg', text: 'Hola {{Nombre usuario.Ejem: Gabriel Bruno}},' }),
+  SP('8'),
+  S('text', { size: 'lg', text: 'Tu publicación ya está activa. Cuando un comprador haga una propuesta, la recibirás directamente en %%Mi Garaje%%.' }),
+  SP('8'),
+  S('text', { size: 'lg', text: 'Desde ahí podrás revisar cada oferta y decidir cómo avanzar: aceptar, contraproponer o rechazar. Recuerda que tienes **24 horas** para responder y mantener la negociación activa.' }),
+  SP('8'),
+  S('text', { size: 'lg', text: 'En este video te mostramos cómo funciona el nuevo flujo.' }),
+  SP('24'),
+  S('video', {
+    url: 'https://concorde-v2-theta.vercel.app/correos/negociacion-tutorial/video.mp4',
+    poster: 'https://concorde-v2-theta.vercel.app/correos/negociacion-tutorial/poster.jpg',
+    width: '300',
+    caption: 'Ver tutorial · 47 s',
+    alt: 'Video tutorial: ¿Te llegó una propuesta? Así la respondes, paso a paso',
+  }),
+  SP('32'),
+  S('text', { size: 'lg', align: 'center', text: 'Conoce en pocos pasos cómo administrar tus negociaciones.' }),
+  SP('16'),
+  S('steps', {
+    title: 'Responde tus propuestas',
+    s1: 'Toca tu perfil|Arriba a la derecha',
+    s2: 'Baja a Mis negociaciones|En Tu actividad',
+    s3: 'Toca «En venta»|Ahí llegan tus propuestas',
+    s4: 'Toca tu auto|Ves tus propuestas y su plazo',
+    s5: 'Acepta, contrapropón o rechaza|Tienes 24 horas',
+    s6: 'Confirma la venta|Las demás propuestas se cierran',
+    s7: 'Coordina por el SubasChat|Directo con el comprador',
+  }),
+  SP('32'),
+  S('cta', { text: 'Ir a Mi Garaje', url: 'https://www.vmcsubastas.com/login?redirect_after_to=/zona', variant: 'glass' }),
+  SP('32'),
+];
 
 export const EMAILS: EmailTemplate[] = [
   {
@@ -482,6 +524,16 @@ export const EMAILS: EmailTemplate[] = [
       S('cta', { text: '¡Aprende a negociar con Subastin!', url: 'https://ayuda.vmcsubastas.com/es/collections/3079940-centro-de-ayuda-comprador', variant: 'negotiable' }),
       SP('30'),
     ],
+  },
+  {
+    id: 'oferta-publicada-vendedor',
+    name: 'Oferta publicada — vendedor (tutorial)',
+    subject: '¡Tu oferta ha sido publicada!',
+    category: 'Negociable',
+    stage: 'Inicio',
+    leadsTo: ['nueva-negociacion-vendedor'],
+    sections: OFERTA_PUBLICADA_SECTIONS,
+    html: glassNegociableEmail(OFERTA_PUBLICADA_SECTIONS, '¡Tu oferta ha sido publicada!', 'Ingresa a “Mi Garaje” y administra las propuestas de los compradores'),
   },
   {
     id: 'nueva-negociacion-vendedor',
