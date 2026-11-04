@@ -16,8 +16,8 @@ import { generateEmail, type Section } from "../prodEmailTemplates";
 import { swapEmailFooter, swapEmailHeader, stripBodyTitle } from "../headerSwap";
 
 const FONT = "'Plus Jakarta Sans', Arial, Helvetica, sans-serif";
-/** Logo oficial (logo-correos.svg exportado a PNG 3x con sharp: Gmail y Outlook no muestran SVG). Blanco: va sobre la franja morada, ver BRAND_SKY. */
-const LOGO = "https://concorde-v2-theta.vercel.app/logo-correos@3x.png";
+/** Logo oficial (public/logo-vmc.svg exportado a PNG 3x con sharp: Gmail y Outlook no muestran SVG). Blanco: va sobre la franja morada, ver BRAND_SKY. */
+const LOGO = "https://concorde-v2-theta.vercel.app/logo-vmc@3x.png";
 const AYUDA = "https://ayuda.vmcsubastas.com/es/collections/3079940-centro-de-ayuda-comprador";
 
 /** Fondo lavanda con halos. */
