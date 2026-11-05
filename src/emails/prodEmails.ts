@@ -228,19 +228,31 @@ const SP = (height: string) => S('spacer', { height });
 
 /** Cuerpo de «oferta-publicada-vendedor»; banner y footer glass van aparte (boletines/glassNegociable.ts). */
 const OFERTA_PUBLICADA_SECTIONS: Section[] = [
-  // El banner ya dice «publicación realizada»: el cuerpo no lo repite, avanza al
-  // siguiente paso (pirámide invertida: qué pasó → qué hacer → cómo → acción).
+  // Texto de Julio (05/11). Pirámide invertida: qué pasó → qué ganas → cómo → acción.
   // Cuerpo a 16px y en navy, no negro puro: legible en móvil y sobrevive a la
   // inversión de modo oscuro de Gmail/Outlook.
-  S('title', { eyebrow: '', text: '¡Publicación realizada con éxito!' }),
+  S('title', { eyebrow: '', text: '¡Tu auto ya está publicado! Prepárate para recibir ofertas' }),
   SP('24'),
   S('text', { size: 'lg', text: 'Hola {{Nombre usuario.Ejem: Gabriel Bruno}},' }),
   SP('8'),
-  S('text', { size: 'lg', text: 'Tu publicación ya está activa. Cuando un comprador haga una propuesta, la recibirás directamente en %%Mi Garaje%%.' }),
+  S('text', { size: 'lg', text: '¡Excelentes noticias! La publicación de tu auto ya está activa.' }),
   SP('8'),
-  S('text', { size: 'lg', text: 'Desde ahí podrás revisar cada oferta y decidir cómo avanzar: aceptar, contraproponer o rechazar. Recuerda que tienes **24 horas** para responder y mantener la negociación activa.' }),
-  SP('8'),
-  S('text', { size: 'lg', text: 'En este video te mostramos cómo funciona el nuevo flujo.' }),
+  S('text', { size: 'lg', text: 'A partir de ahora, olvídate de las llamadas en horarios incómodos. Con la nueva sección de __Negociaciones__ dentro de %%“Mi Garaje”%%, el proceso es directo y tú tienes el control total de la venta:' }),
+  SP('20'),
+  S('steps', {
+    marks: '📲|⚖️|💸',
+    s1: 'Recibe propuestas|Los compradores interesados te enviarán sus ofertas directamente a ti.',
+    s2: 'Toma el control|Revisa cada propuesta y decide si aceptar, contraproponer o rechazar.',
+    s3: 'El 100% es tuyo|Cierra el trato directamente con el comprador, sin comisiones ni intermediarios.',
+  }),
+  SP('16'),
+  S('note', {
+    icon: '⏳',
+    title: 'Dato clave:',
+    body: 'Cada vez que recibas una oferta, tendrás **24 horas** para responder antes de que expire. ¡Mantente atento para mantener la negociación activa!',
+  }),
+  SP('28'),
+  S('text', { size: 'lg', align: 'center', text: 'Mira este video para descubrir cómo dominar la negociación en VMC:' }),
   SP('24'),
   S('video', {
     url: 'https://concorde-v2-theta.vercel.app/correos/negociacion-tutorial/video.mp4',
@@ -250,8 +262,6 @@ const OFERTA_PUBLICADA_SECTIONS: Section[] = [
     alt: 'Video tutorial: ¿Te llegó una propuesta? Así la respondes, paso a paso',
   }),
   SP('32'),
-  S('text', { size: 'lg', align: 'center', text: 'Conoce en pocos pasos cómo administrar tus negociaciones.' }),
-  SP('16'),
   S('steps', {
     title: 'Responde tus propuestas',
     s1: 'Toca tu perfil|Arriba a la derecha',

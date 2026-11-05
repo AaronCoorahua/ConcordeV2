@@ -41,7 +41,7 @@ function banner(): string {
 <table border="0" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto;"><tr><td>${logo(132)}</td></tr></table>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top:24px;border-radius:20px;${PANE}"><tr><td align="center" style="padding:22px 24px 26px;">
 <table border="0" cellpadding="0" cellspacing="0" align="center"><tr><td style="border-radius:9999px;padding:5px 14px;background-color:rgba(0,174,177,0.10);border:1px solid rgba(0,174,177,0.35);font-size:11px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00797b;">Ya está en Mi Garaje</td></tr></table>
-<h1 style="margin:14px 0 0;font-size:28px;font-weight:800;line-height:1.2;letter-spacing:-0.02em;color:#3b1782;font-family:${FONT};">¡Publicación realizada<br><span style="color:#00898b;">con éxito!</span></h1>
+<h1 style="margin:14px 0 0;font-size:26px;font-weight:800;line-height:1.25;letter-spacing:-0.02em;color:#3b1782;font-family:${FONT};">¡Tu auto ya está publicado! &#128663;<br><span style="color:#00898b;">Prepárate para recibir ofertas</span></h1>
 </td></tr></table>
 </td></tr></table>`;
 }
