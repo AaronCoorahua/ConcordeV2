@@ -91,6 +91,16 @@
       "entry": "src/product/ganaya/mi-garaje/models/Garaje.tsx",
       "status": "prototipo-integrado",
       "useFor": "Llegada a Mi Garaje del vendedor y SubasChat."
+    },
+    {
+      "id": "valoriza-landing",
+      "name": "Landing Valoriza",
+      "route": "/producto/valoriza",
+      "source": "Nueva sobre shell Index (HomeIndexRebase) + copy y pantallas de la campaña «Valoriza y Vende»",
+      "revision": "rama valoriza-landing sobre ec4cd50",
+      "entry": "src/product/valoriza/ValorizaLanding.tsx",
+      "status": "prototipo",
+      "useFor": "Explicar la valorización (AVT) e invitar a valorizar; CTA al prototipo vmc-valuar. Sin backend."
     }
   ],
   "components": [
