@@ -18,6 +18,8 @@ import type { JSX } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button, Header, Sidebar, SidebarMenuButton, SidebarMobile } from "@/src/product/index/adapter";
+import { LIGHT, Projection } from "@/src/product/mi-garaje/models/Resultado";
+import type { RData } from "@/src/product/mi-garaje/models/Resultado";
 import shell from "@/src/product/index/view/HomeIndexRebase.module.css";
 import { GLASS_CSS } from "@/src/product/index/view/glass";
 import { Vidrio, type Sec } from "@/src/product/index/view/Vidrio";
@@ -48,6 +50,14 @@ const EXPECT: { icon: Sec; title: string; text: string }[] = [
   { icon: "auto", title: "Vehículos similares", text: "Autos parecidos al tuyo en el mercado, para comparar." },
   { icon: "fecha", title: "Guardado en Mi Garaje", text: "Tu valorización queda guardada para revisarla o publicar." },
 ];
+
+// Gráfico real del resultado (Projection de Mi Garaje, mismo trazo que AVT) con un auto de EJEMPLO. Cifras ilustrativas.
+const MESES = ["Noviembre", "Diciembre", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre"];
+const DEMO_V = 15850;
+// ponytail: solo market y proj; Projection no lee el resto de RData.
+const DEMO = { market: DEMO_V, proj: MESES.map((full, i) => ({ full, f: 0, v: Math.round((DEMO_V * (1 - 0.055 * i / 12) + 60 * Math.sin(i * Math.PI / 6)) / 10) * 10 })) } as Pick<RData, "market" | "proj"> as RData;
+const HITOS = [1, 3, 6, 12].map((m) => ({ m, v: DEMO.proj[m].v }));
+const usd = (n: number) => `US$ ${n.toLocaleString("en-US")}`;
 
 const USES = [
   { img: "vender.jpg", title: "¿Vas a vender?", text: "Sabrás cuánto pedir antes de publicar." },
@@ -145,6 +155,21 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
         {/* ── Qué esperar del servicio ── */}
         <p className="vz-pill">Qué vas a recibir</p>
         <h2 className="vz-title">Esto es lo que te entrega <span>tu valorización</span></h2>
+        <div className="vz-demo">
+          <article className="vz-demo__value">
+            <span className="vz-demo__tag">Ejemplo</span>
+            <p>Hyundai Accent 2019 · 45,000 km</p>
+            <small>Valor de mercado hoy</small>
+            <strong>{usd(DEMO_V)}</strong>
+            <p>Estimación basada en depreciación real, estacionalidad y kilometraje.</p>
+          </article>
+          <article className="vz-demo__chart">
+            <header><h3>Proyección de valor</h3><p>{usd(HITOS[3].v)} en 12 meses · pasa el cursor por la curva</p></header>
+            <Projection d={DEMO} t={LIGHT} gid={`vzp-${id}`} ds />
+            <dl>{HITOS.map((h) => <div key={h.m}><dt>{h.m === 12 ? "12 meses" : `${h.m} ${h.m === 1 ? "mes" : "meses"}`}</dt><dd>{usd(h.v)}</dd></div>)}</dl>
+          </article>
+        </div>
+        <p className="vz-demo__note">Cifras de ejemplo. Tu valorización es referencial, con fecha, y no constituye oferta comercial.</p>
         <ul className="vz-expect">
           {EXPECT.map((e) => <li key={e.title}><Vidrio s={e.icon} size={40} /><h3>{e.title}</h3><p>{e.text}</p></li>)}
         </ul>
@@ -302,6 +327,21 @@ const VZ_CSS = `
 .vz-know__phone img { width: auto; height: 300px; margin: 20px 0; filter: drop-shadow(0 18px 24px rgba(34,0,92,0.3)); }
 
 /* Qué esperar: cuatro tarjetas con ícono. */
+.vz-demo { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 16px; width: 100%; margin: 8px 0 0; text-align: left; }
+.vz-demo__value { position: relative; display: grid; align-content: center; gap: 6px; padding: 28px 24px; border-radius: 18px; color: #fff;
+  background: radial-gradient(70% 60% at 100% 0%, rgba(132,96,229,0.7), transparent 70%), linear-gradient(160deg, #3B1782, #22005C); box-shadow: 0 16px 32px -20px rgba(34,0,92,0.6); }
+.vz-demo__value p { margin: 0; font-size: 13px; line-height: 19px; color: #DCCFFF; }
+.vz-demo__value small { margin-top: 12px; font-size: 13px; font-weight: 700; }
+.vz-demo__value strong { font-size: 40px; line-height: 44px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.vz-demo__tag { position: absolute; top: 14px; right: 14px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; color: #22005C; background: var(--peach); }
+.vz-demo__chart { display: grid; gap: 12px; padding: 20px; border-radius: 18px; background: #fff; border: 1px solid var(--line); min-width: 0; }
+.vz-demo__chart h3 { margin: 0; font-size: 16px; line-height: 22px; font-weight: 800; color: var(--v700); }
+.vz-demo__chart header p { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+.vz-demo__chart dl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0; }
+.vz-demo__chart dl div { padding: 8px 10px; border-radius: 12px; background: var(--lav); }
+.vz-demo__chart dt { font-size: 11px; font-weight: 600; color: var(--muted); }
+.vz-demo__chart dd { margin: 2px 0 0; font-size: 14px; font-weight: 800; color: var(--v700); font-variant-numeric: tabular-nums; }
+.vz-demo__note { margin: 0; font-size: 12px; color: var(--muted); }
 .vz-expect { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; width: 100%; margin: 8px 0 0; padding: 0; list-style: none; text-align: left; }
 .vz-expect li { display: grid; align-content: start; gap: 8px; padding: 18px 16px; border-radius: 16px; background: var(--lav); border: 1px solid var(--line); }
 .vz-expect h3 { margin: 4px 0 0; font-size: 15px; line-height: 20px; font-weight: 800; color: var(--v700); }
@@ -392,6 +432,9 @@ const VZ_CSS = `
   .vz-know__phone img { height: 280px; }
   .vz-center .pvbtn { width: 100%; }
   .vz-expect { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .vz-demo { grid-template-columns: minmax(0, 1fr); }
+  .vz-demo__chart { padding: 16px 12px; }
+  .vz-demo__chart dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .vz-expect li { padding: 14px 12px; }
   .vz-sell { padding: 24px 20px 260px; }
   .vz-sell h2 { font-size: 24px; }
