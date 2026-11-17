@@ -5,6 +5,8 @@
  * Sidebar, SidebarMobile, lienzo de 1024 y CSS module; solo cambia el contenido de la columna principal.
  * Reutiliza del Index: el botón de vidrio (GLASS_CSS), Button de Concorde, íconos Vidrio
  * y tokens del hero (.hp). Copy y pantallas reales: campaña «Valoriza y Vende» (correos).
+ * Regla de color: los naranjas salen SOLO de la escala del DS (--vmc-color-orange-*): orange-600 (#ED8936) sobre fondo claro,
+ * orange-400 (#FBC47D) sobre fondo oscuro. Nada de duraznos ni naranjas inventados.
  * Regla Stage 1: la valorización es un valor REFERENCIAL con fecha, nunca un precio fijo de venta.
  * Sin backend: los CTA llevan al prototipo de valorización/publicación ya integrado (datos simulados).
  *
@@ -224,7 +226,7 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
 }
 
 const VZ_CSS = `
-.vz { --ink: #191C1C; --muted: #6B6878; --v900: #1C0B4F; --v800: #2E0F70; --v700: #3B1782; --v500: #8460E5; --lav: #F5F0FF; --line: #ECE6FB; --peach: #FFE2C2; --orange: #ED8936;
+.vz { --ink: #191C1C; --muted: #6B6878; --v900: #1C0B4F; --v800: #2E0F70; --v700: #3B1782; --v500: #8460E5; --lav: #F5F0FF; --line: #ECE6FB; --peach: var(--vmc-color-orange-400, #FBC47D); --orange: var(--vmc-color-orange-600, #ED8936);
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   width: 100%; padding: 16px 16px 64px; box-sizing: border-box; display: grid; gap: 16px; background: #fff; font-family: var(--vmc-font-display); color: var(--ink); }
 .vz *, .vz *::before, .vz *::after { box-sizing: border-box; }
