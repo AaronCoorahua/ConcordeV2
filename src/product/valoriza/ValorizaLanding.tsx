@@ -253,7 +253,7 @@ const VZ_CSS = `
   -webkit-backdrop-filter: blur(16px) saturate(150%); backdrop-filter: blur(16px) saturate(150%); box-shadow: 0 16px 32px -18px rgba(59,23,130,0.4); }
 .vz-proof__brand { margin: 0; padding-right: 20px; border-right: 1px solid #E4DCF8; }
 .vz-proof__brand strong { display: block; font-size: 17px; line-height: 22px; font-weight: 800; letter-spacing: -0.02em; color: var(--v700); }
-.vz-proof__brand span { display: block; font-size: 12px; line-height: 16px; font-weight: 600; color: #C2410C; }
+.vz-proof__brand span { display: block; font-size: 12px; line-height: 16px; font-weight: 600; color: var(--orange); }
 .vz-proof ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; }
 .vz-proof li { display: flex; align-items: center; gap: 12px; padding: 0 16px; min-width: 0; }
 .vz-proof li + li { border-left: 1px solid #E4DCF8; }
@@ -269,11 +269,11 @@ const VZ_CSS = `
 .vz-steps ol { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; counter-reset: none; }
 .vz-steps li { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 14px; background: var(--lav); border: 1px solid var(--line); }
 .vz-steps li span { display: grid; font-size: 14px; line-height: 18px; font-weight: 800; color: var(--v700); }
-.vz-steps li small { font-size: 11px; line-height: 14px; font-weight: 700; color: #C2410C; }
+.vz-steps li small { font-size: 11px; line-height: 14px; font-weight: 700; color: var(--orange); }
 
 /* Bloques centrados: píldora, titular, bajada, cifras. */
 .vz-center { display: grid; justify-items: center; text-align: center; gap: 14px; padding: 40px 32px; }
-.vz-pill { margin: 0; padding: 4px 14px; border-radius: 999px; font-size: 12px; line-height: 18px; font-weight: 700; color: #C2410C; background: #FFF4E8; border: 1px solid #FBD7B2; }
+.vz-pill { margin: 0; padding: 4px 14px; border-radius: 999px; font-size: 12px; line-height: 18px; font-weight: 700; color: var(--orange); background: #fff; border: 1px solid var(--orange); }
 .vz-center .vz-pill:not(:first-child) { margin-top: 40px; }
 .vz-title { margin: 0; max-width: 22ch; font-size: 36px; line-height: 1.1; font-weight: 800; letter-spacing: -0.035em; color: var(--v700); }
 .vz-title span { color: var(--v500); }
