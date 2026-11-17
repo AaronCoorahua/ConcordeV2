@@ -297,7 +297,7 @@ const VZ_CSS = `
 .vz-know__card li::before { content: ""; width: 20px; height: 20px; border-radius: 50%;
   background: var(--orange) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.3 2.3 4.7-5' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat; }
 .vz-know__phone { display: grid; place-items: center; border-radius: 18px; border: 1px solid #CDBDF5; background: linear-gradient(180deg, var(--lav), #fff); overflow: hidden; }
-.vz-know__phone img { width: auto; height: 300px; margin: 16px 0 -60px; filter: drop-shadow(0 18px 24px rgba(34,0,92,0.3)); }
+.vz-know__phone img { width: auto; height: 300px; margin: 20px 0; filter: drop-shadow(0 18px 24px rgba(34,0,92,0.3)); }
 
 /* Qué esperar: cuatro tarjetas con ícono. */
 .vz-expect { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; width: 100%; margin: 8px 0 0; padding: 0; list-style: none; text-align: left; }
@@ -387,7 +387,7 @@ const VZ_CSS = `
   .vz-stats { gap: 32px; }
   .vz-stats dt { font-size: 26px; }
   .vz-know { grid-template-columns: minmax(0, 1fr); }
-  .vz-know__phone img { height: 260px; }
+  .vz-know__phone img { height: 280px; }
   .vz-center .pvbtn { width: 100%; }
   .vz-expect { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .vz-expect li { padding: 14px 12px; }
