@@ -3,7 +3,7 @@
 /**
  * Landing «Valoriza» (nueva, 16/11/2026 · v2). Vive dentro del shell del Index (HomeIndexRebase): mismo Header,
  * Sidebar, SidebarMobile, lienzo de 1024 y CSS module; solo cambia el contenido de la columna principal.
- * Reutiliza del Index: el botón de vidrio (GLASS_CSS), Button/ProfileButton de Concorde, íconos Vidrio
+ * Reutiliza del Index: el botón de vidrio (GLASS_CSS), Button de Concorde, íconos Vidrio
  * y tokens del hero (.hp). Copy y pantallas reales: campaña «Valoriza y Vende» (correos).
  * Regla Stage 1: la valorización es un valor REFERENCIAL con fecha, nunca un precio fijo de venta.
  * Sin backend: los CTA llevan al prototipo de valorización/publicación ya integrado (datos simulados).
@@ -15,7 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import type { JSX } from "react";
 import { useRouter } from "next/navigation";
 
-import { Button, Header, ProfileButton, Sidebar, SidebarMenuButton, SidebarMobile } from "@/src/product/index/adapter";
+import { Button, Header, Sidebar, SidebarMenuButton, SidebarMobile } from "@/src/product/index/adapter";
 import shell from "@/src/product/index/view/HomeIndexRebase.module.css";
 import { GLASS_CSS } from "@/src/product/index/view/glass";
 import { Vidrio, type Sec } from "@/src/product/index/view/Vidrio";
@@ -24,8 +24,8 @@ const VALUAR = "/producto/mi-garaje/m/vmc-valuar";
 const IMG = "/correos/campana-valoriza";
 
 // Conocimiento AVT: ver ./AVT.md (contrato relevado del código de avt-ai y del lab de VMC-Laptop).
-// Estructura (comentario de Julio, 17/11): la de landing-subascars. Se rescatan el hero con su franja de vidrio
-// (más bajo) y el bloque «Vende tu vehículo» del Index; el medio sigue a Subascars, sin efectos extra.
+// Estructura: la de landing-subascars (Julio y Fernando, 17/11). Comercial + informativa: hero y franja de vidrio,
+// cómo funciona, qué esperar del servicio, lo que debes saber, banner de venta, FAQ y Centro de Ayuda.
 const STEPS: { icon: Sec; label: string }[] = [
   { icon: "auto", label: "Ingresas tu auto" },
   { icon: "docs", label: "Afinas detalles" },
@@ -37,6 +37,19 @@ const PERKS: { icon: Sec; title: string; text: string }[] = [
   { icon: "verificado", title: "Gratis", text: "Sin compromiso" },
   { icon: "fecha", title: "1 minuto", text: "Para tu valor base" },
   { icon: "docs", title: "12 detalles", text: "Opcionales" },
+];
+
+// Qué esperar del servicio: lo que trae el resultado de AVT (público en el contrato, ver AVT.md).
+const EXPECT: { icon: Sec; title: string; text: string }[] = [
+  { icon: "valorizaciones", title: "Valor de mercado de hoy", text: "Cuánto vale tu auto hoy, con la fecha de la valorización." },
+  { icon: "crecimiento", title: "Proyección a 12 meses", text: "Cómo cambiará su valor en 1, 3, 6 y 12 meses." },
+  { icon: "auto", title: "Vehículos similares", text: "Autos parecidos al tuyo en el mercado, para comparar." },
+  { icon: "fecha", title: "Guardado en Mi Garaje", text: "Tu valorización queda guardada para revisarla o publicar." },
+];
+
+const USES = [
+  { img: "vender.jpg", title: "¿Vas a vender?", text: "Sabrás cuánto pedir antes de publicar." },
+  { img: "comprar.jpg", title: "¿Te interesa un auto?", text: "Revisa si su precio es justo antes de proponer." },
 ];
 
 // «Lo que debes saber» (equivale a la tarjeta de Subascars). Fórmula de AVT en lenguaje llano, sin cifras internas.
@@ -89,14 +102,6 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
       {/* ── Hero ── */}
       <section className="vz-hero" ref={hero} aria-label="Valoriza tu auto">
         <div className="vz-hero__photo"><img src="/producto/index/banners/vmc/valoriza-auto.jpg" alt="" fetchPriority="high" /></div>
-        <div className="vz-hero__card">
-          <p>Tu valorización incluye</p>
-          <ul>
-            <li><Vidrio s="valorizaciones" size={24} /><span>Valor de mercado<small>Con fecha de hoy</small></span></li>
-            <li><Vidrio s="crecimiento" size={24} /><span>Proyección<small>A 12 meses</small></span></li>
-            <li><Vidrio s="auto" size={24} /><span>Vehículos similares<small>En el mercado</small></span></li>
-          </ul>
-        </div>
         <div className="vz-hero__copy">
           <h1>¿Cuánto vale tu auto <em>hoy</em>?</h1>
           <p>Gratis, en un minuto y sin compromiso. Sabrás cuánto pedir antes de publicar.</p>
@@ -135,6 +140,13 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
           <div><dt>12 meses</dt><dd>De proyección de valor</dd></div>
         </dl>
 
+        {/* ── Qué esperar del servicio ── */}
+        <p className="vz-pill">Qué vas a recibir</p>
+        <h2 className="vz-title">Esto es lo que te entrega <span>tu valorización</span></h2>
+        <ul className="vz-expect">
+          {EXPECT.map((e) => <li key={e.title}><Vidrio s={e.icon} size={40} /><h3>{e.title}</h3><p>{e.text}</p></li>)}
+        </ul>
+
         {/* ── Lo que debes saber (como «¿Sabes realmente cómo funciona…?») ── */}
         <p className="vz-pill">Valor con sustento</p>
         <h2 className="vz-title">El valor real de tu auto <span>está a un minuto</span></h2>
@@ -154,26 +166,27 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
         <Button variant="primary" onClick={valuar}>Valorizar mi auto</Button>
       </section>
 
-      {/* ── Vende tu vehículo (estructura del Index) ── */}
-      <section className="vz-why" aria-label="Vender o comprar">
-        <div className="vz-bento">
-          <article className="vz-tile vz-tile--photo">
-            <img src={`${IMG}/vender.jpg`} alt="" loading="lazy" />
-            <div><h3>¿Vas a vender?</h3><p>Sabrás cuánto pedir antes de publicar.</p>
-              <ProfileButton href={VALUAR}>Valoriza tu auto</ProfileButton></div>
-          </article>
-          <article className="vz-tile vz-tile--photo">
-            <img src={`${IMG}/comprar.jpg`} alt="" loading="lazy" />
-            <div><h3>¿Te interesa un auto?</h3><p>Revisa si su precio es justo antes de proponer.</p>
-              <ProfileButton href={VALUAR}>Valorízalo antes</ProfileButton></div>
-          </article>
-          <article className="vz-tile vz-tile--sell">
-            <img className="vz-sell__person" src="/producto/index/demo/sell/seller-phone-man.png" alt="" loading="lazy" />
-            <h3>¿Listo para vender? Empieza por su valor</h3>
-            <p>Miles de compradores ya entran a VMC. Publicar empieza valorizando: así tu precio tiene sustento.</p>
-            <a className="hib-glass" href={VALUAR}>Valorizar y publicar</a>
-          </article>
+      {/* ── Banner comercial (lugar del banner de WhatsApp de Subascars) + franja de vidrio con los dos usos,
+             mismo patrón que hero + franja. Un solo CTA principal; las opciones son enlaces secundarios. ── */}
+      <section className="vz-use" aria-label="Para qué te sirve valorizar">
+        <div className="vz-sell">
+          <img className="vz-sell__person" src="/producto/index/demo/sell/seller-phone-man.png" alt="" loading="lazy" />
+          <p className="vz-sell__kicker">Miles de compradores ya entran a VMC</p>
+          <h2>¿Listo para vender? <span>Empieza por su valor</span></h2>
+          <p>Publicar empieza valorizando: así tu precio tiene sustento.</p>
+          <Button variant="primary" onClick={valuar}>Valorizar y publicar</Button>
         </div>
+        <ul className="vz-use__opts">
+          {USES.map((u) => (
+            <li key={u.title}>
+              <a href={VALUAR}>
+                <img src={`${IMG}/${u.img}`} alt="" loading="lazy" />
+                <span><strong>{u.title}</strong>{u.text}</span>
+                <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden><path d="M7.5 5l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </a>
+            </li>
+          ))}
+        </ul>
       </section>
 
       {/* ── Preguntas frecuentes ── */}
@@ -233,16 +246,6 @@ const VZ_CSS = `
 .vz-hero p { margin: 0; max-width: 40ch; font-size: 14px; line-height: 21px; font-weight: 500; color: #E8DDFF; }
 .vz-hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 .vz-hero__actions .hib-glass { height: 40px; }
-.vz-hero__card { position: absolute; z-index: 1; right: 17%; top: 20px; width: 204px; padding: 12px 12px 8px; border-radius: 16px;
-  background: linear-gradient(160deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06)); border: 1px solid rgba(255,255,255,0.28);
-  -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%);
-  box-shadow: 0 24px 40px -18px rgba(5,0,30,0.7), inset 0 1px 0 rgba(255,255,255,0.25); }
-.vz-hero__card > p { margin: 0 0 4px; font-size: 11px; line-height: 16px; font-weight: 700; color: var(--peach); max-width: none; }
-.vz-hero__card ul { display: grid; margin: 0; padding: 0; list-style: none; }
-.vz-hero__card li { display: flex; align-items: center; gap: 10px; padding: 6px 0; }
-.vz-hero__card li + li { border-top: 1px solid rgba(255,255,255,0.14); }
-.vz-hero__card span { display: grid; font-size: 12px; line-height: 16px; font-weight: 700; color: #fff; }
-.vz-hero__card small { font-size: 11px; line-height: 14px; font-weight: 500; color: #CFBAFF; }
 
 /* Franja de vidrio montada sobre el borde del hero (como «Formato de publicación» en Subascars). */
 .vz-proof { position: relative; z-index: 2; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px; margin: -52px 28px 0; padding: 12px 8px 12px 20px;
@@ -296,22 +299,34 @@ const VZ_CSS = `
 .vz-know__phone { display: grid; place-items: center; border-radius: 18px; border: 1px solid #CDBDF5; background: linear-gradient(180deg, var(--lav), #fff); overflow: hidden; }
 .vz-know__phone img { width: auto; height: 300px; margin: 16px 0 -60px; filter: drop-shadow(0 18px 24px rgba(34,0,92,0.3)); }
 
-/* Vende tu vehículo (estructura del Index). */
-.vz-bento { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.vz-tile { position: relative; overflow: hidden; border-radius: 20px; border: 1px solid var(--line); background: #fff; box-shadow: 0 12px 28px -22px rgba(59,23,130,0.35); }
-.vz-tile h3 { margin: 0; font-size: 18px; line-height: 22px; font-weight: 800; letter-spacing: -0.02em; color: var(--v700); }
-.vz-tile p { margin: 6px 0 0; font-size: 13px; line-height: 19px; color: var(--muted); }
-.vz-tile--photo { display: grid; grid-template-rows: 140px auto; }
-.vz-tile--photo > img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 600ms var(--ease); }
-.vz-tile--photo:hover > img { transform: scale(1.04); }
-.vz-tile--photo > div { padding: 14px 16px 16px; }
-.vz-tile--photo .pprofilebtn { margin-top: 8px; padding: 0; }
-.vz-tile--sell { grid-column: 1 / -1; display: grid; align-content: center; justify-items: start; min-height: 196px; padding: 28px 32px; color: #fff; border: 0; isolation: isolate;
+/* Qué esperar: cuatro tarjetas con ícono. */
+.vz-expect { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; width: 100%; margin: 8px 0 0; padding: 0; list-style: none; text-align: left; }
+.vz-expect li { display: grid; align-content: start; gap: 8px; padding: 18px 16px; border-radius: 16px; background: var(--lav); border: 1px solid var(--line); }
+.vz-expect h3 { margin: 4px 0 0; font-size: 15px; line-height: 20px; font-weight: 800; color: var(--v700); }
+.vz-expect p { margin: 0; font-size: 13px; line-height: 19px; color: var(--muted); }
+
+/* Banner de venta + franja de vidrio con los dos usos (vender / comprar). */
+.vz-use { display: grid; }
+.vz-sell { position: relative; overflow: hidden; isolation: isolate; display: grid; align-content: center; justify-items: start; gap: 10px; min-height: 240px; padding: 32px 36px 72px; border-radius: 20px; color: #fff;
   background: radial-gradient(90% 120% at -10% 120%, rgba(239,133,46,0.85) 0%, rgba(239,133,46,0.3) 30%, transparent 58%), linear-gradient(120deg, #32136F 0%, #4E22A9 60%, #7B4BE3 100%); }
-.vz-tile--sell h3 { max-width: 20ch; color: #fff; font-size: 26px; line-height: 30px; letter-spacing: -0.03em; }
-.vz-tile--sell p { max-width: 40ch; color: rgba(255,255,255,0.86); }
-.vz-tile--sell .hib-glass { height: 40px; margin-top: 18px; padding-inline: 28px; }
-.vz-sell__person { position: absolute; z-index: -1; right: 24px; bottom: 0; height: 112%; width: auto; pointer-events: none; }
+.vz-sell__kicker { margin: 0; font-size: 12px; line-height: 16px; font-weight: 700; color: var(--peach); }
+.vz-sell h2 { margin: 0; max-width: 18ch; font-size: 30px; line-height: 1.08; font-weight: 800; letter-spacing: -0.03em; }
+.vz-sell h2 span { display: block; color: var(--peach); }
+.vz-sell > p:not(.vz-sell__kicker) { margin: 0 0 6px; max-width: 40ch; font-size: 14px; line-height: 21px; color: rgba(255,255,255,0.86); }
+.vz-sell__person { position: absolute; z-index: -1; right: 40px; bottom: 0; height: 100%; width: auto; pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent 100%); mask-image: linear-gradient(180deg, #000 70%, transparent 100%); }
+.vz-use__opts { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: -48px 28px 0; padding: 8px; list-style: none;
+  border-radius: 16px; border: 1px solid rgba(255,255,255,0.9); background: rgba(255,255,255,0.86);
+  -webkit-backdrop-filter: blur(16px) saturate(150%); backdrop-filter: blur(16px) saturate(150%); box-shadow: 0 16px 32px -18px rgba(59,23,130,0.4); }
+.vz-use__opts li + li { border-left: 1px solid #E4DCF8; }
+.vz-use__opts a { display: grid; grid-template-columns: 72px minmax(0, 1fr) 20px; align-items: center; gap: 14px; padding: 8px 12px 8px 8px; border-radius: 12px;
+  color: var(--muted); font-size: 13px; line-height: 18px; text-decoration: none; transition: background-color 200ms var(--ease); }
+.vz-use__opts a:hover { background: var(--lav); }
+.vz-use__opts a:focus-visible { outline: 2px solid var(--v500); outline-offset: 2px; }
+.vz-use__opts img { width: 72px; height: 56px; border-radius: 10px; object-fit: cover; display: block; }
+.vz-use__opts strong { display: block; font-size: 15px; line-height: 20px; font-weight: 800; color: var(--v700); }
+.vz-use__opts svg { color: var(--orange); transition: transform 200ms var(--ease); }
+.vz-use__opts a:hover svg { transform: translateX(3px); }
 
 /* Preguntas frecuentes: título centrado y tarjetas numeradas (como Subascars), <details> nativo. */
 .vz-faq { display: grid; gap: 20px; padding: 32px 24px; }
@@ -359,7 +374,6 @@ const VZ_CSS = `
   .vz-hero__actions { width: 100%; }
   .vz-hero__actions > * { flex: 1 1 100%; }
   .vz-hero__actions .pvbtn { white-space: nowrap; padding-inline: 16px; }
-  .vz-hero__card { display: none; }
   .vz-proof { grid-template-columns: minmax(0, 1fr); margin: -52px 12px 0; padding: 14px 4px 6px; }
   .vz-proof__brand { padding: 0 12px 10px; border-right: 0; border-bottom: 1px solid #E4DCF8; }
   .vz-proof ul { grid-template-columns: minmax(0, 1fr); }
@@ -375,8 +389,14 @@ const VZ_CSS = `
   .vz-know { grid-template-columns: minmax(0, 1fr); }
   .vz-know__phone img { height: 260px; }
   .vz-center .pvbtn { width: 100%; }
-  .vz-bento { grid-template-columns: minmax(0, 1fr); gap: 12px; }
-  .vz-tile--sell { padding: 24px 20px 220px; }
+  .vz-expect { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .vz-expect li { padding: 14px 12px; }
+  .vz-sell { padding: 24px 20px 260px; }
+  .vz-sell h2 { font-size: 24px; }
+  .vz-sell .pvbtn { width: 100%; }
+  .vz-sell__person { right: 50%; transform: translateX(50%); bottom: 48px; height: 220px; }
+  .vz-use__opts { grid-template-columns: minmax(0, 1fr); margin: -48px 12px 0; padding: 4px; }
+  .vz-use__opts li + li { border-left: 0; border-top: 1px solid #E4DCF8; }
   .vz-sell__person { right: -10px; height: 230px; }
   .vz-faq { padding: 24px 12px; }
   .vz-faq summary { padding: 0 12px 0 16px; }
@@ -391,7 +411,7 @@ const VZ_CSS = `
   .vz-dock .pvbtn { width: 100%; white-space: nowrap; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .vz-tile--photo > img, .vz-dock { transition: none; }
+  .vz-dock { transition: none; }
 }
 `;
 
