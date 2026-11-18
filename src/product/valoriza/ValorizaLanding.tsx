@@ -20,6 +20,8 @@ import { useRouter } from "next/navigation";
 import { Button, Header, Sidebar, SidebarMenuButton, SidebarMobile } from "@/src/product/index/adapter";
 import { LIGHT, Projection, Season } from "@/src/product/mi-garaje/models/Resultado";
 import { SELL_SEASONAL } from "@/src/product/mi-garaje/models/Revela";
+import { computeSellingSignal } from "@/src/product/mi-garaje/models/avt/sellingSignal";
+import { runAVT } from "@/src/product/mi-garaje/models/avt/engine";
 import "@/src/product/mi-garaje/models/revela.css";
 import type { RData } from "@/src/product/mi-garaje/models/Resultado";
 import shell from "@/src/product/index/view/HomeIndexRebase.module.css";
@@ -53,17 +55,22 @@ const EXPECT: { icon: Sec; title: string; text: string }[] = [
   { icon: "fecha", title: "Guardado en Mi Garaje", text: "Tu valorización queda guardada para revisarla o publicar." },
 ];
 
-// Gráfico real del resultado (Projection de Mi Garaje, mismo trazo que AVT) con un auto de EJEMPLO. Cifras ilustrativas.
-const MESES = ["Noviembre", "Diciembre", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre"];
-const DEMO_V = 15850;
-// ponytail: solo market y proj; Projection no lee el resto de RData.
-const DEMO = { market: DEMO_V, proj: MESES.map((full, i) => ({ full, f: 0, v: Math.round((DEMO_V * (1 - 0.055 * i / 12) + 60 * Math.sin(i * Math.PI / 6)) / 10) * 10 })) } as Pick<RData, "market" | "proj"> as RData;
+// Ejemplo calculado con el motor real de AVT (copia en mi-garaje/models/avt): Hyundai Accent GL 1.4 AT 2019, 45,000 km,
+// precio de lista del lab (US$ 17,900), categoría B. Fecha fija (18/11/2026) para que servidor y cliente pinten lo mismo.
+const AT = new Date(2026, 10, 18);
+const DEMO_V: number = runAVT(17900, "B", 2019, 45000, AT).baseValue;
+const SIG = computeSellingSignal(DEMO_V, "B", 2019, 45000, AT);
+const DEMO = { market: DEMO_V, proj: (SIG.projection.monthlyProjections as { value: number; monthLabel: string; seasonalFactor?: number }[])
+  .map((p) => ({ v: p.value, full: p.monthLabel, f: p.seasonalFactor ?? 0 })) } as Pick<RData, "market" | "proj"> as RData;
 const HITOS = [1, 3, 6, 12].map((m) => ({ m, v: DEMO.proj[m].v }));
 const usd = (n: number) => `US$ ${n.toLocaleString("en-US")}`;
-// Momento óptimo (tabla SELL_SEASONAL de AVT) y similares del mismo ejemplo; mes fijo en noviembre para no desfasar SSR/cliente.
+// Momento óptimo: tabla SELL_SEASONAL de AVT; «hoy» = noviembre (mes de AT).
 const MES3 = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 const SEASON_D = { ...DEMO, now: 11, season: MES3.map((name, i) => ({ m: i + 1, name, f: SELL_SEASONAL[i + 1] })) } as RData;
-const COMPS = [14900, 15400, 15600, 16200, 16900];
+const PEAK = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"].indexOf(SIG.timing.nextPeakMonth ?? "") + 1;
+const UP = MES3.filter((_, i) => SELL_SEASONAL[i + 1] > 10), DOWN = MES3.filter((_, i) => SELL_SEASONAL[i + 1] < 0);
+// Publicaciones similares de ejemplo, alrededor del valor AVT (en producción vienen de getComparables).
+const COMPS = [-0.06, -0.03, -0.015, 0.02, 0.065].map((k) => Math.round((DEMO_V * (1 + k)) / 100) * 100);
 const cX = (v: number) => `${((v - COMPS[0] * 0.9) / (COMPS[4] * 1.1 - COMPS[0] * 0.9)) * 100}%`;
 
 const USES = [
@@ -165,7 +172,7 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
         <div className="vz-demo">
           <article className="vz-demo__value">
             <span className="vz-demo__tag">Ejemplo</span>
-            <p>Hyundai Accent 2019 · 45,000 km</p>
+            <p>Hyundai Accent GL 1.4 AT 2019 · 45,000 km</p>
             <small>Valor de mercado hoy</small>
             <strong>{usd(DEMO_V)}</strong>
             <p>Estimación basada en depreciación real, estacionalidad y kilometraje.</p>
@@ -178,14 +185,25 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
         </div>
         <div className="rv rva rva--still vz-more">
           <article className="rv-card">
-            <header><h3>Señal de venta</h3><p>Demanda baja en noviembre. Mejor esperar.</p></header>
-            <span className="rva-level" role="img" aria-label="Señal de venta: No es momento, 1 de 5">
-              <i aria-hidden>{[1, 2, 3, 4, 5].map((n) => <span key={n} className={n <= 1 ? "is-on" : ""} />)}</i><b>No es momento</b></span>
-            <p className="vz-more__hint">Próximo pico: <b>Enero (+13.1%)</b></p>
+            <header><h3>Señal de venta</h3><p>{SIG.signal.sublabel}</p></header>
+            <span className="rva-level" role="img" aria-label={`Señal de venta: ${SIG.signal.label}, ${SIG.signal.level} de 5`}>
+              <i aria-hidden>{[1, 2, 3, 4, 5].map((n) => <span key={n} className={n <= SIG.signal.level ? "is-on" : ""} />)}</i><b>{SIG.signal.label}</b></span>
+            <ol className="vz-why">
+              <li><b>Hoy:</b> noviembre tiene {SELL_SEASONAL[11]}% de demanda.</li>
+              <li><b>Próximo pico:</b> {SIG.timing.nextPeakMonth} (+{SELL_SEASONAL[PEAK]}%), en {SIG.timing.daysUntilPeak} días.</li>
+              <li><b>Mientras esperas:</b> el auto pierde ~{usd(SIG.timing.monthlyValueLoss)} al mes.</li>
+            </ol>
           </article>
           <article className="rv-card vz-more__wide">
             <header><h3>Momento óptimo de venta</h3><p>Los meses en que más se compra y en los que menos</p></header>
-            <Season d={SEASON_D} t={LIGHT} ds />
+            <div className="vz-season">
+              <span className="vz-pin" style={{ left: `${((PEAK - 0.5) / 12) * 100}%` }}>Próximo pico</span>
+              <Season d={SEASON_D} t={LIGHT} ds />
+            </div>
+            <ul className="vz-key">
+              <li className="is-up"><b>Más demanda</b> {UP.join(", ")} (+{SELL_SEASONAL[PEAK]}% en el pico)</li>
+              <li className="is-down"><b>Menos demanda</b> {DOWN.join(", ")} ({SELL_SEASONAL[11]}%)</li>
+            </ul>
           </article>
           <article className="rv-card">
             <header><h3>Vehículos similares</h3><p>Tu valor junto a {COMPS.length} publicaciones parecidas</p></header>
@@ -375,6 +393,19 @@ const VZ_CSS = `
 .vz-more .rva-level { justify-self: start; }
 .vz-more .rva-ends span, .vz-more .rva-ends b { white-space: nowrap; }
 .vz-more__wide { grid-column: 1 / -1; order: -1; }
+.vz-why { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; counter-reset: why; }
+.vz-why li { position: relative; padding-left: 28px; font-size: 13px; line-height: 19px; color: var(--muted); counter-increment: why; }
+.vz-why li::before { content: counter(why); position: absolute; left: 0; top: 0; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center;
+  font-size: 11px; font-weight: 800; color: #fff; background: var(--v700); }
+.vz-why b { color: var(--v700); }
+.vz-season { position: relative; padding-top: 28px; }
+.vz-pin { position: absolute; top: 0; transform: translateX(-50%); padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; color: #fff; background: var(--v700); }
+.vz-pin::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -4px; border: 4px solid transparent; border-top-color: var(--v700); }
+.vz-key { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0; padding: 0; list-style: none; font-size: 13px; color: var(--muted); }
+.vz-key li { display: flex; align-items: center; gap: 6px; }
+.vz-key li::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: #8460E5; }
+.vz-key li.is-down::before { background: var(--orange); }
+.vz-key b { color: var(--v700); }
 .vz-more__hint { margin: 0; font-size: 13px; color: var(--muted); } .vz-more__hint b { color: var(--v700); }
 .vz-demo__note { margin: 0; font-size: 12px; color: var(--muted); }
 .vz-expect { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; width: 100%; margin: 8px 0 0; padding: 0; list-style: none; text-align: left; }
