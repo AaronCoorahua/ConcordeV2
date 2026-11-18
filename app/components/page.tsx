@@ -55,6 +55,11 @@ import HeroCarousel from "@/src/components/HeroCarousel";
 import LogoMarquee from "@/src/components/LogoMarquee";
 import { COMPANIES, STORES } from "@/src/blocks/index/shared/data";
 import { INDEX_SLIDES } from "@/src/blocks/index/desktop/IndexHero";
+import { PublicationBadge } from "@/src/components/PublicationBadge";
+import { QrCode } from "@/src/components/QrCode";
+import { QrCard } from "@/src/components/QrCard";
+import { RiskMeter } from "@/src/components/RiskMeter";
+import CountdownDemo from "@/app/handoff/countdown/CountdownDemo";
 
 // Componentes del Index (vmc-index-lab). La destacada de Autoplan sirve de ejemplo a FeaturedCard y LotGallery.
 const IDX_F = STORES[0].featured;
@@ -579,6 +584,42 @@ const REGISTRY: ComponentEntry[] = [
         </div>
       </div>
     ),
+  },
+  // ── Mi Garaje (mi-garaje-lab) ──
+  {
+    id: "publicationbadge",
+    name: "PublicationBadge",
+    handoffPath: "/handoff/publicationbadge",
+    preview: (
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, justifyContent: "center", maxWidth: 240 }}>
+        <PublicationBadge status="revision" /><PublicationBadge status="publicada" /><PublicationBadge status="negociacion" />
+        <PublicationBadge status="subaschat" /><PublicationBadge status="vendido" /><PublicationBadge status="desierta" />
+      </div>
+    ),
+  },
+  {
+    id: "riskmeter",
+    name: "RiskMeter",
+    handoffPath: "/handoff/riskmeter",
+    preview: <div style={{ display: "grid", gap: 12 }}><RiskMeter level={0} tone="light" /><RiskMeter level={3} tone="light" /></div>,
+  },
+  {
+    id: "countdown",
+    name: "Countdown",
+    handoffPath: "/handoff/countdown",
+    preview: <CountdownDemo />,
+  },
+  {
+    id: "qrcode",
+    name: "QrCode",
+    handoffPath: "/handoff/qrcode",
+    preview: <QrCode value="https://www.vmcsubastas.com/oferta/51015" size={110} />,
+  },
+  {
+    id: "qrcard",
+    name: "QrCard",
+    handoffPath: "/handoff/qrcard",
+    preview: <QrCard value="https://www.vmcsubastas.com/oferta/51015" size={120} />,
   },
   // ── Index (vmc-index-lab) ──
   {

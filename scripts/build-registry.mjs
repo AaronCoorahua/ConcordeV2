@@ -54,7 +54,8 @@ function gatherFiles(dir, prefix, sub = "") {
       out.push(...gatherFiles(full, prefix, `${sub}${name}/`));
       continue;
     }
-    if (!/\.tsx?$/.test(name)) continue;
+    // .css: bloques que importan hojas globales (mi-garaje); sin ellas el bloque instalado quedaría sin estilos.
+    if (!/\.(tsx?|css)$/.test(name)) continue;
     if (/Handoff\.tsx$/.test(name)) continue;
     if (name === "index.ts") continue;
     const target = `${prefix}${sub}${name}`;
@@ -186,10 +187,16 @@ for (const BlockName of listDirs(blockRoot)) {
   // OTROS bloques referenciados (ej. DetalleMobile → bloque Header). Incluimos
   // TODOS los archivos del bloque referido + el cierre de componentes que usen,
   // así el bloque distribuido trae sus dependencias cross-bloque completas.
+  // Transitivo: valoriza → landing-shell → header y sidebar.
   const refBlocks = new Set();
-  for (const f of blockFiles) {
+  const queue = [...blockFiles];
+  while (queue.length) {
+    const f = queue.shift();
     for (const rb of blockRefsOf(f.raw)) {
-      if (rb !== BlockName && blockGathered[rb]) refBlocks.add(rb);
+      if (rb !== BlockName && blockGathered[rb] && !refBlocks.has(rb)) {
+        refBlocks.add(rb);
+        queue.push(...blockGathered[rb]);
+      }
     }
   }
   for (const rb of refBlocks) {

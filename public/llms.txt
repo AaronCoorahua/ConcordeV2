@@ -41,14 +41,15 @@ Docs con preview + props (para humanos):
   y los JSON de bloque ya los incluyen).
 - El catálogo vivo siempre está en `/r/registry.json` — féchalo para la lista actual.
 
-## Componentes (53)
+## Componentes (58)
 
 accordion, activitycard, amountoptiongroup, auctionstatus, avatarzone, badgestatus,
 bidmessage, bidposition, bidproposal, businessicon, button, cardtitle, cardviewer,
-categorycard, categoryicon, checkicon, conditionpill, detailcard, docbutton, eyeicon,
+categorycard, categoryicon, checkicon, conditionpill, countdown, detailcard, docbutton, eyeicon,
 featuredcard, glassbutton, herocarousel, infoicon, input, lightbar, likebutton,
 logomarquee, lotgallery, offercard, offericon, offershelf, offertype, offertypecards,
-pricebadge, priceicon, profilebutton, progressbar, salastatus, sendbidicon,
+pricebadge, priceicon, profilebutton, progressbar, publicationbadge, qrcard, qrcode,
+riskmeter, salastatus, sendbidicon,
 servicecentericon, signal, staricon, statpill, table, tabselector, termsselector,
 timericon, todayicon, userprofilecard, vidrio, vmcahora, walletbalancecard
 
@@ -63,6 +64,12 @@ Componentes del nuevo inicio (bloque index):
 - vidrio          íconos de vidrio esmerilado (28)
 - logomarquee     franja de logos en movimiento (empresas que publican en VMC)
 
+Componentes de Mi Garaje:
+- publicationbadge  estados de una publicación (7) y chincheta de fijada
+- riskmeter         riesgo del perfil en escala de 5 niveles
+- countdown         cuenta regresiva en vivo
+- qrcode, qrcard    QR en SVG y tarjeta imprimible del vehículo que recibe ofertas
+
 ## Bloques (página completa = bloque + sus componentes)
 
 - index     → herocarousel, vmcahora, offertypecards, lotgallery, featuredcard, lightbar,
@@ -72,6 +79,12 @@ Componentes del nuevo inicio (bloque index):
               Versión anterior del inicio.
 - detalle   → auctionstatus, cardviewer, accordion, detailcard, conditionpill, button,
               cardtitle, offercard
+- mi-garaje → Mi Garaje (evolución de zona): cuenta, actividad, negociación, valorizar,
+              publicar, mis valorizaciones. Trae .css globales; usa framer-motion.
+- valoriza  → landing de Valoriza (valorización AVT). button, profilebutton, glassbutton, vidrio
+              + landing-shell (marco del Index: header, sidebar y drawer en celular).
+- vendo-mis-cosas → landing de Vendo Mis Cosas (venta de artículos). button, glassbutton, vidrio
+              + landing-shell. Para una landing nueva de VMC, parte de una de estas dos.
 - zona      → userprofilecard, walletbalancecard, activitycard, offershelf, avatarzone,
               staricon, infoicon, profilebutton, cardtitle, offercard, badgestatus
 - sala      → bidproposal, bidmessage, progressbar, button, avatarzone, pricebadge,

@@ -43,14 +43,17 @@ Sin terminal: fetchea `<nombre>.json` y escribe cada `files[].content` en un arc
 
 Componentes: accordion, activitycard, amountoptiongroup, auctionstatus, avatarzone,
 badgestatus, bidmessage, bidposition, bidproposal, businessicon, button, cardtitle,
-cardviewer, categorycard, categoryicon, checkicon, conditionpill, detailcard, docbutton,
+cardviewer, categorycard, categoryicon, checkicon, conditionpill, countdown, detailcard, docbutton,
 eyeicon, featuredcard, glassbutton, herocarousel, infoicon, input, lightbar, likebutton,
 logomarquee, lotgallery, offercard, offericon, offershelf, offertype, offertypecards,
-pricebadge, priceicon, profilebutton, progressbar, salastatus, sendbidicon,
+pricebadge, priceicon, profilebutton, progressbar, publicationbadge, qrcard, qrcode,
+riskmeter, salastatus, sendbidicon,
 servicecentericon, signal, staricon, statpill, table, tabselector, termsselector,
 timericon, todayicon, userprofilecard, vidrio, vmcahora, walletbalancecard
 
-Bloques: index (nuevo inicio de VMC), homepage (inicio anterior), detalle, zona, sala,
+Bloques: index (nuevo inicio de VMC), homepage (inicio anterior), mi-garaje (cuenta del usuario,
+evolución de zona), valoriza y vendo-mis-cosas (landings; base para
+landings nuevas, con landing-shell), detalle, zona, sala,
 login, register, tu-perfil, agregar-subascoins, banners, header, sidebar. Cada uno
 instala sus componentes.
 

@@ -105,6 +105,12 @@
       "url": "https://concorde-v2-theta.vercel.app/r/conditionpill.json"
     },
     {
+      "name": "countdown",
+      "type": "registry:component",
+      "title": "Countdown",
+      "url": "https://concorde-v2-theta.vercel.app/r/countdown.json"
+    },
+    {
       "name": "detailcard",
       "type": "registry:component",
       "title": "DetailCard",
@@ -231,6 +237,30 @@
       "url": "https://concorde-v2-theta.vercel.app/r/progressbar.json"
     },
     {
+      "name": "publicationbadge",
+      "type": "registry:component",
+      "title": "PublicationBadge",
+      "url": "https://concorde-v2-theta.vercel.app/r/publicationbadge.json"
+    },
+    {
+      "name": "qrcard",
+      "type": "registry:component",
+      "title": "QrCard",
+      "url": "https://concorde-v2-theta.vercel.app/r/qrcard.json"
+    },
+    {
+      "name": "qrcode",
+      "type": "registry:component",
+      "title": "QrCode",
+      "url": "https://concorde-v2-theta.vercel.app/r/qrcode.json"
+    },
+    {
+      "name": "riskmeter",
+      "type": "registry:component",
+      "title": "RiskMeter",
+      "url": "https://concorde-v2-theta.vercel.app/r/riskmeter.json"
+    },
+    {
       "name": "salastatus",
       "type": "registry:component",
       "title": "SalaStatus",
@@ -347,6 +377,7 @@
       "title": "detalle",
       "url": "https://concorde-v2-theta.vercel.app/r/detalle.json",
       "components": [
+        "infoicon",
         "auctionstatus",
         "cardviewer",
         "accordion",
@@ -398,6 +429,13 @@
       ]
     },
     {
+      "name": "landing-shell",
+      "type": "registry:block",
+      "title": "landing-shell",
+      "url": "https://concorde-v2-theta.vercel.app/r/landing-shell.json",
+      "components": []
+    },
+    {
       "name": "login",
       "type": "registry:block",
       "title": "login",
@@ -406,6 +444,49 @@
         "button",
         "input",
         "eyeicon"
+      ]
+    },
+    {
+      "name": "mi-garaje",
+      "type": "registry:block",
+      "title": "mi-garaje",
+      "url": "https://concorde-v2-theta.vercel.app/r/mi-garaje.json",
+      "components": [
+        "button",
+        "statpill",
+        "profilebutton",
+        "input",
+        "termsselector",
+        "auctionstatus",
+        "cardviewer",
+        "cardtitle",
+        "signal",
+        "table",
+        "accordion",
+        "detailcard",
+        "conditionpill",
+        "progressbar",
+        "vidrio",
+        "infoicon",
+        "checkicon",
+        "badgestatus",
+        "likebutton",
+        "priceicon",
+        "offershelf",
+        "tabselector",
+        "userprofilecard",
+        "walletbalancecard",
+        "avatarzone",
+        "staricon",
+        "publicationbadge",
+        "todayicon",
+        "offericon",
+        "categoryicon",
+        "businessicon",
+        "bidmessage",
+        "timericon",
+        "countdown",
+        "riskmeter"
       ]
     },
     {
@@ -493,6 +574,29 @@
         "button",
         "staricon",
         "infoicon"
+      ]
+    },
+    {
+      "name": "valoriza",
+      "type": "registry:block",
+      "title": "valoriza",
+      "url": "https://concorde-v2-theta.vercel.app/r/valoriza.json",
+      "components": [
+        "button",
+        "profilebutton",
+        "glassbutton",
+        "vidrio"
+      ]
+    },
+    {
+      "name": "vendo-mis-cosas",
+      "type": "registry:block",
+      "title": "vendo-mis-cosas",
+      "url": "https://concorde-v2-theta.vercel.app/r/vendo-mis-cosas.json",
+      "components": [
+        "button",
+        "glassbutton",
+        "vidrio"
       ]
     },
     {

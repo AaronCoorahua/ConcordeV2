@@ -53,6 +53,14 @@ export const VIDRIO_CSS = String.raw`
 @keyframes vd-ring { 20% { transform:rotate(12deg); } 45% { transform:rotate(-9deg); } 70% { transform:rotate(4deg); } }
 .vd-host:is(:hover,:focus-visible,.is-hover,.is-focus):not(.is-dis,:disabled) .vd-bd { animation:vd-clap .5s .04s var(--out); }
 @keyframes vd-clap { 20% { transform:translateX(-2.5px); } 45% { transform:translateX(2px); } 70% { transform:translateX(-1px); } }
+/* Mi Garaje: aviso suena como alertas; dar de baja en naranja de marca, la tapa se levanta; republicar, la flecha da la vuelta. */
+.vd--aviso .vd-gx { transform-origin:24px 10px; }
+.vd-host:is(:hover,:focus-visible,.is-hover,.is-focus):not(.is-dis,:disabled) .vd--aviso .vd-gx { animation:vd-ring .5s var(--out); }
+.vd--baja { --solid:#ED8936; --glass:#FFC995; }
+.vd--republicar .vd-gx { transform-origin:21px 27px; }
+.vd-host:is(:hover,:focus-visible,.is-hover,.is-focus):not(.is-dis,:disabled) .vd--baja .vd-gx { animation:vd-clap .45s var(--out); }
+.vd-host:is(:hover,:focus-visible,.is-hover,.is-focus):not(.is-dis,:disabled) .vd--republicar .vd-gx { animation:vd-turn .5s var(--out); }
+@keyframes vd-turn { to { transform:rotate(360deg); } }
 @media (prefers-reduced-motion:reduce) { .vd * { animation:none !important; transition:none !important; } }
 
 /* ── Estados del ícono (15/10). La clase is-* fuerza el estado en la matriz; en la interfaz real lo dan :hover, :focus-visible,
@@ -80,7 +88,7 @@ export const VIDRIO_CSS = String.raw`
  *  se cruzan, con el detalle en blanco. Referencia: sets de íconos glassmorphism de Dribbble/Figma (p. ej. Glazicons).
  *  ponytail: el vidrio es SVG puro (copia desenfocada de la forma de atrás, recortada por la de adelante), no backdrop-filter:
  *  se ve igual en todos los navegadores y se exporta tal cual a Figma. Retícula de 48 px. */
-export type Sec = "negociaciones" | "participaciones" | "compras" | "publicaciones" | "valorizaciones" | "billetera" | "auto" | "alertas" | "publicar" | "km" | "caja" | "combustible" | "fecha" | "ubicacion" | "equipo" | "docs" | "texto" | "precio" | "vehicular" | "equipos" | "maquinaria" | "materiales" | "articulos" | "mobiliario" | "empresa" | "verificado" | "crecimiento" | "vender";
+export type Sec = "negociaciones" | "participaciones" | "compras" | "publicaciones" | "valorizaciones" | "billetera" | "auto" | "alertas" | "publicar" | "km" | "caja" | "combustible" | "fecha" | "ubicacion" | "equipo" | "docs" | "texto" | "precio" | "vehicular" | "equipos" | "maquinaria" | "materiales" | "articulos" | "mobiliario" | "empresa" | "verificado" | "crecimiento" | "vender" | "aviso" | "bolsa" | "republicar" | "baja";
 
 type Parts = { back: ReactNode; front: ReactNode; detail: ReactNode };
 const W = { fill: "none", stroke: "#fff", strokeWidth: 3, strokeLinecap: "round", strokeLinejoin: "round" } as const;
@@ -258,6 +266,31 @@ const PARTS: Record<Sec, Parts> = {
     back: <circle cx="31" cy="17" r="12" />,
     front: <path d="M20 10a4 4 0 0 1 8 0v10h10a4 4 0 0 1 0 8H28v10a4 4 0 0 1-8 0V28H10a4 4 0 0 1 0-8h10z" />,
     detail: null,
+  },
+  // Íconos de Mi Garaje (mi-garaje-lab, app/iconos/Vidrio.tsx).
+  // Aviso (modal de propuesta): campana de vidrio que suena; arcos de sonido, perilla y badajo sólidos.
+  aviso: {
+    back: <><path d="M8.5 17a16 16 0 0 1 5-9.5M39.5 17a16 16 0 0 0-5-9.5" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" /><circle cx="24" cy="8.5" r="3.5" /><circle className="vd-bd" cx="24" cy="38" r="4.5" /></>,
+    front: <path d="M24 10a11 11 0 0 1 11 11v6l4 5a1.5 1.5 0 0 1-1.2 2.5H10.2A1.5 1.5 0 0 1 9 32l4-5v-6a11 11 0 0 1 11-11z" />,
+    detail: <path d="M18 22a6 6 0 0 1 4-5.5" {...W} strokeWidth={2.5} />,
+  },
+  // Bolsa de dinero (fondos insuficientes): nudo sólido arriba, bolsa de vidrio con «$».
+  bolsa: {
+    back: <path d="M15.5 8a2 2 0 0 1 2.4-2.6c2 .6 3.9 1.3 6.1 1.3s4.1-.7 6.1-1.3A2 2 0 0 1 32.5 8L30 22H18z" />,
+    front: <path d="M19.5 15h9c7.5 4 12.5 10.5 12.5 17.5a9.5 9.5 0 0 1-9.5 9.5h-15A9.5 9.5 0 0 1 7 32.5C7 25.5 12 19 19.5 15z" />,
+    detail: <text x="24" y="35.5" {...T} fontSize={15}>$</text>,
+  },
+  // Republicar: círculo sólido detrás del círculo de vidrio con la flecha que da la vuelta.
+  republicar: {
+    back: <circle cx="32" cy="16" r="12" />,
+    front: <circle cx="21" cy="27" r="17" />,
+    detail: <g {...W} strokeWidth={3}><path d="M30 22.5a10 10 0 1 0 1 9" /><path d="M31 15.5v7.5h-7.5" /></g>,
+  },
+  // Dar de baja: una lámina sólida asoma detrás del tacho de vidrio (tapa y cuerpo), con las ranuras en blanco. Va en naranja.
+  baja: {
+    back: <rect x="19" y="4" width="24" height="30" rx="6" />,
+    front: <><rect x="6" y="11" width="32" height="6" rx="3" /><path d="M9.5 19h25l-2 20a4 4 0 0 1-4 3.6H15.5a4 4 0 0 1-4-3.6z" /></>,
+    detail: <g {...W} strokeWidth={2.8}><path d="M18 25v11M26 25v11" /></g>,
   },
 };
 

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "countdown",
+  "type": "registry:component",
+  "title": "Countdown",
+  "description": "Componente Concorde Countdown — un solo archivo, Countdown.tsx.",
+  "dependencies": [
+    "react"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/Countdown.tsx",
+      "type": "registry:file",
+      "target": "components/Countdown.tsx",
+      "content": "\"use client\";\n\n/**\n * Countdown — cuenta regresiva en cifras mono que corre en vivo (Mi Garaje, mi-garaje-lab · plus-parts).\n * Muestra HH:MM:SS hasta `to` (timestamp en ms) con una etiqueta encima. En el servidor dibuja --:--:--\n * para no desajustar la hidratación. Solo depende de React.\n */\nimport { useEffect, useState } from \"react\";\nimport type { JSX } from \"react\";\n\nexport const COUNTDOWN_CSS = String.raw`\n.cp-count { display:inline-grid; gap:1px; font-family: var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif); }\n.cp-count small { font-size:.6875rem; font-weight:700; color:#B25614; }\n.cp-count b { font-family:var(--vmc-font-mono, 'Roboto Mono', ui-monospace, monospace); font-size:1.125rem; font-weight:700; color:#3B1782; font-variant-numeric:tabular-nums; }\n.cp-live .cp-count b { color:#fff; } .cp-live .cp-count small { color:#FDD8A4; }\n`;\n\nfunction useNow(): number {\n  const [now, setNow] = useState(0); // 0 en el servidor: evita desajuste de hidratación\n  useEffect(() => {\n    // El primer tic va en un timeout (no síncrono en el efecto) para no encadenar renders.\n    const tick = () => setNow(Date.now());\n    const first = setTimeout(tick, 0);\n    const t = setInterval(tick, 1000);\n    return () => { clearTimeout(first); clearInterval(t); };\n  }, []);\n  return now;\n}\n\nexport interface CountdownProps {\n  /** Momento final, en ms (Date.now() + …). */\n  to: number;\n  /** Etiqueta encima de la cifra (p. ej. «Cierra en»). */\n  label: string;\n}\n\nexport function Countdown({ to, label }: CountdownProps): JSX.Element {\n  const now = useNow();\n  const styles = <style href=\"concorde-countdown\" precedence=\"default\">{COUNTDOWN_CSS}</style>;\n  if (!now || !Number.isFinite(to)) return <>{styles}<span className=\"cp-count\"><small>{label}</small><b>--:--:--</b></span></>;\n  const left = Math.max(0, to - now);\n  const h = Math.floor(left / 3.6e6), m = Math.floor((left % 3.6e6) / 6e4), sec = Math.floor((left % 6e4) / 1e3);\n  const pad = (n: number) => String(n).padStart(2, \"0\");\n  return <>{styles}<span className=\"cp-count\" aria-label={`${label}: ${h} h ${m} min`}><small>{label}</small><b>{pad(h)}:{pad(m)}:{pad(sec)}</b></span></>;\n}\n\nexport default Countdown;\n"
+    }
+  ]
+}

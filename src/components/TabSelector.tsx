@@ -27,6 +27,9 @@ export interface TabSelectorProps {
   onChange?: (index: number) => void;
   "aria-label"?: string;
   className?: string;
+  /** Modo bandeja (Mi Garaje): las opciones con novedades sin abrir van en bold y el resto en peso normal.
+   *  Sin esta prop todas las pestañas conservan su peso de siempre. */
+  notificationIndices?: number[];
 }
 
 // ─── Self-contained CSS ───────────────────────────────────────────────────────
@@ -84,6 +87,8 @@ const TABSELECTOR_STYLES = `
   box-shadow: rgba(32,0,104,0.2) 0px 8px 16px;
 }
 .ptabs__tab--active:hover { opacity: 1; }
+/* Modo bandeja: la diferencia se lee de inmediato, aun en tamaños pequeños. */
+.ptabs__tab--read { font-weight: 400 !important; }
 @media (prefers-reduced-motion: reduce) {
   .ptabs__tab { transition: none; }
 }
@@ -100,6 +105,7 @@ export default function TabSelector({
   onChange,
   "aria-label": ariaLabel,
   className = "",
+  notificationIndices,
 }: TabSelectorProps): JSX.Element {
   const uid = useId().replace(/:/g, "-");
   const controlled = value !== undefined;
@@ -133,7 +139,8 @@ export default function TabSelector({
               type="button"
               role="tab"
               aria-selected={isActive}
-              className={["ptabs__tab", isActive ? "ptabs__tab--active" : ""].filter(Boolean).join(" ")}
+              className={["ptabs__tab", isActive ? "ptabs__tab--active" : "",
+                notificationIndices ? (notificationIndices.includes(i) ? "ptabs__tab--unread" : "ptabs__tab--read") : ""].filter(Boolean).join(" ")}
               onClick={function pick() { select(i); }}
             >
               {label}

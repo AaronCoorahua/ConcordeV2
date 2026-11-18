@@ -1,0 +1,24 @@
+/* Marco de las landings (el del Index, HomeIndexRebase): lienzo de 1024 centrado sobre el morado del header.
+   Abierto 226 + 798 · cerrado 76 + 948. --sb lo fija el estado del sidebar. */
+.root { min-height: 100vh; background: #2E0F70; }
+.root, .root * { box-sizing: border-box; }
+.desktopShell { --sb: 226px; display: grid; grid-template-columns: var(--sb) minmax(0, 1fr);
+  grid-template-rows: 64px minmax(0, 1fr); width: min(100%, 1024px); min-width: 0; margin: 0 auto;
+  transition: grid-template-columns 0.28s cubic-bezier(0.4, 0, 0.2, 1); }
+.desktopShell[data-collapsed] { --sb: 76px; }
+.desktopShell > header { position: sticky; top: 0; z-index: 4; grid-column: 2; grid-row: 1; }
+/* La cabecera del Sidebar (logo + hamburguesa) mide 226 aunque el sidebar se cierre a 76 y va sobre el header. */
+.sidebarRail { position: sticky; top: 0; z-index: 5; grid-column: 1; grid-row: 1 / -1; align-self: start; height: 100dvh; overflow: visible; }
+.mainColumn { min-width: 0; grid-column: 2; grid-row: 2; background: #ffffff; }
+.mobileShell { display: none; min-width: 0; overflow-x: clip; background: #fff; }
+.brandLogo { display: block; width: 119px; height: 45px; object-fit: contain; }
+.mobileBrand { display: inline-flex; align-items: center; gap: 10px; }
+.mobileLogo { display: block; width: 96px; height: 30px; object-fit: contain; }
+
+@media (max-width: 1023px) {
+  .desktopShell { display: none; }
+  .mobileShell { display: block; }
+  .mobileShell, .mobileShell :global(.sbm-root), .mobileShell :global([data-block="header"]) {
+    width: 100% !important; max-width: 100% !important; }
+  .mobileShell > header { position: sticky; top: 0; z-index: 8; }
+}

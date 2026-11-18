@@ -36,6 +36,10 @@ export interface DetailCardProps {
   participants?: number | string;
   /** Texto del banner teal (default solo en negotiable: "¡Aprende a negociar con Subastin!"). Pasa "" para ocultarlo. */
   bannerText?: string;
+  /** Banner compacto de Max, el asistente AI de VMC, en el lugar del banner teal (Mi Garaje). */
+  assistantBanner?: boolean;
+  /** Banner mini 311 × 60 en el lugar del banner teal (p. ej. «Publica en VMC»): imagen @2x que enlaza a `href`. */
+  miniBanner?: { src: string; alt: string; href: string };
   /** Título del cuerpo */
   title?: string;
   /** Etiqueta del precio (default "Precio Base:") */
@@ -126,10 +130,34 @@ const DETAILCARD_STYLES = `
   line-height: 1.25;
 }
 
+/* ── Banner de Max y banner mini (Mi Garaje · 311×60) ── */
+.pdetail__max-banner {
+  position: relative;
+  height: 60px;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: #F3ECFF;
+}
+.pdetail__max-banner img { display:block; width:100%; max-width:none; height:100%; object-fit:fill; transform:translateX(8px); }
+.pdetail__max-banner::before { content:""; position:absolute; z-index:1; top:0; right:0; width:58px; height:100%; pointer-events:none; background:linear-gradient(90deg, rgba(248,244,255,0), #F8F4FF 36%, #F8F4FF 100%); }
+.pdetail__mini-banner { display:block; background:#fff; }
+.pdetail__mini-banner img { transform:none; }
+.pdetail__mini-banner::before { display:none; }
+.pdetail__mini-banner:focus-visible { outline:2px solid #8460E5; outline-offset:-2px; }
+.pdetail__max-go { position:absolute; z-index:2; top:50%; right:14px; display:grid; place-items:center; width:28px; height:28px; box-sizing:border-box; border:1.5px solid transparent; border-radius:50%; color:#5A35C2;
+  background:linear-gradient(145deg, rgba(255,255,255,.94), rgba(245,240,255,.76)) padding-box, linear-gradient(135deg, #30E8EC 0%, #8460E5 72%, #CFBAFF 100%) border-box;
+  box-shadow:inset 0 1px 0 #fff, 0 3px 10px rgba(59,23,130,.16); transform:translateY(-50%); animation:pdetail-max-live 2.2s ease-in-out infinite; }
+.pdetail__max-go::after { content:""; position:absolute; inset:-4px; border:1px solid rgba(132,96,229,.34); border-radius:inherit; opacity:0; animation:pdetail-max-ring 2.2s ease-out infinite; }
+.pdetail__max-go svg { display:block; animation:pdetail-max-chat 1.8s ease-in-out infinite; }
+@keyframes pdetail-max-live { 0%,100% { transform:translateY(-50%) scale(1); box-shadow:inset 0 1px 0 #fff, 0 3px 10px rgba(59,23,130,.16); } 50% { transform:translateY(-50%) scale(1.07); box-shadow:inset 0 1px 0 #fff, 0 5px 14px rgba(0,168,171,.22), 0 3px 10px rgba(132,96,229,.2); } }
+@keyframes pdetail-max-ring { 0%,52% { opacity:0; transform:scale(.84); } 70% { opacity:.55; } 100% { opacity:0; transform:scale(1.22); } }
+@keyframes pdetail-max-chat { 0%,100% { transform:translateY(0) scale(1); } 50% { transform:translateY(-1px) scale(1.08); } }
+
 /* ── Cuerpo blanco (311×260) ── */
 .pdetail__body { padding: 0 16px 40px; text-align: center; }
 /* text/VYbody-xsm · Plus Jakarta Sans · 400 · 12px · line-height space/200 (16px) */
 .pdetail__title { margin: 44px auto 0; max-width: 216px; font-size: 12px; font-weight: 400; letter-spacing: 0; color: #191C1C; line-height: 16px; }
+.pdetail__title--assistant { max-width: 270px; }
 
 /* ── Botón Participa — misma interacción que Button (primary/negotiable) ── */
 @property --pdangle { syntax: "<angle>"; inherits: false; initial-value: 135deg; }
@@ -141,7 +169,8 @@ const DETAILCARD_STYLES = `
   align-items: center;
   justify-content: center;
   margin-top: 12px;
-  width: 186px;
+  min-width: 186px;
+  white-space: nowrap;
   height: 48px;
   padding: 0 20px;
   border-radius: 9999px;
@@ -251,6 +280,7 @@ const DETAILCARD_STYLES = `
 
 @media (prefers-reduced-motion: reduce) {
   .pdetail__cta { transition: none; }
+  .pdetail__max-go, .pdetail__max-go::after, .pdetail__max-go svg { animation:none; }
 }
 `;
 
@@ -294,6 +324,8 @@ export default function DetailCard({
   variant = "live",
   startLabel,
   bannerText,
+  assistantBanner = false,
+  miniBanner,
   day = "LUNES 04",
   time = "11:11 pm",
   views = 11,
@@ -355,12 +387,14 @@ export default function DetailCard({
           </div>
         </div>
 
-        {/* Banner teal (negotiable) */}
-        {resolvedBanner ? <div className="pdetail__banner">{resolvedBanner}</div> : null}
+        {/* Banner: mini con enlace, de Max, o teal (negotiable) */}
+        {miniBanner ? <a className="pdetail__max-banner pdetail__mini-banner" href={miniBanner.href}><img src={miniBanner.src} alt={miniBanner.alt} /></a>
+          : assistantBanner ? <div className="pdetail__max-banner"><img src="/mi-garaje/banners/max/max-mini-claro-escucha@2x.png" alt="¿Tienes alguna duda? Consúltale a Max." /><span className="pdetail__max-go" aria-hidden><MessageIcon /></span></div>
+          : resolvedBanner ? <div className="pdetail__banner">{resolvedBanner}</div> : null}
 
         {/* Body */}
         <div className="pdetail__body">
-          <p className="pdetail__title">{resolvedTitle}</p>
+          <p className={`pdetail__title${assistantBanner || miniBanner ? " pdetail__title--assistant" : ""}`}>{resolvedTitle}</p>
           <button type="button" className="pdetail__cta" onClick={onParticipate}>{resolvedCta}</button>
           {!isNeg && (
             <div className="pdetail__price">

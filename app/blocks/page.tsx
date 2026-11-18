@@ -108,6 +108,14 @@ const BLOCKS: BlockEntry[] = [
     node: <img src="/index/thumb.jpg" alt="" width={INDEX_SHELL_WIDTH} height={1000} style={{ display: "block" }} /> },
   { id: "detalle",  name: "Detalle",  width: DETALLE_WIDTH,  height: DETALLE_HEIGHT,  node: <Detalle /> },
   { id: "zona",     name: "Zona",     width: ZONA_COMBINED_W, height: ZONA_COMBINED_H, node: ZONA_COMBINED },
+  // Mi Garaje: imagen de la pantalla principal (su CSS es global; el bloque vivo se ve en iframes en /blocks/mi-garaje).
+  { id: "mi-garaje", name: "Mi Garaje", width: 1024, height: 900,
+    node: <img src="/mi-garaje/thumb.jpg" alt="" width={1024} height={900} style={{ display: "block" }} /> },
+  // Landings: imagen del primer tramo (como Index y Mi Garaje).
+  { id: "valoriza", name: "Valoriza", width: 1024, height: 900,
+    node: <img src="/valoriza/thumb.jpg" alt="" width={1024} height={900} style={{ display: "block" }} /> },
+  { id: "vendo-mis-cosas", name: "Vendo Mis Cosas", width: 1024, height: 900,
+    node: <img src="/vendo-mis-cosas/thumb.jpg" alt="" width={1024} height={900} style={{ display: "block" }} /> },
   { id: "agregar-subascoins", name: "Agregar Subascoins", width: AGSC_COMBINED_W, height: AGSC_COMBINED_H, node: AGSC_COMBINED },
   { id: "tu-perfil", name: "Tu Perfil", width: TUPERFIL_COMBINED_W, height: TUPERFIL_COMBINED_H, node: TUPERFIL_COMBINED },
   { id: "login",    name: "Login",    width: LOGIN_COMBINED_W, height: LOGIN_COMBINED_H, node: LOGIN_COMBINED },
