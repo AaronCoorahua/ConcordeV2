@@ -41,18 +41,46 @@ Docs con preview + props (para humanos):
   y los JSON de bloque ya los incluyen).
 - El catálogo vivo siempre está en `/r/registry.json` — féchalo para la lista actual.
 
-## Componentes (32)
+## Componentes (53)
 
-accordion, amountoptiongroup, auctionstatus, avatarzone, badgestatus,
-bidmessage, bidposition, bidproposal, button, cardtitle, cardviewer, categorycard,
-checkicon, conditionpill, detailcard, docbutton, input, likebutton, offercard,
-offertype, pricebadge, priceicon, profilebutton, progressbar, salastatus,
-sendbidicon, signal, staricon, table, tabselector, termsselector, timericon
+accordion, activitycard, amountoptiongroup, auctionstatus, avatarzone, badgestatus,
+bidmessage, bidposition, bidproposal, businessicon, button, cardtitle, cardviewer,
+categorycard, categoryicon, checkicon, conditionpill, detailcard, docbutton, eyeicon,
+featuredcard, glassbutton, herocarousel, infoicon, input, lightbar, likebutton,
+logomarquee, lotgallery, offercard, offericon, offershelf, offertype, offertypecards,
+pricebadge, priceicon, profilebutton, progressbar, salastatus, sendbidicon,
+servicecentericon, signal, staricon, statpill, table, tabselector, termsselector,
+timericon, todayicon, userprofilecard, vidrio, vmcahora, walletbalancecard
+
+Componentes del nuevo inicio (bloque index):
+- herocarousel    banner principal con campañas e indicador de vidrio para pasar entre ellas
+- vmcahora        feed en vivo de VMC (ofertas, propuestas, registros, publicidad, blog)
+- offertypecards  tarjetas de tipo de oferta con foto (Recibe ofertas / En vivo)
+- featuredcard    carta destacada de un lote (se inclina, favorito, precio con SubasCoin)
+- lotgallery      carta destacada + lotes en filas (usa featuredcard)
+- lightbar        barra de luz naranja o turquesa (la usa featuredcard)
+- glassbutton     botón de vidrio para fotos y fondos oscuros
+- vidrio          íconos de vidrio esmerilado (28)
+- logomarquee     franja de logos en movimiento (empresas que publican en VMC)
 
 ## Bloques (página completa = bloque + sus componentes)
 
-- homepage  → offercard, badgestatus, profilebutton, cardtitle, offertype, categorycard
-- detalle   → auctionstatus, cardviewer
+- index     → herocarousel, vmcahora, offertypecards, lotgallery, featuredcard, lightbar,
+              glassbutton, vidrio, logomarquee, profilebutton (+ bloques header y sidebar).
+              Nuevo inicio de VMC.
+- homepage  → offercard, badgestatus, profilebutton, cardtitle, offertype, categorycard.
+              Versión anterior del inicio.
+- detalle   → auctionstatus, cardviewer, accordion, detailcard, conditionpill, button,
+              cardtitle, offercard
+- zona      → userprofilecard, walletbalancecard, activitycard, offershelf, avatarzone,
+              staricon, infoicon, profilebutton, cardtitle, offercard, badgestatus
 - sala      → bidproposal, bidmessage, progressbar, button, avatarzone, pricebadge,
-              badgestatus, signal, priceicon, salastatus, cardviewer, bidposition, sendbidicon
-- salamobile→ progressbar, bidproposal, bidmessage, signal, button
+              badgestatus, signal, priceicon, statpill, salastatus, cardviewer, bidposition
+- login     → button, input, eyeicon
+- register  → tabselector, input, eyeicon, button, termsselector
+- tu-perfil → input, button, staricon, infoicon
+- agregar-subascoins → amountoptiongroup, button
+- banners   → staricon, businessicon, timericon
+- header    → button
+- sidebar   → todayicon, offericon, categoryicon, businessicon, servicecentericon
+- testsala, testsala2 → pruebas de la sala en celular

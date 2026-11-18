@@ -45,6 +45,32 @@ import ServiceCenterIcon from "@/src/components/ServiceCenterIcon";
 import BusinessIcon from "@/src/components/BusinessIcon";
 import CategoryIcon from "@/src/components/CategoryIcon";
 import OfferIcon from "@/src/components/OfferIcon";
+import VmcAhora from "@/src/components/VmcAhora/VmcAhora";
+import { CardIcons, FeaturedCard } from "@/src/components/FeaturedCard";
+import { LotGallery } from "@/src/components/LotGallery";
+import { LightBar } from "@/src/components/LightBar";
+import GlassButton from "@/src/components/GlassButton";
+import { Vidrio } from "@/src/components/Vidrio";
+import HeroCarousel from "@/src/components/HeroCarousel";
+import LogoMarquee from "@/src/components/LogoMarquee";
+import { COMPANIES, STORES } from "@/src/blocks/index/shared/data";
+import { INDEX_SLIDES } from "@/src/blocks/index/desktop/IndexHero";
+
+// Componentes del Index (vmc-index-lab). La destacada de Autoplan sirve de ejemplo a FeaturedCard y LotGallery.
+const IDX_F = STORES[0].featured;
+const IDX_FEATURED = (
+  <FeaturedCard image={IDX_F.image} title={IDX_F.title} subtitle={IDX_F.subtitle} featured photos={IDX_F.photos} price={IDX_F.price}
+    chips={[{ icon: CardIcons.gear, label: IDX_F.transmission }, { icon: CardIcons.fuel, label: IDX_F.fuel }]}
+    stats={[{ icon: CardIcons.gauge, label: IDX_F.km }, { icon: CardIcons.seats, label: `${IDX_F.seats} asientos` }]} height="100%" fillMedia tilt={0} />
+);
+// Vista reducida de un componente grande: se dibuja a su tamaño y se escala.
+function Scaled({ w, h, scale, children }: { w: number; h: number; scale: number; children: JSX.Element }): JSX.Element {
+  return (
+    <div style={{ width: w * scale, height: h * scale, overflow: "hidden", position: "relative" }}>
+      <div style={{ width: w, height: h, transform: `scale(${scale})`, transformOrigin: "top left", display: "flex" }}>{children}</div>
+    </div>
+  );
+}
 
 // ── Registry ──────────────────────────────────────────────────────────────
 
@@ -551,6 +577,79 @@ const REGISTRY: ComponentEntry[] = [
         <div style={{ transform: "scale(0.32)" }}>
           <OfferShelf />
         </div>
+      </div>
+    ),
+  },
+  // ── Index (vmc-index-lab) ──
+  {
+    id: "herocarousel",
+    name: "HeroCarousel",
+    handoffPath: "/handoff/herocarousel",
+    preview: <Scaled w={640} h={300} scale={0.38}><HeroCarousel slides={INDEX_SLIDES} /></Scaled>,
+  },
+  {
+    id: "logomarquee",
+    name: "LogoMarquee",
+    handoffPath: "/handoff/logomarquee",
+    // Sin href: las tarjetas no pueden ser enlaces dentro del enlace de esta card.
+    preview: <Scaled w={560} h={110} scale={0.45}><div style={{ width: 560 }}><LogoMarquee items={COMPANIES.map((c) => ({ name: c.name, logo: c.logo, caption: c.lots }))} /></div></Scaled>,
+  },
+  {
+    id: "vmcahora",
+    name: "VmcAhora",
+    handoffPath: "/handoff/vmcahora",
+    preview: <Scaled w={320} h={300} scale={0.5}><VmcAhora view="timeline" /></Scaled>,
+  },
+  {
+    id: "offertypecards",
+    name: "OfferTypeCards",
+    handoffPath: "/handoff/offertypecards",
+    // Imagen del componente: sus tarjetas son enlaces y no pueden ir dentro del enlace de esta card.
+    preview: <img src="/index/thumbs/offertypecards.jpg" alt="" width={250} style={{ display: "block", borderRadius: 8 }} />,
+  },
+  {
+    id: "featuredcard",
+    name: "FeaturedCard",
+    handoffPath: "/handoff/featuredcard",
+    preview: <Scaled w={292} h={386} scale={0.38}>{IDX_FEATURED}</Scaled>,
+  },
+  {
+    id: "lotgallery",
+    name: "LotGallery",
+    handoffPath: "/handoff/lotgallery",
+    preview: <Scaled w={720} h={360} scale={0.34}><div style={{ width: 720 }}><LotGallery featured={IDX_FEATURED} items={STORES[0].lots} height={356} /></div></Scaled>,
+  },
+  {
+    id: "lightbar",
+    name: "LightBar",
+    handoffPath: "/handoff/lightbar",
+    preview: (
+      <div style={{ display: "grid", gap: 14, width: 200 }}>
+        <LightBar />
+        <LightBar tone="negotiable" />
+      </div>
+    ),
+  },
+  {
+    id: "glassbutton",
+    name: "GlassButton",
+    handoffPath: "/handoff/glassbutton",
+    preview: (
+      <div style={{ padding: "22px 28px", borderRadius: 12, background: "linear-gradient(100deg, #2A1670 0%, #3D2299 45%, #8460E5 100%)" }}>
+        <GlassButton tabIndex={-1}>Publicar mi auto</GlassButton>
+      </div>
+    ),
+  },
+  {
+    id: "vidrio",
+    name: "Vidrio",
+    handoffPath: "/handoff/vidrio",
+    preview: (
+      <div style={{ display: "flex", gap: 10 }}>
+        <Vidrio s="vehicular" size={40} />
+        <Vidrio s="maquinaria" size={40} />
+        <Vidrio s="negociaciones" size={40} />
+        <Vidrio s="valorizaciones" size={40} />
       </div>
     ),
   },

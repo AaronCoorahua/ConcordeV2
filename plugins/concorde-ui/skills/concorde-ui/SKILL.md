@@ -41,10 +41,20 @@ Sin terminal: fetchea `<nombre>.json` y escribe cada `files[].content` en un arc
 
 ## Catálogo (snapshot — confirma con /r/registry.json)
 
-Componentes: accordion, amountoptiongroup, auctionstatus, avatarzone, badgestatus,
-bidbutton, bidmessage, bidposition, bidproposal, button, cardtitle, cardviewer,
-categorycard, checkicon, conditionpill, detailcard, docbutton, input, likebutton,
-offercard, offertype, pricebadge, priceicon, profilebutton, progressbar, salastatus,
-sendbidicon, sidebar, signal, staricon, table, tabselector, termsselector, timericon
+Componentes: accordion, activitycard, amountoptiongroup, auctionstatus, avatarzone,
+badgestatus, bidmessage, bidposition, bidproposal, businessicon, button, cardtitle,
+cardviewer, categorycard, categoryicon, checkicon, conditionpill, detailcard, docbutton,
+eyeicon, featuredcard, glassbutton, herocarousel, infoicon, input, lightbar, likebutton,
+logomarquee, lotgallery, offercard, offericon, offershelf, offertype, offertypecards,
+pricebadge, priceicon, profilebutton, progressbar, salastatus, sendbidicon,
+servicecentericon, signal, staricon, statpill, table, tabselector, termsselector,
+timericon, todayicon, userprofilecard, vidrio, vmcahora, walletbalancecard
 
-Bloques: homepage, detalle, sala, salamobile (cada uno instala sus componentes).
+Bloques: index (nuevo inicio de VMC), homepage (inicio anterior), detalle, zona, sala,
+login, register, tu-perfil, agregar-subascoins, banners, header, sidebar. Cada uno
+instala sus componentes.
+
+Para el inicio de VMC usa `index`, no `homepage`. Sus piezas propias: herocarousel
+(banner principal), vmcahora (feed en vivo), offertypecards (tipo de oferta),
+lotgallery + featuredcard + lightbar (lotes de cada tienda), logomarquee (empresas),
+glassbutton (botón de vidrio) y vidrio (íconos).

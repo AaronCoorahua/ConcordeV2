@@ -123,6 +123,24 @@
       "url": "https://concorde-v2-theta.vercel.app/r/eyeicon.json"
     },
     {
+      "name": "featuredcard",
+      "type": "registry:component",
+      "title": "FeaturedCard",
+      "url": "https://concorde-v2-theta.vercel.app/r/featuredcard.json"
+    },
+    {
+      "name": "glassbutton",
+      "type": "registry:component",
+      "title": "GlassButton",
+      "url": "https://concorde-v2-theta.vercel.app/r/glassbutton.json"
+    },
+    {
+      "name": "herocarousel",
+      "type": "registry:component",
+      "title": "HeroCarousel",
+      "url": "https://concorde-v2-theta.vercel.app/r/herocarousel.json"
+    },
+    {
       "name": "infoicon",
       "type": "registry:component",
       "title": "InfoIcon",
@@ -135,10 +153,28 @@
       "url": "https://concorde-v2-theta.vercel.app/r/input.json"
     },
     {
+      "name": "lightbar",
+      "type": "registry:component",
+      "title": "LightBar",
+      "url": "https://concorde-v2-theta.vercel.app/r/lightbar.json"
+    },
+    {
       "name": "likebutton",
       "type": "registry:component",
       "title": "LikeButton",
       "url": "https://concorde-v2-theta.vercel.app/r/likebutton.json"
+    },
+    {
+      "name": "logomarquee",
+      "type": "registry:component",
+      "title": "LogoMarquee",
+      "url": "https://concorde-v2-theta.vercel.app/r/logomarquee.json"
+    },
+    {
+      "name": "lotgallery",
+      "type": "registry:component",
+      "title": "LotGallery",
+      "url": "https://concorde-v2-theta.vercel.app/r/lotgallery.json"
     },
     {
       "name": "offercard",
@@ -163,6 +199,12 @@
       "type": "registry:component",
       "title": "OfferType",
       "url": "https://concorde-v2-theta.vercel.app/r/offertype.json"
+    },
+    {
+      "name": "offertypecards",
+      "type": "registry:component",
+      "title": "OfferTypeCards",
+      "url": "https://concorde-v2-theta.vercel.app/r/offertypecards.json"
     },
     {
       "name": "pricebadge",
@@ -261,6 +303,18 @@
       "url": "https://concorde-v2-theta.vercel.app/r/userprofilecard.json"
     },
     {
+      "name": "vidrio",
+      "type": "registry:component",
+      "title": "Vidrio",
+      "url": "https://concorde-v2-theta.vercel.app/r/vidrio.json"
+    },
+    {
+      "name": "vmcahora",
+      "type": "registry:component",
+      "title": "VmcAhora",
+      "url": "https://concorde-v2-theta.vercel.app/r/vmcahora.json"
+    },
+    {
       "name": "walletbalancecard",
       "type": "registry:component",
       "title": "WalletBalanceCard",
@@ -324,6 +378,23 @@
         "cardtitle",
         "offertype",
         "categorycard"
+      ]
+    },
+    {
+      "name": "index",
+      "type": "registry:block",
+      "title": "index",
+      "url": "https://concorde-v2-theta.vercel.app/r/index.json",
+      "components": [
+        "glassbutton",
+        "vidrio",
+        "logomarquee",
+        "offertypecards",
+        "vmcahora",
+        "herocarousel",
+        "profilebutton",
+        "featuredcard",
+        "lotgallery"
       ]
     },
     {

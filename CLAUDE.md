@@ -279,6 +279,7 @@ import { NOMBRE_WIDTH, NOMBRE_HEIGHT } from "@/src/blocks/nombre/desktop/dimensi
 | `header`   | `dimensions.ts` ✓ | —                          | —             |
 | `sidebar`  | `dimensions.ts` ✓ | —                          | —             |
 | `homepage` | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | —             |
+| `index`    | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | `data.ts`     |
 | `zona`     | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | —             |
 | `detalle`  | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | `pills.ts`    |
 | `sala`     | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | `liveData.ts` |

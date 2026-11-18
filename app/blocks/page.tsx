@@ -14,6 +14,7 @@ import { SALAMOBILE_WIDTH as TESTSALA_W, SALAMOBILE_HEIGHT as TESTSALA_H } from 
 import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/dimensions";
 import Header from "@/app/_components/Header";
+import { INDEX_SHELL_WIDTH } from "@/src/blocks/index/desktop/dimensions";
 
 /**
  * /blocks — Catálogo de Bloques (tema claro, mismo estilo que /components).
@@ -101,6 +102,10 @@ const TUPERFIL_COMBINED = (
 
 const BLOCKS: BlockEntry[] = [
   { id: "homepage", name: "Homepage", width: HP_COMBINED_W, height: HP_COMBINED_H, node: HOMEPAGE_COMBINED },
+  // Index: imagen del primer tramo (sacada del render del bloque). El bloque vivo tiene enlaces y no puede ir
+  // dentro del <a> de la tarjeta; además así el catálogo no arranca el feed ni carga todas sus fotos.
+  { id: "index",    name: "Index",    width: INDEX_SHELL_WIDTH, height: 1000,
+    node: <img src="/index/thumb.jpg" alt="" width={INDEX_SHELL_WIDTH} height={1000} style={{ display: "block" }} /> },
   { id: "detalle",  name: "Detalle",  width: DETALLE_WIDTH,  height: DETALLE_HEIGHT,  node: <Detalle /> },
   { id: "zona",     name: "Zona",     width: ZONA_COMBINED_W, height: ZONA_COMBINED_H, node: ZONA_COMBINED },
   { id: "agregar-subascoins", name: "Agregar Subascoins", width: AGSC_COMBINED_W, height: AGSC_COMBINED_H, node: AGSC_COMBINED },

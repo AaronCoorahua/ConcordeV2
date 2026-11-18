@@ -9,6 +9,7 @@ export interface BlockNavItem {
 
 export const BLOCKS_NAV: BlockNavItem[] = [
   { id: "homepage", name: "Homepage" },
+  { id: "index",    name: "Index" },
   { id: "detalle",  name: "Detalle" },
   { id: "zona",     name: "Zona" },
   { id: "agregar-subascoins", name: "Agregar Subascoins" },
