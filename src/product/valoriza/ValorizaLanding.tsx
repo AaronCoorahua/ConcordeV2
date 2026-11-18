@@ -47,13 +47,6 @@ const PERKS: { icon: Sec; title: string; text: string }[] = [
   { icon: "docs", title: "12 detalles", text: "Opcionales" },
 ];
 
-// Qué esperar del servicio: lo que trae el resultado de AVT (público en el contrato, ver AVT.md).
-const EXPECT: { icon: Sec; title: string; text: string }[] = [
-  { icon: "valorizaciones", title: "Valor de mercado de hoy", text: "Cuánto vale tu auto hoy, con la fecha de la valorización." },
-  { icon: "crecimiento", title: "Proyección a 12 meses", text: "Cómo cambiará su valor en 1, 3, 6 y 12 meses." },
-  { icon: "auto", title: "Vehículos similares", text: "Autos parecidos al tuyo en el mercado, para comparar." },
-  { icon: "fecha", title: "Guardado en Mi Garaje", text: "Tu valorización queda guardada para revisarla o publicar." },
-];
 
 // Ejemplo calculado con el motor real de AVT (copia en mi-garaje/models/avt): Hyundai Accent GL 1.4 AT 2019, 45,000 km,
 // precio de lista del lab (US$ 17,900), categoría B. Fecha fija (18/11/2026) para que servidor y cliente pinten lo mismo.
@@ -71,6 +64,7 @@ const PEAK = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "A
 const UP = MES3.filter((_, i) => SELL_SEASONAL[i + 1] > 10), DOWN = MES3.filter((_, i) => SELL_SEASONAL[i + 1] < 0);
 // Publicaciones similares de ejemplo, alrededor del valor AVT (en producción vienen de getComparables).
 const COMPS = [-0.06, -0.03, -0.015, 0.02, 0.065].map((k) => Math.round((DEMO_V * (1 + k)) / 100) * 100);
+const AVG = Math.round(COMPS.reduce((x, y) => x + y, 0) / COMPS.length / 10) * 10, AVG_DIFF = Math.round(((DEMO_V - AVG) / AVG) * 100);
 const cX = (v: number) => `${((v - COMPS[0] * 0.9) / (COMPS[4] * 1.1 - COMPS[0] * 0.9)) * 100}%`;
 
 const USES = [
@@ -169,55 +163,51 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
         {/* ── Qué esperar del servicio ── */}
         <p className="vz-pill">Qué vas a recibir</p>
         <h2 className="vz-title">Esto verás de tu auto <span>en un minuto</span></h2>
-        <div className="vz-demo">
-          <article className="vz-demo__value">
-            <span className="vz-demo__tag">Ejemplo</span>
-            <p>Hyundai Accent GL 1.4 AT 2019 · 45,000 km</p>
+        {/* Informe de ejemplo: un solo objeto que responde las 3 preguntas del vendedor, cada gráfico con su conclusión al lado. */}
+        <div className="rv rva rva--still vz-rep">
+          <aside className="vz-rep__car"><div className="vz-rep__pin">
+            <span className="vz-rep__tag">Ejemplo calculado con AVT</span>
+            <p className="vz-rep__meta">Hyundai Accent GL 1.4 AT 2019<br />45,000 km</p>
             <small>Valor de mercado hoy</small>
             <strong>{usd(DEMO_V)}</strong>
-            <p>Estimación basada en depreciación real, estacionalidad y kilometraje.</p>
-          </article>
-          <article className="vz-demo__chart">
-            <header><h3>Proyección de valor</h3><p>Cada mes vale un poco menos: −{usd(DEMO_V - HITOS[3].v)} en 12 meses</p></header>
-            <Projection d={DEMO} t={LIGHT} gid={`vzp-${id}`} ds />
-            <dl>{HITOS.map((h) => <div key={h.m}><dt>{h.m === 12 ? "12 meses" : `${h.m} ${h.m === 1 ? "mes" : "meses"}`}</dt><dd>{usd(h.v)}</dd></div>)}</dl>
-          </article>
-        </div>
-        <div className="rv rva rva--still vz-more">
-          <article className="rv-card">
-            <header><h3>Señal de venta</h3><p>{SIG.signal.sublabel}</p></header>
+            <p className="vz-rep__meta">Estimación basada en depreciación real, estacionalidad y kilometraje.</p>
             <span className="rva-level" role="img" aria-label={`Señal de venta: ${SIG.signal.label}, ${SIG.signal.level} de 5`}>
               <i aria-hidden>{[1, 2, 3, 4, 5].map((n) => <span key={n} className={n <= SIG.signal.level ? "is-on" : ""} />)}</i><b>{SIG.signal.label}</b></span>
-            <ol className="vz-why">
-              <li><b>Hoy:</b> noviembre tiene {SELL_SEASONAL[11]}% de demanda.</li>
-              <li><b>Próximo pico:</b> {SIG.timing.nextPeakMonth} (+{SELL_SEASONAL[PEAK]}%), en {SIG.timing.daysUntilPeak} días.</li>
-              <li><b>Mientras esperas:</b> el auto pierde ~{usd(SIG.timing.monthlyValueLoss)} al mes.</li>
-            </ol>
-          </article>
-          <article className="rv-card vz-more__wide">
-            <header><h3>Momento óptimo de venta</h3><p>Los meses en que más se compra y en los que menos</p></header>
-            <div className="vz-season">
-              <span className="vz-pin" style={{ left: `${((PEAK - 0.5) / 12) * 100}%` }}>Próximo pico</span>
-              <Season d={SEASON_D} t={LIGHT} ds />
+            <div className="vz-rep__go">
+              <Button variant="primary" onClick={valuar}>Ver cuánto vale mi auto</Button>
+              <p>Gratis. Tu resultado queda en Mi Garaje, con fecha.</p>
             </div>
-            <ul className="vz-key">
-              <li className="is-up"><b>Más demanda</b> {UP.join(", ")} (+{SELL_SEASONAL[PEAK]}% en el pico)</li>
-              <li className="is-down"><b>Menos demanda</b> {DOWN.join(", ")} ({SELL_SEASONAL[11]}%)</li>
-            </ul>
-          </article>
-          <article className="rv-card">
-            <header><h3>Vehículos similares</h3><p>Tu valor junto a {COMPS.length} publicaciones parecidas</p></header>
-            <div className="rva-map" role="img" aria-label={`Publicaciones entre ${usd(COMPS[0])} y ${usd(COMPS[4])}; AVT ${usd(DEMO_V)}`}>
-              <span className="rva-band" style={{ left: cX(COMPS[0]), width: `calc(${cX(COMPS[4])} - ${cX(COMPS[0])})` }} />
-              <span className="rva-dot" style={{ left: cX(DEMO_V) }} />
-            </div>
-            <p className="rva-ends"><span>{usd(COMPS[0])}</span><b>AVT: {usd(DEMO_V)}</b><span>{usd(COMPS[4])}</span></p>
-          </article>
+          </div></aside>
+          <div className="vz-rep__story">
+            <section>
+              <h3>¿Cuánto vale hoy?</h3>
+              <p>Está {AVG_DIFF === 0 ? "en" : AVG_DIFF < 0 ? `${-AVG_DIFF}% bajo` : `${AVG_DIFF}% sobre`} el promedio de <b>{COMPS.length} publicaciones parecidas</b> ({usd(AVG)}). Así sabes si tu precio compite.</p>
+              <div className="rva-map" role="img" aria-label={`Publicaciones entre ${usd(COMPS[0])} y ${usd(COMPS[4])}; AVT ${usd(DEMO_V)}`}>
+                <span className="rva-band" style={{ left: cX(COMPS[0]), width: `calc(${cX(COMPS[4])} - ${cX(COMPS[0])})` }} />
+                <span className="rva-dot" style={{ left: cX(DEMO_V) }} />
+              </div>
+              <p className="rva-ends"><span>{usd(COMPS[0])}</span><b>AVT: {usd(DEMO_V)}</b><span>{usd(COMPS[4])}</span></p>
+            </section>
+            <section>
+              <h3>¿Cuánto valdrá?</h3>
+              <p>Pierde ~{usd(SIG.timing.monthlyValueLoss)} al mes: en 12 meses valdría <b>{usd(HITOS[3].v)}</b> (−{(((DEMO_V - HITOS[3].v) / DEMO_V) * 100).toFixed(1)}%).</p>
+              <Projection d={DEMO} t={LIGHT} gid={`vzp-${id}`} ds />
+            </section>
+            <section>
+              <h3>¿Cuándo venderlo?</h3>
+              <p>Noviembre tiene {SELL_SEASONAL[11]}% de demanda. En <b>{SIG.timing.nextPeakMonth} sube a +{SELL_SEASONAL[PEAK]}%</b>, dentro de {SIG.timing.daysUntilPeak} días.</p>
+              <div className="vz-season">
+                <span className="vz-pin" style={{ left: `${((PEAK - 0.5) / 12) * 100}%` }}>Próximo pico</span>
+                <Season d={SEASON_D} t={LIGHT} ds />
+              </div>
+              <ul className="vz-key">
+                <li><b>Más demanda</b> {UP.join(", ")}</li>
+                <li className="is-down"><b>Menos demanda</b> {DOWN.join(", ")}</li>
+              </ul>
+            </section>
+          </div>
         </div>
-        <p className="vz-demo__note">Cifras de ejemplo. Tu valorización es referencial, con fecha, y no constituye oferta comercial.</p>
-        <ul className="vz-expect">
-          {EXPECT.map((e) => <li key={e.title}><Vidrio s={e.icon} size={40} /><h3>{e.title}</h3><p>{e.text}</p></li>)}
-        </ul>
+        <p className="vz-demo__note">Cifras de ejemplo calculadas con el motor AVT. Tu valorización es referencial, con fecha, y no constituye oferta comercial.</p>
 
         {/* ── Lo que debes saber (como «¿Sabes realmente cómo funciona…?») ── */}
         <p className="vz-pill">Valor con sustento</p>
@@ -372,32 +362,6 @@ const VZ_CSS = `
 .vz-know__phone img { width: auto; height: 300px; margin: 20px 0; filter: drop-shadow(0 18px 24px rgba(34,0,92,0.3)); }
 
 /* Qué esperar: cuatro tarjetas con ícono. */
-.vz-demo { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 16px; width: 100%; margin: 8px 0 0; text-align: left; }
-.vz-demo__value { position: relative; display: grid; align-content: center; gap: 6px; padding: 28px 24px; border-radius: 18px; color: #fff;
-  background: radial-gradient(70% 60% at 100% 0%, rgba(132,96,229,0.7), transparent 70%), linear-gradient(160deg, #3B1782, #22005C); box-shadow: 0 16px 32px -20px rgba(34,0,92,0.6); }
-.vz-demo__value p { margin: 0; font-size: 13px; line-height: 19px; color: #DCCFFF; }
-.vz-demo__value small { margin-top: 12px; font-size: 13px; font-weight: 700; }
-.vz-demo__value strong { font-size: 40px; line-height: 44px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-.vz-demo__tag { position: absolute; top: 14px; right: 14px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; color: #22005C; background: var(--peach); }
-.vz-demo__chart { display: grid; gap: 12px; padding: 20px; border-radius: 18px; background: #fff; border: 1px solid var(--line); min-width: 0; }
-.vz-demo__chart h3 { margin: 0; font-size: 16px; line-height: 22px; font-weight: 800; color: var(--v700); }
-.vz-demo__chart header p { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
-.vz-demo__chart dl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0; }
-.vz-demo__chart dl div { padding: 8px 10px; border-radius: 12px; background: var(--lav); }
-.vz-demo__chart dt { font-size: 11px; font-weight: 600; color: var(--muted); }
-.vz-demo__chart dd { margin: 2px 0 0; font-size: 14px; font-weight: 800; color: var(--v700); font-variant-numeric: tabular-nums; }
-.vz-more { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; width: 100%; text-align: left; }
-.vz-more .rv-card { gap: 12px; padding: 20px; border-radius: 18px; }
-.vz-more h3 { margin: 0; font-size: 16px; line-height: 22px; font-weight: 800; color: var(--v700); }
-.vz-more header p { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
-.vz-more .rva-level { justify-self: start; }
-.vz-more .rva-ends span, .vz-more .rva-ends b { white-space: nowrap; }
-.vz-more__wide { grid-column: 1 / -1; order: -1; }
-.vz-why { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; counter-reset: why; }
-.vz-why li { position: relative; padding-left: 28px; font-size: 13px; line-height: 19px; color: var(--muted); counter-increment: why; }
-.vz-why li::before { content: counter(why); position: absolute; left: 0; top: 0; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center;
-  font-size: 11px; font-weight: 800; color: #fff; background: var(--v700); }
-.vz-why b { color: var(--v700); }
 .vz-season { position: relative; padding-top: 28px; }
 .vz-pin { position: absolute; top: 0; transform: translateX(-50%); padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; color: #fff; background: var(--v700); }
 .vz-pin::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -4px; border: 4px solid transparent; border-top-color: var(--v700); }
@@ -406,12 +370,35 @@ const VZ_CSS = `
 .vz-key li::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: #8460E5; }
 .vz-key li.is-down::before { background: var(--orange); }
 .vz-key b { color: var(--v700); }
-.vz-more__hint { margin: 0; font-size: 13px; color: var(--muted); } .vz-more__hint b { color: var(--v700); }
+.vz-rep { display: grid; grid-template-columns: 296px minmax(0, 1fr); width: 100%; margin: 8px 0 0; text-align: left; overflow: hidden;
+  border-radius: 24px; background: #fff; border: 1px solid var(--line); box-shadow: 0 24px 48px -32px rgba(34,0,92,0.45); }
+.vz-rep__car { padding: 28px 24px; color: #fff;
+  background: radial-gradient(90% 50% at 100% 0%, rgba(132,96,229,0.55), transparent 70%), linear-gradient(170deg, #3B1782, #22005C); }
+.vz-rep__pin { position: sticky; top: 88px; display: flex; flex-direction: column; gap: 6px; }
+.vz-rep__tag { align-self: flex-start; margin-bottom: 12px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; color: #22005C; background: var(--peach); }
+.vz-rep__meta { margin: 0; font-size: 13px; line-height: 19px; color: #DCCFFF; }
+.vz-rep__car small { margin-top: 16px; font-size: 13px; font-weight: 700; }
+.vz-rep__car strong { font-size: 38px; line-height: 44px; white-space: nowrap; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.vz-rep__car .rva-level { align-self: flex-start; max-width: 100%; margin-top: 16px; background: #fff; }
+.vz-rep__go { display: grid; gap: 8px; padding-top: 24px; }
+.vz-rep__go button { white-space: nowrap; }
+.vz-rep__go p { margin: 0; font-size: 12px; line-height: 17px; color: #DCCFFF; text-align: center; }
+.vz-rep__story { display: grid; min-width: 0; }
+.vz-rep__story section { display: grid; gap: 8px; min-width: 0; padding: 24px 28px; }
+.vz-rep__story section + section { border-top: 1px solid var(--line); }
+.vz-rep__story h3 { margin: 0; font-size: 18px; line-height: 24px; font-weight: 800; letter-spacing: -0.01em; color: var(--v700); }
+.vz-rep__story section > p:not(.rva-ends) { margin: 0 0 8px; max-width: 52ch; font-size: 14px; line-height: 21px; color: var(--muted); text-wrap: pretty; }
+.vz-rep__story b { color: var(--v700); font-weight: 700; }
+.vz-rep .rva-map { margin-top: 8px; }
+.vz-rep .rva-ends span, .vz-rep .rva-ends b { white-space: nowrap; }
+.vz-season { position: relative; padding-top: 28px; }
+.vz-pin { position: absolute; top: 0; transform: translateX(-50%); padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; color: #fff; background: var(--v700); }
+.vz-pin::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -4px; border: 4px solid transparent; border-top-color: var(--v700); }
+.vz-key { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0; padding: 0; list-style: none; font-size: 13px; color: var(--muted); }
+.vz-key li { display: flex; align-items: center; gap: 6px; }
+.vz-key li::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: #8460E5; }
+.vz-key li.is-down::before { background: var(--orange); }
 .vz-demo__note { margin: 0; font-size: 12px; color: var(--muted); }
-.vz-expect { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; width: 100%; margin: 8px 0 0; padding: 0; list-style: none; text-align: left; }
-.vz-expect li { display: grid; align-content: start; gap: 8px; padding: 18px 16px; border-radius: 16px; background: var(--lav); border: 1px solid var(--line); }
-.vz-expect h3 { margin: 4px 0 0; font-size: 15px; line-height: 20px; font-weight: 800; color: var(--v700); }
-.vz-expect p { margin: 0; font-size: 13px; line-height: 19px; color: var(--muted); }
 
 /* Banner de venta + franja de vidrio con los dos usos (vender / comprar). */
 .vz-use { display: grid; }
@@ -497,11 +484,6 @@ const VZ_CSS = `
   .vz-know { grid-template-columns: minmax(0, 1fr); }
   .vz-know__phone img { height: 280px; }
   .vz-center .pvbtn { width: 100%; }
-  .vz-expect { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-  .vz-demo, .vz-more { grid-template-columns: minmax(0, 1fr); }
-  .vz-demo__chart { padding: 16px 12px; }
-  .vz-demo__chart dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .vz-expect li { padding: 14px 12px; }
   .vz-sell { padding: 24px 20px 260px; }
   .vz-sell h2 { font-size: 24px; }
   .vz-sell .pvbtn { width: 100%; }
