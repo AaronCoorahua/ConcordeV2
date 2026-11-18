@@ -123,9 +123,9 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
         <div className="vz-hero__photo"><img src="/producto/index/banners/vmc/valoriza-auto.jpg" alt="" fetchPriority="high" /></div>
         <div className="vz-hero__copy">
           <h1>¿Cuánto vale tu auto <em>hoy</em>?</h1>
-          <p>Gratis, en un minuto y sin compromiso. Sabrás cuánto pedir antes de publicar.</p>
+          <p>Descúbrelo gratis en 1 minuto, con datos reales del mercado peruano. Sin compromiso.</p>
           <div className="vz-hero__actions">
-            <Button variant="primary" onClick={valuar}>Quiero saber cuánto vale</Button>
+            <Button variant="primary" onClick={valuar}>Ver cuánto vale mi auto</Button>
             <button type="button" className="hib-glass" onClick={toSteps}>Ver cómo funciona</button>
           </div>
         </div>
@@ -152,8 +152,8 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
       {/* ── Beneficio (como «Un solo pago, hasta que lo vendas») ── */}
       <section className="vz-card vz-center" aria-label="Por qué valorizar">
         <p className="vz-pill">Gratis · Sin compromiso</p>
-        <h2 className="vz-title">Sabe cuánto vale tu auto, <span>antes de publicar</span></h2>
-        <p className="vz-lead">El precio de un aviso no es el valor de tu auto. AVT lo calcula con datos reales del mercado peruano para que pidas lo justo, <b>ni más, ni menos</b>.</p>
+        <h2 className="vz-title">Pide lo justo:<br /><span>ni de más, ni de menos</span></h2>
+        <p className="vz-lead">Si pides de menos, pierdes dinero. Si pides de más, tu auto no se vende. AVT calcula su valor con datos reales del mercado peruano, <b>no con el precio de un aviso</b>.</p>
         <dl className="vz-stats">
           <div><dt>1 min</dt><dd>Para tu valor base</dd></div>
           <div><dt>12 meses</dt><dd>De proyección de valor</dd></div>
@@ -161,7 +161,7 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
 
         {/* ── Qué esperar del servicio ── */}
         <p className="vz-pill">Qué vas a recibir</p>
-        <h2 className="vz-title">Esto es lo que te entrega <span>tu valorización</span></h2>
+        <h2 className="vz-title">Esto verás de tu auto <span>en un minuto</span></h2>
         <div className="vz-demo">
           <article className="vz-demo__value">
             <span className="vz-demo__tag">Ejemplo</span>
@@ -171,7 +171,7 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
             <p>Estimación basada en depreciación real, estacionalidad y kilometraje.</p>
           </article>
           <article className="vz-demo__chart">
-            <header><h3>Proyección de valor</h3><p>{usd(HITOS[3].v)} en 12 meses · pasa el cursor por la curva</p></header>
+            <header><h3>Proyección de valor</h3><p>Cada mes vale un poco menos: −{usd(DEMO_V - HITOS[3].v)} en 12 meses</p></header>
             <Projection d={DEMO} t={LIGHT} gid={`vzp-${id}`} ds />
             <dl>{HITOS.map((h) => <div key={h.m}><dt>{h.m === 12 ? "12 meses" : `${h.m} ${h.m === 1 ? "mes" : "meses"}`}</dt><dd>{usd(h.v)}</dd></div>)}</dl>
           </article>
@@ -184,11 +184,11 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
             <p className="vz-more__hint">Próximo pico: <b>Enero (+13.1%)</b></p>
           </article>
           <article className="rv-card vz-more__wide">
-            <header><h3>Momento óptimo de venta</h3><p>Demanda del mercado mes a mes</p></header>
+            <header><h3>Momento óptimo de venta</h3><p>Los meses en que más se compra y en los que menos</p></header>
             <Season d={SEASON_D} t={LIGHT} ds />
           </article>
           <article className="rv-card">
-            <header><h3>Vehículos similares</h3><p>{COMPS.length} publicaciones · 2018–2020</p></header>
+            <header><h3>Vehículos similares</h3><p>Tu valor junto a {COMPS.length} publicaciones parecidas</p></header>
             <div className="rva-map" role="img" aria-label={`Publicaciones entre ${usd(COMPS[0])} y ${usd(COMPS[4])}; AVT ${usd(DEMO_V)}`}>
               <span className="rva-band" style={{ left: cX(COMPS[0]), width: `calc(${cX(COMPS[4])} - ${cX(COMPS[0])})` }} />
               <span className="rva-dot" style={{ left: cX(DEMO_V) }} />
@@ -203,8 +203,8 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
 
         {/* ── Lo que debes saber (como «¿Sabes realmente cómo funciona…?») ── */}
         <p className="vz-pill">Valor con sustento</p>
-        <h2 className="vz-title">El valor real de tu auto <span>está a un minuto</span></h2>
-        <p className="vz-lead">Responde unos datos y mira su valor de mercado con fecha. Al final, <b>tú decides si lo guardas o lo publicas</b>.</p>
+        <h2 className="vz-title">Sin adivinar: así se calcula <span>tu valor</span></h2>
+        <p className="vz-lead">Cada cifra sale de datos reales del mercado peruano. Al final, <b>tú decides si lo guardas o lo publicas</b>.</p>
         <div className="vz-know">
           <article className="vz-know__card">
             <header><small>¿Sabes realmente cómo se calcula</small>el valor de tu auto?</header>
@@ -217,7 +217,7 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
             <img src={`${IMG}/cel/resultado.png`} alt="" width={460} height={867} loading="lazy" />
           </div>
         </div>
-        <Button variant="primary" onClick={valuar}>Valorizar mi auto</Button>
+        <Button variant="primary" onClick={valuar}>Ver cuánto vale mi auto</Button>
       </section>
 
       {/* ── Banner comercial (lugar del banner de WhatsApp de Subascars) + franja de vidrio con los dos usos,
@@ -225,9 +225,9 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
       <section className="vz-use" aria-label="Para qué te sirve valorizar">
         <div className="vz-sell">
           <img className="vz-sell__person" src="/producto/index/demo/sell/seller-phone-man.png" alt="" loading="lazy" />
-          <p className="vz-sell__kicker">Miles de compradores ya entran a VMC</p>
+          <p className="vz-sell__kicker">Vende en VMC Subastas</p>
           <h2>¿Listo para vender? <span>Empieza por su valor</span></h2>
-          <p>Publicar empieza valorizando: así tu precio tiene sustento.</p>
+          <p>Publica con un precio que puedes sustentar. Publicar empieza valorizando.</p>
           <Button variant="primary" onClick={valuar}>Valorizar y publicar</Button>
         </div>
         <ul className="vz-use__opts">
@@ -270,7 +270,7 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
 
       {/* CTA fijo inferior (solo móvil). */}
       <div className="vz-dock" data-on={pastHero || undefined} aria-hidden={!pastHero}>
-        <Button variant="primary" onClick={valuar} tabIndex={pastHero ? 0 : -1}>Quiero saber cuánto vale</Button>
+        <Button variant="primary" onClick={valuar} tabIndex={pastHero ? 0 : -1}>Ver cuánto vale mi auto</Button>
       </div>
       <style>{GLASS_CSS + VZ_CSS}</style>
     </div>
