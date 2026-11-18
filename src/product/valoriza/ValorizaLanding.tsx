@@ -197,7 +197,7 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
             <header><h3>Momento óptimo de venta</h3><p>Hoy la demanda está baja ({SELL_SEASONAL[11]}%). Sube en {SIG.timing.nextPeakMonth}.</p></header>
             <div className="vz-season">
               <span className="vz-peak" aria-hidden style={{ left: `${((PEAK - 1) / 12) * 100}%`, width: `${(PEAK_N / 12) * 100}%` }} />
-              <span className="vz-pin" style={{ left: `${((PEAK - 1 + PEAK_N / 2) / 12) * 100}%` }}>Próximo pico · +{SELL_SEASONAL[PEAK]}%</span>
+              <span className="vz-pin" style={{ left: `${((PEAK - 1) / 12) * 100}%` }}>Próximo pico · +{SELL_SEASONAL[PEAK]}%</span>
               <Season d={SEASON_D} t={LIGHT} ds />
             </div>
           </article>
@@ -395,8 +395,8 @@ const VZ_CSS = `
 /* Encierro del pico: banda lila con borde punteado detrás de las barras (Julio, 18/11). */
 .vz-peak { position: absolute; z-index: -1; top: 14px; bottom: 0; border-radius: 14px; background: rgba(132,96,229,0.1);
   border: 1.5px dashed #8460E5; box-shadow: 0 10px 24px -14px rgba(90,53,194,0.55); }
-.vz-pin { position: absolute; z-index: 1; top: 0; transform: translateX(-50%); padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; color: #fff; background: var(--v700); }
-.vz-pin::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -4px; border: 4px solid transparent; border-top-color: var(--v700); }
+.vz-pin { position: absolute; z-index: 1; top: 0; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; color: #fff; background: var(--v700); }
+.vz-pin::after { content: ""; position: absolute; top: 100%; left: 16px; margin-left: -4px; border: 4px solid transparent; border-top-color: var(--v700); }
 .vz-more__hint--peak { justify-self: start; padding: 8px 12px; border-radius: 12px; background: rgba(132,96,229,0.1); border: 1.5px dashed #8460E5; color: var(--v700); }
 .vz-more__hint { margin: 0; font-size: 13px; color: var(--muted); } .vz-more__hint b { color: var(--v700); }
 .vz-demo__note { margin: 0; font-size: 12px; color: var(--muted); }
@@ -492,6 +492,7 @@ const VZ_CSS = `
   .vz-expect { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .vz-demo, .vz-more { grid-template-columns: minmax(0, 1fr); }
   .vz-demo__chart { padding: 16px 12px; }
+  .vz-season .rv-tick { font-size: 10px; letter-spacing: -0.01em; }
   .vz-demo__chart dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .vz-expect li { padding: 14px 12px; }
   .vz-sell { padding: 24px 20px 260px; }
@@ -536,6 +537,15 @@ export default function ValorizaLanding(): JSX.Element {
 
   return (
     <>
+      {/* Degradados de Season (ids fijos «rvs-*»): la copia de escritorio está oculta en móvil (display:none) y sus <defs> dejan
+          de pintar, así que las barras móviles quedaban vacías. Se declaran una vez aquí, antes de ambas copias, y ganan por orden. */}
+      <svg width="0" height="0" aria-hidden style={{ position: "absolute" }}>
+        <defs>
+          <linearGradient id="rvs-up" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#AE8EFF" /><stop offset="1" stopColor="#5A35C2" /></linearGradient>
+          <linearGradient id="rvs-mid" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#CFBAFF" /><stop offset="1" stopColor="#8460E5" /></linearGradient>
+          <linearGradient id="rvs-dn" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#ED8936" /><stop offset="1" stopColor="#F4AC59" /></linearGradient>
+        </defs>
+      </svg>
       <div className={shell.desktopShell} data-collapsed={collapsed || undefined}>
         <Header width="100%" />
         <aside className={shell.sidebarRail} aria-label="Navegación de VMC">
