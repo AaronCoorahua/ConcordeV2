@@ -172,6 +172,7 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
         <div className="vz-demo">
           <article className="vz-demo__value">
             <span className="vz-demo__tag">Ejemplo</span>
+            <img className="vz-demo__car" src={`${IMG}/accent-ejemplo.webp`} alt="" width={900} height={438} loading="lazy" />
             <p>Hyundai Accent GL 1.4 AT 2019 · 45,000 km</p>
             <small>Valor de mercado hoy</small>
             <strong>{usd(DEMO_V)}</strong>
@@ -365,11 +366,12 @@ const VZ_CSS = `
 
 /* Qué esperar: cuatro tarjetas con ícono. */
 .vz-demo { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 16px; width: 100%; margin: 8px 0 0; text-align: left; }
-.vz-demo__value { position: relative; display: grid; align-content: center; gap: 6px; padding: 28px 24px; border-radius: 18px; color: #fff;
+.vz-demo__value { position: relative; display: grid; align-content: start; gap: 6px; padding: 28px 24px; border-radius: 18px; color: #fff;
   background: radial-gradient(70% 60% at 100% 0%, rgba(132,96,229,0.7), transparent 70%), linear-gradient(160deg, #3B1782, #22005C); box-shadow: 0 16px 32px -20px rgba(34,0,92,0.6); }
 .vz-demo__value p { margin: 0; font-size: 13px; line-height: 19px; color: #DCCFFF; }
 .vz-demo__value small { margin-top: 12px; font-size: 13px; font-weight: 700; }
 .vz-demo__value strong { font-size: 40px; line-height: 44px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.vz-demo__car { width: calc(100% + 24px); max-width: none; height: auto; margin: 20px -12px 8px; filter: drop-shadow(0 18px 20px rgba(10,0,40,0.45)); }
 .vz-demo__tag { position: absolute; top: 14px; right: 14px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; color: #22005C; background: var(--peach); }
 .vz-demo__chart { display: grid; gap: 12px; padding: 20px; border-radius: 18px; background: #fff; border: 1px solid var(--line); min-width: 0; }
 .vz-demo__chart h3 { margin: 0; font-size: 16px; line-height: 22px; font-weight: 800; color: var(--v700); }
