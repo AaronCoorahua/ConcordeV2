@@ -68,6 +68,8 @@ const usd = (n: number) => `US$ ${n.toLocaleString("en-US")}`;
 const MES3 = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 const SEASON_D = { ...DEMO, now: 11, season: MES3.map((name, i) => ({ m: i + 1, name, f: SELL_SEASONAL[i + 1] })) } as RData;
 const PEAK = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"].indexOf(SIG.timing.nextPeakMonth ?? "") + 1;
+// Meses de pico seguidos desde el próximo pico (ene–feb): se encierran en el gráfico.
+const PEAK_N = [0, 1, 2, 3].findIndex((k) => !(SELL_SEASONAL[((PEAK - 1 + k) % 12) + 1] > 10));
 // Publicaciones similares de ejemplo, alrededor del valor AVT (en producción vienen de getComparables).
 const COMPS = [-0.06, -0.03, -0.015, 0.02, 0.065].map((k) => Math.round((DEMO_V * (1 + k)) / 100) * 100);
 const AVG = Math.round(COMPS.reduce((x, y) => x + y, 0) / COMPS.length / 10) * 10;
@@ -189,12 +191,13 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
             <header><h3>Señal de venta</h3><p>{SIG.signal.sublabel}</p></header>
             <span className="rva-level" role="img" aria-label={`Señal de venta: ${SIG.signal.label}, ${SIG.signal.level} de 5`}>
               <i aria-hidden>{[1, 2, 3, 4, 5].map((n) => <span key={n} className={n <= SIG.signal.level ? "is-on" : ""} />)}</i><b>{SIG.signal.label}</b></span>
-            <p className="vz-more__hint">Próximo pico: <b>{SIG.timing.nextPeakMonth} (+{SELL_SEASONAL[PEAK]}%)</b> · en {SIG.timing.daysUntilPeak} días</p>
+            <p className="vz-more__hint vz-more__hint--peak">Próximo pico: <b>{SIG.timing.nextPeakMonth} (+{SELL_SEASONAL[PEAK]}%)</b> · en {SIG.timing.daysUntilPeak} días</p>
           </article>
           <article className="rv-card vz-more__wide">
             <header><h3>Momento óptimo de venta</h3><p>Hoy la demanda está baja ({SELL_SEASONAL[11]}%). Sube en {SIG.timing.nextPeakMonth}.</p></header>
             <div className="vz-season">
-              <span className="vz-pin" style={{ left: `${((PEAK - 0.5) / 12) * 100}%` }}>Próximo pico</span>
+              <span className="vz-peak" aria-hidden style={{ left: `${((PEAK - 1) / 12) * 100}%`, width: `${(PEAK_N / 12) * 100}%` }} />
+              <span className="vz-pin" style={{ left: `${((PEAK - 1 + PEAK_N / 2) / 12) * 100}%` }}>Próximo pico · +{SELL_SEASONAL[PEAK]}%</span>
               <Season d={SEASON_D} t={LIGHT} ds />
             </div>
           </article>
@@ -387,9 +390,14 @@ const VZ_CSS = `
 .vz-more .rva-level { justify-self: start; }
 .vz-more .rva-ends span, .vz-more .rva-ends b { white-space: nowrap; }
 .vz-more__wide { grid-column: 1 / -1; order: -1; }
-.vz-season { position: relative; padding-top: 28px; }
-.vz-pin { position: absolute; top: 0; transform: translateX(-50%); padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; color: #fff; background: var(--v700); }
+.vz-season { position: relative; isolation: isolate; padding-top: 28px; }
+.vz-season > div { position: relative; }
+/* Encierro del pico: banda lila con borde punteado detrás de las barras (Julio, 18/11). */
+.vz-peak { position: absolute; z-index: -1; top: 14px; bottom: 0; border-radius: 14px; background: rgba(132,96,229,0.1);
+  border: 1.5px dashed #8460E5; box-shadow: 0 10px 24px -14px rgba(90,53,194,0.55); }
+.vz-pin { position: absolute; z-index: 1; top: 0; transform: translateX(-50%); padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; color: #fff; background: var(--v700); }
 .vz-pin::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -4px; border: 4px solid transparent; border-top-color: var(--v700); }
+.vz-more__hint--peak { justify-self: start; padding: 8px 12px; border-radius: 12px; background: rgba(132,96,229,0.1); border: 1.5px dashed #8460E5; color: var(--v700); }
 .vz-more__hint { margin: 0; font-size: 13px; color: var(--muted); } .vz-more__hint b { color: var(--v700); }
 .vz-demo__note { margin: 0; font-size: 12px; color: var(--muted); }
 .vz-expect { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; width: 100%; margin: 8px 0 0; padding: 0; list-style: none; text-align: left; }
