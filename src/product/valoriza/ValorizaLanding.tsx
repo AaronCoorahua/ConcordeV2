@@ -18,7 +18,9 @@ import type { JSX } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button, Header, Sidebar, SidebarMenuButton, SidebarMobile } from "@/src/product/index/adapter";
-import { LIGHT, Projection } from "@/src/product/mi-garaje/models/Resultado";
+import { LIGHT, Projection, Season } from "@/src/product/mi-garaje/models/Resultado";
+import { SELL_SEASONAL } from "@/src/product/mi-garaje/models/Revela";
+import "@/src/product/mi-garaje/models/revela.css";
 import type { RData } from "@/src/product/mi-garaje/models/Resultado";
 import shell from "@/src/product/index/view/HomeIndexRebase.module.css";
 import { GLASS_CSS } from "@/src/product/index/view/glass";
@@ -58,6 +60,11 @@ const DEMO_V = 15850;
 const DEMO = { market: DEMO_V, proj: MESES.map((full, i) => ({ full, f: 0, v: Math.round((DEMO_V * (1 - 0.055 * i / 12) + 60 * Math.sin(i * Math.PI / 6)) / 10) * 10 })) } as Pick<RData, "market" | "proj"> as RData;
 const HITOS = [1, 3, 6, 12].map((m) => ({ m, v: DEMO.proj[m].v }));
 const usd = (n: number) => `US$ ${n.toLocaleString("en-US")}`;
+// Momento óptimo (tabla SELL_SEASONAL de AVT) y similares del mismo ejemplo; mes fijo en noviembre para no desfasar SSR/cliente.
+const MES3 = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+const SEASON_D = { ...DEMO, now: 11, season: MES3.map((name, i) => ({ m: i + 1, name, f: SELL_SEASONAL[i + 1] })) } as RData;
+const COMPS = [14900, 15400, 15600, 16200, 16900];
+const cX = (v: number) => `${((v - COMPS[0] * 0.9) / (COMPS[4] * 1.1 - COMPS[0] * 0.9)) * 100}%`;
 
 const USES = [
   { img: "vender.jpg", title: "¿Vas a vender?", text: "Sabrás cuánto pedir antes de publicar." },
@@ -167,6 +174,26 @@ function ValorizaBody({ id }: { id: "d" | "m" }): JSX.Element {
             <header><h3>Proyección de valor</h3><p>{usd(HITOS[3].v)} en 12 meses · pasa el cursor por la curva</p></header>
             <Projection d={DEMO} t={LIGHT} gid={`vzp-${id}`} ds />
             <dl>{HITOS.map((h) => <div key={h.m}><dt>{h.m === 12 ? "12 meses" : `${h.m} ${h.m === 1 ? "mes" : "meses"}`}</dt><dd>{usd(h.v)}</dd></div>)}</dl>
+          </article>
+        </div>
+        <div className="rv rva rva--still vz-more">
+          <article className="rv-card">
+            <header><h3>Señal de venta</h3><p>Demanda baja en noviembre. Mejor esperar.</p></header>
+            <span className="rva-level" role="img" aria-label="Señal de venta: No es momento, 1 de 5">
+              <i aria-hidden>{[1, 2, 3, 4, 5].map((n) => <span key={n} className={n <= 1 ? "is-on" : ""} />)}</i><b>No es momento</b></span>
+            <p className="vz-more__hint">Próximo pico: <b>Enero (+13.1%)</b></p>
+          </article>
+          <article className="rv-card vz-more__wide">
+            <header><h3>Momento óptimo de venta</h3><p>Demanda del mercado mes a mes</p></header>
+            <Season d={SEASON_D} t={LIGHT} ds />
+          </article>
+          <article className="rv-card">
+            <header><h3>Vehículos similares</h3><p>{COMPS.length} publicaciones · 2018–2020</p></header>
+            <div className="rva-map" role="img" aria-label={`Publicaciones entre ${usd(COMPS[0])} y ${usd(COMPS[4])}; AVT ${usd(DEMO_V)}`}>
+              <span className="rva-band" style={{ left: cX(COMPS[0]), width: `calc(${cX(COMPS[4])} - ${cX(COMPS[0])})` }} />
+              <span className="rva-dot" style={{ left: cX(DEMO_V) }} />
+            </div>
+            <p className="rva-ends"><span>{usd(COMPS[0])}</span><b>AVT: {usd(DEMO_V)}</b><span>{usd(COMPS[4])}</span></p>
           </article>
         </div>
         <p className="vz-demo__note">Cifras de ejemplo. Tu valorización es referencial, con fecha, y no constituye oferta comercial.</p>
@@ -341,6 +368,14 @@ const VZ_CSS = `
 .vz-demo__chart dl div { padding: 8px 10px; border-radius: 12px; background: var(--lav); }
 .vz-demo__chart dt { font-size: 11px; font-weight: 600; color: var(--muted); }
 .vz-demo__chart dd { margin: 2px 0 0; font-size: 14px; font-weight: 800; color: var(--v700); font-variant-numeric: tabular-nums; }
+.vz-more { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; width: 100%; text-align: left; }
+.vz-more .rv-card { gap: 12px; padding: 20px; border-radius: 18px; }
+.vz-more h3 { margin: 0; font-size: 16px; line-height: 22px; font-weight: 800; color: var(--v700); }
+.vz-more header p { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+.vz-more .rva-level { justify-self: start; }
+.vz-more .rva-ends span, .vz-more .rva-ends b { white-space: nowrap; }
+.vz-more__wide { grid-column: 1 / -1; order: -1; }
+.vz-more__hint { margin: 0; font-size: 13px; color: var(--muted); } .vz-more__hint b { color: var(--v700); }
 .vz-demo__note { margin: 0; font-size: 12px; color: var(--muted); }
 .vz-expect { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; width: 100%; margin: 8px 0 0; padding: 0; list-style: none; text-align: left; }
 .vz-expect li { display: grid; align-content: start; gap: 8px; padding: 18px 16px; border-radius: 16px; background: var(--lav); border: 1px solid var(--line); }
@@ -432,7 +467,7 @@ const VZ_CSS = `
   .vz-know__phone img { height: 280px; }
   .vz-center .pvbtn { width: 100%; }
   .vz-expect { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-  .vz-demo { grid-template-columns: minmax(0, 1fr); }
+  .vz-demo, .vz-more { grid-template-columns: minmax(0, 1fr); }
   .vz-demo__chart { padding: 16px 12px; }
   .vz-demo__chart dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .vz-expect li { padding: 14px 12px; }

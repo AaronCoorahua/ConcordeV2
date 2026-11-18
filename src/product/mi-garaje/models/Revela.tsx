@@ -12,7 +12,7 @@ import "./resultado.css";
 import "./revela.css";
 
 // AVT ResultScreen (App.jsx): tabla de «Momento óptimo de venta» y nombres de mes.
-const SELL_SEASONAL: Record<number, number> = { 1: 13.1, 2: 13.1, 3: 8.1, 4: 8.1, 5: 8.1, 6: -5.1, 7: -5.1, 8: 8.1, 9: 13.1, 10: 8.1, 11: -5.1, 12: -5.1 };
+export const SELL_SEASONAL: Record<number, number> = { 1: 13.1, 2: 13.1, 3: 8.1, 4: 8.1, 5: 8.1, 6: -5.1, 7: -5.1, 8: 8.1, 9: 13.1, 10: 8.1, 11: -5.1, 12: -5.1 };
 const MO_FULL = ["", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 const usd = (n: number) => `US$ ${Math.round(n).toLocaleString("en-US")}`;
 
