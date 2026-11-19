@@ -135,6 +135,12 @@
       "url": "https://concorde-v2-theta.vercel.app/r/categoryicon.json"
     },
     {
+      "name": "categoryrail",
+      "type": "registry:component",
+      "title": "CategoryRail",
+      "url": "https://concorde-v2-theta.vercel.app/r/categoryrail.json"
+    },
+    {
       "name": "chatbubble",
       "type": "registry:component",
       "title": "ChatBubble",
@@ -682,14 +688,15 @@
       "url": "https://concorde-v2-theta.vercel.app/r/index.json",
       "components": [
         "glassbutton",
-        "vidrio",
+        "categoryrail",
         "logomarquee",
         "offertypecards",
         "vmcahora",
         "herocarousel",
         "profilebutton",
         "featuredcard",
-        "lotgallery"
+        "lotgallery",
+        "vidrio"
       ]
     },
     {

@@ -21,7 +21,7 @@ const ROWS: Row[] = [
   { section: "Recomendados y banners", before: "Dos OfferShelf (Recomendados, Me interesa) y dos huecos grises de banner.",
     after: "Recomendados y banners reales de VMC (campañas en HTML), también en el hueco del Sidebar." },
   { section: "Fichas", before: "Bloque Detalle con datos de ejemplo.",
-    after: "Detalle con la oferta real (prop offer), aviso Publicación basic y el SubasChat del acuerdo en lugar del DetailCard." },
+    after: "Detalle con la oferta real (prop offer), aviso Publicación basic y el SubasChat del acuerdo en lugar del DetailCard. Estas dos pantallas (Propuesta y Acuerdo con SubasChat) se ven en el bloque Detalle." },
   { section: "Marco", before: "Header logueado sobre 798 de ancho.",
     after: "Lienzo de 1024 de vmcsubastas.com con Header y Sidebar (229, cerrado 76); bajo 1024 px, drawer con hamburguesa." },
 ];
@@ -29,7 +29,7 @@ const ROWS: Row[] = [
 const EXTENDED = [
   ["TabSelector", "/handoff/tabselector", "notificationIndices: modo bandeja, las pestañas con novedades en bold y el resto en peso normal. Sin la prop, igual que antes."],
   ["DetailCard", "/handoff/detailcard", "assistantBanner (banner de Max) y miniBanner (imagen con enlace) en el lugar del banner teal; el botón crece si el texto es largo."],
-  ["Detalle (bloque)", "/blocks/detalle", "offer (título, fotos, relacionadas, detailSlot para reemplazar el DetailCard, visits) y safetyPlacement (aviso Publicación basic). Sin props, igual que antes."],
+  ["Detalle (bloque)", "/blocks/detalle/v1", "offer (título, fotos, relacionadas, detailSlot para reemplazar el DetailCard, visits) y safetyPlacement (aviso Publicación basic). Sin props, igual que antes."],
   ["Vidrio", "/handoff/vidrio", "Cuatro íconos nuevos: aviso, bolsa, republicar y baja (en naranja)."],
 ];
 
@@ -42,7 +42,7 @@ const NEW = [
 ];
 
 const PENDING = [
-  "Todo lo que muestran las 6 pantallas ya es componente de Concorde (44 nuevos, en la lista de abajo). En el bloque quedan solo el armado de cada pantalla, los datos de ejemplo y las reglas de posición.",
+  "Todo lo que muestran las 6 pantallas (4 en Mi Garaje y 2 en Detalle) ya es componente de Concorde (44 nuevos, en la lista de abajo). En el bloque quedan solo el armado de cada pantalla, los datos de ejemplo y las reglas de posición.",
   "Las pantallas se ven en iframes con la base del lab (sin el reset de Tailwind de Concorde, Plus Jakarta Sans, alto de línea normal), para que midan lo mismo que en VMC Laptop.",
   "Usa framer-motion (animaciones de pestañas y filas) y qrcode-generator, aceptadas como dependencias de Concorde.",
   "BadgeStatus, LikeButton, ProfileButton y TabSelector tomaron la versión del lab (paleta de marca #ED8936 / #22005C, EN VIVO y PRÓXIMA de 80 px, pestañas con novedades en negrita): Mi Garaje se ve igual que en el lab.",
@@ -54,7 +54,7 @@ export default function MiGarajeComparison(): JSX.Element {
     <section style={{ maxWidth: 1280, margin: "0 auto", padding: "48px 32px 0" }}>
       <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--ui-ink)", letterSpacing: "-0.01em", margin: "0 0 4px" }}>Qué cambia frente a Zona</h2>
       <p style={{ fontSize: 14, color: "var(--ui-body)", margin: "0 0 20px", maxWidth: 760 }}>
-        Mi Garaje es la evolución de Zona. Viene de mi-garaje-lab (VMC-Laptop, rama mi-garaje/vendo-mis-cosas, 9a0fa2b), modo vmc, sin los paneles de QA. Zona sigue disponible tal cual.
+        Mi Garaje es la evolución de Zona. Viene de mi-garaje-lab (VMC-Laptop, rama mi-garaje/vendo-mis-cosas, 9a0fa2b), modo vmc, sin los paneles de QA. Zona queda como la versión 1 de Mi Garaje, tal cual.
       </p>
       <div style={{ overflowX: "auto", border: "1px solid var(--ui-border)", borderRadius: 12 }}>
         <table className="mgc-table">

@@ -7,6 +7,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import CategoryCard from "@/src/components/CategoryCard";
 import Preview from "@/app/handoff/_components/Preview";
+import DeprecatedNotice from "@/app/handoff/_components/DeprecatedNotice";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
 import PropsTable, { type PropRow } from "@/app/handoff/_components/PropsTable";
@@ -87,6 +88,8 @@ export default function CategoryCardHandoffPage(): JSX.Element {
 
   return (
     <main style={{ maxWidth: 768, margin: "0 auto", padding: "48px 24px 96px", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)", color: "var(--ui-ink)" }}>
+
+      <DeprecatedNotice replacement="CategoryRail" note="El Index muestra las categorías con CategoryRail (6 tarjetas con foto e ícono de vidrio); CategoryCard solo lo usa Homepage, la versión 1." />
 
       {/* Title */}
       <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 8px" }}>CategoryCard</h1>

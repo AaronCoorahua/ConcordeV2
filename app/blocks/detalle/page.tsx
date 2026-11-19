@@ -7,8 +7,8 @@ import RequiredComponents, { type RequiredItem } from "@/app/blocks/_components/
 import DetalleViewer from "./DetalleViewer";
 
 /**
- * /blocks/detalle — Visor del bloque Detalle (desktop + mobile).
- * El estado (tabs En vivo / Negociable) lo maneja DetalleViewer.
+ * /blocks/detalle — Detalle actual: Propuesta (comprador) y Acuerdo con SubasChat, las pantallas de ficha de Mi Garaje.
+ * La versión 1 (el bloque Detalle de antes) está en /blocks/detalle/v1.
  */
 
 function readSrc(rel: string): string {
@@ -19,55 +19,58 @@ function readSrc(rel: string): string {
   }
 }
 
-// Componentes que necesita el bloque → cards bajo el visor
 const REQUIRED: RequiredItem[] = [
-  { name: "AuctionStatus", path: "/handoff/auctionstatus", role: "Estado de la subasta (cambia live/negotiable)" },
-  { name: "CardViewer",    path: "/handoff/cardviewer",    role: "Visor de imágenes + filmstrip de miniaturas" },
-  { name: "Accordion",     path: "/handoff/accordion",     role: "Secciones colapsables (Información general, Condiciones, Visitas)" },
-  { name: "DetailCard",    path: "/handoff/detailcard",    role: "Tarjeta de detalle de la oferta (live / negotiable)" },
-  { name: "ConditionPill", path: "/handoff/conditionpill", role: "Píldoras de condiciones (filled «Con…» / outline «Sin…»)" },
-  { name: "OfferCard",     path: "/handoff/offercard",     role: "Cards de OFERTAS RELACIONADAS (Audi Q3) — live y negotiable" },
-  { name: "Button",        path: "/handoff/button",        role: "CTA «Ingresa» (header) y «Agenda tu visita» (secondary-sm en VISITAS)" },
+  { name: "DetailCard", path: "/handoff/detailcard", role: "Ficha de la propuesta; banners de Max y mini (assistantBanner, miniBanner)" },
+  { name: "CardViewer", path: "/handoff/cardviewer", role: "Fotos del vehículo con miniaturas" },
+  { name: "AuctionStatus", path: "/handoff/auctionstatus", role: "Estado de la oferta sobre las fotos" },
+  { name: "Accordion", path: "/handoff/accordion", role: "Información general, Condiciones y Visitas" },
+  { name: "ConditionPill", path: "/handoff/conditionpill", role: "Condiciones de la oferta (con / sin)" },
+  { name: "OfferCard", path: "/handoff/offercard", role: "Ofertas relacionadas" },
+  { name: "LikeButton", path: "/handoff/likebutton", role: "Favorito de la ficha" },
+  { name: "ProposalModal", path: "/handoff/proposalmodal", role: "Modal para enviar una propuesta" },
+  { name: "ProposalNotice", path: "/handoff/proposalnotice", role: "Avisos de fondos insuficientes o negociación cerrada" },
+  { name: "ChatHeader", path: "/handoff/chatheader", role: "Cabecera del SubasChat del acuerdo" },
+  { name: "ChatDay", path: "/handoff/chatday", role: "Separador de día del SubasChat" },
+  { name: "ChatBubble", path: "/handoff/chatbubble", role: "Mensajes del SubasChat" },
+  { name: "ChatNotice", path: "/handoff/chatnotice", role: "Avisos del sistema en el SubasChat" },
+  { name: "ChatComposer", path: "/handoff/chatcomposer", role: "Caja para escribir del SubasChat" },
+  { name: "Button", path: "/handoff/button", role: "Ofertar, Agenda tu visita y acciones del chat" },
+  { name: "ProfileButton", path: "/handoff/profilebutton", role: "Volver a Mi Garaje y enlaces de sección" },
+  { name: "Vidrio", path: "/handoff/vidrio", role: "Íconos de vidrio del modal y los avisos" },
+  { name: "CardTitle", path: "/handoff/cardtitle", role: "Títulos de sección de la ficha" },
 ];
 
-// Archivos propios del bloque
-const BLOCK_FILES: BlockFile[] = [
-  { path: "src/blocks/detalle/desktop/Detalle.tsx", code: readSrc("src/blocks/detalle/desktop/Detalle.tsx") },
-  { path: "src/blocks/detalle/mobile/DetalleMobile.tsx", code: readSrc("src/blocks/detalle/mobile/DetalleMobile.tsx") },
-  { path: "src/blocks/detalle/pills.ts", code: readSrc("src/blocks/detalle/pills.ts") },
-];
-
-// Componentes que usa el bloque → aparecen bajo src/components/
-const USED_COMPONENTS = ["AuctionStatus", "CardViewer", "Accordion", "CardTitle", "DetailCard", "ConditionPill", "LikeButton", "PriceIcon", "OfferCard"];
-const COMPONENT_FILES: BlockFile[] = USED_COMPONENTS.map(function toFile(name) {
-  const rel = `src/components/${name}.tsx`;
-  return { path: rel, code: readSrc(rel) };
+const FILES: BlockFile[] = [
+  "src/blocks/mi-garaje/desktop/Propuesta.tsx",
+  "src/blocks/mi-garaje/desktop/propuesta.css",
+  "src/blocks/mi-garaje/desktop/Oferta.tsx",
+  "src/blocks/mi-garaje/desktop/SubasChat.tsx",
+  "src/blocks/mi-garaje/desktop/subaschat.css",
+  "src/blocks/mi-garaje/desktop/chat.ts",
+  "src/blocks/mi-garaje/desktop/kit.tsx",
+  "src/blocks/detalle/desktop/Detalle.tsx",
+  "src/blocks/detalle/pills.ts",
+  "src/components/DetailCard.tsx",
+  "src/components/CardViewer.tsx",
+  "src/components/AuctionStatus.tsx",
+  "src/components/Accordion.tsx",
+  "src/components/ConditionPill.tsx",
+  "src/components/OfferCard.tsx",
+  "src/components/LikeButton.tsx",
+  "src/components/ProposalModal.tsx",
+  "src/components/ProposalNotice.tsx",
+  "src/components/ChatHeader.tsx",
+  "src/components/ChatDay.tsx",
+  "src/components/ChatBubble.tsx",
+  "src/components/ChatNotice.tsx",
+  "src/components/ChatComposer.tsx",
+  "src/components/Button.tsx",
+  "src/components/ProfileButton.tsx",
+  "src/components/Vidrio.tsx",
+  "src/components/CardTitle.tsx",
+].map(function toFile(p) {
+  return { path: p, code: readSrc(p) };
 });
-
-// El bloque Sidebar (va pegado a la izquierda) → su código también aparece en /code
-const SIDEBAR_BLOCK_PATHS = [
-  "src/blocks/sidebar/desktop/Sidebar.tsx",
-  "src/blocks/sidebar/desktop/SidebarItem.tsx",
-  "src/blocks/sidebar/desktop/SidebarSubItem.tsx",
-  "src/blocks/sidebar/desktop/SidebarHeader.tsx",
-  "src/blocks/sidebar/desktop/SidebarBanner.tsx",
-];
-const SIDEBAR_ICONS = ["TodayIcon", "OfferIcon", "CategoryIcon", "BusinessIcon", "ServiceCenterIcon"];
-const SIDEBAR_FILES: BlockFile[] = [
-  ...SIDEBAR_BLOCK_PATHS.map(function toBlock(p) { return { path: p, code: readSrc(p) }; }),
-  ...SIDEBAR_ICONS.map(function toIcon(name) {
-    const rel = `src/components/${name}.tsx`;
-    return { path: rel, code: readSrc(rel) };
-  }),
-];
-
-// El bloque Header (barra superior) → su código también aparece en /code
-const HEADER_FILES: BlockFile[] = [
-  { path: "src/blocks/header/desktop/Header.tsx", code: readSrc("src/blocks/header/desktop/Header.tsx") },
-  { path: "src/components/Button.tsx", code: readSrc("src/components/Button.tsx") },
-];
-
-const FILES: BlockFile[] = [...BLOCK_FILES, ...COMPONENT_FILES, ...SIDEBAR_FILES, ...HEADER_FILES];
 
 export default function DetalleBlockPage(): JSX.Element {
   return (

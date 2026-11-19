@@ -10,6 +10,8 @@ import { Vidrio } from "@/src/components/Vidrio";
 import Button from "@/src/components/Button";
 
 export const WALLET_CARD_CSS = String.raw`
+/* La tarjeta es vd-host (el ícono de vidrio reacciona al pasar el mouse). Su fondo se repite para el estado presionado:
+   si no, la regla de Vidrio «presionado» (fondo #EDE6FF) la pintaba de lila al apretar «Adquiere SubasCoins». */
 .f-wallet { position:relative; isolation:isolate; overflow:hidden; display:grid; gap:16px; padding:20px; border-radius:20px; color:#fff;
   background:linear-gradient(116deg,#5A35C2 0%,#2E0F70 55%,#100030 100%); box-shadow:0 18px 44px rgba(34,0,92,.28); }
 .f-wallet::before { content:""; position:absolute; z-index:-1; width:280px; height:280px; right:-110px; top:-130px; border-radius:50%;
@@ -51,7 +53,7 @@ export const WALLET_CARD_CSS = String.raw`
 .f-wallet__bal div + div { padding-left:20px; }
 .f-wallet__bal { padding-bottom:20px; border-bottom:1px solid rgba(255,255,255,.14); }
 .f-wallet > button { margin-top:18px; }
-.f-wallet { background:linear-gradient(160deg,#3B1782 0%,#22005C 100%); }
+.f-wallet, .f-wallet.f-wallet.vd-host.vd-host:is(:active,.is-press) { background:linear-gradient(160deg,#3B1782 0%,#22005C 100%); }
 .f-wallet::before { display:none; }
 @media (min-width:1024px) { .f-wallet { padding:16px; gap:12px; border-radius:16px; } }
 @media (min-width:1024px) { .f-wallet h2 { font-size:.9375rem; font-weight:800; } }
@@ -64,7 +66,7 @@ export const WALLET_CARD_CSS = String.raw`
 @media (min-width:1024px) { .f-wallet__bal { padding-bottom:12px; } }
 .f-wallet h2 { display:flex; align-items:center; gap:8px; }
 .f-wallet .vd { --solid:#ED8936; --glass:#CFBAFF; }
-@media (min-width:1024px) { .f-wallet { background:linear-gradient(116deg,#5A35C2 0%,#2E0F70 55%,#100030 100%); box-shadow:0 12px 32px rgba(34,0,92,.28); } }
+@media (min-width:1024px) { .f-wallet, .f-wallet.f-wallet.vd-host.vd-host:is(:active,.is-press) { background:linear-gradient(116deg,#5A35C2 0%,#2E0F70 55%,#100030 100%); box-shadow:0 12px 32px rgba(34,0,92,.28); } }
 @media (min-width:1024px) { .f-wallet::before { display:block; } }
 @media (min-width:1024px) { .f-wallet h2 { font-size:1rem; font-weight:700; } }
 @media (min-width:1024px) { .f-wallet header a { font-size:.75rem; font-weight:600; } }
@@ -78,7 +80,7 @@ export const WALLET_CARD_CSS = String.raw`
 @media (min-width:1024px) { .f-wallet .psec { margin:0; } }
 @media (min-width:1024px) { .f-wallet { border-radius:8px; } }
 @media (min-width:1024px) { .f-wallet h2 .vd { width:28px; height:28px; } }
-@media (min-width:1024px) { .f-wallet { background:radial-gradient(92% 68% at 20% -24%,rgba(174,142,255,.26) 0%,rgba(132,96,229,.10) 42%,transparent 76%),radial-gradient(125% 105% at 54% 122%,rgba(244,172,89,.32) 0%,rgba(237,137,54,.13) 36%,transparent 72%),linear-gradient(145deg,#5A35C2 0%,#3B1782 52%,#22005C 100%); } }
+@media (min-width:1024px) { .f-wallet, .f-wallet.f-wallet.vd-host.vd-host:is(:active,.is-press) { background:radial-gradient(92% 68% at 20% -24%,rgba(174,142,255,.26) 0%,rgba(132,96,229,.10) 42%,transparent 76%),radial-gradient(125% 105% at 54% 122%,rgba(244,172,89,.32) 0%,rgba(237,137,54,.13) 36%,transparent 72%),linear-gradient(145deg,#5A35C2 0%,#3B1782 52%,#22005C 100%); } }
 @media (min-width:1024px) { .f-wallet::before { display:none; } }
 @media (min-width:1024px) { .f-wallet header { min-height:28px; align-items:center; } }
 @media (min-width:1024px) { .f-wallet header :is(h2,a) { align-self:center; margin-block:0; } }

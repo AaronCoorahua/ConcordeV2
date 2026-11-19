@@ -1,7 +1,4 @@
 import type { JSX, ReactNode } from "react";
-import Homepage, { HOMEPAGE_WIDTH, HOMEPAGE_HEIGHT } from "@/src/blocks/homepage/desktop/Homepage";
-import Detalle, { DETALLE_WIDTH, DETALLE_HEIGHT } from "@/src/blocks/detalle/desktop/Detalle";
-import Zona, { ZONA_WIDTH, ZONA_HEIGHT } from "@/src/blocks/zona/desktop/Zona";
 import AgregarSubascoins, { AGREGARSUBASCOINS_WIDTH, AGREGARSUBASCOINS_HEIGHT } from "@/src/blocks/agregar-subascoins/desktop/AgregarSubascoins";
 import TuPerfil, { TUPERFIL_WIDTH, TUPERFIL_HEIGHT } from "@/src/blocks/tu-perfil/desktop/TuPerfil";
 import Login from "@/src/blocks/login/desktop/Login";
@@ -15,9 +12,11 @@ import Sidebar from "@/src/blocks/sidebar/desktop/Sidebar";
 import { SIDEBAR_WIDTH, SIDEBAR_HEIGHT } from "@/src/blocks/sidebar/desktop/dimensions";
 import Header from "@/app/_components/Header";
 import { INDEX_SHELL_WIDTH } from "@/src/blocks/index/desktop/dimensions";
+import { BLOCKS_NAV } from "@/app/blocks/_components/blocks-nav";
 
 /**
  * /blocks — Catálogo de Bloques (tema claro, mismo estilo que /components).
+ * Solo los bloques actuales; las versiones anteriores (Homepage, Detalle v1, Zona) van como enlace en la tarjeta del actual.
  */
 
 interface BlockEntry {
@@ -28,32 +27,9 @@ interface BlockEntry {
   /** Altura usada sólo para calcular la escala del thumbnail (recorta la vista desde arriba) */
   thumbHeight?: number;
   node: ReactNode;
+  /** Ruta de la tarjeta; por defecto /blocks/<id>. */
+  href?: string;
 }
-
-// Homepage se compone con el Sidebar pegado a la izquierda (homepage arranca bajo el header del sidebar)
-const HP_SIDEBAR_HEADER_H = 60;
-const HP_COMBINED_W = SIDEBAR_WIDTH + HOMEPAGE_WIDTH;
-const HP_COMBINED_H = Math.max(SIDEBAR_HEIGHT, HP_SIDEBAR_HEADER_H + HOMEPAGE_HEIGHT);
-
-// Layout flex: al colapsar el Sidebar su width se anima y el Homepage lo sigue (queda pegado).
-const HOMEPAGE_COMBINED = (
-  <div style={{ display: "flex", alignItems: "flex-start", width: HP_COMBINED_W, height: HP_COMBINED_H, background: "#ffffff" }}>
-    <Sidebar />
-    <div style={{ marginTop: HP_SIDEBAR_HEADER_H, flexShrink: 0 }}>
-      <Homepage />
-    </div>
-  </div>
-);
-
-// Zona se compone con el Sidebar pegado a la izquierda (la Zona ya trae su header)
-const ZONA_COMBINED_W = SIDEBAR_WIDTH + ZONA_WIDTH;
-const ZONA_COMBINED_H = Math.max(SIDEBAR_HEIGHT, ZONA_HEIGHT);
-const ZONA_COMBINED = (
-  <div style={{ display: "flex", alignItems: "flex-start", width: ZONA_COMBINED_W, height: ZONA_COMBINED_H, background: "#ffffff" }}>
-    <Sidebar height={ZONA_COMBINED_H} />
-    <Zona />
-  </div>
-);
 
 // Login se compone con el Sidebar pegado a la izquierda (el Login ya trae su header).
 // A diferencia de los demás bloques, el Login es más corto que el Sidebar (837 vs
@@ -101,13 +77,13 @@ const TUPERFIL_COMBINED = (
 );
 
 const BLOCKS: BlockEntry[] = [
-  { id: "homepage", name: "Homepage", width: HP_COMBINED_W, height: HP_COMBINED_H, node: HOMEPAGE_COMBINED },
-  // Index: imagen del primer tramo (sacada del render del bloque). El bloque vivo tiene enlaces y no puede ir
+  // Homepage = el bloque Index. Imagen del primer tramo (sacada del render del bloque). El bloque vivo tiene enlaces y no puede ir
   // dentro del <a> de la tarjeta; además así el catálogo no arranca el feed ni carga todas sus fotos.
-  { id: "index",    name: "Index",    width: INDEX_SHELL_WIDTH, height: 1000,
+  { id: "homepage", name: "Homepage", href: "/blocks/index", width: INDEX_SHELL_WIDTH, height: 1000,
     node: <img src="/index/thumb.jpg" alt="" width={INDEX_SHELL_WIDTH} height={1000} style={{ display: "block" }} /> },
-  { id: "detalle",  name: "Detalle",  width: DETALLE_WIDTH,  height: DETALLE_HEIGHT,  node: <Detalle /> },
-  { id: "zona",     name: "Zona",     width: ZONA_COMBINED_W, height: ZONA_COMBINED_H, node: ZONA_COMBINED },
+  // Detalle: imagen de la pantalla Propuesta (comprador), como Mi Garaje.
+  { id: "detalle",  name: "Detalle",  width: 1024, height: 900,
+    node: <img src="/detalle/thumb.jpg" alt="" width={1024} height={900} style={{ display: "block" }} /> },
   // Mi Garaje: imagen de la pantalla principal (su CSS es global; el bloque vivo se ve en iframes en /blocks/mi-garaje).
   { id: "mi-garaje", name: "Mi Garaje", width: 1024, height: 900,
     node: <img src="/mi-garaje/thumb.jpg" alt="" width={1024} height={900} style={{ display: "block" }} /> },
@@ -146,8 +122,10 @@ export default function BlocksPage(): JSX.Element {
           {BLOCKS.map(function renderBlock(b) {
             const th = b.thumbHeight ?? b.height;
             const scale = Math.min((THUMB_H - 32) / th, 240 / b.width);
+            const older = BLOCKS_NAV.find((n) => n.id === b.id)?.versions?.slice(1) ?? [];
             return (
-              <a key={b.id} href={`/blocks/${b.id}`} className="blk-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", borderRadius: 12, overflow: "hidden", background: "#ffffff", border: "1px solid var(--ui-border)", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
+              <div key={b.id} className="blk-card" style={{ display: "flex", flexDirection: "column", borderRadius: 12, overflow: "hidden", background: "#ffffff", border: "1px solid var(--ui-border)", transition: "box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease" }}>
+              <a href={b.href ?? `/blocks/${b.id}`} style={{ display: "flex", flexDirection: "column", flex: 1, textDecoration: "none" }}>
                 <div style={{ height: THUMB_H, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--ui-subtle)", borderBottom: "1px solid var(--ui-border-soft)" }}>
                   <div style={{ width: b.width * scale, height: th * scale, position: "relative", overflow: "hidden", borderRadius: 4, boxShadow: "0 6px 18px rgba(15,23,42,0.12)", outline: "1px solid var(--ui-border)" }}>
                     <div style={{ position: "absolute", top: 0, left: 0, width: b.width, height: b.height, transform: `scale(${scale})`, transformOrigin: "top left" }}>
@@ -160,6 +138,15 @@ export default function BlocksPage(): JSX.Element {
                   <span className="blk-arrow" aria-hidden="true" style={{ fontSize: 15, color: "var(--ui-border-hover)" }}>→</span>
                 </div>
               </a>
+              {older.length ? (
+                <div style={{ padding: "0 18px 14px", marginTop: -6, fontSize: 12, color: "var(--ui-muted)" }}>
+                  Versiones anteriores:{" "}
+                  {older.map((v, i) => (
+                    <span key={v.href}>{i ? " · " : ""}<a href={v.href} className="blk-old">{v.label}{v.note ? ` (${v.note})` : ""}</a></span>
+                  ))}
+                </div>
+              ) : null}
+              </div>
             );
           })}
         </div>
@@ -168,6 +155,8 @@ export default function BlocksPage(): JSX.Element {
       <style dangerouslySetInnerHTML={{ __html: `
         .blk-card:hover { box-shadow: 0 8px 30px -8px rgba(15,23,42,0.12), 0 2px 8px -2px rgba(15,23,42,0.05); border-color: var(--ui-border-hover); transform: translateY(-2px); }
         .blk-card:hover .blk-name { color: var(--ui-accent); }
+        .blk-old { color: var(--ui-body); text-decoration: underline; text-decoration-color: var(--ui-border-hover); text-underline-offset: 2px; }
+        .blk-old:hover { color: var(--ui-accent); }
         .blk-card:hover .blk-arrow { color: var(--ui-accent); transform: translateX(3px); transition: color 0.2s ease, transform 0.2s ease; }
       `}} />
     </div>

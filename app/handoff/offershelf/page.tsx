@@ -7,6 +7,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import OfferShelf from "@/src/components/OfferShelf";
 import Preview from "@/app/handoff/_components/Preview";
+import DeprecatedNotice from "@/app/handoff/_components/DeprecatedNotice";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
 import PropsTable, { type PropRow } from "@/app/handoff/_components/PropsTable";
@@ -63,6 +64,8 @@ export default function OfferShelfHandoffPage(): JSX.Element {
   const source = readComponentSource();
   return (
     <main style={{ maxWidth: 768, margin: "0 auto", padding: "48px 24px 96px", fontFamily: "var(--vmc-font-display,'Plus Jakarta Sans',-apple-system,sans-serif)", color: "var(--ui-ink)" }}>
+
+      <DeprecatedNotice replacement="LotGallery" note="El Index lo usa en lugar de esta repisa." />
 
       <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 8px" }}>OfferShelf</h1>
       <p style={{ ...muted, fontSize: 16 }}>Estante de ofertas (766×352): CardTitle + fila de 4 OfferCards. Compone CardTitle, OfferCard y BadgeStatus.</p>

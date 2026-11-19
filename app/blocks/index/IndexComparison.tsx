@@ -27,7 +27,7 @@ const ROWS: Row[] = [
     pieces: <><C>AdStrip</C> (bloque)</> },
   { section: "Categorías", before: "4 CategoryCard con ícono: vehicular, maquinaria, equipos diversos y artículos diversos.",
     after: "6 cards con foto, ícono de vidrio y número de lotes. Se suman Materiales y Mobiliario. En celular, 2 columnas.",
-    pieces: <><C>CategoryRail</C> (bloque) · <C href="/handoff/vidrio">Vidrio</C> nuevo, en lugar de <C href="/handoff/categorycard">CategoryCard</C></> },
+    pieces: <><C href="/handoff/categoryrail">CategoryRail</C> nuevo (con <C href="/handoff/vidrio">Vidrio</C>), en lugar de <C href="/handoff/categorycard">CategoryCard</C></> },
   { section: "Banner de campaña", before: "No existía.",
     after: "Valoriza tu auto: foto de fondo, degradado del sistema y el mensaje en un panel de vidrio.",
     pieces: <><C>CampaignBanner</C> (bloque) · <C href="/handoff/glassbutton">GlassButton</C></> },
@@ -97,7 +97,7 @@ export default function IndexComparison(): JSX.Element {
     <section style={{ maxWidth: 1280, margin: "0 auto", padding: "48px 32px 0" }}>
       <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--ui-ink)", letterSpacing: "-0.01em", margin: "0 0 4px" }}>Qué cambia frente a Homepage</h2>
       <p style={{ fontSize: 14, color: "var(--ui-body)", margin: "0 0 20px", maxWidth: 760 }}>
-        Index es la evolución del bloque Homepage. Viene de vmc-index-lab, con la vista por defecto (Opción A) y sin los controles de QA. Homepage sigue disponible tal cual.
+        Index es la evolución del bloque Homepage. Viene de vmc-index-lab, con la vista por defecto (Opción A) y sin los controles de QA. Homepage queda como la versión 1, tal cual.
       </p>
       <div style={{ overflowX: "auto", border: "1px solid var(--ui-border)", borderRadius: 12 }}>
         <table className="cmp-table">

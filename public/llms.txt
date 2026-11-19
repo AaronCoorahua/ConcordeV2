@@ -41,24 +41,33 @@ Docs con preview + props (para humanos):
   y los JSON de bloque ya los incluyen).
 - El catálogo vivo siempre está en `/r/registry.json` — féchalo para la lista actual.
 
-## Componentes (102)
+## Componentes (96 actuales + 7 deprecados)
 
-accordion, accountcard, actionlist, actiontile, activitycard, activitysection, adbanner,
-addbutton, amountcomposer, amountoptiongroup, auctionstatus, avatarzone, badgestatus,
-bidmessage, bidposition, bidproposal, businessicon, button, cardtitle, cardviewer,
-categorycard, categoryicon, chatbubble, chatcomposer, chatday, chatheader, chatnotice,
-checkicon, combobox, conditionpill, countdown, decisionbar, detailcard, docbutton,
-dropmodal, eyeicon, featuredcard, foldertabs, glassbutton, herocarousel, infoicon,
-input, lightbar, likebutton, logomarquee, lotgallery, morebutton, notificationbell,
-notificationbox, notificationinbox, offercard, offericon, offershelf, offertype,
-offertypecards, pagination, pendingtoggle, pricebadge, priceicon, profilebutton,
-progressbar, projectionchart, proposalmodal, proposalnotice, proposalthread,
-publicationbadge, publishfeebanner, publishswipe, qrcard, qrcode, recommendedlist,
-republishbar, republishmodal, responsetimer, riskmeter, roundprogress, salastatus,
-seasonchart, sectionhead, select, sendbidicon, servicecentericon, sidepanel, signal,
-stagetabs, staricon, statpill, statustag, stepper, table, tabselector, termsselector,
-timericon, todayicon, userprofilecard, valuationcard, valuehero, vehiclerow, vidrio,
-vmcahora, walletbalancecard, walletcard
+accordion, accountcard, actionlist, actiontile, activitysection, adbanner, addbutton,
+amountcomposer, amountoptiongroup, auctionstatus, avatarzone, badgestatus, bidmessage,
+bidposition, bidproposal, businessicon, button, cardtitle, cardviewer, categoryicon, categoryrail,
+chatbubble, chatcomposer, chatday, chatheader, chatnotice, checkicon, combobox,
+conditionpill, countdown, decisionbar, detailcard, dropmodal, eyeicon, featuredcard,
+foldertabs, glassbutton, herocarousel, infoicon, input, lightbar, likebutton,
+logomarquee, lotgallery, morebutton, notificationbell, notificationbox,
+notificationinbox, offercard, offericon, offertypecards, pagination,
+pendingtoggle, pricebadge, priceicon, profilebutton, progressbar, projectionchart,
+proposalmodal, proposalnotice, proposalthread, publicationbadge, publishfeebanner,
+publishswipe, qrcard, qrcode, recommendedlist, republishbar, republishmodal,
+responsetimer, riskmeter, roundprogress, salastatus, seasonchart, sectionhead, select,
+sendbidicon, servicecentericon, sidepanel, signal, stagetabs, staricon, statpill,
+statustag, stepper, table, tabselector, termsselector, timericon, todayicon,
+valuationcard, valuehero, vehiclerow, vidrio, vmcahora, walletcard
+
+Deprecados (siguen instalables, pero para algo nuevo usa su reemplazo; solo los usan las
+versiones anteriores de los bloques, o ningún bloque):
+- activitycard       → activitysection (Mi Garaje)
+- userprofilecard    → accountcard (Mi Garaje)
+- walletbalancecard  → walletcard (Mi Garaje)
+- offertype          → offertypecards (Index)
+- offershelf         → lotgallery (Index)
+- categorycard       → categoryrail (Index)
+- docbutton          → no lo usa ningún bloque
 
 Componentes del nuevo inicio (bloque index):
 - herocarousel    banner principal con campañas e indicador de vidrio para pasar entre ellas
@@ -66,6 +75,7 @@ Componentes del nuevo inicio (bloque index):
 - offertypecards  tarjetas de tipo de oferta con foto (Recibe ofertas / En vivo)
 - featuredcard    carta destacada de un lote (se inclina, favorito, precio con SubasCoin)
 - lotgallery      carta destacada + lotes en filas (usa featuredcard)
+- categoryrail    «Explora por categoría»: tarjetas con foto, ícono de vidrio y cantidad de lotes
 - lightbar        barra de luz naranja o turquesa (la usa featuredcard)
 - glassbutton     botón de vidrio para fotos y fondos oscuros
 - vidrio          íconos de vidrio esmerilado (28)
@@ -123,21 +133,25 @@ Componentes de Mi Garaje:
 
 ## Bloques (página completa = bloque + sus componentes)
 
-- index     → herocarousel, vmcahora, offertypecards, lotgallery, featuredcard, lightbar,
+- index     → herocarousel, vmcahora, offertypecards, lotgallery, categoryrail, featuredcard, lightbar,
               glassbutton, vidrio, logomarquee, profilebutton (+ bloques header y sidebar).
-              Nuevo inicio de VMC.
+              Inicio actual de VMC (en el catálogo: Homepage, «Actual»).
 - homepage  → offercard, badgestatus, profilebutton, cardtitle, offertype, categorycard.
-              Versión anterior del inicio.
+              Versión 1 de Homepage (inicio anterior). Para el inicio usa index.
 - detalle   → auctionstatus, cardviewer, accordion, detailcard, conditionpill, button,
-              cardtitle, offercard
+              cardtitle, offercard. Versión 1 de Detalle (/blocks/detalle/v1). El Detalle
+              actual (/blocks/detalle) son las pantallas Propuesta (comprador) y Acuerdo con
+              SubasChat; se instalan con mi-garaje.
 - mi-garaje → Mi Garaje (evolución de zona): cuenta, actividad, negociación, valorizar,
-              publicar, mis valorizaciones. Trae .css globales; usa framer-motion.
+              publicar, mis valorizaciones; trae también las pantallas del Detalle actual
+              (propuesta y acuerdo con SubasChat). Trae .css globales; usa framer-motion.
 - valoriza  → landing de Valoriza (valorización AVT). button, profilebutton, glassbutton, vidrio
               + landing-shell (marco del Index: header, sidebar y drawer en celular).
 - vendo-mis-cosas → landing de Vendo Mis Cosas (venta de artículos). button, glassbutton, vidrio
               + landing-shell. Para una landing nueva de VMC, parte de una de estas dos.
 - zona      → userprofilecard, walletbalancecard, activitycard, offershelf, avatarzone,
-              staricon, infoicon, profilebutton, cardtitle, offercard, badgestatus
+              staricon, infoicon, profilebutton, cardtitle, offercard, badgestatus.
+              Versión 1 de Mi Garaje. Para la cuenta del usuario usa mi-garaje.
 - sala      → bidproposal, bidmessage, progressbar, button, avatarzone, pricebadge,
               badgestatus, signal, priceicon, statpill, salastatus, cardviewer, bidposition
 - login     → button, input, eyeicon

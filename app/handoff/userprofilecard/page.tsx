@@ -7,6 +7,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import UserProfileCard from "@/src/components/UserProfileCard";
 import Preview from "@/app/handoff/_components/Preview";
+import DeprecatedNotice from "@/app/handoff/_components/DeprecatedNotice";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
 import PropsTable, { type PropRow } from "@/app/handoff/_components/PropsTable";
@@ -85,6 +86,8 @@ export default function UserProfileCardHandoffPage(): JSX.Element {
   const source = readComponentSource();
   return (
     <main style={{ maxWidth: 768, margin: "0 auto", padding: "48px 24px 96px", fontFamily: "var(--vmc-font-display,'Plus Jakarta Sans',-apple-system,sans-serif)", color: "var(--ui-ink)" }}>
+
+      <DeprecatedNotice replacement="AccountCard" note="Mi Garaje lo usa en lugar de esta tarjeta; solo la usa Zona, la versión 1 de Mi Garaje." />
 
       <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 8px" }}>UserProfileCard</h1>
       <p style={{ ...muted, fontSize: 16 }}>Tarjeta de zona de usuario (766×140): saludo, riesgo del perfil, puntos VMC y accesos. Compone AvatarZone, ProfileButton y StarIcon.</p>

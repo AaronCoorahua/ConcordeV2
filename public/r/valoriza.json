@@ -13,7 +13,7 @@
       "path": "bloques/valoriza/desktop/dimensions.ts",
       "type": "registry:file",
       "target": "bloques/valoriza/desktop/dimensions.ts",
-      "content": "// Landing de Valoriza: lienzo de LandingShell. Es responsive: bajo 1024 px pasa a celular (393) con drawer.\nexport const VALORIZA_WIDTH = 1024;\nexport const VALORIZA_HEIGHT = 900;\nexport const VALORIZA_MOBILE_WIDTH = 393;\nexport const VALORIZA_MOBILE_HEIGHT = 852;\n"
+      "content": "// Landing de Valoriza: lienzo de LandingShell. Es responsive: bajo 1024 px pasa a celular (393) con drawer.\n// El visor la muestra a 1280 (escalada): a 1024 justos la barra de scroll la dejaba bajo 1024 y salía la versión de celular.\nexport const VALORIZA_WIDTH = 1280;\nexport const VALORIZA_HEIGHT = 900;\nexport const VALORIZA_MOBILE_WIDTH = 393;\nexport const VALORIZA_MOBILE_HEIGHT = 852;\n"
     },
     {
       "path": "bloques/valoriza/desktop/Valoriza.tsx",

@@ -50,12 +50,13 @@ import OfferIcon from "@/src/components/OfferIcon";
 import VmcAhora from "@/src/components/VmcAhora/VmcAhora";
 import { CardIcons, FeaturedCard } from "@/src/components/FeaturedCard";
 import { LotGallery } from "@/src/components/LotGallery";
+import { CategoryRail } from "@/src/components/CategoryRail";
 import { LightBar } from "@/src/components/LightBar";
 import GlassButton from "@/src/components/GlassButton";
 import { Vidrio } from "@/src/components/Vidrio";
 import HeroCarousel from "@/src/components/HeroCarousel";
 import LogoMarquee from "@/src/components/LogoMarquee";
-import { COMPANIES, STORES } from "@/src/blocks/index/shared/data";
+import { CATEGORIES, COMPANIES, STORES } from "@/src/blocks/index/shared/data";
 import { INDEX_SLIDES } from "@/src/blocks/index/desktop/IndexHero";
 import { PublicationBadge } from "@/src/components/PublicationBadge";
 import { QrCode } from "@/src/components/QrCode";
@@ -1031,6 +1032,12 @@ const REGISTRY: ComponentEntry[] = [
     preview: <Scaled w={720} h={360} scale={0.34}><div style={{ width: 720 }}><LotGallery featured={IDX_FEATURED} items={STORES[0].lots} height={356} /></div></Scaled>,
   },
   {
+    id: "categoryrail",
+    name: "CategoryRail",
+    handoffPath: "/handoff/categoryrail",
+    preview: <Scaled w={720} h={160} scale={0.38}><div style={{ width: 720 }}><Detached><CategoryRail items={CATEGORIES} /></Detached></div></Scaled>,
+  },
+  {
     id: "lightbar",
     name: "LightBar",
     handoffPath: "/handoff/lightbar",
@@ -1065,6 +1072,61 @@ const REGISTRY: ComponentEntry[] = [
     ),
   },
 ];
+
+// ── Secciones ─────────────────────────────────────────────────────────────
+// Primero los componentes actuales, agrupados por donde se usan; al final los deprecados (solo los usan las versiones
+// anteriores de los bloques, o ningún bloque).
+
+const SECTIONS: { title: string; ids: string[] }[] = [
+  { title: "Index", ids: ["herocarousel", "vmcahora", "offertypecards", "lotgallery", "categoryrail", "featuredcard", "lightbar", "logomarquee"] },
+  { title: "Mi Garaje", ids: [
+    "accountcard", "riskmeter", "walletcard", "actiontile", "recommendedlist", "adbanner", "activitysection", "pendingtoggle",
+    "foldertabs", "stagetabs", "vehiclerow", "countdown", "statustag", "pagination", "publicationbadge", "morebutton", "actionlist",
+    "republishbar", "republishmodal", "dropmodal", "sidepanel", "notificationbell", "notificationbox", "notificationinbox",
+    "stepper", "sectionhead", "valuehero", "projectionchart", "seasonchart", "decisionbar", "valuationcard", "addbutton",
+    "publishswipe", "publishfeebanner", "qrcode", "qrcard",
+  ] },
+  { title: "Detalle y negociación", ids: [
+    "detailcard", "cardviewer", "auctionstatus", "conditionpill", "offercard", "likebutton", "proposalmodal", "proposalnotice",
+    "responsetimer", "roundprogress", "proposalthread", "amountcomposer", "chatheader", "chatday", "chatbubble", "chatnotice", "chatcomposer",
+  ] },
+  { title: "Sala", ids: ["salastatus", "bidposition", "bidproposal", "bidmessage", "pricebadge"] },
+  { title: "Formularios y cuenta", ids: ["input", "select", "combobox", "termsselector", "tabselector", "amountoptiongroup", "avatarzone"] },
+  { title: "Base", ids: ["button", "profilebutton", "glassbutton", "badgestatus", "cardtitle", "accordion", "table", "progressbar", "statpill", "signal", "vidrio"] },
+  { title: "Íconos", ids: ["todayicon", "offericon", "categoryicon", "businessicon", "servicecentericon", "infoicon", "checkicon", "staricon", "timericon", "priceicon", "sendbidicon"] },
+];
+
+/** Deprecados → texto de reemplazo (la tarjeta ya es un enlace, así que va sin enlace). */
+const DEPRECATED: Record<string, string> = {
+  activitycard: "Reemplazado por ActivitySection (Mi Garaje)",
+  userprofilecard: "Reemplazado por AccountCard (Mi Garaje)",
+  walletbalancecard: "Reemplazado por WalletCard (Mi Garaje)",
+  offertype: "Reemplazado por OfferTypeCards (Index)",
+  offershelf: "Reemplazado por LotGallery (Index)",
+  categorycard: "Reemplazado por CategoryRail (Index)",
+  docbutton: "No lo usa ningún bloque",
+};
+
+/** Actuales que evolucionan de otro componente. */
+const EVOLVES: Record<string, string> = {
+  activitysection: "Evoluciona de ActivityCard",
+  accountcard: "Evoluciona de UserProfileCard",
+  walletcard: "Evoluciona de WalletBalanceCard",
+  lotgallery: "Evoluciona de OfferShelf",
+  categoryrail: "Evoluciona de CategoryCard",
+  offertypecards: "Evoluciona de OfferType",
+};
+
+function byId(id: string): ComponentEntry {
+  const c = REGISTRY.find((r) => r.id === id);
+  if (!c) throw new Error(`Componente sin registrar: ${id}`);
+  return c;
+}
+const GROUPS = [
+  ...SECTIONS.map((g) => ({ title: g.title, items: g.ids.map(byId), deprecated: false })),
+  { title: "Componentes deprecados", items: Object.keys(DEPRECATED).map(byId), deprecated: true },
+];
+const CURRENT_COUNT = REGISTRY.length - Object.keys(DEPRECATED).length;
 
 // ── Styles ────────────────────────────────────────────────────────────────
 
@@ -1151,6 +1213,17 @@ const PAGE_STYLES = `
   }
   .cp-card:hover .cp-card-name { color: var(--ui-accent); }
   .cp-card:hover .cp-card-arrow { color: var(--ui-accent); transform: translateX(3px); }
+  .cp-card-name-wrap { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .cp-card-note { font-size: 12px; color: var(--ui-muted); line-height: 1.4; }
+
+  .cp-group + .cp-group { margin-top: 40px; }
+  .cp-group-title { display: flex; align-items: baseline; gap: 8px; font-size: 15px; font-weight: 700; color: var(--ui-ink); margin: 0 0 12px; }
+  .cp-group-count { font-size: 12px; font-weight: 500; color: var(--ui-muted); }
+  .cp-group + .cp-group--deprecated { margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--ui-border-soft); }
+  .cp-group-sub { font-size: 13px; color: var(--ui-body); margin: -6px 0 14px; }
+  .cp-card--deprecated .cp-card-preview { opacity: 0.45; filter: grayscale(1); }
+  .cp-card--deprecated .cp-card-name { color: var(--ui-body); }
+  .cp-tag { font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ui-muted); background: var(--ui-border-soft); border-radius: 999px; padding: 2px 8px; flex-shrink: 0; }
 
   .cp-still .nt-box, .cp-still .nt-box li { animation: none; }
 
@@ -1172,22 +1245,34 @@ export default function ComponentsPage(): JSX.Element {
         <main className="cp-section">
           <div className="cp-section-head">
             <h1 className="cp-section-title">Componentes</h1>
-            <span className="cp-section-count">{REGISTRY.length} componentes</span>
+            <span className="cp-section-count">{CURRENT_COUNT} actuales · {REGISTRY.length - CURRENT_COUNT} deprecados</span>
           </div>
 
-          <div className="cp-grid">
-            {REGISTRY.map(function renderCard(c) {
-              return (
-                <a key={c.id} href={c.handoffPath} className="cp-card">
-                  <div className="cp-card-preview">{c.preview}</div>
-                  <div className="cp-card-foot">
-                    <span className="cp-card-name">{c.name}</span>
-                    <span className="cp-card-arrow" aria-hidden="true">→</span>
-                  </div>
-                </a>
-              );
-            })}
-          </div>
+          {GROUPS.map(function renderGroup(g) {
+            return (
+              <section key={g.title} className={g.deprecated ? "cp-group cp-group--deprecated" : "cp-group"}>
+                <h2 className="cp-group-title">{g.title}<span className="cp-group-count">{g.items.length}</span></h2>
+                {g.deprecated ? <p className="cp-group-sub">Solo los usan las versiones anteriores de los bloques, o ningún bloque. Siguen disponibles, pero para algo nuevo usa su reemplazo.</p> : null}
+                <div className="cp-grid">
+                  {g.items.map(function renderCard(c) {
+                    const note = g.deprecated ? DEPRECATED[c.id] : EVOLVES[c.id];
+                    return (
+                      <a key={c.id} href={c.handoffPath} className={g.deprecated ? "cp-card cp-card--deprecated" : "cp-card"}>
+                        <div className="cp-card-preview">{c.preview}</div>
+                        <div className="cp-card-foot">
+                          <span className="cp-card-name-wrap">
+                            <span className="cp-card-name">{c.name}</span>
+                            {note ? <span className="cp-card-note">{note}</span> : null}
+                          </span>
+                          {g.deprecated ? <span className="cp-tag">Deprecado</span> : <span className="cp-card-arrow" aria-hidden="true">→</span>}
+                        </div>
+                      </a>
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })}
         </main>
       </div>
     </>

@@ -41,28 +41,41 @@ Sin terminal: fetchea `<nombre>.json` y escribe cada `files[].content` en un arc
 
 ## Catálogo (snapshot — confirma con /r/registry.json)
 
-Componentes: accordion, accountcard, actionlist, actiontile, activitycard,
-activitysection, adbanner, addbutton, amountcomposer, amountoptiongroup, auctionstatus,
-avatarzone, badgestatus, bidmessage, bidposition, bidproposal, businessicon, button,
-cardtitle, cardviewer, categorycard, categoryicon, chatbubble, chatcomposer, chatday,
-chatheader, chatnotice, checkicon, combobox, conditionpill, countdown, decisionbar,
-detailcard, docbutton, dropmodal, eyeicon, featuredcard, foldertabs, glassbutton,
-herocarousel, infoicon, input, lightbar, likebutton, logomarquee, lotgallery,
-morebutton, notificationbell, notificationbox, notificationinbox, offercard, offericon,
-offershelf, offertype, offertypecards, pagination, pendingtoggle, pricebadge, priceicon,
-profilebutton, progressbar, projectionchart, proposalmodal, proposalnotice,
-proposalthread, publicationbadge, publishfeebanner, publishswipe, qrcard, qrcode,
-recommendedlist, republishbar, republishmodal, responsetimer, riskmeter, roundprogress,
-salastatus, seasonchart, sectionhead, select, sendbidicon, servicecentericon, sidepanel,
-signal, stagetabs, staricon, statpill, statustag, stepper, table, tabselector,
-termsselector, timericon, todayicon, userprofilecard, valuationcard, valuehero,
-vehiclerow, vidrio, vmcahora, walletbalancecard, walletcard
+Componentes: accordion, accountcard, actionlist, actiontile, activitysection, adbanner,
+addbutton, amountcomposer, amountoptiongroup, auctionstatus, avatarzone, badgestatus,
+bidmessage, bidposition, bidproposal, businessicon, button, cardtitle, cardviewer,
+categoryicon, categoryrail, chatbubble, chatcomposer, chatday, chatheader, chatnotice, checkicon,
+combobox, conditionpill, countdown, decisionbar, detailcard, dropmodal, eyeicon,
+featuredcard, foldertabs, glassbutton, herocarousel, infoicon, input, lightbar,
+likebutton, logomarquee, lotgallery, morebutton, notificationbell, notificationbox,
+notificationinbox, offercard, offericon, offertypecards, pagination,
+pendingtoggle, pricebadge, priceicon, profilebutton, progressbar, projectionchart,
+proposalmodal, proposalnotice, proposalthread, publicationbadge, publishfeebanner,
+publishswipe, qrcard, qrcode, recommendedlist, republishbar, republishmodal,
+responsetimer, riskmeter, roundprogress, salastatus, seasonchart, sectionhead, select,
+sendbidicon, servicecentericon, sidepanel, signal, stagetabs, staricon, statpill,
+statustag, stepper, table, tabselector, termsselector, timericon, todayicon,
+valuationcard, valuehero, vehiclerow, vidrio, vmcahora, walletcard
 
-Bloques: index (nuevo inicio de VMC), homepage (inicio anterior), mi-garaje (cuenta del usuario,
-evolución de zona), valoriza y vendo-mis-cosas (landings; base para
-landings nuevas, con landing-shell), detalle, zona, sala,
-login, register, tu-perfil, agregar-subascoins, banners, header, sidebar. Cada uno
-instala sus componentes.
+Deprecados (siguen instalables, pero para algo nuevo usa su reemplazo; solo los usan las
+versiones anteriores de los bloques, o ningún bloque):
+- activitycard       → activitysection (Mi Garaje)
+- userprofilecard    → accountcard (Mi Garaje)
+- walletbalancecard  → walletcard (Mi Garaje)
+- offertype          → offertypecards (Index)
+- offershelf         → lotgallery (Index)
+- categorycard       → categoryrail (Index)
+- docbutton          → no lo usa ningún bloque
+
+Bloques actuales: index (inicio de VMC; en el catálogo es Homepage «Actual»), mi-garaje
+(cuenta del usuario; trae también las pantallas del Detalle actual: propuesta y acuerdo con
+SubasChat), valoriza y vendo-mis-cosas (landings; base para landings nuevas, con
+landing-shell), sala, login, register, tu-perfil, agregar-subascoins, banners, header,
+sidebar. Cada uno instala sus componentes.
+
+Versiones anteriores (siguen instalables): homepage (versión 1 de Homepage, usa index),
+zona (versión 1 de Mi Garaje, usa mi-garaje), detalle (versión 1 de Detalle, la ficha de
+ejemplo; mi-garaje la reutiliza para la propuesta y el acuerdo).
 
 Para el inicio de VMC usa `index`, no `homepage`. Sus piezas propias: herocarousel
 (banner principal), vmcahora (feed en vivo), offertypecards (tipo de oferta),

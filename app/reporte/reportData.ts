@@ -613,7 +613,7 @@ function onLike(estabaMarcado, marcar, guardarEnBackend, avisarError) {
 
 /* .pcard--short { width: 134px; height: 170px; }
    .pcard--short .pcard__img { height: 112px; } */`,
-    codeLink: "/blocks/detalle",
+    codeLink: "/blocks/detalle/v1",
   },
   {
     slug: "detalle-columnas-ancho",
@@ -653,7 +653,7 @@ function onLike(estabaMarcado, marcar, guardarEnBackend, avisarError) {
   </div>
 </div>
 // 443 / 311 fijos → izquierda −10px y derecha +10px respecto a PROD`,
-    codeLink: "/blocks/detalle",
+    codeLink: "/blocks/detalle/v1",
   },
   {
     slug: "detalle-like-subascoin-pequenos",
@@ -691,7 +691,7 @@ function onLike(estabaMarcado, marcar, guardarEnBackend, avisarError) {
     {/* tamaño real, sin margen negativo → ícono a escala */}
   </svg>
 </span>`,
-    codeLink: "/blocks/detalle",
+    codeLink: "/blocks/detalle/v1",
     handoffLink: "/handoff/detailcard",
   },
   {
@@ -742,7 +742,7 @@ function onLike(estabaMarcado, marcar, guardarEnBackend, avisarError) {
 .pcardv__thumb:hover { border-color: #ED8936; box-shadow: 0 0 0 2px rgba(249,152,69,.4); }
 /* seleccionada/presionada = borde naranja (live) */
 .pcardv__thumb--selected { border-color: #ED8936; box-shadow: 0 0 0 2px rgba(249,152,69,.4); }`,
-    codeLink: "/blocks/detalle",
+    codeLink: "/blocks/detalle/v1",
     handoffLink: "/handoff/cardviewer",
   },
   {

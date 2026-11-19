@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import type { CSSProperties, JSX, ReactNode } from "react";
-import { BLOCKS_NAV } from "./blocks-nav";
+import { usePathname } from "next/navigation";
+import { BLOCKS_NAV, blockHref, findBlockNav } from "./blocks-nav";
+import VersionSwitch from "./VersionSwitch";
 
 export interface BlockFile {
   path: string;
@@ -157,6 +159,8 @@ export default function BlockViewer({ id, width, height, canvas, files, controls
   const [viewport, setViewport] = useState<Viewport>("desktop");
   const [activeFile, setActiveFile] = useState(0);
   const [copiedCmd, setCopiedCmd] = useState(false);
+  // Tab activo y versiones: por la ruta (las versiones anteriores marcan el tab del bloque actual).
+  const nav = findBlockNav(usePathname(), id);
 
   const mobileSlot = canvasForViewport?.mobile;
   const activeCanvas = viewport === "mobile" && mobileSlot ? mobileSlot.node : canvas;
@@ -286,11 +290,11 @@ export default function BlockViewer({ id, width, height, canvas, files, controls
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, borderBottom: "1px solid var(--ui-border-soft)" }}>
         <nav style={{ display: "flex", gap: 4 }}>
           {BLOCKS_NAV.map(function renderTab(b) {
-            const active = b.id === id;
+            const active = b.id === nav.item?.id;
             return (
               <a
                 key={b.id}
-                href={`/blocks/${b.id}`}
+                href={blockHref(b)}
                 style={{ fontSize: 14, fontWeight: 600, textDecoration: "none", padding: "10px 12px", color: active ? "var(--ui-ink)" : "var(--ui-muted)", borderBottom: active ? "2px solid var(--ui-accent)" : "2px solid transparent", marginBottom: -1 }}
               >
                 {b.name}
@@ -300,6 +304,10 @@ export default function BlockViewer({ id, width, height, canvas, files, controls
         </nav>
         <a href="/blocks" style={{ fontSize: 13, fontWeight: 600, color: "var(--ui-body)", textDecoration: "none", border: "1px solid var(--ui-border)", borderRadius: 8, padding: "6px 12px" }}>Ver todos los bloques</a>
       </div>
+
+      {nav.item?.versions ? (
+        <VersionSwitch versions={nav.item.versions.map((v) => ({ ...v, current: v.href === nav.current?.href }))} />
+      ) : null}
 
       {viewerBody}
     </div>

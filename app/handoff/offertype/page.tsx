@@ -6,6 +6,7 @@ import type { JSX, ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import OfferType from "@/src/components/OfferType";
+import DeprecatedNotice from "@/app/handoff/_components/DeprecatedNotice";
 import Preview from "@/app/handoff/_components/Preview";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
@@ -78,6 +79,8 @@ export default function OfferTypeHandoffPage(): JSX.Element {
 
   return (
     <main style={{ maxWidth: 768, margin: "0 auto", padding: "48px 24px 96px", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)", color: "var(--ui-ink)" }}>
+
+      <DeprecatedNotice replacement="OfferTypeCards" note="El Index muestra el tipo de oferta con OfferTypeCards (tarjetas con foto); OfferType solo lo usa Homepage, la versión 1." />
 
       {/* Title */}
       <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 8px" }}>OfferType</h1>

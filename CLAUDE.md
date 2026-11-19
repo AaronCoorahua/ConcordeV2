@@ -274,18 +274,23 @@ import { NOMBRE_WIDTH, NOMBRE_HEIGHT } from "@/src/blocks/nombre/desktop/dimensi
 
 ### Bloques existentes y estado
 
-| Bloque     | Desktop           | Mobile                     | Shared        |
-|------------|-------------------|----------------------------|---------------|
-| `header`   | `dimensions.ts` ✓ | —                          | —             |
-| `sidebar`  | `dimensions.ts` ✓ | —                          | —             |
-| `homepage` | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | —             |
-| `index`    | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | `data.ts`     |
-| `mi-garaje` | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓  | — (CSS global en `.css`, se ve en iframe) |
-| `valoriza` | `dimensions.ts` ✓ | mismo componente (responsive) | usa `landing-shell` |
-| `vendo-mis-cosas` | `dimensions.ts` ✓ | mismo componente (responsive) | usa `landing-shell` |
-| `zona`     | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | —             |
-| `detalle`  | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | `pills.ts`    |
-| `sala`     | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | `liveData.ts` |
+| Bloque     | Desktop           | Mobile                     | Shared        | En el catálogo |
+|------------|-------------------|----------------------------|---------------|----------------|
+| `header`   | `dimensions.ts` ✓ | —                          | —             | — |
+| `sidebar`  | `dimensions.ts` ✓ | —                          | —             | Sidebar |
+| `homepage` | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | —             | versión 1 de Homepage (`/blocks/homepage`) |
+| `index`    | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | `data.ts`     | Homepage actual (`/blocks/index`) |
+| `mi-garaje` | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓  | — (CSS global en `.css`, se ve en iframe) | Mi Garaje actual (`/blocks/mi-garaje`, 4 pantallas) y Detalle actual (`/blocks/detalle`: Propuesta y Acuerdo con SubasChat) |
+| `valoriza` | `dimensions.ts` ✓ | mismo componente (responsive) | usa `landing-shell` | Valoriza |
+| `vendo-mis-cosas` | `dimensions.ts` ✓ | mismo componente (responsive) | usa `landing-shell` | Vendo Mis Cosas |
+| `zona`     | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | —             | versión 1 de Mi Garaje (`/blocks/zona`) |
+| `detalle`  | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | `pills.ts`    | versión 1 de Detalle (`/blocks/detalle/v1`); Mi Garaje lo reutiliza en la propuesta y el acuerdo |
+| `sala`     | `dimensions.ts` ✓ | `mobile/dimensions.ts` ✓   | `liveData.ts` | Sala |
+
+Las versiones de un bloque se declaran en `app/blocks/_components/blocks-nav.ts` (`versions`, la primera es la actual):
+el visor muestra el selector «Versiones» y las anteriores no tienen tab propio ni tarjeta en `/blocks`.
+En `/components`, los componentes deprecados (solo los usan versiones anteriores) van al final, con su reemplazo
+(`DEPRECATED` en `app/components/page.tsx` y `DeprecatedNotice` en su `/handoff`).
 
 > Para crear o registrar un bloque: `/block NombreBloque`
 

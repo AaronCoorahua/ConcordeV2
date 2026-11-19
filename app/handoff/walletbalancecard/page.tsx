@@ -7,6 +7,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import WalletBalanceCard from "@/src/components/WalletBalanceCard";
 import Preview from "@/app/handoff/_components/Preview";
+import DeprecatedNotice from "@/app/handoff/_components/DeprecatedNotice";
 import CodeBlock from "@/app/handoff/_components/CodeBlock";
 import InstallCommand from "@/app/handoff/_components/InstallCommand";
 import PropsTable, { type PropRow } from "@/app/handoff/_components/PropsTable";
@@ -63,6 +64,8 @@ export default function WalletBalanceCardHandoffPage(): JSX.Element {
   const source = readComponentSource();
   return (
     <main style={{ maxWidth: 768, margin: "0 auto", padding: "48px 24px 96px", fontFamily: "var(--vmc-font-display,'Plus Jakarta Sans',-apple-system,sans-serif)", color: "var(--ui-ink)" }}>
+
+      <DeprecatedNotice replacement="WalletCard" note="Mi Garaje lo usa en lugar de esta tarjeta; solo la usa Zona, la versión 1 de Mi Garaje." />
 
       <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 8px" }}>WalletBalanceCard</h1>
       <p style={{ ...muted, fontSize: 16 }}>Tarjeta «Billetera» (375×221). Compone CardTitle y ProfileButton. El cuerpo (SubasCoins / Saldo + CTA) se irá montando encima.</p>
