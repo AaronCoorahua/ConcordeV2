@@ -3,16 +3,6 @@
 .fl .vz-back { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
 .fl-origin { font-size:.8125rem; font-weight:600; color:var(--muted); }
 
-.fl-stepper { list-style:none; margin:0; padding:0; display:flex; gap:6px; counter-reset:s; }
-.fl-stepper li { flex:1; display:grid; gap:6px; font-size:.75rem; font-weight:700; color:var(--muted); }
-.fl-stepper li::before { content:""; height:4px; border-radius:9999px; background:#E1E3E2; }
-.fl-stepper li.is-done { color:#5A35C2; } .fl-stepper li.is-done::before { background:#8460E5; }
-.fl-stepper li.is-now { color:var(--ink); } .fl-stepper li.is-now::before { background:linear-gradient(90deg,#F4AC59,#ED8936); }
-.fl-stepper li { grid-template-columns:auto 1fr; grid-template-rows:auto auto; column-gap:8px; align-items:center; }
-.fl-stepper li::before { grid-column:1/-1; }
-.fl-stepper__dot { display:grid; place-items:center; width:20px; height:20px; border-radius:9999px; font-size:.6875rem; background:color-mix(in srgb,#E1E3E2 55%,#fff); color:var(--muted); }
-.fl-stepper li.is-done .fl-stepper__dot { background:#F5F0FF; }
-.fl-stepper li.is-now .fl-stepper__dot { background:#ED8936; color:#fff; }
 
 .fl-card { display:grid; grid-template-columns:minmax(0,1fr); gap:20px; padding:28px; border-radius:24px; background:#fff; box-shadow:0 1px 3px rgba(34,0,92,.05), 0 10px 30px rgba(34,0,92,.07); }
 .fl-card > header h1, .fl-card__aside > header h1, .fl-result h1, .fl-done h1 { margin:0; font-size:1.75rem; line-height:1.2; font-weight:800; letter-spacing:-0.02em; color:var(--ink); text-wrap:balance; }
@@ -21,11 +11,6 @@
 .fl-field { display:grid; gap:6px; align-content:start; }
 .fl-label { font-size:.75rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--ink); }
 .fl-input.pinput-root { width:100%; }
-.fl-select { position:relative; display:flex; align-items:center; height:48px; border-radius:16px; border:2px solid #E1E3E2; background:#fff; transition:border-color .15s; }
-.fl-select:focus-within { border-color:#8460E5; }
-.fl-select select { appearance:none; width:100%; height:100%; padding:0 40px 0 16px; border:0; background:transparent; font:inherit; font-size:.9375rem; color:var(--foreground); cursor:pointer; outline:none; border-radius:16px; }
-.fl-select svg { position:absolute; right:14px; color:#ED8936; pointer-events:none; }
-.fl-select.is-disabled { background:#F5F5F7; } .fl-select.is-disabled select { cursor:not-allowed; color:var(--muted); }
 .fl-hint { font-size:.75rem; color:var(--muted); font-variant-numeric:tabular-nums; }
 .fl-hint.is-warn { color:#B25614; font-weight:700; }
 .fl-msrp { grid-column:1/-1; display:flex; align-items:center; gap:16px; padding:14px 16px; border-radius:16px; background:#F5F0FF; }
@@ -71,13 +56,6 @@
 /* Resultado */
 .fl-result { display:grid; gap:16px; }
 .fl-result h1 { font-size:1rem; font-weight:700; color:#5A35C2; letter-spacing:0; }
-.fl-decide { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:20px 24px; border-radius:22px; background:#fff;
-  border:1px solid transparent; background-image:linear-gradient(#fff,#fff), linear-gradient(120deg,#fff 0%,#F4AC59 35%,#8460E5 75%,#fff 100%); background-origin:border-box; background-clip:padding-box,border-box;
-  box-shadow:0 12px 30px rgba(34,0,92,.10); }
-.fl-decide > div:first-child { display:grid; gap:2px; }
-.fl-decide b { font-size:1.125rem; color:var(--ink); }
-.fl-decide span { font-size:.8125rem; color:var(--muted); }
-.fl-decide__btns { display:flex; align-items:center; gap:12px; flex:none; }
 
 /* Información adicional */
 .fl-have { display:grid; grid-template-columns:1fr auto; gap:2px 12px; align-items:center; padding:14px 16px; border-radius:16px; background:color-mix(in srgb,#00A8AB 8%,#fff); }
@@ -138,26 +116,17 @@
   .fl-card { padding:20px 16px; border-radius:20px; }
   .fl-card > header h1, .fl-card__aside > header h1, .fl-done h1 { font-size:1.375rem; }
   .fl-grid, .fl-preview, .fl-pay { grid-template-columns:1fr; }
-  .fl-stepper__label { display:none; }
-  .fl-stepper li.is-now .fl-stepper__label { display:inline; }
-  .fl-decide { flex-direction:column; align-items:stretch; }
-  .fl-decide__btns { display:grid; grid-template-columns:1fr 1.4fr; }
-  .fl-decide__btns > * { justify-content:center; min-width:0; width:100%; }
   .fl-live > b { font-size:1.5rem; }
   .fl-foot { flex-wrap:wrap; }
 }
 @media (prefers-reduced-motion:reduce) { .fl-done__check { animation:none; } }
-.fl-decide__btns > button, .fl-foot button, .fl-pay__sum button { min-width:0 !important; }
+.fl-foot button, .fl-pay__sum button { min-width:0 !important; }
 @media (max-width:767px) {
-  .fl-decide__btns > button { padding-inline:12px !important; }
   .fl-foot { flex-wrap:nowrap; }
   .fl-foot__right { flex:1; justify-content:flex-end; gap:12px; }
   .fl-foot > button:last-child, .fl-foot__right > button:last-child { flex:1; max-width:220px; }
 }
 @media (max-width:767px) {
-  .fl-decide__btns { grid-template-columns:1fr; }
-  .fl-decide__btns > :last-child { order:-1; }
-  .fl-decide__btns > * { width:100% !important; }
   .fl-foot button { white-space:nowrap; padding-inline:20px !important; }
 }
 .fl-kind > div { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
@@ -199,7 +168,6 @@
 @media (max-width:900px) { .fl-prev__page { grid-template-columns:1fr; justify-items:center; padding:12px; } .fl-prev__status, .fl-prev__viewer { max-width:100%; } }
 
 /* Revisión mobile 9/10: sin desborde en la vista previa, CTA en una línea, nota larga bajo el subtítulo, checks en 2 columnas. */
-.fl-stepper__label { white-space:nowrap; }
 /* El texto ocupa el resto de la fila (base 0): no salta debajo de la casilla. */
 
 @media (max-width:767px) {
@@ -215,7 +183,7 @@
 /* ── Mejoras UX 9/10 (07-mejoras-ux-valorizar-publicar.md) ─────────────── */
 /* Error: borde #EF4444 como el Input de Concorde; texto #DC2626 para contraste AA. */
 .fl-err { font-size:.75rem; font-weight:600; color:#DC2626; }
-.fl-select.is-error, .fl-textarea.is-error { border-color:#EF4444; }
+.fl-textarea.is-error { border-color:#EF4444; }
 .fl-card h1:focus, .fl-result h1:focus, .fl-done h1:focus, .fl-prev h1:focus, .fl-sub:focus { outline:none; }
 
 /* Borrador */
@@ -315,21 +283,13 @@
 
 /* ── Valorizar en una página (Fernando): detalles dentro del mismo formulario y resultado debajo, sin foto ── */
 .fl-result--ds { margin-top:24px; scroll-margin-top:16px; }
-.fl-result--ds .fl-decide { position:sticky; bottom:12px; z-index:2; } /* Guardar · Publicar siempre a mano mientras se lee el resultado, también en mobile */
 /* Precio de lista: edición dentro de la misma banda (13/10). */
 .fl-msrp { flex-wrap:wrap; }
 .fl-msrp__input { flex:1; min-width:160px; }
 .fl-msrp__note { flex-basis:100%; margin:0; }
 
-/* Mobile: barra sticky compacta, solo los dos botones en una fila (~68 px). La pregunta se oculta: los botones ya dicen la acción. */
-@media (max-width:767px) {
-  .fl-result--ds .fl-decide { bottom:8px; padding:10px; gap:0; border-radius:20px; box-shadow:0 -2px 0 rgba(34,0,92,.04), 0 8px 28px rgba(34,0,92,.22); }
-  .fl-result--ds .fl-decide > div:first-child { display:none; }
-  .fl-result--ds .fl-decide__btns { grid-template-columns:1fr 1.4fr; gap:8px; }
-  .fl-result--ds .fl-decide__btns > :last-child { order:0; }
-}
-@media (max-width:767px) { .fl-result--ds .fl-decide__btns > * { white-space:nowrap; font-size:.9375rem; } }
-@media (max-width:767px) { .fl-result--ds .fl-decide__btns { grid-template-columns:auto 1fr; } .fl-result--ds .fl-decide__btns > .fl-save { padding-inline:16px; } }
+/* Barra Guardar · Publicar: DecisionBar de Concorde (src/components/DecisionBar.tsx). En móvil, «Guardar» un poco más angosto. */
+@media (max-width:767px) { .fl-result--ds .fl-decide__btns > .fl-save { padding-inline:16px; } }
 
 /* ══ Formularios (13/10): una columna (Baymard), ancho según el dato, rótulos en tipo oración 14/600 (Concorde label-md),
    campos a 16 px para que iOS no haga zoom y áreas táctiles de 44 px en los botones chicos. La dirección sigue en 3 columnas (excepción válida). */
@@ -338,7 +298,7 @@
 .fl-grid > .fl-msrp { grid-column:1 / -1; }
 #f-placa { max-width:200px; }
 .fl-label { font-size:.875rem; font-weight:600; letter-spacing:0; text-transform:none; }
-.fl-select select, .fl-textarea { font-size:1rem; }
+.fl-textarea { font-size:1rem; }
 .fl-inline, .fl-ai, .fl-left, .fl-shot__x, .fl-shot figcaption button, .fl-demo { position:relative; }
 .fl-inline::after, .fl-ai::after, .fl-left::after, .fl-shot figcaption button::after, .fl-demo::after { content:""; position:absolute; left:-4px; right:-4px; top:50%; height:44px; transform:translateY(-50%); }
 .fl-shot__x::after { content:""; position:absolute; inset:-8px; }
@@ -453,28 +413,10 @@
 
 
 /* ── Valorizar (14/10): campos deshabilitados con menos peso (no parecen errores ni bloquean la vista) y «km» fijo. */
-.fl-select.is-disabled { background:transparent; border-style:dashed; border-color:#DAD8E0; }
-.fl-select.is-disabled select { color:#A3A1AA; }
-.fl-select.is-disabled svg { color:#D4D2D9; }
 .fl-km .pinput-root > div:first-child::after { content:"km"; flex:none; margin-left:8px; font-size:.9375rem; font-weight:600; color:var(--muted); }
 
-/* ── Selector con búsqueda (PROPUESTA DS, 14/10): mismo marco que .fl-select; la lista cae debajo del campo. */
-.fl-combo input { appearance:none; width:100%; height:100%; padding:0 40px 0 16px; border:0; background:transparent; font:inherit; font-size:1rem; color:var(--foreground); outline:none; border-radius:16px; }
-.fl-combo input::placeholder { color:var(--muted); }
-.fl-combo input:not(:disabled):not(:focus)::placeholder { color:var(--foreground); } /* con valor elegido, el valor se ve aunque el campo esté vacío para escribir */
-.fl-combo.is-disabled input { cursor:not-allowed; }
-.fl-combo.is-disabled input::placeholder { color:#A3A1AA; }
-.fl-combo.is-open { border-color:#8460E5; }
-.fl-combo.is-open svg { transform:rotate(180deg); }
-.fl-combo svg { transition:transform .2s cubic-bezier(.25,.8,.25,1); }
-.fl-combo__list { position:absolute; z-index:20; top:calc(100% + 6px); left:-2px; right:-2px; max-height:264px; overflow-y:auto; margin:0; padding:6px; list-style:none; border-radius:16px; background:#fff; box-shadow:0 12px 32px rgba(34,0,92,.16), inset 0 0 0 1px #E1E3E2; }
-.fl-combo__list li { padding:10px 12px; border-radius:10px; font-size:.9375rem; color:var(--ink); cursor:pointer; }
-.fl-combo__list li.is-act { background:#F5F0FF; }
-.fl-combo__list li[aria-selected="true"] { font-weight:700; }
-.fl-combo__list li.is-manual { margin-top:4px; border-top:1px solid #EEEDF0; border-radius:0 0 10px 10px; color:#5A35C2; font-weight:600; }
-.fl-combo__none { color:var(--muted) !important; cursor:default !important; }
+/* Selector con búsqueda: Combobox de Concorde (src/components/Combobox.tsx). */
 .fl-gone { display:flex; align-items:center; gap:8px; margin:0 0 16px; padding:10px 16px; border-radius:12px; font-size:.875rem; color:var(--ink); background:#F5F0FF; }
-@media (prefers-reduced-motion:reduce) { .fl-combo svg { transition:none; } }
 .fl-gone { grid-column:1 / -1; }
 .fl-km .pinput-root:has(input:disabled) > div:first-child { border:2px dashed #DAD8E0; background:transparent; box-shadow:none; } /* igual que los selectores deshabilitados */
 
@@ -497,7 +439,6 @@
 @media (min-width:1024px) {
   .fl.fl--vmc { max-width:none; padding:24px 16px 64px; gap:16px; }
   .fl--vmc .vz-back a { font-size:.875rem; font-weight:600; }
-  .fl--vmc .fl-stepper li { font-weight:600; }
 
   /* Tarjeta: el anillo de 1 px de las tarjetas de Mi Garaje en vez de la sombra difusa. */
   .fl.fl--vmc .fl-card { padding:32px; row-gap:24px; border-radius:var(--f-r-card); box-shadow:0 0 0 1px var(--f-hair), 0 1px 2px rgba(34,0,92,.06); }
@@ -544,28 +485,20 @@
   .fl--vmc .fl-saved { font-size:.75rem; color:var(--f-muted); }
   .fl--vmc .fl-error { margin:0; color:var(--f-error); }
   .fl--vmc .fl-errsum { border-left:0; border-radius:var(--f-r-field); box-shadow:inset 0 0 0 1px #F5B7B1; }
-  .fl--vmc .fl-decide b { font-size:1rem; font-weight:700; }
-  .fl--vmc .fl-decide span { font-size:.75rem; }
   .fl--vmc .fl-hero__big { font-size:2.5rem; font-weight:700; }
   .fl--vmc .fl-live > b { font-size:1.5rem; font-weight:700; }
 
   /* Campo VMC: default · hover · foco · error · deshabilitado, igual en los cuatro controles. */
-  .fl--vmc .fl-select, .fl--vmc .pinput, .fl--vmc .fl-textarea { border:1px solid var(--f-line); border-radius:var(--f-r-field); background:#fff; box-shadow:none; transition:border-color .15s, box-shadow .15s, background-color .15s; }
-  .fl--vmc .fl-select, .fl--vmc .pinput { height:var(--f-h-field); }
+  .fl--vmc .pinput, .fl--vmc .fl-textarea { border:1px solid var(--f-line); border-radius:var(--f-r-field); background:#fff; box-shadow:none; transition:border-color .15s, box-shadow .15s, background-color .15s; }
+  .fl--vmc .pinput { height:var(--f-h-field); }
   .fl--vmc .pinput { padding:0 16px; background-image:none; }
-  .fl--vmc .fl-select:hover:not(.is-disabled), .fl--vmc .pinput:hover:not(.pinput--disabled), .fl--vmc .fl-textarea:hover { border-color:var(--f-line-hover); }
-  .fl--vmc .fl-select:focus-within, .fl--vmc .fl-combo.is-open, .fl--vmc .pinput:focus-within, .fl--vmc .fl-textarea:focus { border-color:var(--f-focus); box-shadow:var(--f-ring); padding-inline:16px; }
-  .fl--vmc .fl-select:focus-within, .fl--vmc .fl-combo.is-open { padding-inline:0; }
-  .fl--vmc .fl-select.is-error, .fl--vmc .pinput--error, .fl--vmc .pinput--error:focus-within, .fl--vmc .fl-textarea.is-error { border-color:var(--f-error); box-shadow:none; }
-  .fl--vmc .fl-select.is-disabled, .fl--vmc .fl-select:has(select:disabled), .fl--vmc .pinput--disabled, .fl--vmc .fl-km .pinput-root:has(input:disabled) > div:first-child { border:1px solid transparent; background:var(--f-fill-off); opacity:1; }
-  .fl--vmc .fl-select select, .fl--vmc .fl-combo input { border-radius:var(--f-r-field); font-size:.875rem; }
+  .fl--vmc .pinput:hover:not(.pinput--disabled), .fl--vmc .fl-textarea:hover { border-color:var(--f-line-hover); }
+  .fl--vmc .pinput:focus-within, .fl--vmc .fl-textarea:focus { border-color:var(--f-focus); box-shadow:var(--f-ring); padding-inline:16px; }
+  .fl--vmc .pinput--error, .fl--vmc .pinput--error:focus-within, .fl--vmc .fl-textarea.is-error { border-color:var(--f-error); box-shadow:none; }
+  .fl--vmc .pinput--disabled, .fl--vmc .fl-km .pinput-root:has(input:disabled) > div:first-child { border:1px solid transparent; background:var(--f-fill-off); opacity:1; }
   .fl--vmc .pinput__field, .fl--vmc .fl-textarea { font-size:.875rem; }
-  .fl--vmc .fl-select.is-disabled select, .fl--vmc .fl-combo.is-disabled input::placeholder, .fl--vmc .pinput--disabled .pinput__field::placeholder { color:#7D798A; }
+  .fl--vmc .pinput--disabled .pinput__field::placeholder { color:#7D798A; }
   .fl--vmc .fl-km .pinput-root > div:first-child::after { font-size:.875rem; }
-  /* El naranja es de lo accionable: el chevron va neutro y se enciende con el foco. */
-  .fl--vmc .fl-select svg { color:var(--f-muted); }
-  .fl--vmc .fl-select:focus-within svg, .fl--vmc .fl-combo.is-open svg { color:var(--f-accent); }
-  .fl--vmc .fl-select.is-disabled svg { color:#B9B5C4; }
 
   /* Detalles: los grupos eran tarjetas con sombra dentro de la tarjeta; ahora son filas con divisor, como las secciones de Mi Garaje. */
   .fl--vmc .fl-groups { gap:0; border-top:1px solid var(--f-hair); }
@@ -610,25 +543,12 @@
 /* Grilla del paso Vehículo: la nota del km no empuja la fila (se superpone al espacio entre filas). */
 @media (min-width:1024px) { .fl--vmc .fl-card__main > .fl-grid { row-gap:32px; } }
 
-/* 16/10 · Barra superior VMC: «‹ Mi Garaje» y los pasos en una sola fila (desktop). Hecho = violeta con check blanco y se
-   puede tocar para volver; actual = naranja; pendiente = gris. Fuera de VMC la envoltura no existe para el layout. */
+/* 16/10 · Barra superior VMC: «‹ Mi Garaje» y los pasos (Stepper de Concorde) en una sola fila (desktop).
+   Fuera de VMC la envoltura no existe para el layout. */
 .fl-bar { display:contents; }
 .fl--vmc .fl-bar { display:grid; gap:12px; }
 @media (min-width:1024px) { .fl--vmc .fl-bar { grid-template-columns:auto minmax(0,1fr); align-items:end; column-gap:32px; } }
 .fl--vmc .fl-bar .vz-back { margin:0; }
-.fl--vmc .fl-stepper { gap:8px; }
-.fl--vmc .fl-stepper li { gap:8px; font-size:.75rem; font-weight:600; color:var(--f-muted); }
-.fl--vmc .fl-stepper li::before { height:4px; background:#ECEAF2; }
-.fl--vmc .fl-stepper li.is-done { color:var(--f-ink); } .fl--vmc .fl-stepper li.is-done::before { background:#8460E5; }
-.fl--vmc .fl-stepper li.is-now { color:var(--f-ink); font-weight:700; } .fl--vmc .fl-stepper li.is-now::before { background:linear-gradient(90deg,#F4AC59,#ED8936); }
-.fl--vmc .fl-stepper__dot { width:20px; height:20px; font-size:.6875rem; font-weight:700; color:var(--f-muted); background:#ECEAF2; }
-.fl--vmc .fl-stepper li.is-done .fl-stepper__dot { color:#fff; background:#8460E5; }
-.fl--vmc .fl-stepper li.is-now .fl-stepper__dot { color:#fff; background:#ED8936; box-shadow:0 0 0 3px rgba(237,137,54,.2); }
-.fl--vmc .fl-stepper__go { all:unset; cursor:pointer; display:inline-flex; align-items:center; gap:8px; margin:-4px -8px; padding:4px 8px; border-radius:8px; }
-.fl--vmc .fl-stepper__go:hover { background:var(--f-tint); } .fl--vmc .fl-stepper__go:hover .fl-stepper__label { text-decoration:underline; text-underline-offset:3px; }
-.fl--vmc .fl-stepper__go:focus-visible { outline:2px solid var(--f-focus); outline-offset:2px; }
-.fl--vmc .fl-stepper li { grid-template-columns:1fr; } .fl--vmc .fl-stepper li > .fl-stepper__go, .fl--vmc .fl-stepper li > .fl-stepper__dot { justify-self:start; }
-.fl--vmc .fl-stepper li:not(:has(.fl-stepper__go)) { grid-template-columns:auto 1fr; }
 
 /* ══ 16/10 (tarde) · Valorizar VMC con piezas de Concorde ══ */
 /* Opciones = ConditionPill (rellena = elegida · contorno = no). El botón solo da la interacción. */
@@ -652,17 +572,7 @@
 .fl--vmc .fl-live__v em.is-up { color:#5A35C2; } .fl--vmc .fl-live__v em.is-down { color:#B25614; }
 .fl--vmc .fl-live__p { grid-column:1 / -1; display:grid; gap:6px; }
 .fl--vmc .fl-live__p small { font-size:.75rem; color:var(--f-muted); }
-.fl--vmc .fl-live__p .pprogbar, .fl--vmc .fl-steps .pprogbar { height:8px; border-radius:9999px; }
-/* Barra de pasos: ProgressBar de Concorde + nombres; hecho = check y se puede tocar */
-.fl--vmc .fl-steps { display:grid; gap:8px; }
-.fl--vmc .fl-steps ol { list-style:none; margin:0; padding:0; display:grid; grid-auto-flow:column; grid-auto-columns:1fr; }
-.fl--vmc .fl-steps li { display:flex; align-items:center; gap:8px; font-size:.75rem; font-weight:600; color:var(--f-muted); }
-.fl--vmc .fl-steps li > span { display:grid; place-items:center; width:20px; height:20px; border-radius:50%; font-size:.6875rem; font-weight:700; background:#ECEAF2; }
-.fl--vmc .fl-steps li.is-now { color:var(--f-ink); font-weight:700; } .fl--vmc .fl-steps li.is-now > span { color:#fff; background:#ED8936; }
-.fl--vmc .fl-steps li button { all:unset; cursor:pointer; display:inline-flex; align-items:center; gap:8px; color:var(--f-ink); border-radius:8px; padding:2px 6px; margin:-2px -6px; }
-.fl--vmc .fl-steps li button:hover { background:var(--f-tint); text-decoration:underline; text-underline-offset:3px; }
-.fl--vmc .fl-steps li button:focus-visible { outline:2px solid var(--f-focus); outline-offset:2px; }
-@media (max-width:767px) { .fl--vmc .fl-steps li:not(.is-now) button { font-size:0; gap:0; } .fl--vmc .fl-steps li:not(.is-now) { font-size:0; gap:0; } }
+.fl--vmc .fl-live__p .pprogbar { height:8px; border-radius:9999px; }
 /* La ConditionPill «outline» es gris (en el DS = «no incluida»): como opción disponible va en violeta con borde lila. */
 .fl--vmc .fl-pill .pcondpill--outline { color:#3B1782; box-shadow:inset 0 0 0 1px #CFBAFF, 0 2px 6px rgba(34,0,92,.06); }
 .fl--vmc .fl-pill .pcondpill--outline small { color:#6B6878; }
@@ -673,20 +583,8 @@
 }
 .fl--vmc .fl-confirm__pills { justify-content:flex-start; } .fl--vmc .fl-confirm__pills > * { flex:none; }
 
-/* ── Pasos VMC · pulido 16/10 (noche): nombres arriba, barra abajo partida en 3 tramos alineados con cada paso
-   (antes un solo riel gris oscuro y el borde blanco del gradiente difuminaba dónde terminaba). «Mi Garaje» centrado con el bloque. */
+/* ── Pasos VMC · pulido 16/10 (noche): «Mi Garaje» centrado con el bloque (la barra de pasos es Stepper de Concorde). */
 @media (min-width:1024px) { .fl--vmc .fl-bar { align-items:center; } }
-.fl--vmc .fl-steps { gap:10px; }
-.fl--vmc .fl-steps ol { order:-1; column-gap:6px; }
-.fl--vmc .fl-steps li { font-size:.8125rem; }
-.fl--vmc .fl-steps li > span { width:22px; height:22px; font-size:.75rem; color:var(--f-muted); }
-.fl--vmc .fl-steps li.is-done button { color:#3B1782; }
-.fl--vmc .fl-steps li.is-done svg { color:#ED8936; }
-.fl--vmc .fl-steps .pprogbar { height:6px; border-radius:9999px; background:#E7E3F0; box-shadow:none;
-  -webkit-mask:linear-gradient(90deg, #000 calc(33.333% - 3px), transparent 0 calc(33.333% + 3px), #000 0 calc(66.666% - 3px), transparent 0 calc(66.666% + 3px), #000 0);
-          mask:linear-gradient(90deg, #000 calc(33.333% - 3px), transparent 0 calc(33.333% + 3px), #000 0 calc(66.666% - 3px), transparent 0 calc(66.666% + 3px), #000 0); }
-.fl--vmc .fl-steps .pprogbar__fill { background:linear-gradient(90deg, #F4AC59 0%, #ED8936 30%, #8460E5 100%); }
-
 /* ── Valor estimado en vivo · 16/10 (noche): sin corchetes; número protagonista; precisión en 12 tramos (uno por detalle)
    sobre un riel claro, sin la sombra interior oscura del ProgressBar. */
 .fl--vmc .fl-live.fl-live--ds { gap:16px 24px; padding:20px 24px; box-shadow:0 1px 3px rgba(34,0,92,.05), 0 10px 30px rgba(34,0,92,.08); }
@@ -732,38 +630,18 @@
   .fl--vmc .fl-opts button.fl-pill:hover .pcondpill--outline, .fl--vmc .fl-opts button.fl-pill:active .pcondpill { transform:none; }
 }
 
-/* ── Pasos VMC · segunda vuelta (16/10 noche): «Mi Garaje» alineado con los nombres; paso actual = tramo a medias
-   (en curso), con anillo naranja en su número; pendientes con número en contorno. El relleno avanza animado al cambiar de paso. */
+/* ── Pasos VMC · segunda vuelta (16/10 noche): «Mi Garaje» alineado con los nombres de los pasos. */
 @media (min-width:1024px) { .fl--vmc .fl-bar { align-items:start; } .fl--vmc .fl-bar .vz-back { min-height:24px; margin-top:-1px; } }
-.fl--vmc .fl-steps ol { align-items:center; min-height:24px; }
-.fl--vmc .fl-steps li > span { background:none; box-shadow:inset 0 0 0 1.5px #D9D4E5; color:#8A8797; }
-.fl--vmc .fl-steps li.is-now > span { color:#fff; background:#ED8936; box-shadow:0 0 0 4px rgba(237,137,54,.18); }
-.fl--vmc .fl-steps li { font-weight:500; }
-.fl--vmc .fl-steps li.is-now { font-weight:700; color:#3B1782; }
-.fl--vmc .fl-steps li.is-done button { font-weight:600; }
-.fl--vmc .fl-steps .pprogbar__fill { transition:width .6s cubic-bezier(.16,1,.3,1); }
-@media (prefers-reduced-motion:reduce) { .fl--vmc .fl-steps .pprogbar__fill { transition:none; } }
-/* Pasos escalables (Valorizar 3 · Publicar 6): tramos según --n; con más de 3, «Mi Garaje» arriba y los pasos a todo el ancho. */
-.fl--vmc .fl-steps .pprogbar { --seg:calc((100% - (var(--n, 3) - 1) * 6px) / var(--n, 3));
-  -webkit-mask:repeating-linear-gradient(90deg, #000 0 var(--seg), transparent var(--seg) calc(var(--seg) + 6px));
-          mask:repeating-linear-gradient(90deg, #000 0 var(--seg), transparent var(--seg) calc(var(--seg) + 6px)); }
-.fl--vmc .fl-steps li { white-space:nowrap; min-width:0; }
+/* Pasos escalables (Valorizar 3 · Publicar 6): con más de 3, «Mi Garaje» arriba y los pasos a todo el ancho. */
 @media (min-width:1024px) { .fl--vmc .fl-bar--long { grid-template-columns:1fr; row-gap:16px; } }
-.fl--vmc .fl-steps--long li { font-size:.8125rem; }
 .fl--vmc .fl-bar--long .vz-back { justify-content:flex-start; gap:16px; }
-.fl-steps__of { display:none; }
-/* Móvil con 6 pasos: solo el paso actual con «paso N de 6»; la barra de tramos muestra el resto. */
+/* Móvil con 6 pasos (Stepper muestra solo el actual): «Mi Garaje» puede partirse en dos líneas. */
 @media (max-width:767px) {
-  .fl--vmc .fl-steps--long ol { grid-auto-flow:row; }
-  .fl--vmc .fl-steps--long li:not(.is-now) { display:none; }
-  .fl--vmc .fl-steps--long .fl-steps__of { display:inline; font-size:.75rem; font-weight:500; color:#6B6878; }
   .fl--vmc .fl-bar--long .vz-back { flex-wrap:wrap; row-gap:4px; }
 }
 
 /* ── Completa tu publicación · VMC (16/10 noche): títulos de bloque sin corchetes (como las secciones de Detalles) y
    «De tu valorización» como ficha corta en lila del DS: auto en una línea, km y detalles; Cambiar = ProfileButton. */
-.fl--vmc .fl-sub__t { margin:0; display:flex; align-items:baseline; gap:8px; font-size:1rem; font-weight:700; color:var(--f-ink); }
-.fl--vmc .fl-sub__t small { font-size:.75rem; font-weight:400; color:var(--f-muted); }
 .fl--vmc .fl-have--ds { grid-template-columns:auto minmax(0,1fr) auto; gap:14px; padding:14px 16px; border-radius:16px; background:#F5F0FF; box-shadow:inset 0 0 0 1px #E8DEFF; }
 .fl--vmc .fl-have__ico { display:grid; place-items:center; width:40px; height:40px; border-radius:12px; background:#fff; box-shadow:0 2px 8px rgba(34,0,92,.08); }
 .fl--vmc .fl-have--ds > div { min-width:0; display:grid; gap:2px; }
@@ -798,11 +676,6 @@
 .fl--vmc .fl-errsum .fl-inline:focus-visible { outline:2px solid #DC2626; outline-offset:2px; }
 /* 16/10: Valorizar igual que Publicar (aprobado): «Mi Garaje» arriba y los pasos a todo el ancho, con cualquier cantidad de pasos. */
 @media (min-width:1024px) { .fl--vmc .fl-bar { grid-template-columns:1fr; row-gap:16px; } }
-@media (max-width:767px) {
-  .fl--vmc .fl-steps ol { grid-auto-flow:row; }
-  .fl--vmc .fl-steps li:not(.is-now) { display:none; }
-  .fl--vmc .fl-steps .fl-steps__of { display:inline; font-size:.75rem; font-weight:500; color:#6B6878; }
-}
 /* Precio esperado (VMC): fila propia y atajos del rango AVT con las mismas píldoras de Detalles. */
 .fl--vmc .fl-field--price { grid-column:1 / -1; }
 .fl--vmc .fl-field--price .fl-input, .fl--vmc .fl-field--price .pinput { max-width:320px; }
@@ -867,15 +740,6 @@
 .fl--vmc .fl-prev__side .fl-change, .fl--vmc .fl-prev__side .fl-prev__pills { justify-self:center; }
 
 /* ── Cabeceras de bloque · Publicar VMC (16/10 noche): baldosa con ícono (como Tu actividad), título + ayuda y estado a la derecha. */
-.fl--vmc .fl-sh { display:grid; grid-template-columns:36px minmax(0,1fr) auto; align-items:center; gap:12px; }
-.fl--vmc .fl-sh__ico { display:grid; place-items:center; width:36px; height:36px; border-radius:12px; color:#5A35C2; background:linear-gradient(135deg,#F5F0FF,#EDE6FF); box-shadow:inset 0 1px 0 #fff, inset 0 0 0 1px rgba(132,96,229,.14); }
-.fl--vmc .fl-sh__txt { min-width:0; display:grid; gap:2px; }
-.fl--vmc .fl-sh__txt small { font-size:.875rem; color:var(--f-muted); }
-.fl--vmc .fl-sh .fl-sub__t { font-size:1rem; }
-.fl--vmc .fl-sh__st { display:inline-flex; align-items:center; gap:4px; height:24px; padding:0 10px; border-radius:9999px; font-size:.75rem; font-weight:700; white-space:nowrap; color:#9A4A0F; background:#FFF1E2; }
-.fl--vmc .fl-sh__st.is-ok { color:#3B1782; background:#F5F0FF; animation:fl-pop .36s cubic-bezier(.16,1,.3,1); }
-.fl--vmc .fl-sh__st.is-opt { font-weight:600; color:#6B6878; background:#F3F2F6; }
-@media (prefers-reduced-motion:reduce) { .fl--vmc .fl-sh__st.is-ok { animation:none; } }
 
 /* Datos de la publicación sin hueco: precio y atajos a todo el ancho; placa y cilindrada en dos columnas iguales. */
 .fl--vmc .fl-grid--datos { grid-template-columns:repeat(2, minmax(0,1fr)); }
@@ -901,7 +765,6 @@
 @media (prefers-reduced-motion:reduce) { .fl-modal, .fl-modal__box { animation:none; } }
 .fl-modal__box > button:not(.fl-modal__x) { max-width:300px; white-space:nowrap; }
 /* Cabeceras de bloque con los íconos de vidrio esmerilado (Vidrio.tsx), sin baldosa: como las secciones de Tu actividad. */
-.fl--vmc .fl-sh__ico { width:36px; height:36px; border-radius:0; background:none; box-shadow:none; }
 
 /* Versión única y Precio de lista (VMC): superficie de Concorde (blanco, borde degradado y sombra de AmountOption) en vez del relleno lila */
 .fl--vmc .fl-only, .fl--vmc .fl-msrp--ds { border:1px solid transparent; background:linear-gradient(#fff,#fff) padding-box, linear-gradient(335deg,#8460E5 0%,#FFF8F1 100%) border-box; box-shadow:0 0 16px 4px rgba(0,0,0,.06); }
@@ -962,10 +825,7 @@
 /* «✓ típico» (AVT): nota secundaria, no etiqueta — texto lila con el ✓ de AVT (el check naranja queda solo para «grupo completo»), sin borde ni relleno para no competir con las opciones */
 .fl--vmc .fl-typical { display:inline-flex; align-items:center; gap:4px; margin-left:8px; padding:0; font-size:.75rem; font-weight:500; color:#5A35C2; background:none; vertical-align:middle; }
 /* Grupo completo (AVT: check_circle junto al título, sin texto): check naranja de Concorde que entra con un pop */
-.fl--vmc .fl-sub__t { display:inline-flex; align-items:center; gap:8px; }
-.fl--vmc .fl-gdone { display:inline-grid; animation:fl-pop .35s cubic-bezier(.2,1.4,.4,1) both; }
 @keyframes fl-pop { from { opacity:0; transform:scale(.5); } }
-@media (prefers-reduced-motion:reduce) { .fl--vmc .fl-gdone { animation:none; } }
 /* Valor estimado: ícono de vidrio de precio como en las tarjetas del resultado (.rva-two) */
 .fl--vmc .fl-live__id { display:flex; align-items:center; gap:12px; }
 .fl--vmc .fl-live__id > div { display:grid; gap:2px; min-width:0; }
@@ -990,11 +850,8 @@
 
 /* 19/10 · «típico» (AVT) con jerarquía calmada: el origen vive en la respuesta (marca de vidrio dentro de la opción elegida)
    y el texto de AVT aparece una sola vez por grupo, como nota secundaria a la derecha del título */
-.fl--vmc .fl-sh { display:flex; align-items:center; gap:12px; }
-.fl--vmc .fl-gtip { margin-left:auto; font-size:.75rem; font-weight:500; color:var(--f-muted); white-space:nowrap; }
 .fl--vmc .fl-pill__tip { display:inline-flex; align-items:center; height:18px; margin-left:8px; padding:0 6px; border-radius:9999px; font-size:.6875rem; font-weight:600; color:#fff;
   background:rgba(255,255,255,.2); box-shadow:inset 0 0 0 1px rgba(255,255,255,.35); vertical-align:middle; }
-@media (max-width:640px) { .fl--vmc .fl-sh { flex-wrap:wrap; } .fl--vmc .fl-gtip { flex-basis:100%; margin-left:48px; } }
 
 /* Precisión por tramos (vuelve, pedido 19/10): 12 tramos sobre el riel hundido de Concorde */
 .fl--vmc .fl-live__p .pprogbar, .fl--vmc .fl-live__p .pprogbar__fill { border-radius:2px; }
@@ -1004,7 +861,6 @@
 .fl--vmc .fl-opts .fl-pill small.fl-pill__tip { font-size:.6875rem; font-weight:600; color:#fff; opacity:1; background:rgba(255,255,255,.22); box-shadow:inset 0 0 0 1px rgba(255,255,255,.4); }
 
 /* 19/10 · DS: nota del grupo con la ⓘ de Concorde (InfoIcon, trazo naranja→lila) y texto en lila del DS */
-.fl--vmc .fl-gtip { display:inline-flex; align-items:center; gap:6px; font-size:.75rem; font-weight:600; color:#5A35C2; }
 /* Marca «TÍPICO» dentro de la opción: construcción de BadgeStatus (mayúsculas, relleno + borde degradado, anillo y blur),
    invertida en blanco→lila para que se lea sobre la ConditionPill rellena. 10 px en vez de 9 (caso DS pendiente) */
 .fl--vmc .fl-opts .fl-pill small.fl-pill__tip { height:18px; margin-left:8px; padding:0 7px; border:1px solid transparent; border-radius:9999px;
@@ -1080,30 +936,24 @@
   -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; }
 .fl--neg .fl-shot__cover { background:rgba(34,0,92,.72); }
 /* «Faltan N» en Publicar: tinte teal de Negociable (texto #006E70 ≥ 4.5:1 sobre #E3F6F6) en vez del naranja */
-.fl--neg .fl-sh__st:not(.is-ok):not(.is-opt) { color:#006E70; background:#E3F6F6; box-shadow:inset 0 0 0 1px #9EDFE0; }
 /* Contador «Faltan N de M» de la barra fija: teal de Negociable (la pastilla de Concorde, no texto naranja) */
 .fl--neg .fl-left:not(.is-ok):not(.is-cost) { height:24px; padding:0 10px; border-radius:9999px; font-size:.75rem; color:#006E70; background:#E3F6F6; box-shadow:inset 0 0 0 1px #9EDFE0; }
 .fl--neg .fl-left:focus-visible { outline-color:#00A8AB; }
 /* 19/10 · «Faltan N» con lenguaje Concorde: etiqueta blanca con borde degradado teal→lila (Button negotiable) y el punto de
    estado de BadgeStatus (pulso suave = pendiente). Misma construcción que las etiquetas de km */
-.fl--neg .fl-sh__st:not(.is-ok):not(.is-opt), .fl--neg .fl-left:not(.is-ok):not(.is-cost) { gap:6px; height:24px; padding:0 10px 0 8px; font-size:.75rem; font-weight:700; color:#006E70;
+.fl--neg .fl-left:not(.is-ok):not(.is-cost) { gap:6px; height:24px; padding:0 10px 0 8px; font-size:.75rem; font-weight:700; color:#006E70;
   border:1px solid transparent; background:linear-gradient(#fff,#fff) padding-box, linear-gradient(90deg,#00A8AB,#8460E5) border-box; box-shadow:0 2px 8px rgba(0,168,171,.18); }
-.fl--neg .fl-sh__st:not(.is-ok):not(.is-opt)::before, .fl--neg .fl-left:not(.is-ok):not(.is-cost)::before { content:""; width:6px; height:6px; border-radius:50%;
+.fl--neg .fl-left:not(.is-ok):not(.is-cost)::before { content:""; width:6px; height:6px; border-radius:50%;
   background:linear-gradient(135deg,#30E8EC,#00A8AB); box-shadow:0 0 0 2px rgba(0,168,171,.18); animation:fl-neg-pulse 2s ease-in-out infinite; }
 @keyframes fl-neg-pulse { 50% { opacity:.35; transform:scale(.7); } }
-@media (prefers-reduced-motion:reduce) { .fl--neg .fl-sh__st::before, .fl--neg .fl-left::before { animation:none; } }
+@media (prefers-reduced-motion:reduce) { .fl--neg .fl-left::before { animation:none; } }
 
 /* 19/10 · Listo (publicación Negociable): check, seguimiento y acciones en el teal de Concorde */
 .fl--neg .fl-done__check { background:#E3F6F6; box-shadow:0 0 0 8px rgba(0,168,171,.06); }
 .fl--neg .fl-track li.is-now { color:#006E70; } .fl--neg .fl-track li.is-now::before { background:linear-gradient(90deg,#30E8EC,#00A8AB); }
 
 /* 19/10 · «¿Seguimos con tu publicación?» (VMC desde Publicar): Negociable desde aquí, lo que falta en 3 pasos y botones a su ancho */
-.fl--vmc .fl-decide--neg > div:first-child { flex:1; min-width:0; gap:4px; }
-.fl--vmc .fl-decide--neg b { display:flex; align-items:center; flex-wrap:wrap; gap:4px 0; }
-.fl--vmc .fl-decide--neg .fl-decide__btns { flex:none; }
 .fl--vmc .fl-decide--neg .fl-save.poutline { padding-inline:20px; }
-.fl--vmc .fl-decide.fl-decide--neg { background-image:linear-gradient(#fff,#fff), linear-gradient(120deg,#fff 0%,#30E8EC 35%,#8460E5 75%,#fff 100%); box-shadow:0 12px 30px rgba(0,104,106,.12); }
-.fl--vmc .fl-decide--neg span em { font-style:normal; font-weight:600; color:#006E70; }
 /* 19/10: «Mercado» es el valor que AVT recomienda; lleva el trazo Negociable de Concorde (CardViewer negotiable) para destacarlo. */
 .fl--vmc .fl-quick > button:nth-child(2) .pcondpill--outline { border:2px solid transparent; box-shadow:0 0 16px 4px rgba(0,0,0,.05);
   background:linear-gradient(#fff,#fff) padding-box, linear-gradient(120deg,#fff 0%,#30E8EC 25%,#5A35C2 75%,#fff 100%) border-box; }
@@ -1146,14 +996,7 @@
   -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 40%); mask-image:linear-gradient(90deg,transparent 0%,#000 40%); }
 .fl-fee__img img { display:block; width:100%; height:100%; object-fit:cover; object-position:62% 30%; }
 
-/* Precio: la receta oscura del Precio de lista (MSRP) y del Valor estimado; el fondo de la foto ya es de esa familia. */
-.fl-fee--precio { gap:24px; min-height:112px; padding:16px 24px; color:#fff;
-  background:radial-gradient(90% 160% at 0% 0%, #5A35C2 0%, #3B1782 48%, #22005C 100%); box-shadow:0 8px 24px rgba(34,0,92,.2); }
-.fl-fee__price { position:relative; z-index:1; display:grid; padding-right:24px; border-right:1px solid rgba(255,255,255,.2); }
-.fl-fee__price small { font-size:.75rem; font-weight:600; color:#CFBAFF; }
-.fl-fee__price b { font-size:2rem; line-height:1.15; font-weight:700; font-variant-numeric:tabular-nums; }
-.fl-fee--precio .fl-fee__perks { position:relative; z-index:1; }
-.fl-fee--precio .fl-fee__perks svg { color:#AE8EFF; }
+/* Precio (por defecto): PublishFeeBanner de Concorde (src/components/PublishFeeBanner.tsx). */
 
 /* Franja: sin foto, tarjeta blanca con el borde degradado del formulario (fl-only), una sola línea. */
 .fl-fee--franja { gap:16px; padding:12px 20px; color:var(--f-ink,#22005C); border:1px solid transparent;
@@ -1175,7 +1018,6 @@
 .fl-fee .fl-fee__pill span { font-size:11px !important; letter-spacing:.02em; }
 
 @media (max-width:640px) {
-  .fl-fee--precio { flex-wrap:wrap; gap:12px; padding:16px; } .fl-fee__price { border:0; padding:0; } .fl-fee--precio .fl-fee__img { width:60%; opacity:.45; }
   .fl-fee--franja { flex-wrap:wrap; } .fl-fee--franja .fl-fee__perks { margin-left:0; grid-auto-flow:row; }
   .fl-fee--foto { padding:16px; } .fl-fee__tx { max-width:none; } .fl-fee--foto .fl-fee__img { width:70%; opacity:.4; }
 }
@@ -1194,16 +1036,3 @@
 .fl--vmc .fl-label, .fl--vmc .fl-opts legend { color:#14112B; }
 .fl--vmc .fl-origin { font-weight:400; }
 .fl--vmc .fl-demo { font-size:.75rem; font-weight:500; }
-.fl-fee__price b { font-size:1.5rem; }
-.fl-fee--precio .fl-fee__perks li { font-weight:500; }
-/* 26/10 · Banner de costo v3: la receta de las piezas «Publica tu auto» (publica-vmc.html): pill de vidrio con punto crema,
-   titular 800 con tracking -.02em y bajada. Sin CTA: el usuario ya está en Publicar. */
-.fl-fee--precio .fl-fee__tx { position:relative; z-index:2; display:grid; gap:6px; justify-items:start; max-width:60%; }
-.fl-fee__tag { display:inline-flex; align-items:center; gap:6px; height:22px; padding:0 10px; border-radius:999px; font-size:11px; font-weight:700; color:#fff;
-  border:1px solid rgb(255 255 255 / 38%); background:linear-gradient(180deg,rgb(255 255 255 / 26%),rgb(255 255 255 / 10%));
-  backdrop-filter:blur(10px) saturate(160%); -webkit-backdrop-filter:blur(10px) saturate(160%); box-shadow:inset 0 1px 0 rgb(255 255 255 / 45%),0 4px 12px -4px rgb(10 0 40 / 35%); }
-.fl-fee__tag::before { content:""; width:6px; height:6px; border-radius:50%; background:#FBC47D; }
-.fl-fee--precio .fl-fee__tx > b { font-size:1.5rem; line-height:1.15; font-weight:800; letter-spacing:-.02em; text-wrap:balance; }
-.fl-fee--precio .fl-fee__tx em { font-style:normal; color:#FBC47D; white-space:nowrap; }
-.fl-fee--precio .fl-fee__tx > span:last-child { font-size:.875rem; color:#E4D8FF; }
-@media (max-width:640px) { .fl-fee--precio .fl-fee__tx { max-width:none; } .fl-fee--precio .fl-fee__tx > b { font-size:1.25rem; } }

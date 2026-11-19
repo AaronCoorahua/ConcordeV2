@@ -41,17 +41,24 @@ Docs con preview + props (para humanos):
   y los JSON de bloque ya los incluyen).
 - El catálogo vivo siempre está en `/r/registry.json` — féchalo para la lista actual.
 
-## Componentes (58)
+## Componentes (102)
 
-accordion, activitycard, amountoptiongroup, auctionstatus, avatarzone, badgestatus,
+accordion, accountcard, actionlist, actiontile, activitycard, activitysection, adbanner,
+addbutton, amountcomposer, amountoptiongroup, auctionstatus, avatarzone, badgestatus,
 bidmessage, bidposition, bidproposal, businessicon, button, cardtitle, cardviewer,
-categorycard, categoryicon, checkicon, conditionpill, countdown, detailcard, docbutton, eyeicon,
-featuredcard, glassbutton, herocarousel, infoicon, input, lightbar, likebutton,
-logomarquee, lotgallery, offercard, offericon, offershelf, offertype, offertypecards,
-pricebadge, priceicon, profilebutton, progressbar, publicationbadge, qrcard, qrcode,
-riskmeter, salastatus, sendbidicon,
-servicecentericon, signal, staricon, statpill, table, tabselector, termsselector,
-timericon, todayicon, userprofilecard, vidrio, vmcahora, walletbalancecard
+categorycard, categoryicon, chatbubble, chatcomposer, chatday, chatheader, chatnotice,
+checkicon, combobox, conditionpill, countdown, decisionbar, detailcard, docbutton,
+dropmodal, eyeicon, featuredcard, foldertabs, glassbutton, herocarousel, infoicon,
+input, lightbar, likebutton, logomarquee, lotgallery, morebutton, notificationbell,
+notificationbox, notificationinbox, offercard, offericon, offershelf, offertype,
+offertypecards, pagination, pendingtoggle, pricebadge, priceicon, profilebutton,
+progressbar, projectionchart, proposalmodal, proposalnotice, proposalthread,
+publicationbadge, publishfeebanner, publishswipe, qrcard, qrcode, recommendedlist,
+republishbar, republishmodal, responsetimer, riskmeter, roundprogress, salastatus,
+seasonchart, sectionhead, select, sendbidicon, servicecentericon, sidepanel, signal,
+stagetabs, staricon, statpill, statustag, stepper, table, tabselector, termsselector,
+timericon, todayicon, userprofilecard, valuationcard, valuehero, vehiclerow, vidrio,
+vmcahora, walletbalancecard, walletcard
 
 Componentes del nuevo inicio (bloque index):
 - herocarousel    banner principal con campañas e indicador de vidrio para pasar entre ellas
@@ -65,10 +72,54 @@ Componentes del nuevo inicio (bloque index):
 - logomarquee     franja de logos en movimiento (empresas que publican en VMC)
 
 Componentes de Mi Garaje:
-- publicationbadge  estados de una publicación (7) y chincheta de fijada
-- riskmeter         riesgo del perfil en escala de 5 niveles
-- countdown         cuenta regresiva en vivo
-- qrcode, qrcard    QR en SVG y tarjeta imprimible del vehículo que recibe ofertas
+- publicationbadge   estados de una publicación (7) y chincheta de fijada
+- accountcard        tarjeta Tu cuenta: usuario, riesgo, puntos y SubasPass
+- riskmeter          riesgo del perfil en escala de 5 niveles
+- actiontile         acceso del riel a Publicar o Valorizar
+- walletcard         tarjeta Mi billetera con saldo y SubasCoins
+- recommendedlist    lista de vehículos recomendados del riel
+- adbanner           publicidad del riel o de la barra lateral (pieza en iframe)
+- activitysection    sección plegable de Tu actividad con ícono y contador
+- pendingtoggle      interruptor para ver solo lo pendiente, con contador
+- foldertabs         pestañas de carpeta (Compras / En venta)
+- stagetabs          pestañas de carpeta de las etapas, con contador
+- vehiclerow         fila de vehículo de Tu actividad (foto, estado, plazo, pasos)
+- countdown          cuenta regresiva en vivo
+- statustag          estado en texto con color semántico (usa badgestatus para En vivo)
+- pagination         paginado numerado (sólido o vidrio)
+- morebutton         botón ⋯ que abre las acciones de una fila
+- actionlist         lista de acciones de una fila (Dar de baja, Ver detalle)
+- republishbar       franja para republicar o dar de baja una publicación desierta
+- republishmodal     confirmar republicar una publicación (incluye la base de los modales)
+- dropmodal          dar de baja una publicación con su motivo
+- qrcode, qrcard     QR en SVG y tarjeta imprimible del vehículo que recibe ofertas
+- notificationbell   campana de notificaciones con contador
+- notificationbox    aviso de nueva notificación que se recoge hacia la campana
+- notificationinbox  bandeja de notificaciones con marcar todo como leído
+- stepper            pasos de un formulario (barra con volver o puntos)
+- sectionhead        encabezado de una sección del formulario con ícono y estado
+- select             campo de lista desplegable
+- combobox           campo con búsqueda y lista de opciones
+- valuehero          valor de mercado con recompra y estimado en subasta
+- projectionchart    gráfico de proyección del valor en los próximos meses
+- seasonchart        gráfico del mejor mes para vender
+- decisionbar        barra de decisión con título, texto y acciones
+- valuationcard      tarjeta de una valorización con su valor, señal y acción
+- addbutton          fila con + para agregar otro elemento
+- publishswipe       botón Publicar que muestra que está cargando
+- publishfeebanner   banner del pago único para publicar
+- sidepanel          panel lateral que entra desde la derecha
+- proposalmodal      modal para escribir y enviar una propuesta
+- proposalnotice     aviso de fondos insuficientes, negociación cerrada o error
+- responsetimer      plazo para responder en cuenta regresiva
+- roundprogress      ronda de la negociación en puntos
+- proposalthread     historial de propuestas de ambos lados
+- amountcomposer     campo de monto con sugerencias para contraproponer
+- chatheader         cabecera del SubasChat con la otra parte y el monto
+- chatday            separador de día del chat
+- chatbubble         mensaje del chat (propio o de la otra parte)
+- chatnotice         aviso del sistema dentro del chat
+- chatcomposer       caja para escribir del chat con emojis e imagen
 
 ## Bloques (página completa = bloque + sus componentes)
 

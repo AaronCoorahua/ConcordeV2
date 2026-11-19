@@ -4,10 +4,13 @@
 // (avt-ai src/App.jsx ResultScreen): encabezado → Valor de mercado · Hoy → Recompra · Estimación Subastop → Proyección de valor
 // (hitos 1M·3M·6M·12M) → Señal de venta AVT → Momento óptimo de venta → Vehículos similares en el mercado → Detalles de tu valuación.
 // Solo cambia el diseño: íconos de vidrio, barras y un reveal único de ~1,4 s (sin animación con «reducir movimiento»).
-import { useEffect, useState } from "react";
+// Piezas de Concorde: ValueHero (encabezado y valor), ProjectionChart (proyección) y SeasonChart (momento óptimo).
 import type { JSX } from "react";
 import { Vidrio } from "@/src/components/Vidrio";
-import { Projection, Season, LIGHT, type RData } from "./Resultado";
+import ValueHero from "@/src/components/ValueHero";
+import ProjectionChart from "@/src/components/ProjectionChart";
+import SeasonChart from "@/src/components/SeasonChart";
+import type { RData } from "./Resultado";
 import "./resultado.css";
 import "./revela.css";
 
@@ -15,19 +18,6 @@ import "./revela.css";
 const SELL_SEASONAL: Record<number, number> = { 1: 13.1, 2: 13.1, 3: 8.1, 4: 8.1, 5: 8.1, 6: -5.1, 7: -5.1, 8: 8.1, 9: 13.1, 10: 8.1, 11: -5.1, 12: -5.1 };
 const MO_FULL = ["", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 const usd = (n: number) => `US$ ${Math.round(n).toLocaleString("en-US")}`;
-
-/** Cifra que sube hasta el valor (como el Counter de AVT). Solo visual: el valor real va en texto para lectores de pantalla. */
-function Count({ to, delay = 0, still }: { to: number; delay?: number; still?: boolean }): JSX.Element {
-  const [v, setV] = useState(to);
-  useEffect(() => {
-    if (still || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let raf = 0; const t0 = performance.now() + delay, from = to * 0.85; setV(from);
-    const tick = (t: number) => { const p = Math.max(0, Math.min(1, (t - t0) / 900)); setV(from + (to - from) * (1 - Math.pow(1 - p, 3))); if (p < 1) raf = requestAnimationFrame(tick); };
-    raf = requestAnimationFrame(tick); return () => cancelAnimationFrame(raf);
-  }, [to, delay]);
-  return <><span aria-hidden>{usd(v)}</span><span className="g-sr">{usd(to)}</span></>;
-}
-
 
 /** still: resultado ya guardado (Mis valorizaciones): se muestra quieto, el reveal es solo para el momento de valorizar. */
 /** El texto de AVT (sellingSignal.js, copia literal) escribe «$» y deja «pierdes ~$0» cuando no hay pérdida diaria:
@@ -53,25 +43,12 @@ export default function Revela({ d, still, at }: { d: RData; still?: boolean; at
 
   return <div className={`rv rv--claro rva${still ? " rva--still" : ""}`}>
     {/* 1-3 · Encabezado · Valor de mercado hoy · Recompra y Estimación Subastop (las dos tarjetas de AVT, aquí al pie del héroe) */}
-    <section className="rva-hero" aria-labelledby="fl-h">
-      <div className="rva-left">
-        <header className="rva-top"><h1 id="fl-h" tabIndex={-1} className="rva-car">{car}</h1><p className="rva-meta">{meta.join(" · ")}</p></header>
-        <div className="rva-value">
-          <p className="rva-h">Valor de mercado {at ? `al ${at}` : "hoy"}</p>
-          <p className="rva-big"><Count to={d.market} still={still} /></p>
-          <p className="rva-note">Estimación basada en depreciación real, estacionalidad y kilometraje.</p>
-        </div>
-      </div>
-      <ul className="rva-two">
-        <li><Vidrio s="billetera" size={40} /><div><small>Valor de recompra</small><b><Count to={d.recompra} delay={300} still={still} /></b><span>Compra inmediata para dealers.</span></div></li>
-        <li><Vidrio s="participaciones" size={40} /><div><small>Estimación Subastop</small><b><Count to={d.subastop} delay={400} still={still} /></b><span>Cierre en subasta VMC.</span></div></li>
-      </ul>
-    </section>
+    <ValueHero title={car} meta={meta.join(" · ")} valueLabel={`Valor de mercado ${at ? `al ${at}` : "hoy"}`} value={d.market} buyback={d.recompra} auction={d.subastop} still={still} headingId="fl-h" />
 
     {/* 4 · Proyección de valor (AVT ResultScreen: projectForward semanal; hitos 1M · 3M · 6M · 12M con valor, % y km) */}
     <section {...card(1)} aria-labelledby="rva-proy">
       <header className="rva-head"><Vidrio s="fecha" size={36} /><div><h2 id="rva-proy">Proyección de valor</h2><p>{m12 ? `−${(((d.market - m12.v) / d.market) * 100).toFixed(1)}% en 12 meses` : "Próximos 12 meses"}</p></div></header>
-      <Projection d={d} t={LIGHT} gid="rva-p" ds />
+      <ProjectionChart market={d.market} points={d.pf ?? []} />
       <dl className="rva-miles">{miles.map((m) => <div key={m.label}><dt>{m.label}</dt><dd>{usd(m.v)}<small>−{(((d.market - m.v) / d.market) * 100).toFixed(1)}% · {(m.km / 1000).toFixed(0)}k km</small></dd></div>)}</dl>
     </section>
 
@@ -91,7 +68,7 @@ export default function Revela({ d, still, at }: { d: RData; still?: boolean; at
     {/* 6 · Momento óptimo de venta (AVT: SELL_SEASONAL, 3 tonos, mes actual con su %, próximo pico y meses a evitar) */}
     <section {...card(3)} aria-labelledby="rva-mom">
       <header className="rva-head"><Vidrio s="valorizaciones" size={36} /><div><h2 id="rva-mom">Momento óptimo de venta</h2><p>{s.signal.label} · {MO_FULL[cur]}</p></div></header>
-      <Season d={{ ...d, now: cur, season: d.season.map((x) => ({ ...x, f: SELL_SEASONAL[x.m] })) }} t={LIGHT} ds />
+      <SeasonChart months={d.season.map((x) => ({ ...x, f: SELL_SEASONAL[x.m] }))} now={cur} />
       {nextPeak || dips.length ? <ul className="rva-ins">
         {nextPeak && nextPeak !== cur ? <li className="is-up">Próximo pico: <b>{MO_FULL[nextPeak]}</b> (+{SELL_SEASONAL[nextPeak]}%)</li> : null}
         {dips.length ? <li className="is-down">Evitar: <b>{[...new Set(dips.slice(0, 2).map((m) => MO_FULL[m]))].join(" – ")}</b> ({SELL_SEASONAL[dips[0]]}%)</li> : null}

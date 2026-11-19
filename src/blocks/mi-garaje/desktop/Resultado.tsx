@@ -23,7 +23,7 @@ const k1 = (n: number) => `${(n / 1000).toFixed(1).replace(/\.0$/, "")}K`;
 const pct = (n: number) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(Math.round(n))} %`;
 
 // Paleta validada con validate_palette.js (claro y sobre #2E0F70): violeta = tu valor / más demanda, naranja = menos demanda.
-export const LIGHT = { a: "#8460E5", b: "#ED8936", ink: "#3B1782", text: "#191C1C", muted: "#6B6878", grid: "#ECEAF2", band: "#F5F0FF", mute: "#A39FB3", surface: "#FFFFFF" };
+const LIGHT = { a: "#8460E5", b: "#ED8936", ink: "#3B1782", text: "#191C1C", muted: "#6B6878", grid: "#ECEAF2", band: "#F5F0FF", mute: "#A39FB3", surface: "#FFFFFF" };
 const GLASS = { a: "#9474F5", b: "#D07A2C", ink: "#FFFFFF", text: "#FFFFFF", muted: "#CFBAFF", grid: "rgba(255,255,255,.14)", band: "rgba(255,255,255,.12)", mute: "rgba(255,255,255,.6)", surface: "#3B1782" };
 type Theme = typeof LIGHT;
 
@@ -93,12 +93,9 @@ function Ladder({ d, t: th }: { d: RData; t: Theme }): JSX.Element {
     </svg>{tip.layer}</div></div>;
 }
 
-/** Proyección: eje real, hitos 1/3/6/12 meses, valor final rotulado; cruz con mouse o ← →. */
-// ds (19/10, Revela): línea con el degradado primario de Concorde (ProgressBar: #F4AC59 → #8460E5) y puntos blancos con anillo lila.
-export function Projection({ d, t: th, gid, ds }: { d: RData; t: Theme; gid: string; ds?: boolean }): JSX.Element {
-  // Con ds y d.pf: curva semanal de AVT (projectForward) y sus hitos rotulados (Hoy · 1M · 3M · 6M · 12M), como ChartSVG de AVT.
-  const P: { v: number; full: string; lab: string | null; km?: number }[] = ds && d.pf?.length ? d.pf.map((p) => ({ v: p.v, full: p.label ?? "", lab: p.label, km: p.km })) : d.proj.map((p) => ({ v: p.v, full: p.full, lab: null }));
-  const marks = ds && d.pf?.length ? P.flatMap((p, i) => (p.lab ? [i] : [])) : [0, 1, 3, 6, 12];
+/** Proyección: eje real, hitos 1/3/6/12 meses, valor final rotulado; cruz con mouse o ← →. (La de «Revela» es ProjectionChart de Concorde.) */
+function Projection({ d, t: th, gid }: { d: RData; t: Theme; gid: string }): JSX.Element {
+  const P: { v: number; full: string; lab: string | null; km?: number }[] = d.proj.map((p) => ({ v: p.v, full: p.full, lab: null }));
   const [ref, W] = useW(), narrow = W < 480, H = 200, L = 44, R = narrow ? 12 : 108, T = narrow ? 36 : 12, B = 24, n = P.length;
   const vs = P.map((p) => p.v), lo = Math.floor((Math.min(...vs) - 60) / 200) * 200, hi = Math.ceil((Math.max(...vs) + 40) / 200) * 200;
   const x = (i: number) => L + (i / (n - 1)) * (W - L - R), y = (v: number) => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
@@ -112,13 +109,13 @@ export function Projection({ d, t: th, gid, ds }: { d: RData; t: Theme; gid: str
       onMouseMove={move} onMouseLeave={() => setHov(null)} onBlur={() => setHov(null)}
       onKeyDown={(e) => { if (e.key === "ArrowRight") setHov((v) => Math.min(n - 1, (v ?? -1) + 1)); if (e.key === "ArrowLeft") setHov((v) => Math.max(0, (v ?? 1) - 1)); }}>
       <defs><linearGradient id={gid} x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor={th.a} stopOpacity={th.surface === "#FFFFFF" ? 0.16 : 0.4} /><stop offset="1" stopColor={th.a} stopOpacity="0" /></linearGradient>
-        {ds ? <linearGradient id={`${gid}l`} gradientUnits="userSpaceOnUse" x1={x(0)} x2={x(n - 1)} y1="0" y2="0"><stop offset="0" stopColor="#F4AC59" /><stop offset=".3" stopColor="#ED8936" /><stop offset="1" stopColor="#8460E5" /></linearGradient> : null}</defs>
+        </defs>
       {ticks.map((v) => <g key={v}><line x1={L} x2={W - R} y1={y(v)} y2={y(v)} stroke={th.grid} /><text x={L - 8} y={y(v) + 4} textAnchor="end" className="rv-tick" fill={th.muted}>{k1(v)}</text></g>)}
-      {(ds && d.pf?.length ? marks : [0, 3, 6, 9, 12]).filter((i) => i < n).map((i) => <text key={i} x={x(i)} y={H - 4} textAnchor="middle" className="rv-tick" fill={th.muted}>{i === 0 ? "Hoy" : ds && d.pf?.length ? P[i].lab : P[i].full.slice(0, 3)}</text>)}
+      {[0, 3, 6, 9, 12].filter((i) => i < n).map((i) => <text key={i} x={x(i)} y={H - 4} textAnchor="middle" className="rv-tick" fill={th.muted}>{i === 0 ? "Hoy" : P[i].full.slice(0, 3)}</text>)}
       <path d={`M${x(0)},${H - B} L${pts.join(" L")} L${x(n - 1)},${H - B} Z`} fill={`url(#${gid})`} />
-      <polyline points={pts.join(" ")} fill="none" stroke={ds ? `url(#${gid}l)` : th.a} strokeWidth={ds ? 3 : 2} strokeLinejoin="round" strokeLinecap="round" />
-      {(ds && d.pf?.length ? marks.slice(1) : [1, 3, 6, 12]).filter((i) => i < n).map((i) => <circle key={i} cx={x(i)} cy={y(P[i].v)} r={ds ? 5 : 4} fill={ds ? "#fff" : th.a} stroke={ds ? "#8460E5" : th.surface} strokeWidth={2} />)}
-      <circle cx={x(0)} cy={y(d.market)} r={ds ? 6 : 5} fill={ds ? "#ED8936" : th.a} stroke={th.surface} strokeWidth={2} />
+      <polyline points={pts.join(" ")} fill="none" stroke={th.a} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+      {[1, 3, 6, 12].filter((i) => i < n).map((i) => <circle key={i} cx={x(i)} cy={y(P[i].v)} r={4} fill={th.a} stroke={th.surface} strokeWidth={2} />)}
+      <circle cx={x(0)} cy={y(d.market)} r={5} fill={th.a} stroke={th.surface} strokeWidth={2} />
       <text x={narrow ? x(n - 1) : x(n - 1) + 10} y={narrow ? 14 : y(last.v) - 3} textAnchor={narrow ? "end" : "start"} className="rv-val rv-val--b" fill={th.text}>{usd(last.v)}</text>
       <text x={narrow ? x(n - 1) : x(n - 1) + 10} y={narrow ? 30 : y(last.v) + 13} textAnchor={narrow ? "end" : "start"} className="rv-tick" fill={th.muted}>−{drop}{" "}% · 12 meses</text>
       {h ? <g pointerEvents="none"><line x1={x(hov!)} x2={x(hov!)} y1={T} y2={H - B} stroke={th.muted} strokeOpacity={0.5} /><circle cx={x(hov!)} cy={y(h.v)} r={6} fill={th.a} stroke={th.surface} strokeWidth={2} /></g> : null}
@@ -127,27 +124,24 @@ export function Projection({ d, t: th, gid, ds }: { d: RData; t: Theme; gid: str
   </div>;
 }
 
-/** Estacionalidad divergente: arriba más demanda (violeta), abajo menos (naranja); «Hoy» rotulado. */
-// ds (19/10, Revela): barras con los degradados de Concorde — más demanda = ConditionPill (#AE8EFF → #5A35C2), menos = EN VIVO (#F4AC59 → #B25614).
-export function Season({ d, t: th, ds }: { d: RData; t: Theme; ds?: boolean }): JSX.Element {
+/** Estacionalidad divergente: arriba más demanda (violeta), abajo menos (naranja); «Hoy» rotulado. (La de «Revela» es SeasonChart de Concorde.) */
+function Season({ d, t: th }: { d: RData; t: Theme }): JSX.Element {
   const [ref, W] = useW(), tip = useTip(), H = 168, T = 22, B = 28;
   const max = Math.max(...d.season.map((s) => Math.abs(s.f))), y0 = T + (H - T - B) / 2, sy = (H - T - B) / 2 / max, slot = W / 12, bw = Math.min(22, slot * 0.62);
   const bar = (cx: number, f: number) => { const h = Math.abs(f) * sy, x0 = cx - bw / 2, r = Math.min(4, h), s = f >= 0 ? -1 : 1;
     return `M${x0},${y0} V${y0 + s * (h - r)} Q${x0},${y0 + s * h} ${x0 + r},${y0 + s * h} H${x0 + bw - r} Q${x0 + bw},${y0 + s * h} ${x0 + bw},${y0 + s * (h - r)} V${y0} Z`; };
   return <div ref={ref} className="rv-w"><div ref={tip.host} className="rv-plot" onMouseLeave={tip.clear}>
     <svg width={W} height={H} className="rv-svg" role="img" aria-label={d.season.map((s) => `${s.name} ${pct(s.f)}`).join(", ")}>
-      {ds ? <defs><linearGradient id="rvs-up" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#AE8EFF" /><stop offset="1" stopColor="#5A35C2" /></linearGradient><linearGradient id="rvs-mid" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#CFBAFF" /><stop offset="1" stopColor="#8460E5" /></linearGradient><linearGradient id="rvs-dn" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#ED8936" /><stop offset="1" stopColor="#F4AC59" /></linearGradient></defs> : null}
       <line x1={0} x2={W} y1={y0} y2={y0} stroke={th.muted} strokeOpacity={0.5} />
       {d.season.map((s, i) => { const cx = slot * i + slot / 2, now = s.m === d.now;
-        return <g key={s.m} {...tip.hit(ds ? <b>{s.name} · {s.f > 0 ? "+" : ""}{s.f}%</b> : <><b>{s.name} · {pct(s.f)} demanda</b><span>{s.f > 0 ? "Sobre el promedio del año" : "Bajo el promedio del año"}</span></>)}>
+        return <g key={s.m} {...tip.hit(<><b>{s.name} · {pct(s.f)} demanda</b><span>{s.f > 0 ? "Sobre el promedio del año" : "Bajo el promedio del año"}</span></>)}>
           <rect x={cx - slot / 2} y={T - 16} width={slot} height={H - T + 16} fill="transparent" />
-          {ds && now ? <path d={bar(cx, s.f)} fill="none" stroke={s.f >= 0 ? "#8460E5" : "#ED8936"} strokeOpacity={0.28} strokeWidth={8} strokeLinejoin="round" /> : null}
-          <path d={bar(cx, s.f)} fill={ds ? `url(#rvs-${s.f > 10 ? "up" : s.f >= 0 ? "mid" : "dn"})` : s.f >= 0 ? th.a : th.b} opacity={now || ds ? 1 : 0.8} stroke={ds && now ? "#fff" : "none"} strokeWidth={ds && now ? 1.5 : 0} />
-          {now ? <text x={cx} y={s.f >= 0 ? y0 - Math.abs(s.f) * sy - 6 : y0 + Math.abs(s.f) * sy + 14} textAnchor="middle" className="rv-val rv-val--b" fill={ds ? "#3B1782" : th.text}>{ds ? `${s.f > 0 ? "+" : ""}${s.f}%` : pct(s.f)}</text> : null}
-          <text x={cx} y={H - 6} textAnchor="middle" className={`rv-tick${now ? " rv-tick--now" : ""}`} fill={now ? (ds ? "#3B1782" : th.text) : th.muted}>{now && !ds ? "Hoy" : s.name.slice(0, 3)}</text>
+          <path d={bar(cx, s.f)} fill={s.f >= 0 ? th.a : th.b} opacity={now ? 1 : 0.8} />
+          {now ? <text x={cx} y={s.f >= 0 ? y0 - Math.abs(s.f) * sy - 6 : y0 + Math.abs(s.f) * sy + 14} textAnchor="middle" className="rv-val rv-val--b" fill={th.text}>{pct(s.f)}</text> : null}
+          <text x={cx} y={H - 6} textAnchor="middle" className={`rv-tick${now ? " rv-tick--now" : ""}`} fill={now ? th.text : th.muted}>{now ? "Hoy" : s.name.slice(0, 3)}</text>
         </g>; })}
     </svg>{tip.layer}</div>
-    {ds ? null : <ul className="rv-legend"><li><i style={{ background: th.a }} />Más demanda que el promedio</li><li><i style={{ background: th.b }} />Menos demanda</li></ul>}</div>;
+    <ul className="rv-legend"><li><i style={{ background: th.a }} />Más demanda que el promedio</li><li><i style={{ background: th.b }} />Menos demanda</li></ul></div>;
 }
 
 /** Puente del valor: del precio de lista al valor de mercado, factor por factor (por qué vale lo que vale). */

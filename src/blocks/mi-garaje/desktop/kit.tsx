@@ -3,7 +3,8 @@
 /**
  * Piezas compartidas por los modelos A/B/C: datos de ejemplo, chrome de navegación
  * (Header + Sidebar de Concorde) y piezas PROPUESTAS que no existen en Concorde
- * (VehicleRow, StatusTag, Thumbs, Chevron, Skeleton). Caso para revisar con Julio.
+ * (Thumbs, Chevron). Caso para revisar con Julio. La fila de vehículo y la etiqueta de estado ya son componentes de
+ * Concorde: VehicleRow y StatusTag (src/components).
  */
 import { useState } from "react";
 import type { JSX, ReactNode } from "react";
@@ -19,8 +20,6 @@ import AvatarZone from "@/src/components/AvatarZone";
 import StarIcon from "@/src/components/StarIcon";
 import InfoIcon from "@/src/components/InfoIcon";
 import ProfileButton from "@/src/components/ProfileButton";
-import TabSelector from "@/src/components/TabSelector";
-import Button from "@/src/components/Button";
 
 // ─── Datos de ejemplo ────────────────────────────────────────────────────────
 export type Tone = "live" | "negotiable" | "vault" | "neutral" | "urgent";
@@ -71,7 +70,6 @@ export const photosOf = (slug: string): string[] => Array.from({ length: PHOTO_C
 export const PHOTO: Record<string, string> = new Proxy({}, { get: (_, slug: string) => `/mi-garaje/garage-photos/${slug}/1.jpg` });
 export const newsCount = (s: Section) => s.items.filter((i) => i.isNew).length;
 export const urgentItems = (all: Section[]) => all.flatMap((s) => s.items.filter((i) => i.urgent).map((i) => ({ ...i, section: s.title })));
-export const ctaVariant = (t: Tone) => (t === "live" ? "primary" : t === "negotiable" ? "negotiable" : "secondary-sm") as "primary" | "negotiable" | "secondary-sm";
 
 // ─── Piezas PROPUESTAS (no existen en Concorde; caso para Julio) ─────────────
 /** Chevron en círculo, mismo trazo que ProfileButton. */
@@ -80,11 +78,6 @@ export function Chevron({ open }: { open?: boolean }): JSX.Element {
     <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" strokeWidth="1.5" />
     <path d="M8.5 6.5 12 10l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
   </svg>;
-}
-
-/** Estado en texto + color semántico (DESIGN.md: naranja = en vivo/urgencia, cyan = negociable, vault = resto). */
-export function StatusTag({ tone, children }: { tone: Tone; children: ReactNode }): JSX.Element {
-  return <span className={`kit-tag kit-tag--${tone}`}>{tone === "live" ? <i aria-hidden className="kit-tag__dot" /> : null}{children}</span>;
 }
 
 export function NewBadge({ n }: { n: number }): JSX.Element | null {
@@ -96,38 +89,6 @@ export function Thumbs({ items, max = 3 }: { items: Item[]; max?: number }): JSX
   if (!items.length) return null;
   return <span className="kit-thumbs" aria-hidden>{items.slice(0, max).map((i) => <img key={i.id} src={PHOTO[i.photo]} alt="" width={28} height={28} />)}
     {items.length > max ? <b>+{items.length - max}</b> : null}</span>;
-}
-
-/** Fila compacta de vehículo; toda la fila es el destino, la acción urgente es el botón. */
-export function VehicleRow({ item, compact }: { item: Item; compact?: boolean }): JSX.Element {
-  return <article className={`kit-row${item.isNew ? " kit-row--new" : ""}${compact ? " kit-row--compact" : ""}`}>
-    <img className="kit-row__photo" src={PHOTO[item.photo]} alt="" width={80} height={60} />
-    <div className="kit-row__body">
-      <div className="kit-row__title"><a href="#" className="kit-row__link">{item.name} {item.year}</a>{item.isNew ? <span className="kit-row__new">Nuevo</span> : null}</div>
-      <span className="kit-row__meta">{item.detail}<span className="kit-row__plate"> · {item.plate}</span></span>
-      <span className="kit-row__tags"><StatusTag tone={item.tone}>{item.status}</StatusTag>{item.deadline ? <StatusTag tone="urgent">{item.deadline}</StatusTag> : null}</span>
-    </div>
-    <div className="kit-row__action">{item.urgent ? <Button variant={ctaVariant(item.tone)}>{item.cta}</Button> : <ProfileButton>{item.cta}</ProfileButton>}</div>
-  </article>;
-}
-
-export function SkeletonRows({ n = 2 }: { n?: number }): JSX.Element {
-  return <div className="kit-skel" role="status" aria-label="Cargando">{Array.from({ length: n }, (_, i) => <div key={i} className="kit-skel__row"><i /><div><b /><b /></div></div>)}</div>;
-}
-
-/** Cuerpo común de una sección «Mis…»: pestañas, filas, vacío que enseña, carga. */
-export function SectionBody({ section, max = 3, loading }: { section: Section; max?: number; loading?: boolean }): JSX.Element {
-  const [tab, setTab] = useState(0);
-  if (loading) return <SkeletonRows />;
-  if (!section.items.length) return <div className="kit-empty"><p>{section.empty}</p>
-    {section.emptyCta ? <Button variant={section.emptyCta === "Publicar" ? "primary" : "outline"}>{section.emptyCta}</Button> : null}</div>;
-  const groups = section.groups;
-  const items = groups ? section.items.filter((i) => i.group === groups[tab]) : section.items;
-  return <div className="kit-body">
-    {groups ? <TabSelector options={groups.map((g) => `${g} · ${section.items.filter((i) => i.group === g).length}`)} value={tab} onChange={setTab} aria-label={section.title} /> : null}
-    <div className="kit-list">{items.slice(0, max).map((i) => <VehicleRow key={i.id} item={i} />)}</div>
-    {section.items.length > max ? <ProfileButton>{`Ver las ${section.items.length}`}</ProfileButton> : null}
-  </div>;
 }
 
 /** Perfil compacto: compone las mismas piezas que UserProfileCard (AvatarZone, StarIcon, InfoIcon, ProfileButton). */
@@ -181,23 +142,4 @@ export function Chrome({ children, vmc = false }: { children: ReactNode; vmc?: b
     </div>
   </SidebarMobile>;
   return vmc ? <NotifProvider>{shell}</NotifProvider> : shell;
-}
-
-/** PROPUESTA DS · Gallery: foto principal + tira de miniaturas (fotos subidas por el usuario). Flechas ← → navegan. */
-export function Gallery({ slug, alt, height = 240 }: { slug: string; alt: string; height?: number }): JSX.Element {
-  const list = photosOf(slug);
-  const [i, setI] = useState(0);
-  const go = (d: number) => setI((x) => (x + d + list.length) % list.length);
-  return <div className="kit-gal" onKeyDown={(e) => { if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); }}>
-    <div className="kit-gal__main" style={{ height }}>
-      <img src={list[i]} alt={`${alt} · foto ${i + 1} de ${list.length}`} />
-      {list.length > 1 ? <>
-        <button type="button" className="kit-gal__nav kit-gal__nav--prev" onClick={() => go(-1)} aria-label="Foto anterior"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden><path d="M12 5l-5 5 5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
-        <button type="button" className="kit-gal__nav kit-gal__nav--next" onClick={() => go(1)} aria-label="Foto siguiente"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden><path d="M8 5l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
-        <span className="kit-gal__count">{i + 1} / {list.length}</span>
-      </> : null}
-    </div>
-    {list.length > 1 ? <div className="kit-gal__thumbs" role="tablist" aria-label="Fotos">{list.map((src, k) =>
-      <button key={src} type="button" role="tab" aria-selected={k === i} aria-label={`Foto ${k + 1}`} onClick={() => setI(k)}><img src={src} alt="" /></button>)}</div> : null}
-  </div>;
 }

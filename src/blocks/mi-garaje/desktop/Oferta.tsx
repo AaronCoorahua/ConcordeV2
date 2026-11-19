@@ -95,6 +95,7 @@ export default function Oferta({ q }: { q: Record<string, string> }): JSX.Elemen
     <main className="of-main">
       <Detalle
         variant="negotiable"
+        safetyPlacement="gallery" /* como en el lab: el Detalle del lab lo trae por defecto */
         offer={{
           title,
           subtitle: q.plate ? `Placa ${q.plate}${q.rol === "comprador" ? "" : " · Vendedor: SubasCars"}` : "Vendedor: SubasCars",

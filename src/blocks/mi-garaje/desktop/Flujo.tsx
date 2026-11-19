@@ -9,10 +9,10 @@
  * Publicar continúa: Información adicional (solo lo que AVT no pidió) → Vista previa → Pago → Pendiente de aprobación.
  * Tarifa confirmada (9/10): pago único de 25 SC. Cifras de valorización: de EJEMPLO.
  */
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { PIEZAS, bannerKey, bannerSrc } from "./bannersVmc";
-import type { JSX, ReactNode } from "react";
+import type { JSX } from "react";
 import type React from "react";
 import Button from "@/src/components/Button";
 import StatPill from "@/src/components/StatPill";
@@ -31,6 +31,12 @@ import ProgressBar from "@/src/components/ProgressBar";
 import { Vidrio, type Sec as VSec } from "@/src/components/Vidrio";
 import InfoIcon from "@/src/components/InfoIcon";
 import CheckIcon from "@/src/components/CheckIcon";
+import Stepper from "@/src/components/Stepper";
+import Select from "@/src/components/Select";
+import Combobox from "@/src/components/Combobox";
+import PublishFeeBanner from "@/src/components/PublishFeeBanner";
+import DecisionBar from "@/src/components/DecisionBar";
+import SectionHead from "@/src/components/SectionHead";
 import { Chrome, photosOf } from "./kit";
 import { Chevron } from "./Garaje";
 import { computeSellingSignal, SEASONAL_ANNUAL, MONTH_NAMES_ES } from "./avt/sellingSignal";
@@ -156,47 +162,6 @@ function Tween({ to }: { to: number }): JSX.Element {
   return <>{usd(v)}</>;
 }
 
-/** PROPUESTA DS · Select con la anatomía de Input (Concorde no tiene select). */
-function Select({ label, value, onChange, options, placeholder, disabled, hint, id, onBlur, error }: { label: string; value: string; onChange: (v: string) => void; options: string[]; placeholder: string; disabled?: boolean; hint?: ReactNode; id?: string; onBlur?: () => void; error?: string }): JSX.Element {
-  return <label className="fl-field"><span className="fl-label">{label}</span>
-    <span className={`fl-select${disabled ? " is-disabled" : ""}${error ? " is-error" : ""}`}>
-      <select id={id} value={value} onChange={(e) => onChange(e.target.value)} onBlur={onBlur} disabled={disabled} aria-invalid={error ? true : undefined}><option value="" disabled>{placeholder}</option>{options.map((o) => <option key={o} value={o}>{o}</option>)}</select>
-      <svg width="16" height="16" viewBox="0 0 20 20" aria-hidden><path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-    </span>{error ? <span className="fl-err">{error}</span> : hint}</label>;
-}
-
-/** PROPUESTA DS (14/10): selector con búsqueda para listas largas (Baymard: desplegable solo hasta ~10 opciones).
- *  Patrón combobox del W3C APG: escribir filtra (sin tildes ni mayúsculas), ↑ ↓ recorren, Enter elige, Esc cierra.
- *  Si el texto no coincide con una opción al salir, vuelve al valor elegido. «+ Mi modelo no aparece» siempre queda al final. */
-function Combo({ label, value, onChange, options, placeholder, disabled }: { label: string; value: string; onChange: (v: string) => void; options: string[]; placeholder: string; disabled?: boolean }): JSX.Element {
-  const id = useId();
-  const [q, setQ] = useState<string | null>(null); // null = cerrado, muestra el valor
-  const [act, setAct] = useState(0);
-  const norm = (x: string) => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  const fixed = options.filter((o) => o === MANUAL);
-  const list = q === null ? [] : [...options.filter((o) => o !== MANUAL && norm(o).includes(norm(q))), ...fixed];
-  const pick = (o: string) => { onChange(o); setQ(null); };
-  const close = () => { const hit = q && options.find((o) => norm(o) === norm(q)); if (hit && hit !== value) onChange(hit); setQ(null); };
-  const key = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); if (q === null) { setQ(""); setAct(0); return; } setAct((a) => (a + (e.key === "ArrowDown" ? 1 : -1) + list.length) % Math.max(list.length, 1)); }
-    else if (e.key === "Enter" && q !== null && list[act]) { e.preventDefault(); pick(list[act]); }
-    else if (e.key === "Escape") setQ(null);
-  };
-  return <div className="fl-field"><label className="fl-label" htmlFor={id}>{label}</label>
-    <span className={`fl-select fl-combo${disabled ? " is-disabled" : ""}${q !== null ? " is-open" : ""}`}>
-      <input id={id} role="combobox" aria-expanded={q !== null} aria-controls={`${id}-l`} aria-autocomplete="list" autoComplete="off" disabled={disabled}
-        aria-activedescendant={q !== null && list[act] ? `${id}-${act}` : undefined}
-        value={q ?? value} placeholder={value || placeholder} onFocus={() => { setQ(""); setAct(-1); }} onBlur={close} onKeyDown={key}
-        onChange={(e) => { setQ(e.target.value); setAct(0); }} />
-      <svg width="16" height="16" viewBox="0 0 20 20" aria-hidden><path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-      {q !== null ? <ul id={`${id}-l`} role="listbox" aria-label={label} className="fl-combo__list">
-        {list.length ? list.map((o, i) => <li key={o} id={`${id}-${i}`} role="option" aria-selected={o === value} className={`${i === act ? "is-act" : ""}${o === MANUAL ? " is-manual" : ""}`}
-          onMouseDown={(e) => { e.preventDefault(); pick(o); }} onMouseEnter={() => setAct(i)}>{o}</li>)
-          : <li className="fl-combo__none" aria-disabled>Sin resultados para «{q}»</li>}
-      </ul> : null}
-    </span></div>;
-}
-
 // Tomas guiadas (Motorway, Turo): siguen siendo de 1 a 10 fotos; la portada se elige.
 const SHOTS: [string, string][] = [["frente", "Frente"], ["lat-izq", "Lateral izquierdo"], ["lat-der", "Lateral derecho"], ["posterior", "Posterior"], ["interior", "Interior"], ["tablero", "Tablero y kilometraje"]];
 const MAX_PHOTOS = 10, MAX_MB = 10;
@@ -212,17 +177,6 @@ function focusField(id: string): void {
 type Draft = { at?: number; step: Step; brand: string; model: string; version: string; year: string; km: string; ans: Record<string, number>; mech: Record<string, string>;
   plate: string; desc: string; city: string; prov: string; dist: string; cc: string; expect: string; equip: string[]; docs: string[]; shots: Record<string, string>; extra: string[]; cover: string };
 
-// onGo (VMC, 16/10): los pasos hechos son botones para volver a ellos; el check va en violeta (hecho), no en el naranja de la acción.
-function Stepper({ steps, current, onGo }: { steps: string[]; current: number; onGo?: (i: number) => void }): JSX.Element {
-  // El tramo del paso actual va a la mitad (en curso); los hechos, llenos.
-  if (onGo) return <div className={`fl-steps${steps.length > 3 ? " fl-steps--long" : ""}`} style={{ "--n": steps.length } as React.CSSProperties}><ProgressBar value={((current + 0.5) / steps.length) * 100} />
-    <ol aria-label={`Paso ${current + 1} de ${steps.length}`}>{steps.map((s, i) => <li key={s} className={i < current ? "is-done" : i === current ? "is-now" : ""} aria-current={i === current ? "step" : undefined}>
-      {i < current ? <button type="button" onClick={() => onGo(i)} aria-label={`Volver a ${s}`}><CheckIcon size={16} />{s}</button> : <><span>{i + 1}</span>{s}{i === current ? <small className="fl-steps__of">· paso {i + 1} de {steps.length}</small> : null}</>}</li>)}</ol></div>;
-  return <ol className="fl-stepper" aria-label={`Paso ${current + 1} de ${steps.length}`}>
-    {steps.map((s, i) => <li key={s} className={i < current ? "is-done" : i === current ? "is-now" : ""} aria-current={i === current ? "step" : undefined}>
-      <span className="fl-stepper__dot">{i < current ? <CheckIcon size={14} /> : i + 1}</span><span className="fl-stepper__label">{s}</span></li>)}
-  </ol>;
-}
 
 /** Valorización guardada con la que se entra a Publicar (Mis valorizaciones · «Publicar»). */
 export type Saved = { brand: string; model: string; version: string; year: number; km: number; factors: [string, string][] };
@@ -321,9 +275,7 @@ export default function Flujo({ from, fromSaved, saved, single = false, ficha = 
   const SUB_ICON: Record<string, VSec> = { datos: "publicaciones", mec: "caja", ubic: "ubicacion", equip: "equipo", docs: "docs", desc: "texto" }; // vidrio esmerilado de Tu actividad
   const subHead = (icon: string, title: string, ids: string[] | null, hint?: string) => {
     const miss = ids ? REQ.filter((x) => ids.includes(x[0]) && !x[2]).length : 0;
-    return <div className="fl-sh"><span className="fl-sh__ico vd-host" aria-hidden><Vidrio s={SUB_ICON[icon]} size={36} /></span>
-      <div className="fl-sh__txt"><h2 className="fl-sub__t">{title}</h2>{hint ? <small>{hint}</small> : null}</div>
-      {!ids ? <span className="fl-sh__st is-opt">Opcional</span> : miss ? <span className="fl-sh__st">{miss === 1 ? "Falta 1" : `Faltan ${miss}`}</span> : <span key="ok" className="fl-sh__st is-ok"><CheckIcon size={14} /> Listo</span>}</div>; };
+    return <SectionHead icon={SUB_ICON[icon]} title={title} hint={hint} status={!ids ? "optional" : miss || "ok"} />; };
   const showErr = (id: string) => (tried || touched.has(id)) && infoMissing.some((x) => x[0] === id);
   const expN = Number(expect.replace(/\D/g, "")) || 0;
   const expState = !expN ? null : expN < low ? "low" : expN > high ? "high" : "ok";
@@ -428,7 +380,7 @@ export default function Flujo({ from, fromSaved, saved, single = false, ficha = 
   const GROUP_ICON: Record<string, VSec> = { mec: "caja", est: "auto", his: "fecha", eq: "equipo" };
   const groupsUI = <div className="fl-groups" id="fl-groups">{GROUPS.map((g) => {
           const done = g.fields.every((f) => ans[f.id] !== undefined), open = openGroups.has(g.id);
-          if (vmc) return <section key={g.id} id={`fl-g-${g.id}`} className="fl-sec" aria-labelledby={`fl-gt-${g.id}`}><div className="fl-sh"><span className="fl-sh__ico vd-host" aria-hidden><Vidrio s={GROUP_ICON[g.id]} size={36} /></span><h2 id={`fl-gt-${g.id}`} className="fl-sub__t">{g.title}{done ? <span key="ok" className="fl-gdone"><CheckIcon size={20} title="Completo" /></span> : null}</h2>{g.fields.some((f) => auto.has(f.id) && ans[f.id] === f.typical) ? <span className="fl-gtip"><InfoIcon size={16} />típico · toca para cambiar</span> : null}</div><div className="fl-group__body">{g.fields.map((f) => <fieldset key={f.id} className="fl-opts">
+          if (vmc) return <section key={g.id} id={`fl-g-${g.id}`} className="fl-sec" aria-labelledby={`fl-gt-${g.id}`}><SectionHead icon={GROUP_ICON[g.id]} title={g.title} titleId={`fl-gt-${g.id}`} done={done} tip={g.fields.some((f) => auto.has(f.id) && ans[f.id] === f.typical) ? "típico · toca para cambiar" : undefined} /><div className="fl-group__body">{g.fields.map((f) => <fieldset key={f.id} className="fl-opts">
               <legend>{f.label}{auto.has(f.id) && ans[f.id] === f.typical ? null : f.typical !== undefined && ans[f.id] === undefined ? <span className="fl-typical">Típico: {f.opts[f.typical][0]}</span> : null}</legend>
               <div>{f.opts.map(([o, imp], i) => <button key={o} type="button" aria-pressed={ans[f.id] === i} className={`${ans[f.id] === i ? "is-on" : ""}${vmc ? " fl-pill" : ""}`}
                 onClick={() => { setAns((a) => ({ ...a, [f.id]: i })); setAuto((x) => { if (!x.has(f.id)) return x; const n = new Set(x); n.delete(f.id); return n; }); }}>{vmc ? <ConditionPill variant={ans[f.id] === i ? "filled" : "outline"}>{o}{auto.has(f.id) && ans[f.id] === i && i === f.typical ? <small className="fl-pill__tip">típico</small> : null}</ConditionPill> : <>{o}{imp ? <small>{imp > 0 ? "+" : ""}{imp} %</small> : null}</>}</button>)}</div>
@@ -548,7 +500,7 @@ export default function Flujo({ from, fromSaved, saved, single = false, ficha = 
       <nav className="vz-back" aria-label="Salir"><a href={home}><span className="vz-back__chev"><Chevron /></span>Mi Garaje</a>
         {ficha || !isPub ? null : <span className="fl-origin">{isPub ? "Publicar" : "Valorizar"} · empieza valorizando tu vehículo</span>}</nav>
 
-      {step !== "listo" && step !== "guardado" ? <Stepper steps={flowSteps} current={idx} onGo={vmc ? (i) => go((["vehiculo", "detalles", "resultado", "info", "preview", "pago"] as Step[])[i]) : undefined} /> : null}</div>
+      {step !== "listo" && step !== "guardado" ? <Stepper steps={flowSteps} current={idx} onGo={(i) => go((["vehiculo", "detalles", "resultado", "info", "preview", "pago"] as Step[])[i])} /> : null}</div>
       {/* 26/10 (pedido de Julio): el costo desde el inicio, no solo al final. Copy de T&C IV.11.2 a, b y g. Foto: fee-publica.jpg (recorte de fee-publica-original.jpg). */}
       {vmc && isPub && step === (fromSaved ? "info" : "vehiculo") ? (() => { // el paso donde se entra: desde una valorización guardada es Información
         // 26/10 (pedido de Julio): el costo desde el inicio, solo en Vehículo, entre los pasos y el formulario. Copy de T&C IV.11.2 a, b y g. Tres opciones para comparar con ?costo=:
@@ -564,15 +516,8 @@ export default function Flujo({ from, fromSaved, saved, single = false, ficha = 
           <div className="fl-fee__tx"><StatPill variant="glass" label="" value="Pago único" className="fl-fee__pill" icon={tag} />
             <b>Publicar cuesta &gt;S&lt; {FEE_SC}, una sola vez</b>
             <span>Republicación gratis hasta que lo vendas · Sin comisión al vender</span></div></aside>;
-        return <aside className="fl-fee fl-fee--precio" aria-label="Costo de publicar">
-          <span className="fl-fee__img" aria-hidden><img src="/mi-garaje/banners/personaje/fee-publica.jpg" alt="" /></span>
-          {/* 26/10 · copy de Julio con el vocabulario de la landing (propuestas, 100 % es tuyo, directo). «Sin intermediarios» no: los T&C dicen que VMC es intermediario tecnológico. */}
-          {/* 26/10 v3: misma receta que las piezas de publica-vmc.html (pill de vidrio · titular 800 · bajada), sin CTA porque ya está publicando. */}
-          <div className="fl-fee__tx">
-            <span className="fl-fee__tag">25 SubasCoins · Pago único · 0% comisión</span>
-            <b>Recibe propuestas por solo <em>&gt;S&lt; {FEE_SC}</em></b>
-            <span>Un solo pago hasta que lo vendas: el 100% de la venta es tuyo.</span>
-          </div></aside>;
+        // 26/10 v3: misma receta que las piezas de publica-vmc.html (pill de vidrio · titular 800 · bajada), sin CTA porque ya está publicando.
+        return <PublishFeeBanner fee={FEE_SC} />;
       })() : null}
       {savedAt && step !== "listo" && step !== "guardado" && step !== "resultado" ? <p className="fl-saved" aria-live="polite"><CheckIcon size={14} /> Borrador guardado · puedes salir y continuar después</p> : null}
 
@@ -594,8 +539,8 @@ export default function Flujo({ from, fromSaved, saved, single = false, ficha = 
           {restored ? <p className="fl-restored"><span>Retomamos tu valorización sin terminar.</span><button type="button" className="fl-tlink" onClick={restart}>Empezar de nuevo</button></p> : null}
           <div className="fl-grid">
           {/* Cascada por dependencia: Marca → Modelo → Año (solo los de su vigencia) → Versión → Km. */}
-          <Combo label="Marca" value={brand} onChange={(v) => { setBrand(v); setModel(""); setVersion(""); setMsrpEdit(false); }} options={Object.keys(CATALOG)} placeholder="Escribe o elige la marca" />
-          <Combo label="Modelo" value={model} onChange={(v) => { setModel(v); setVersion(""); setMsrpEdit(false); setMsrpOverride(""); if (v !== MANUAL && yearN && !vigente(v, yearN)) setYear(""); }} options={brand ? [...Object.keys(CATALOG[brand]), MANUAL] : []} placeholder={brand ? "Escribe o elige el modelo" : "Primero elige la marca"} disabled={!brand} />
+          <Combobox pinned={MANUAL} label="Marca" value={brand} onChange={(v) => { setBrand(v); setModel(""); setVersion(""); setMsrpEdit(false); }} options={Object.keys(CATALOG)} placeholder="Escribe o elige la marca" />
+          <Combobox pinned={MANUAL} label="Modelo" value={model} onChange={(v) => { setModel(v); setVersion(""); setMsrpEdit(false); setMsrpOverride(""); if (v !== MANUAL && yearN && !vigente(v, yearN)) setYear(""); }} options={brand ? [...Object.keys(CATALOG[brand]), MANUAL] : []} placeholder={brand ? "Escribe o elige el modelo" : "Primero elige la marca"} disabled={!brand} />
           {isManual ? versionUI : null}
           <Select label="Año de fabricación" value={year} onChange={setYear} options={YEARS.filter((y) => isManual || vigente(model, y)).map(String)} placeholder={model ? "Elige el año" : "Primero elige el modelo"} disabled={!model} />
           {isManual ? null : versionUI}
@@ -622,14 +567,14 @@ export default function Flujo({ from, fromSaved, saved, single = false, ficha = 
           {isPub && !vmc ? <ul className="fl-expect"><li><CheckIcon size={16} />Para publicar necesitarás: placa, de 1 a 10 fotos y &gt;S&lt; 25</li></ul> : null}</header></div>
         <div className="fl-card__main"><div className="fl-grid">
           {/* Orden de AVT: Marca → Año → Km → Modelo (filtrado por año) → Versión, habilitados en cadena. */}
-          <Combo label="Marca" value={brand} onChange={(v) => { setBrand(v); setModel(""); setVersion(""); setMsrpEdit(false); }} options={Object.keys(CATALOG)} placeholder="Escribe o elige la marca" />
+          <Combobox pinned={MANUAL} label="Marca" value={brand} onChange={(v) => { setBrand(v); setModel(""); setVersion(""); setMsrpEdit(false); }} options={Object.keys(CATALOG)} placeholder="Escribe o elige la marca" />
           <Select label="Año de fabricación" value={year} onChange={(v) => { setYear(v); if (model && model !== MANUAL && !vigente(model, Number(v))) { setModel(""); setVersion(""); } }} options={YEARS.map(String)} placeholder={brand ? "Año" : "Primero elige la marca"} disabled={!brand} />
           <label className="fl-field fl-km"><span className="fl-label">Kilómetros</span>
             <Input value={km} onChange={(v) => setKm(v.replace(/[^\d]/g, "").slice(0, 6).replace(/\B(?=(\d{3})+(?!\d))/g, ","))} placeholder={yearN ? "" : "Primero elige el año"} inputMode="numeric" className="fl-input" disabled={!yearN}
               variant={tried && yearN && !kmN ? "error" : "default"} errorMessage={tried && yearN && !kmN ? "Ingresa el kilometraje" : undefined} aria-label="Kilómetros" />
             {yearN ? <span className="fl-hint fl-kmh"><span>Promedio esperado: <b>{expected.toLocaleString("en-US")} km</b> <span className="fl-kmh__f">({useYears} {useYears === 1 ? "año" : "años"} × 15,000 km)</span></span>{kmDiff === null ? null : <span className={`fl-kmh__d ${Math.abs(kmDiff) <= 10 ? "is-avg" : kmDiff > 0 ? "is-up" : "is-down"}`}>{Math.abs(kmDiff) <= 10 ? "≈ Promedio" : `${kmDiff > 0 ? "↑" : "↓"}\u00a0${Math.abs(kmDiff)}\u00a0% ${kmDiff > 0 ? "sobre" : "bajo"} promedio`}</span>}</span> : null}
           </label>
-          <Combo label="Modelo" value={model} onChange={(v) => { setModel(v); setVersion(""); setMsrpEdit(false); setMsrpOverride(""); }} options={brand && yearN ? [...Object.keys(CATALOG[brand]).filter((m) => vigente(m, yearN)), MANUAL] : []} placeholder={!brand ? "Primero elige la marca" : !yearN ? "Primero elige el año" : !kmN ? "Primero ingresa los kilómetros" : "Escribe o elige el modelo"} disabled={!brand || !yearN || !kmN} />
+          <Combobox pinned={MANUAL} label="Modelo" value={model} onChange={(v) => { setModel(v); setVersion(""); setMsrpEdit(false); setMsrpOverride(""); }} options={brand && yearN ? [...Object.keys(CATALOG[brand]).filter((m) => vigente(m, yearN)), MANUAL] : []} placeholder={!brand ? "Primero elige la marca" : !yearN ? "Primero elige el año" : !kmN ? "Primero ingresa los kilómetros" : "Escribe o elige el modelo"} disabled={!brand || !yearN || !kmN} />
           {versionUI}
           {msrpUI}
                   </div>
@@ -714,14 +659,12 @@ export default function Flujo({ from, fromSaved, saved, single = false, ficha = 
         <Accordion title="Proyección mes a mes" titleSize={14} className="fl-acc">{projUI}</Accordion>
         {tailUI}
         <p className="fl-legal">Valuación estimativa generada por el motor AVT.ai. No constituye oferta comercial. Los valores reales pueden variar según condición específica del vehículo, documentación y condiciones del mercado al momento de la transacción.</p>
-        <footer className="fl-decide">
-          <div><b>¿Qué quieres hacer con este valor?</b><span>Guárdalo en Mis valorizaciones o publícalo ahora; no volverás a llenar estos datos.</span></div>
-          <div className="fl-decide__btns">
+        <DecisionBar title="¿Qué quieres hacer con este valor?" description="Guárdalo en Mis valorizaciones o publícalo ahora; no volverás a llenar estos datos."
+          actions={<>
             <Button variant="outline" className="fl-save" onClick={saveValuation}>
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M6 3h12v18l-6-4-6 4z" /></svg>Guardar</Button>
             <Button variant="primary" onClick={() => go("info")}>Publicar</Button>
-          </div>
-        </footer>
+          </>} />
       </section> : null}
       {showResult && !ficha ? <section className={`fl-result fl-result--ds${rvAlt || revela ? " fl-result--rv" : ""}`} id="fl-result" aria-labelledby="fl-h">
         {revela ? <Revela d={rdata} /> : rvAlt ? <Resultado d={rdata} variant={rvAlt} /> : <>
@@ -762,17 +705,15 @@ export default function Flujo({ from, fromSaved, saved, single = false, ficha = 
         {revela ? null : rvAlt ? <>{compsUI}{detailAccUI}</> : tailUI}
         {/* Barra sticky: al final del resultado para que acompañe todo el scroll (visible desde el valor, como el «Guardar» de AVT). */}
         {/* 19/10 · VMC desde Publicar: lo que falta en una línea y la entrada a la publicación en Negociable (botón y borde teal). */}
-        <footer className={`fl-decide${vmc && isPub ? " fl-decide--neg" : ""}`}>
-          {vmc && isPub ? <div><b>¿Seguimos con tu publicación?</b>
-            <span>Ya tenemos los datos del vehículo. Falta: <em>fotos</em> · <em>descripción</em> · <em>pago de &gt;S&lt; {FEE_SC}</em></span></div>
-          : <div><b>{isPub ? "¿Seguimos con tu publicación?" : "¿Qué quieres hacer con este valor?"}</b>
-            <span>{isPub ? "Ya tenemos los datos del vehículo: solo faltan fotos, descripción y el pago." : "Guárdalo en Mis valorizaciones o publícalo ahora; no volverás a llenar estos datos."}</span></div>}
-          <div className="fl-decide__btns">
+        <DecisionBar negotiable={vmc && isPub}
+          title={isPub ? "¿Seguimos con tu publicación?" : "¿Qué quieres hacer con este valor?"}
+          description={vmc && isPub ? <>Ya tenemos los datos del vehículo. Falta: <em>fotos</em> · <em>descripción</em> · <em>pago de &gt;S&lt; {FEE_SC}</em></>
+            : isPub ? "Ya tenemos los datos del vehículo: solo faltan fotos, descripción y el pago." : "Guárdalo en Mis valorizaciones o publícalo ahora; no volverás a llenar estos datos."}
+          actions={<>
             <Button variant="outline" className="fl-save" onClick={saveValuation}>
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M6 3h12v18l-6-4-6 4z" /></svg>Guardar</Button>
             <Button variant="primary" onClick={() => go("info")}>{isPub ? "Continuar publicación" : "Publicar"}</Button>
-          </div>
-        </footer>
+          </>} />
       </section> : null}
 
       {/* ── Guardado ─────────────────────────────────── */}

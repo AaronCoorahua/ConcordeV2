@@ -36,7 +36,7 @@ export interface TabSelectorProps {
 
 const STYLE_ID = "concorde-tabselector-styles";
 
-const TABSELECTOR_STYLES = `
+export const TABSELECTOR_STYLES = `
 .ptabs {
   display: inline-flex;
   align-items: center;
@@ -84,11 +84,13 @@ const TABSELECTOR_STYLES = `
     linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 75%, #ffffff 100%);
   background-origin: border-box;
   background-clip: padding-box, border-box;
-  box-shadow: rgba(32,0,104,0.2) 0px 8px 16px;
+  box-shadow: rgba(34, 0, 92,0.2) 0px 8px 16px;
 }
 .ptabs__tab--active:hover { opacity: 1; }
 /* Modo bandeja: la diferencia se lee de inmediato, aun en tamaños pequeños. */
+.ptabs__tab--unread { font-weight: 800 !important; letter-spacing: -0.012em; color: #2A075E; }
 .ptabs__tab--read { font-weight: 400 !important; }
+.ptabs__tab--read:not(.ptabs__tab--active) { color: #6B6878; background-image: none; -webkit-text-fill-color: #6B6878; opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
   .ptabs__tab { transition: none; }
 }

@@ -2,8 +2,8 @@
  * Condition pills del bloque Detalle según la variante de la oferta.
  * Módulo PLANO (sin "use client") para que desktop y mobile lo compartan.
  *   · live       → 4 condiciones, todas incluidas (filled)
- *   · negotiable → 3 condiciones: «Con Fee de Habilitación» (filled) +
- *                  «Sin…» no incluidas (outline)
+ *   · negotiable → 3 condiciones: «Fee de Habilitación» (filled) +
+ *                  «Opción a visitas» y «Comisión» no incluidas (outline)
  */
 
 export type DetalleVariant = "live" | "negotiable";
@@ -17,8 +17,8 @@ export const DETALLE_PILLS: Record<DetalleVariant, DetallePill[]> = {
     { label: "Cuota mínima de 2 participantes" },
   ],
   negotiable: [
-    { label: "Con Fee de Habilitación" },
-    { label: "Sin Opción a Visitas", tone: "outline" },
-    { label: "Sin Comisión", tone: "outline" },
+    { label: "Fee de Habilitación" },
+    { label: "Opción a visitas", tone: "outline" },
+    { label: "Comisión", tone: "outline" },
   ],
 };

@@ -6,7 +6,7 @@
  */
 import { useRef, useState } from "react";
 import type { JSX } from "react";
-import { DropModal } from "./lib/DropModal";
+import { DropModal } from "@/src/components/DropModal";
 import { PUBLICATION_LABEL, PublicationBadge, PublicationPin, type PublicationStatus } from "@/src/components/PublicationBadge";
 
 type Kind = "subasta" | "negociable";

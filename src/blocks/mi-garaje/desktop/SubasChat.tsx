@@ -9,6 +9,11 @@
 import { Fragment, useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import type { JSX, MouseEvent, ReactNode } from "react";
 import Button from "@/src/components/Button";
+import ChatBubble from "@/src/components/ChatBubble";
+import ChatComposer from "@/src/components/ChatComposer";
+import ChatDay from "@/src/components/ChatDay";
+import ChatHeader from "@/src/components/ChatHeader";
+import ChatNotice from "@/src/components/ChatNotice";
 import {
   COPY, CHAT_MONTHS, EMOJIS, chatUntil, EMPTY_TEXT, ERROR_TEXT, LOCKED_TEXT, MAX_CHARS, MAX_IMAGE_MB, OFFLINE_TEXT, fakeSend, newId, nowHHMM, replyFor, seed,
   type ChatMode, type ChatRole, type Msg,
@@ -91,7 +96,6 @@ export default function SubasChat({ role, mode, amount, poke, offline = false, f
   const timers = useRef<number[]>([]);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
   const rootRef = useRef<HTMLElement>(null);
   const leaveId = useId();
   const { other, cuu, deal } = COPY[role];
@@ -162,9 +166,6 @@ export default function SubasChat({ role, mode, amount, poke, offline = false, f
     const el = listRef.current; if (!el) return;
     el.scrollTo({ top: el.scrollHeight, behavior: scrollBehavior() }); atBottom.current = true; setUnread(0);
   };
-
-  // El textarea crece con el texto hasta el max-height del CSS (120px); +2 = bordes (box-sizing: border-box).
-  useEffect(() => { const el = inputRef.current; if (!el) return; el.style.height = "auto"; el.style.height = `${el.scrollHeight + 2}px`; }, [text]);
 
   useEffect(() => { const set = urls.current; return () => set.forEach((u) => URL.revokeObjectURL(u)); }, []);
 
@@ -244,11 +245,7 @@ export default function SubasChat({ role, mode, amount, poke, offline = false, f
   const showCount = text.length >= MAX_CHARS * 0.9;
 
   return <section ref={rootRef} className={`sc${fluid ? " sc--fluid" : ""}`} aria-label={`SubasChat con ${cuu}`}>
-{hideHead ? null :       <header className="sc__head">
-        <span className="sc__avatar" aria-hidden>{cuu.slice(0, 2)}</span>
-        <div className="sc__who"><b>{cuu}</b><span>{other}</span></div>
-        <div className="sc__deal"><small>{deal}</small><b>{amount}</b></div>
-      </header>}
+      {hideHead ? null : <ChatHeader name={cuu} role={other} dealLabel={deal} amount={amount} />}
 
       {locked ? <div className="sc__locked">
         <svg width="40" height="40" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
@@ -269,31 +266,22 @@ export default function SubasChat({ role, mode, amount, poke, offline = false, f
               <span className="is-l" /><span className="is-r" /><span className="is-l is-short" />
             </div> : null}
             {before}
-            {!loading && system && !msgs.length ? <div className="sc__sys" role="note">{system}</div> : null}
+            {!loading && system && !msgs.length ? <ChatNotice>{system}</ChatNotice> : null}
             {empty && intro ? intro : empty ? <div className="sc__empty">
               <svg width="44" height="44" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"><path d="M4 5h16v11H9l-5 4z" /><path d="M8 9.5h8M8 12.5h5" strokeLinecap="round" /></svg>
               <p>{EMPTY_TEXT}</p>
             </div> : null}
             {/* Como WhatsApp: primero el día y debajo el aviso del sistema. */}
-            {!loading && msgs.length ? <div className="sc__day"><span>Hoy</span></div> : null}
-            {!loading && system && msgs.length ? <div className="sc__sys" role="note">{system}</div> : null}
+            {!loading && msgs.length ? <ChatDay label="Hoy" /> : null}
+            {!loading && system && msgs.length ? <ChatNotice>{system}</ChatNotice> : null}
             {loading ? null : msgs.map((m, i) => {
               const cont = sameBurst(msgs[i - 1], m); // no es el primero de su ráfaga
               const more = sameBurst(m, msgs[i + 1]); // no es el último → sin hora (salvo que siga enviándose)
-              return <div key={m.id} className={`sc__row${m.mine ? " is-mine" : ""}${cont ? " is-cont" : ""}${more ? " is-more" : ""}`}>
-                <div className={`sc__bubble is-${m.status}${m.image ? " has-img" : ""}`}>
-                  <span className="sc__sr">{m.mine ? "Tú" : cuu}: </span>
-                  {m.image ? <img src={m.image} alt="Imagen enviada" /> : null}
-                  {m.text ? <p>{withLinks(m.text, onLink)}</p> : null}
-                  {more && m.status === "sent" ? null : <span className="sc__meta">{m.at}{m.mine ? <>
-                    <i className="sc__tick" aria-hidden>{m.status === "sent" ? "✓✓" : m.status === "sending" ? "◷" : "!"}</i>
-                    <span className="sc__sr">{m.status === "sent" ? "Enviado" : m.status === "sending" ? "Enviando" : "No enviado"}</span></> : null}</span>}
-                </div>
-                {m.status === "failed" ? <div className="sc__fail" role="alert">{ERROR_TEXT}
+              return <ChatBubble key={m.id} mine={m.mine} sender={m.mine ? "Tú" : cuu} time={m.at} status={m.status} cont={cont} more={more} hideTime={more && m.status === "sent"} image={m.image}
+                footer={m.status === "failed" ? <div className="sc__fail" role="alert">{ERROR_TEXT}
                   <button type="button" onClick={() => void deliver(m.id)}>Reintentar</button>
                   <button type="button" onClick={() => remove(m.id)}>Eliminar</button>
-                </div> : null}
-              </div>;
+                </div> : null}>{m.text ? withLinks(m.text, onLink) : null}</ChatBubble>;
             })}
             {!loading && mode === "verificar" ? <div className="sc__verify" role="status">
               <span className="sc__verify-kicker">Confirmación · 2 semanas</span>
@@ -321,21 +309,8 @@ export default function SubasChat({ role, mode, amount, poke, offline = false, f
           </span> : null}
         </div> : null}
         {mode === "cerrado" || purchaseCompleted ? <p className="sc__closed">{purchaseCompleted ? "Compra confirmada · este chat queda como registro y ya no admite mensajes." : `Solo lectura · el chat dura ${CHAT_MONTHS} meses desde el acuerdo`}</p> : <>
-        <form className="sc__compose" onSubmit={(e) => { e.preventDefault(); submit(); }}>
-          <button type="button" className="sc__tool" aria-label="Emojis" aria-pressed={emojis} onClick={() => setEmojis((v) => !v)} disabled={loading}>😊</button>
-          <button type="button" className="sc__tool" aria-label="Enviar imagen" onClick={() => fileRef.current?.click()} disabled={loading}>
-            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2" /><circle cx="9" cy="10" r="1.6" /><path d="M21 16l-5-5-8 8" /></svg>
-          </button>
-          <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) pickImage(f); e.target.value = ""; }} />
-          {/* Sin maxLength: al pegar no se corta en silencio; el contador avisa y Enviar se bloquea si sobra texto. */}
-          <textarea ref={inputRef} rows={1} value={text} placeholder="Escribe un mensaje…" disabled={loading}
-            aria-label={`Mensaje para ${cuu}`} aria-invalid={over > 0} enterKeyHint="send"
-            onChange={(e) => { setText(e.target.value); if (notice) setNotice(""); }}
-            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); submit(); } }} />
-          <button type="submit" className="sc__send" aria-label="Enviar" disabled={loading || !text.trim() || over > 0}>
-            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden><path d="M4 12l16-8-6 16-2-7z" fill="currentColor" /></svg>
-          </button>
-        </form></>}
+        <ChatComposer label={`Mensaje para ${cuu}`} value={text} inputRef={inputRef} disabled={loading} invalid={over > 0} canSend={!loading && !!text.trim() && over <= 0}
+          onChange={(t) => { setText(t); if (notice) setNotice(""); }} onSend={submit} emojiOpen={emojis} onEmoji={() => setEmojis((v) => !v)} onImage={pickImage} /></>}
       </>}
 
       {leaving ? <div className="sc__leave" role="alertdialog" aria-modal="true" aria-labelledby={`${leaveId}-t`} aria-describedby={`${leaveId}-d`}

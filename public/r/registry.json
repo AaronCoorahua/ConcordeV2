@@ -9,10 +9,52 @@
       "url": "https://concorde-v2-theta.vercel.app/r/accordion.json"
     },
     {
+      "name": "accountcard",
+      "type": "registry:component",
+      "title": "AccountCard",
+      "url": "https://concorde-v2-theta.vercel.app/r/accountcard.json"
+    },
+    {
+      "name": "actionlist",
+      "type": "registry:component",
+      "title": "ActionList",
+      "url": "https://concorde-v2-theta.vercel.app/r/actionlist.json"
+    },
+    {
+      "name": "actiontile",
+      "type": "registry:component",
+      "title": "ActionTile",
+      "url": "https://concorde-v2-theta.vercel.app/r/actiontile.json"
+    },
+    {
       "name": "activitycard",
       "type": "registry:component",
       "title": "ActivityCard",
       "url": "https://concorde-v2-theta.vercel.app/r/activitycard.json"
+    },
+    {
+      "name": "activitysection",
+      "type": "registry:component",
+      "title": "ActivitySection",
+      "url": "https://concorde-v2-theta.vercel.app/r/activitysection.json"
+    },
+    {
+      "name": "adbanner",
+      "type": "registry:component",
+      "title": "AdBanner",
+      "url": "https://concorde-v2-theta.vercel.app/r/adbanner.json"
+    },
+    {
+      "name": "addbutton",
+      "type": "registry:component",
+      "title": "AddButton",
+      "url": "https://concorde-v2-theta.vercel.app/r/addbutton.json"
+    },
+    {
+      "name": "amountcomposer",
+      "type": "registry:component",
+      "title": "AmountComposer",
+      "url": "https://concorde-v2-theta.vercel.app/r/amountcomposer.json"
     },
     {
       "name": "amountoptiongroup",
@@ -93,10 +135,46 @@
       "url": "https://concorde-v2-theta.vercel.app/r/categoryicon.json"
     },
     {
+      "name": "chatbubble",
+      "type": "registry:component",
+      "title": "ChatBubble",
+      "url": "https://concorde-v2-theta.vercel.app/r/chatbubble.json"
+    },
+    {
+      "name": "chatcomposer",
+      "type": "registry:component",
+      "title": "ChatComposer",
+      "url": "https://concorde-v2-theta.vercel.app/r/chatcomposer.json"
+    },
+    {
+      "name": "chatday",
+      "type": "registry:component",
+      "title": "ChatDay",
+      "url": "https://concorde-v2-theta.vercel.app/r/chatday.json"
+    },
+    {
+      "name": "chatheader",
+      "type": "registry:component",
+      "title": "ChatHeader",
+      "url": "https://concorde-v2-theta.vercel.app/r/chatheader.json"
+    },
+    {
+      "name": "chatnotice",
+      "type": "registry:component",
+      "title": "ChatNotice",
+      "url": "https://concorde-v2-theta.vercel.app/r/chatnotice.json"
+    },
+    {
       "name": "checkicon",
       "type": "registry:component",
       "title": "CheckIcon",
       "url": "https://concorde-v2-theta.vercel.app/r/checkicon.json"
+    },
+    {
+      "name": "combobox",
+      "type": "registry:component",
+      "title": "Combobox",
+      "url": "https://concorde-v2-theta.vercel.app/r/combobox.json"
     },
     {
       "name": "conditionpill",
@@ -111,6 +189,12 @@
       "url": "https://concorde-v2-theta.vercel.app/r/countdown.json"
     },
     {
+      "name": "decisionbar",
+      "type": "registry:component",
+      "title": "DecisionBar",
+      "url": "https://concorde-v2-theta.vercel.app/r/decisionbar.json"
+    },
+    {
       "name": "detailcard",
       "type": "registry:component",
       "title": "DetailCard",
@@ -123,6 +207,12 @@
       "url": "https://concorde-v2-theta.vercel.app/r/docbutton.json"
     },
     {
+      "name": "dropmodal",
+      "type": "registry:component",
+      "title": "DropModal",
+      "url": "https://concorde-v2-theta.vercel.app/r/dropmodal.json"
+    },
+    {
       "name": "eyeicon",
       "type": "registry:component",
       "title": "EyeIcon",
@@ -133,6 +223,12 @@
       "type": "registry:component",
       "title": "FeaturedCard",
       "url": "https://concorde-v2-theta.vercel.app/r/featuredcard.json"
+    },
+    {
+      "name": "foldertabs",
+      "type": "registry:component",
+      "title": "FolderTabs",
+      "url": "https://concorde-v2-theta.vercel.app/r/foldertabs.json"
     },
     {
       "name": "glassbutton",
@@ -183,6 +279,30 @@
       "url": "https://concorde-v2-theta.vercel.app/r/lotgallery.json"
     },
     {
+      "name": "morebutton",
+      "type": "registry:component",
+      "title": "MoreButton",
+      "url": "https://concorde-v2-theta.vercel.app/r/morebutton.json"
+    },
+    {
+      "name": "notificationbell",
+      "type": "registry:component",
+      "title": "NotificationBell",
+      "url": "https://concorde-v2-theta.vercel.app/r/notificationbell.json"
+    },
+    {
+      "name": "notificationbox",
+      "type": "registry:component",
+      "title": "NotificationBox",
+      "url": "https://concorde-v2-theta.vercel.app/r/notificationbox.json"
+    },
+    {
+      "name": "notificationinbox",
+      "type": "registry:component",
+      "title": "NotificationInbox",
+      "url": "https://concorde-v2-theta.vercel.app/r/notificationinbox.json"
+    },
+    {
       "name": "offercard",
       "type": "registry:component",
       "title": "OfferCard",
@@ -213,6 +333,18 @@
       "url": "https://concorde-v2-theta.vercel.app/r/offertypecards.json"
     },
     {
+      "name": "pagination",
+      "type": "registry:component",
+      "title": "Pagination",
+      "url": "https://concorde-v2-theta.vercel.app/r/pagination.json"
+    },
+    {
+      "name": "pendingtoggle",
+      "type": "registry:component",
+      "title": "PendingToggle",
+      "url": "https://concorde-v2-theta.vercel.app/r/pendingtoggle.json"
+    },
+    {
       "name": "pricebadge",
       "type": "registry:component",
       "title": "PriceBadge",
@@ -237,10 +369,46 @@
       "url": "https://concorde-v2-theta.vercel.app/r/progressbar.json"
     },
     {
+      "name": "projectionchart",
+      "type": "registry:component",
+      "title": "ProjectionChart",
+      "url": "https://concorde-v2-theta.vercel.app/r/projectionchart.json"
+    },
+    {
+      "name": "proposalmodal",
+      "type": "registry:component",
+      "title": "ProposalModal",
+      "url": "https://concorde-v2-theta.vercel.app/r/proposalmodal.json"
+    },
+    {
+      "name": "proposalnotice",
+      "type": "registry:component",
+      "title": "ProposalNotice",
+      "url": "https://concorde-v2-theta.vercel.app/r/proposalnotice.json"
+    },
+    {
+      "name": "proposalthread",
+      "type": "registry:component",
+      "title": "ProposalThread",
+      "url": "https://concorde-v2-theta.vercel.app/r/proposalthread.json"
+    },
+    {
       "name": "publicationbadge",
       "type": "registry:component",
       "title": "PublicationBadge",
       "url": "https://concorde-v2-theta.vercel.app/r/publicationbadge.json"
+    },
+    {
+      "name": "publishfeebanner",
+      "type": "registry:component",
+      "title": "PublishFeeBanner",
+      "url": "https://concorde-v2-theta.vercel.app/r/publishfeebanner.json"
+    },
+    {
+      "name": "publishswipe",
+      "type": "registry:component",
+      "title": "PublishSwipe",
+      "url": "https://concorde-v2-theta.vercel.app/r/publishswipe.json"
     },
     {
       "name": "qrcard",
@@ -255,16 +423,64 @@
       "url": "https://concorde-v2-theta.vercel.app/r/qrcode.json"
     },
     {
+      "name": "recommendedlist",
+      "type": "registry:component",
+      "title": "RecommendedList",
+      "url": "https://concorde-v2-theta.vercel.app/r/recommendedlist.json"
+    },
+    {
+      "name": "republishbar",
+      "type": "registry:component",
+      "title": "RepublishBar",
+      "url": "https://concorde-v2-theta.vercel.app/r/republishbar.json"
+    },
+    {
+      "name": "republishmodal",
+      "type": "registry:component",
+      "title": "RepublishModal",
+      "url": "https://concorde-v2-theta.vercel.app/r/republishmodal.json"
+    },
+    {
+      "name": "responsetimer",
+      "type": "registry:component",
+      "title": "ResponseTimer",
+      "url": "https://concorde-v2-theta.vercel.app/r/responsetimer.json"
+    },
+    {
       "name": "riskmeter",
       "type": "registry:component",
       "title": "RiskMeter",
       "url": "https://concorde-v2-theta.vercel.app/r/riskmeter.json"
     },
     {
+      "name": "roundprogress",
+      "type": "registry:component",
+      "title": "RoundProgress",
+      "url": "https://concorde-v2-theta.vercel.app/r/roundprogress.json"
+    },
+    {
       "name": "salastatus",
       "type": "registry:component",
       "title": "SalaStatus",
       "url": "https://concorde-v2-theta.vercel.app/r/salastatus.json"
+    },
+    {
+      "name": "seasonchart",
+      "type": "registry:component",
+      "title": "SeasonChart",
+      "url": "https://concorde-v2-theta.vercel.app/r/seasonchart.json"
+    },
+    {
+      "name": "sectionhead",
+      "type": "registry:component",
+      "title": "SectionHead",
+      "url": "https://concorde-v2-theta.vercel.app/r/sectionhead.json"
+    },
+    {
+      "name": "select",
+      "type": "registry:component",
+      "title": "Select",
+      "url": "https://concorde-v2-theta.vercel.app/r/select.json"
     },
     {
       "name": "sendbidicon",
@@ -279,10 +495,22 @@
       "url": "https://concorde-v2-theta.vercel.app/r/servicecentericon.json"
     },
     {
+      "name": "sidepanel",
+      "type": "registry:component",
+      "title": "SidePanel",
+      "url": "https://concorde-v2-theta.vercel.app/r/sidepanel.json"
+    },
+    {
       "name": "signal",
       "type": "registry:component",
       "title": "Signal",
       "url": "https://concorde-v2-theta.vercel.app/r/signal.json"
+    },
+    {
+      "name": "stagetabs",
+      "type": "registry:component",
+      "title": "StageTabs",
+      "url": "https://concorde-v2-theta.vercel.app/r/stagetabs.json"
     },
     {
       "name": "staricon",
@@ -295,6 +523,18 @@
       "type": "registry:component",
       "title": "StatPill",
       "url": "https://concorde-v2-theta.vercel.app/r/statpill.json"
+    },
+    {
+      "name": "statustag",
+      "type": "registry:component",
+      "title": "StatusTag",
+      "url": "https://concorde-v2-theta.vercel.app/r/statustag.json"
+    },
+    {
+      "name": "stepper",
+      "type": "registry:component",
+      "title": "Stepper",
+      "url": "https://concorde-v2-theta.vercel.app/r/stepper.json"
     },
     {
       "name": "table",
@@ -333,6 +573,24 @@
       "url": "https://concorde-v2-theta.vercel.app/r/userprofilecard.json"
     },
     {
+      "name": "valuationcard",
+      "type": "registry:component",
+      "title": "ValuationCard",
+      "url": "https://concorde-v2-theta.vercel.app/r/valuationcard.json"
+    },
+    {
+      "name": "valuehero",
+      "type": "registry:component",
+      "title": "ValueHero",
+      "url": "https://concorde-v2-theta.vercel.app/r/valuehero.json"
+    },
+    {
+      "name": "vehiclerow",
+      "type": "registry:component",
+      "title": "VehicleRow",
+      "url": "https://concorde-v2-theta.vercel.app/r/vehiclerow.json"
+    },
+    {
       "name": "vidrio",
       "type": "registry:component",
       "title": "Vidrio",
@@ -349,6 +607,12 @@
       "type": "registry:component",
       "title": "WalletBalanceCard",
       "url": "https://concorde-v2-theta.vercel.app/r/walletbalancecard.json"
+    },
+    {
+      "name": "walletcard",
+      "type": "registry:component",
+      "title": "WalletCard",
+      "url": "https://concorde-v2-theta.vercel.app/r/walletcard.json"
     },
     {
       "name": "agregar-subascoins",
@@ -469,6 +733,12 @@
         "vidrio",
         "infoicon",
         "checkicon",
+        "stepper",
+        "select",
+        "combobox",
+        "publishfeebanner",
+        "decisionbar",
+        "sectionhead",
         "badgestatus",
         "likebutton",
         "priceicon",
@@ -478,15 +748,53 @@
         "walletbalancecard",
         "avatarzone",
         "staricon",
+        "statustag",
+        "vehiclerow",
+        "stagetabs",
+        "foldertabs",
+        "pendingtoggle",
+        "publishswipe",
+        "activitysection",
+        "recommendedlist",
+        "accountcard",
+        "actiontile",
+        "walletcard",
+        "sidepanel",
+        "adbanner",
         "publicationbadge",
         "todayicon",
         "offericon",
         "categoryicon",
         "businessicon",
+        "dropmodal",
+        "republishmodal",
+        "republishbar",
+        "morebutton",
+        "actionlist",
         "bidmessage",
         "timericon",
+        "amountcomposer",
+        "chatbubble",
+        "chatcomposer",
+        "chatday",
+        "chatheader",
+        "chatnotice",
+        "proposalthread",
+        "responsetimer",
+        "roundprogress",
+        "notificationbell",
+        "notificationinbox",
+        "notificationbox",
+        "pagination",
         "countdown",
-        "riskmeter"
+        "riskmeter",
+        "proposalmodal",
+        "proposalnotice",
+        "valuehero",
+        "projectionchart",
+        "seasonchart",
+        "valuationcard",
+        "addbutton"
       ]
     },
     {

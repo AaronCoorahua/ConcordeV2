@@ -19,9 +19,6 @@
 .np__offer { display: grid; gap: 8px; padding: 16px 16px 16px; border-radius: 16px; background: var(--neg-soft); box-shadow: inset 0 0 0 1px var(--neg-line); }
 .np__top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
 .np__lbl { margin: 0; font-size: .75rem; font-weight: 600; color: var(--muted); }
-.np__due { display: inline-flex; align-items: center; gap: 4px; font-size: .75rem; line-height:16px; font-weight: 600; color: var(--muted); white-space: nowrap; }
-.np__due b { font-family: var(--vmc-font-mono); font-weight: 600; }
-.np__due.is-me, .np__due.is-me b { color: var(--np-action); }
 .np__amt { margin: 0; font-size: 2.5rem; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: var(--ink); }
 .np__ctx { margin: 8px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .np__ctx div { padding: 8px 12px; border-radius: 8px; background: #fff; }
@@ -32,15 +29,6 @@
 
 /* ── Historial: BidMessage de Concorde; la ronda es una nota, no un segundo título ── */
 .np__hhead { display: grid; gap: 4px; margin-bottom: 16px; }
-.np__meta { display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: .75rem; font-weight: 600; color: var(--muted); }
-.np__meta i { display: flex; gap: 4px; }
-.np__meta b { width: 16px; height: 4px; border-radius: 4px; background: var(--neg-line); }
-.np__meta b.is-on { background: var(--neg); }
-.np__thread { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.np__thread li { justify-self: start; display: grid; gap: 4px; justify-items: start; }
-.np__thread li.is-me { justify-self: end; justify-items: end; }
-.np__thread li > span { font-size: .75rem; font-weight: 600; color: var(--muted); }
-.np__thread .pbidmsg b { font-size: .9375rem; font-weight: 600; font-variant-numeric: tabular-nums; }
 .np__delta { margin-left: 8px; font-size: .75rem; font-weight: 600; opacity: .8; }
 .np__gap { margin: 16px 0 0; text-align: center; font-size: .875rem; color: var(--muted); }
 .np__gap b { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
@@ -168,8 +156,6 @@
 .g--vmc.g-page .g-qv .g-status--neg, .g-qv .g-status--neg { color:#fff; font-weight:600; background:linear-gradient(90deg, #00A8AB 0%, #008688 100%); }
 /* Oferta actual: tarjeta blanca con la franja superior teal de OfferType (no un fondo menta) */
 .np__offer { background:var(--neg-grad) top / 100% 4px no-repeat, #fff; box-shadow:inset 0 0 0 1px var(--neg); padding-top:20px; }
-.np__meta b { width:8px; height:8px; border-radius:50%; background:#E1E3E2; }
-.np__meta b.is-on { background:linear-gradient(135deg, #00A8AB, #8460E5); box-shadow:0 1px 3px rgba(0,168,171,.22); }
 .np__pwho em { color:var(--neg-ink); background:#fff; box-shadow:inset 0 0 0 1px var(--neg); }
 /* Referencias: dos columnas de texto separadas por una línea; en la lista es el único contenedor (sin tarjeta dentro de tarjeta) */
 .np__refs { margin:0; display:grid; grid-template-columns:1fr 1fr; }
@@ -195,7 +181,6 @@
 .np__amt { font-size:2rem; font-weight:700; letter-spacing:-0.01em; }
 .np__lbl { font-weight:400; }
 .np__vs { margin:0; font-size:.875rem; color:var(--txt); } .np__vs b { font-weight:700; color:var(--ink); }
-.np__thread .pbidmsg b { font-size:.875rem; font-weight:700; }
 .np__gap { font-size:.75rem; } .np__gap b { font-weight:700; }
 .np__done b { font-size:.875rem; font-weight:700; }
 
@@ -257,15 +242,7 @@
 .np__offer > .np__amt { padding:16px 16px 0; }
 .np__offer > .np__refs, .np__offer > .np__vs { margin:16px; padding-top:16px; }
 
-/* Historial tipo chat (SubasChat): día, avatar y hora */
-.np__thread { gap:12px; }
-.np__thread li { display:flex; align-items:flex-end; gap:8px; }
-.np__thread li > div { display:grid; gap:4px; justify-items:start; }
-.np__thread li.is-me > div { justify-items:end; }
-.np__day { justify-self:stretch !important; display:flex !important; align-items:center; gap:12px; font-size:.75rem; font-weight:600; color:var(--muted); }
-.np__day::before, .np__day::after { content:""; flex:1; height:1px; background:#E1E3E2; }
-.np__avatar { flex:none; display:grid; place-items:center; width:28px; height:28px; border-radius:50%; font-size:.6875rem; font-weight:700; color:#fff; background:linear-gradient(135deg, #00DAE0, #008688); }
-.np__at { font-size:.6875rem; color:var(--muted); } .np__at i { font-style:normal; color:#8460E5; }
+/* Historial tipo chat: ProposalThread de Concorde (día, avatar y hora). */
 /* El rechazo también es una respuesta humana: entra al hilo como burbuja del vendedor,
    no como tarjeta de sistema. */
 .np__reply .pbidmsg { min-height:0; max-width:286px; padding:10px 12px; }
@@ -284,16 +261,6 @@
 .np__last-act .np__keep { width:100%; }
 .np__last-act .np__exp { line-height:1.35; }
 .np__last-act .np__exp b { font-weight:700; color:#55526B; }
-.np__chips { display:flex; justify-content:center; gap:8px; overflow-x:auto; scrollbar-width:none; padding-bottom:2px; }
-.np__chips button { all:unset; cursor:pointer; flex:none; position:relative; overflow:hidden; display:inline-flex; align-items:center; gap:6px; min-height:28px; padding:0 10px; border:1.5px solid transparent; border-radius:9999px; font-size:.6875rem; font-variant-numeric:tabular-nums; color:#fff; background-image:linear-gradient(135deg, #8460E5 0%, #6842C7 42%, #3B1782 100%), linear-gradient(135deg, #fff 0%, #C9B8FF 58%, #fff 100%); background-origin:padding-box,border-box; background-clip:padding-box,border-box; box-shadow:inset 0 1px 0 1px rgba(255,255,255,.30), 0 2px 7px rgba(59,23,130,.24); text-shadow:0 1px 2px rgba(30,8,76,.38); transition:background .2s ease, box-shadow .2s ease, transform .2s ease; }
-.np__chips button::before { content:""; position:absolute; inset:0; border-radius:inherit; background:linear-gradient(180deg, rgba(255,255,255,.16), transparent 58%); pointer-events:none; }
-.np__chips button small, .np__chips button b { position:relative; z-index:1; }
-.np__chips button small { font-size:.6875rem; font-weight:500; color:#fff; }
-.np__chips button small::after { content:"·"; margin-left:6px; color:rgba(255,255,255,.58); }
-.np__chips button b { font-size:.6875rem; font-weight:700; color:#fff; }
-.np__chips button:hover { background-image:linear-gradient(220deg, #9A79ED 0%, #724CD0 42%, #4B229B 100%), linear-gradient(135deg, #fff 0%, #C9B8FF 58%, #fff 100%); box-shadow:inset 0 1px 0 1px rgba(255,255,255,.34), 0 5px 12px rgba(59,23,130,.30); transform:translateY(-1px); }
-.np__chips button[aria-pressed="true"] { background-image:linear-gradient(135deg, #5A35C2 0%, #24104F 100%), linear-gradient(135deg, #fff 0%, #C9B8FF 58%, #fff 100%); box-shadow:inset 0 1px 0 1px rgba(255,255,255,.24), 0 2px 8px rgba(59,23,130,.28); }
-.np__chips button:focus-visible { outline:2px solid #8460E5; outline-offset:2px; }
 .np__compose { display:flex; align-items:center; gap:8px; padding:4px 4px 4px 16px; border-radius:9999px; background:#fff; box-shadow:inset 0 0 0 1px #8E89A0; }
 .np__compose:focus-within { box-shadow:inset 0 0 0 2px #00A8AB, 0 0 0 3px rgba(0,168,171,.15); }
 .np__compose label { flex:1; display:flex; align-items:center; gap:6px; min-width:0; }
@@ -548,12 +515,12 @@
 .np__chatoff-hint { display:flex; align-items:center; justify-content:center; gap:6px; margin:0 0 6px; font-size:.75rem; color:#5F5B6B; text-align:center; }
 .np__chatoff-hint svg { flex:none; color:#8460E5; }
 .np__chatoff .sc__compose { padding:0; border-top:0; }
-.np__chatoff textarea { flex:1; min-width:0; height:40px; padding:8px 14px; border:1px solid #DCD8E8; border-radius:20px; background:#F7F6FA; font:inherit; font-size:.875rem; resize:none; color:#9A97A6; }
+.np__chatoff .sc__compose textarea { flex:1; min-width:0; height:40px; padding:8px 14px; border:1px solid #DCD8E8; border-radius:20px; background:#F7F6FA; font:inherit; font-size:.875rem; resize:none; color:#9A97A6; }
 @media (prefers-reduced-motion:reduce) { .np__sold { animation:none; } }
 .np__sold-mark svg, .np__sold-mark svg path { color:#fff; stroke:#fff; }
 /* Animación de aceptar dentro del chat (23/10): la tarjeta de Propuesta.tsx en el hilo, sin sombra de modal. */
 .np__thread > .np__fx { justify-self:stretch; display:block; width:auto; }
-.np__fx .va__card { box-shadow:none; border:1px solid #E6DEFF; }
+.np .np__fx .va__card { box-shadow:none; border:1px solid #E6DEFF; }
 .np__thread > .np__fx ~ .np__sold { display:none; }
 .np__thread > li.np__fx { justify-self:stretch !important; display:block !important; width:auto !important; max-width:none; }
 .np__thread > li.np__fx > .va__card { width:100%; box-sizing:border-box; justify-items:center; text-align:center; }
@@ -660,15 +627,16 @@
 
 /* Rechazo: no es una celebración. El cyan de Negociable queda solo como señal
    de contexto; se eliminan rayos, confeti y rebotes, propios de una victoria. */
-.np__rejectfx { margin:max(24px, calc(var(--np-view, 0px) / 2 - 116px)) 0; animation:np-reject-in .48s cubic-bezier(.16,1,.3,1) both; }
+.np__rejectfx { animation:np-reject-in .48s cubic-bezier(.16,1,.3,1) both; }
+.np .np__rejectfx { margin:max(24px, calc(var(--np-view, 0px) / 2 - 116px)) 0; }
 .np__rejectfx--prepare { min-height:360px; animation:none; }
-.vh .vh__reject { position:relative; isolation:isolate; min-height:360px; align-content:center; overflow:hidden; padding-block:28px; background:radial-gradient(ellipse at 50% 38%,rgba(48,232,236,.11),transparent 35%),radial-gradient(ellipse at 50% 65%,rgba(132,96,229,.08),transparent 48%),linear-gradient(180deg,#fff 0%,#F7FBFB 100%); }
+.np .vh .vh__reject { position:relative; isolation:isolate; min-height:360px; align-content:center; overflow:hidden; padding-block:28px; background:radial-gradient(ellipse at 50% 38%,rgba(48,232,236,.11),transparent 35%),radial-gradient(ellipse at 50% 65%,rgba(132,96,229,.08),transparent 48%),linear-gradient(180deg,#fff 0%,#F7FBFB 100%); }
 /* Una sola línea de negociación se junta y se apaga: comunica oportunidad que se va,
    sin los rayos de una celebración. Solo aplica al instante del rechazo. */
 .np__rejectfx[data-step="rejected"] .vh__reject { animation:none; }
 .np__rejectfx[data-step="rejected"] .vh__reject::before { content:""; position:absolute; z-index:-1; left:50%; top:50%; width:82%; height:2px; border-radius:99px; background:linear-gradient(90deg,transparent,rgba(0,218,224,.08) 10%,rgba(0,168,171,.46) 35%,rgba(0,168,171,.46) 65%,rgba(0,218,224,.08) 90%,transparent); transform:translate(-50%,-50%); animation:vh-reject-close 1.72s cubic-bezier(.45,0,.55,1) both; }
 .np__rejectfx:not([data-step="rejected"]) .vh__reject::before { content:""; position:absolute; z-index:-1; left:50%; top:50%; width:1px; height:184px; background:linear-gradient(180deg,transparent,rgba(0,168,171,.12),transparent); transform:translate(-50%,-50%); }
-.vh__reject--preparing { display:grid; place-items:center; min-height:360px; background:radial-gradient(circle at 50% 50%,rgba(48,232,236,.09),transparent 34%),linear-gradient(180deg,#fff,#F7FBFB); }
+.np .vh__reject--preparing { display:grid; place-items:center; min-height:360px; background:radial-gradient(circle at 50% 50%,rgba(48,232,236,.09),transparent 34%),linear-gradient(180deg,#fff,#F7FBFB); }
 /* Puente visible mientras el historial sube: conserva continuidad de la escena,
    en vez de mostrar durante 520 ms una tarjeta blanca sin contenido. */
 .vh__closing-bridge { position:relative; display:block; width:110px; height:2px; overflow:hidden; border-radius:99px; background:rgba(0,168,171,.12); }
@@ -715,7 +683,6 @@
 .np--chat .is-cont > .sc__bubble { border-top-left-radius:4px; } .np--chat .is-mine.is-cont > .sc__bubble { border-top-left-radius:20px; border-top-right-radius:4px; }
 .np--chat .sc__bubble p { color:inherit; } .np--chat .sc__bubble .sc__meta { color:#7B7590; } .np--chat .is-mine > .sc__bubble .sc__meta { color:rgba(255,255,255,.72); }
 .np--chat .sc__row--bid .sc__bubble p b { font-size:1rem; font-weight:700; }
-.sc__sys--done { background:#E6F7F7; color:#00686A; } .sc__sys--done svg { color:#008688; }
 
 /* Negociación arriba del chat (23/10): dentro de la misma lista; el encabezado del comprador la separa y queda pegado arriba al bajar. */
 .np__prev { display:grid; gap:6px; padding:4px 0 20px; }

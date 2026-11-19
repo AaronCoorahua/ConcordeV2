@@ -1,6 +1,8 @@
 ﻿"use client";
 
-import type { JSX } from "react";
+import { useEffect, useRef } from "react";
+import type { JSX, ReactNode } from "react";
+import { createRoot } from "react-dom/client";
 import Header from "@/app/_components/Header";
 import Button from "@/src/components/Button";
 import LikeButton from "@/src/components/LikeButton";
@@ -60,6 +62,47 @@ import { QrCode } from "@/src/components/QrCode";
 import { QrCard } from "@/src/components/QrCard";
 import { RiskMeter } from "@/src/components/RiskMeter";
 import CountdownDemo from "@/app/handoff/countdown/CountdownDemo";
+import { StatusTag } from "@/src/components/StatusTag";
+import { Pagination } from "@/src/components/Pagination";
+import { Stepper } from "@/src/components/Stepper";
+import StageTabsDemo from "@/app/handoff/stagetabs/StageTabsDemo";
+import VehicleRowDemo from "@/app/handoff/vehiclerow/VehicleRowDemo";
+import { AccountCard } from "@/src/components/AccountCard";
+import { WalletCard } from "@/src/components/WalletCard";
+import { RecommendedList, type RecommendedItem } from "@/src/components/RecommendedList";
+import { AdBanner } from "@/src/components/AdBanner";
+import { NotificationBox } from "@/src/components/NotificationBox";
+import { SectionHead } from "@/src/components/SectionHead";
+import { ValueHero } from "@/src/components/ValueHero";
+import { DecisionBar } from "@/src/components/DecisionBar";
+import { PublishFeeBanner } from "@/src/components/PublishFeeBanner";
+import { RoundProgress } from "@/src/components/RoundProgress";
+import { ProposalThread } from "@/src/components/ProposalThread";
+import { ChatHeader } from "@/src/components/ChatHeader";
+import { ChatDay } from "@/src/components/ChatDay";
+import { ChatBubble } from "@/src/components/ChatBubble";
+import { ChatNotice } from "@/src/components/ChatNotice";
+import type { Sec } from "@/src/components/Vidrio";
+import ActionTileDemo from "@/app/handoff/actiontile/ActionTileDemo";
+import ActivitySectionDemo from "@/app/handoff/activitysection/ActivitySectionDemo";
+import PendingToggleDemo from "@/app/handoff/pendingtoggle/PendingToggleDemo";
+import FolderTabsDemo from "@/app/handoff/foldertabs/FolderTabsDemo";
+import MoreButtonDemo from "@/app/handoff/morebutton/MoreButtonDemo";
+import ActionListDemo from "@/app/handoff/actionlist/ActionListDemo";
+import RepublishBarDemo from "@/app/handoff/republishbar/RepublishBarDemo";
+import NotificationBellDemo from "@/app/handoff/notificationbell/NotificationBellDemo";
+import NotificationInboxDemo from "@/app/handoff/notificationinbox/NotificationInboxDemo";
+import SelectDemo from "@/app/handoff/select/SelectDemo";
+import ComboboxDemo from "@/app/handoff/combobox/ComboboxDemo";
+import ProjectionChartDemo from "@/app/handoff/projectionchart/ProjectionChartDemo";
+import SeasonChartDemo from "@/app/handoff/seasonchart/SeasonChartDemo";
+import ValuationCardDemo from "@/app/handoff/valuationcard/ValuationCardDemo";
+import AddButtonDemo from "@/app/handoff/addbutton/AddButtonDemo";
+import PublishSwipeDemo from "@/app/handoff/publishswipe/PublishSwipeDemo";
+import ResponseTimerDemo from "@/app/handoff/responsetimer/ResponseTimerDemo";
+import AmountComposerDemo from "@/app/handoff/amountcomposer/AmountComposerDemo";
+import ChatComposerDemo from "@/app/handoff/chatcomposer/ChatComposerDemo";
+import { indexFont } from "@/app/blocks/index/font";
 
 // Componentes del Index (vmc-index-lab). La destacada de Autoplan sirve de ejemplo a FeaturedCard y LotGallery.
 const IDX_F = STORES[0].featured;
@@ -76,6 +119,46 @@ function Scaled({ w, h, scale, children }: { w: number; h: number; scale: number
     </div>
   );
 }
+
+// Piezas de Mi Garaje: la base que heredan en la pantalla (Plus Jakarta Sans con todos sus pesos, alto de línea normal),
+// igual que en sus páginas de /handoff.
+const GARAJE_BASE = { fontFamily: "var(--vmc-font-display), \"Plus Jakarta Sans\", sans-serif", lineHeight: "normal", color: "#191C1C" } as const;
+function Garaje({ width, className, children }: { width?: number; className?: string; children: ReactNode }): JSX.Element {
+  return <div className={`${indexFont.variable}${className ? ` ${className}` : ""}`} style={{ ...GARAJE_BASE, width }}>{children}</div>;
+}
+// Piezas que llevan enlaces (<a>): no pueden ir dentro del enlace de la card, así que se montan en su propia raíz de React,
+// solo en el navegador y sin interacción (el clic llega a la card).
+function Detached({ children }: { children: JSX.Element }): JSX.Element {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const host = document.createElement("div");
+    ref.current?.appendChild(host);
+    const root = createRoot(host);
+    root.render(children);
+    return () => { setTimeout(() => { root.unmount(); host.remove(); }, 0); };
+  }, [children]);
+  return <div ref={ref} inert style={{ pointerEvents: "none" }} />;
+}
+// Los diálogos no se abren en el catálogo: su ícono y su título.
+function DialogStandIn({ icon, title }: { icon: Sec; title: string }): JSX.Element {
+  return <div style={{ display: "grid", justifyItems: "center", gap: 6, color: "#3B1782", fontWeight: 700, fontSize: 13 }}><Vidrio s={icon} size={40} />{title}</div>;
+}
+// Datos de los ejemplos de /handoff.
+const garagePhoto = (slug: string) => `/mi-garaje/garage-photos/${slug}/1.jpg`;
+const RECS: RecommendedItem[] = [
+  { name: "Nissan Versa", year: 2020, price: "US$ 9,300", imageSrc: garagePhoto("versa"), badge: "negotiable" },
+  { name: "Nissan Sentra", year: 2021, price: "US$ 11,500", imageSrc: garagePhoto("sentra"), badge: "live" },
+  { name: "Suzuki Swift", year: 2019, price: "US$ 7,800", imageSrc: garagePhoto("swift"), badge: "live" },
+];
+const AD_RAIL = "/mi-garaje/banners/publica-vmc.html?v=10-valor-publica&f=side400&e=personaje";
+const AD_STRIP = "/mi-garaje/banners/publica-vmc.html?v=10-valor-publica&f=strip776&e=personaje";
+const MAZDA = [
+  { me: true, amount: "US$ 12,000", when: "Hoy 9:10" },
+  { me: false, amount: "US$ 13,700", when: "Hoy 9:40" },
+  { me: true, amount: "US$ 12,600", when: "Hoy 10:05" },
+];
+const CHAT = { display: "flex", flexDirection: "column", boxSizing: "border-box", padding: 10, background: "#f7f6fb", borderRadius: 8 } as const;
+const LOCK = <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden><rect x="4" y="9" width="12" height="8" rx="2" fill="currentColor" /><path d="M7 9V7a3 3 0 0 1 6 0v2" stroke="currentColor" strokeWidth="2" /></svg>;
 
 // ── Registry ──────────────────────────────────────────────────────────────
 
@@ -586,6 +669,92 @@ const REGISTRY: ComponentEntry[] = [
     ),
   },
   // ── Mi Garaje (mi-garaje-lab) ──
+  // Inicio: cuenta, accesos, billetera, recomendados y Tu actividad.
+  {
+    id: "accountcard",
+    name: "AccountCard",
+    handoffPath: "/handoff/accountcard",
+    preview: <Scaled w={451} h={215} scale={0.6}><Garaje width={451}><Detached><AccountCard username="ZAEX5G" risk="Muy bajo" points={500} passExpiry="16/01/2026" passHref="#" /></Detached></Garaje></Scaled>,
+  },
+  {
+    id: "riskmeter",
+    name: "RiskMeter",
+    handoffPath: "/handoff/riskmeter",
+    preview: <div style={{ display: "grid", gap: 12 }}><RiskMeter level={0} tone="light" /><RiskMeter level={3} tone="light" /></div>,
+  },
+  {
+    id: "actiontile",
+    name: "ActionTile",
+    handoffPath: "/handoff/actiontile",
+    preview: <Scaled w={300} h={160} scale={0.8}><Garaje width={300}><ActionTileDemo /></Garaje></Scaled>,
+  },
+  {
+    id: "walletcard",
+    name: "WalletCard",
+    handoffPath: "/handoff/walletcard",
+    preview: <Scaled w={300} h={215} scale={0.72}><Garaje width={300}><Detached><WalletCard balance="320" subasCoins="1,250" transactionsHref="#" /></Detached></Garaje></Scaled>,
+  },
+  {
+    id: "recommendedlist",
+    name: "RecommendedList",
+    handoffPath: "/handoff/recommendedlist",
+    preview: <Scaled w={300} h={300} scale={0.5}><Garaje width={300}><Detached><RecommendedList items={RECS} href="#" /></Detached></Garaje></Scaled>,
+  },
+  {
+    id: "adbanner",
+    name: "AdBanner",
+    handoffPath: "/handoff/adbanner",
+    preview: <Scaled w={300} h={320} scale={0.45}><Garaje width={300}><AdBanner slot="rail" src={AD_RAIL} stripSrc={AD_STRIP} title="Publicidad: Conoce su valor y publícalo en VMC." /></Garaje></Scaled>,
+  },
+  {
+    id: "activitysection",
+    name: "ActivitySection",
+    handoffPath: "/handoff/activitysection",
+    preview: <Scaled w={451} h={330} scale={0.5}><Garaje width={451}><ActivitySectionDemo /></Garaje></Scaled>,
+  },
+  {
+    id: "pendingtoggle",
+    name: "PendingToggle",
+    handoffPath: "/handoff/pendingtoggle",
+    preview: <Garaje><PendingToggleDemo /></Garaje>,
+  },
+  {
+    id: "foldertabs",
+    name: "FolderTabs",
+    handoffPath: "/handoff/foldertabs",
+    preview: <Scaled w={435} h={60} scale={0.62}><Garaje width={435}><FolderTabsDemo /></Garaje></Scaled>,
+  },
+  {
+    id: "stagetabs",
+    name: "StageTabs",
+    handoffPath: "/handoff/stagetabs",
+    preview: <Scaled w={435} h={60} scale={0.62}><Garaje width={435}><StageTabsDemo /></Garaje></Scaled>,
+  },
+  {
+    id: "vehiclerow",
+    name: "VehicleRow",
+    handoffPath: "/handoff/vehiclerow",
+    preview: <Scaled w={435} h={200} scale={0.62}><Garaje width={435}><div style={{ background: "#fff", borderRadius: 8 }}><VehicleRowDemo set="negociaciones" /></div></Garaje></Scaled>,
+  },
+  {
+    id: "countdown",
+    name: "Countdown",
+    handoffPath: "/handoff/countdown",
+    preview: <CountdownDemo />,
+  },
+  {
+    id: "statustag",
+    name: "StatusTag",
+    handoffPath: "/handoff/statustag",
+    preview: <Garaje><div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center" }}><StatusTag tone="wait">Lista para publicar</StatusTag><StatusTag tone="progress">Pendiente de aprobación</StatusTag><StatusTag tone="wait">Publicada</StatusTag></div></Garaje>,
+  },
+  {
+    id: "pagination",
+    name: "Pagination",
+    handoffPath: "/handoff/pagination",
+    preview: <Garaje><Pagination page={0} pages={3} onChange={() => {}} label="Mis publicaciones" variant="glass" size="s" /></Garaje>,
+  },
+  // Mis publicaciones.
   {
     id: "publicationbadge",
     name: "PublicationBadge",
@@ -598,16 +767,34 @@ const REGISTRY: ComponentEntry[] = [
     ),
   },
   {
-    id: "riskmeter",
-    name: "RiskMeter",
-    handoffPath: "/handoff/riskmeter",
-    preview: <div style={{ display: "grid", gap: 12 }}><RiskMeter level={0} tone="light" /><RiskMeter level={3} tone="light" /></div>,
+    id: "morebutton",
+    name: "MoreButton",
+    handoffPath: "/handoff/morebutton",
+    preview: <Garaje><MoreButtonDemo /></Garaje>,
   },
   {
-    id: "countdown",
-    name: "Countdown",
-    handoffPath: "/handoff/countdown",
-    preview: <CountdownDemo />,
+    id: "actionlist",
+    name: "ActionList",
+    handoffPath: "/handoff/actionlist",
+    preview: <Scaled w={411} h={56} scale={0.66}><Garaje width={411}><Detached><ActionListDemo /></Detached></Garaje></Scaled>,
+  },
+  {
+    id: "republishbar",
+    name: "RepublishBar",
+    handoffPath: "/handoff/republishbar",
+    preview: <Scaled w={351} h={120} scale={0.78}><Garaje width={351}><RepublishBarDemo /></Garaje></Scaled>,
+  },
+  {
+    id: "republishmodal",
+    name: "RepublishModal",
+    handoffPath: "/handoff/republishmodal",
+    preview: <DialogStandIn icon="republicar" title="Confirma la republicación" />,
+  },
+  {
+    id: "dropmodal",
+    name: "DropModal",
+    handoffPath: "/handoff/dropmodal",
+    preview: <DialogStandIn icon="baja" title="Dar de baja" />,
   },
   {
     id: "qrcode",
@@ -620,6 +807,189 @@ const REGISTRY: ComponentEntry[] = [
     name: "QrCard",
     handoffPath: "/handoff/qrcard",
     preview: <QrCard value="https://www.vmcsubastas.com/oferta/51015" size={120} />,
+  },
+  // Notificaciones.
+  {
+    id: "notificationbell",
+    name: "NotificationBell",
+    handoffPath: "/handoff/notificationbell",
+    preview: <NotificationBellDemo />,
+  },
+  {
+    id: "notificationbox",
+    name: "NotificationBox",
+    handoffPath: "/handoff/notificationbox",
+    // Quieto: en la pantalla entra y se recoge hacia la campana en 2,4 s.
+    preview: <Scaled w={360} h={180} scale={0.75}><Garaje width={360} className="cp-still"><div style={{ padding: "8px 20px 40px" }}><NotificationBox photo="/mi-garaje/garage-photos/sentra/1.jpg" title="El vendedor respondió tu propuesta" body="Nissan Sentra 2020 · te pide US$ 4,800" time="Ahora" onOpen={() => undefined} /></div></Garaje></Scaled>,
+  },
+  {
+    id: "notificationinbox",
+    name: "NotificationInbox",
+    handoffPath: "/handoff/notificationinbox",
+    preview: <Scaled w={400} h={230} scale={0.66}><Garaje width={400}><div style={{ padding: "4px 10px 30px" }}><Detached><NotificationInboxDemo /></Detached></div></Garaje></Scaled>,
+  },
+  // Valorizar y Publicar.
+  {
+    id: "stepper",
+    name: "Stepper",
+    handoffPath: "/handoff/stepper",
+    preview: <Scaled w={560} h={70} scale={0.5}><Garaje width={560}><Stepper steps={["Vehículo", "Detalles", "Valor", "Información", "Vista previa"]} current={2} onGo={() => {}} /></Garaje></Scaled>,
+  },
+  {
+    id: "sectionhead",
+    name: "SectionHead",
+    handoffPath: "/handoff/sectionhead",
+    preview: <Scaled w={520} h={120} scale={0.52}><Garaje width={520}><div style={{ display: "grid", gap: 24, width: 520 }}><SectionHead icon="caja" title="Mecánica" done tip="típico · toca para cambiar" /><SectionHead icon="auto" title="Estado del vehículo" /></div></Garaje></Scaled>,
+  },
+  {
+    id: "select",
+    name: "Select",
+    handoffPath: "/handoff/select",
+    preview: <Scaled w={360} h={90} scale={0.75}><Garaje width={360}><SelectDemo start="2019" /></Garaje></Scaled>,
+  },
+  {
+    id: "combobox",
+    name: "Combobox",
+    handoffPath: "/handoff/combobox",
+    preview: <Scaled w={360} h={90} scale={0.75}><Garaje width={360}><ComboboxDemo label="Marca" options={["Toyota", "Kia", "Hyundai", "Volkswagen"]} placeholder="Escribe o elige la marca" /></Garaje></Scaled>,
+  },
+  {
+    id: "valuehero",
+    name: "ValueHero",
+    handoffPath: "/handoff/valuehero",
+    preview: <Scaled w={760} h={300} scale={0.36}><Garaje width={760}><ValueHero title="Toyota Corolla 2019" meta="45,000 km · 7 años de uso" valueLabel="Valor de mercado hoy" value={15010} buyback={12010} auction={15760} /></Garaje></Scaled>,
+  },
+  {
+    id: "projectionchart",
+    name: "ProjectionChart",
+    handoffPath: "/handoff/projectionchart",
+    preview: <Scaled w={680} h={300} scale={0.4}><Garaje width={680}><ProjectionChartDemo /></Garaje></Scaled>,
+  },
+  {
+    id: "seasonchart",
+    name: "SeasonChart",
+    handoffPath: "/handoff/seasonchart",
+    preview: <Scaled w={680} h={300} scale={0.4}><Garaje width={680}><SeasonChartDemo /></Garaje></Scaled>,
+  },
+  {
+    id: "decisionbar",
+    name: "DecisionBar",
+    handoffPath: "/handoff/decisionbar",
+    preview: <Scaled w={760} h={120} scale={0.36}><Garaje width={760}><DecisionBar title="¿Publicamos tu vehículo?" description="Ya tenemos los datos del vehículo: en Publicar solo agregas las fotos." actions={<><Button variant="outline">Valorizar de nuevo</Button><Button variant="primary">Publicar</Button></>} /></Garaje></Scaled>,
+  },
+  {
+    id: "valuationcard",
+    name: "ValuationCard",
+    handoffPath: "/handoff/valuationcard",
+    preview: <Scaled w={760} h={330} scale={0.36}><Garaje width={760}><ValuationCardDemo only="ready" /></Garaje></Scaled>,
+  },
+  {
+    id: "addbutton",
+    name: "AddButton",
+    handoffPath: "/handoff/addbutton",
+    preview: <Scaled w={500} h={70} scale={0.55}><Garaje width={500}><AddButtonDemo /></Garaje></Scaled>,
+  },
+  {
+    id: "publishswipe",
+    name: "PublishSwipe",
+    handoffPath: "/handoff/publishswipe",
+    preview: <PublishSwipeDemo />,
+  },
+  {
+    id: "publishfeebanner",
+    name: "PublishFeeBanner",
+    handoffPath: "/handoff/publishfeebanner",
+    preview: <Scaled w={760} h={200} scale={0.36}><Garaje width={760}><PublishFeeBanner fee={25} /></Garaje></Scaled>,
+  },
+  // Negociación y SubasChat.
+  {
+    id: "sidepanel",
+    name: "SidePanel",
+    handoffPath: "/handoff/sidepanel",
+    preview: (
+      <div aria-hidden style={{ position: "relative", width: 220, height: 132, borderRadius: 10, overflow: "hidden", background: "rgba(25,28,28,.28)" }}>
+        <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: 132, display: "grid", alignContent: "start", gap: 6, padding: 12, background: "#fff", boxShadow: "-8px 0 24px rgba(34,0,92,.18)" }}>
+          <b style={{ fontSize: 12, color: "#3B1782" }}>Nissan Sentra 2020</b>
+          <span style={{ height: 6, borderRadius: 3, background: "#ECE8F7" }} /><span style={{ height: 6, width: "70%", borderRadius: 3, background: "#ECE8F7" }} />
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "proposalmodal",
+    name: "ProposalModal",
+    handoffPath: "/handoff/proposalmodal",
+    preview: <DialogStandIn icon="negociaciones" title="¿Cuánto ofreces?" />,
+  },
+  {
+    id: "proposalnotice",
+    name: "ProposalNotice",
+    handoffPath: "/handoff/proposalnotice",
+    preview: <DialogStandIn icon="bolsa" title="Fondos insuficientes" />,
+  },
+  {
+    id: "responsetimer",
+    name: "ResponseTimer",
+    handoffPath: "/handoff/responsetimer",
+    preview: <Garaje><ResponseTimerDemo hours={23} minutes={47} urgent pre="Tienes" post=" para responder" /></Garaje>,
+  },
+  {
+    id: "roundprogress",
+    name: "RoundProgress",
+    handoffPath: "/handoff/roundprogress",
+    preview: <Scaled w={412} h={60} scale={0.66}><Garaje width={412}><RoundProgress round={2} total={5} /></Garaje></Scaled>,
+  },
+  {
+    id: "proposalthread",
+    name: "ProposalThread",
+    handoffPath: "/handoff/proposalthread",
+    preview: <Scaled w={412} h={255} scale={0.6}><Garaje width={412}><ProposalThread other="Vendedor" initials="V" items={MAZDA} /></Garaje></Scaled>,
+  },
+  {
+    id: "amountcomposer",
+    name: "AmountComposer",
+    handoffPath: "/handoff/amountcomposer",
+    preview: <Scaled w={412} h={130} scale={0.66}><Garaje width={412}><AmountComposerDemo /></Garaje></Scaled>,
+  },
+  {
+    id: "chatheader",
+    name: "ChatHeader",
+    handoffPath: "/handoff/chatheader",
+    preview: <Scaled w={311} h={80} scale={0.85}><Garaje width={311}><div style={{ borderRadius: 8, overflow: "hidden" }}><ChatHeader name="KLM8RT" role="Comprador" dealLabel="Venta" amount="US$ 17,500" /></div></Garaje></Scaled>,
+  },
+  {
+    id: "chatday",
+    name: "ChatDay",
+    handoffPath: "/handoff/chatday",
+    preview: <Garaje width={311}><div style={CHAT}><ChatDay label="Hoy" /></div></Garaje>,
+  },
+  {
+    id: "chatbubble",
+    name: "ChatBubble",
+    handoffPath: "/handoff/chatbubble",
+    preview: (
+      <Scaled w={311} h={245} scale={0.7}>
+        <Garaje width={311}>
+          <div style={{ ...CHAT, gap: 6 }}>
+            <ChatBubble sender="KLM8RT" time="10:31">Hola, gracias por aceptar 🙌 ¿Cuándo podría ver el auto?</ChatBubble>
+            <ChatBubble mine sender="Tú" time="10:33" status="sent">¡Hola! Puede ser mañana a las 10 am en Miraflores.</ChatBubble>
+            <ChatBubble sender="KLM8RT" time="10:34">Perfecto, ahí estaré. ¿Tiene el SOAT vigente?</ChatBubble>
+          </div>
+        </Garaje>
+      </Scaled>
+    ),
+  },
+  {
+    id: "chatnotice",
+    name: "ChatNotice",
+    handoffPath: "/handoff/chatnotice",
+    preview: <Scaled w={400} h={90} scale={0.66}><Garaje width={400}><div style={CHAT}><ChatNotice>{LOCK}<span><b>Se cobró tu fee de habilitación de tu consignación (&gt;S&lt;&nbsp;50).</b> Coordinen aquí la visita y el pago hasta el 19/02/2027.</span></ChatNotice></div></Garaje></Scaled>,
+  },
+  {
+    id: "chatcomposer",
+    name: "ChatComposer",
+    handoffPath: "/handoff/chatcomposer",
+    preview: <Scaled w={311} h={70} scale={0.85}><Garaje width={311}><ChatComposerDemo /></Garaje></Scaled>,
   },
   // ── Index (vmc-index-lab) ──
   {
@@ -781,6 +1151,8 @@ const PAGE_STYLES = `
   }
   .cp-card:hover .cp-card-name { color: var(--ui-accent); }
   .cp-card:hover .cp-card-arrow { color: var(--ui-accent); transform: translateX(3px); }
+
+  .cp-still .nt-box, .cp-still .nt-box li { animation: none; }
 
   @media (max-width: 768px) {
     .cp-section { padding: 28px 20px 60px; }

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "roundprogress",
+  "type": "registry:component",
+  "title": "RoundProgress",
+  "description": "Componente Concorde RoundProgress — un solo archivo, RoundProgress.tsx.",
+  "dependencies": [
+    "react"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/RoundProgress.tsx",
+      "type": "registry:file",
+      "target": "components/RoundProgress.tsx",
+      "content": "/**\n * RoundProgress — en qué ronda va una negociación (Mi Garaje, mi-garaje-lab · panel de negociación):\n * «Negociación 2/5» a la izquierda y un punto por ronda a la derecha; las rondas hechas en cian → violeta.\n * Solo depende de React.\n */\nimport type { JSX } from \"react\";\n\nexport const ROUND_PROGRESS_CSS = String.raw`\n.np__meta { display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: .75rem; font-weight: 600; color: #6B6878; }\n.np__meta i { display: flex; gap: 4px; }\n.np__meta b { width:8px; height:8px; border-radius:50%; background:#E1E3E2; }\n.np__meta b.is-on { background:linear-gradient(135deg, #00A8AB, #8460E5); box-shadow:0 1px 3px rgba(0,168,171,.22); }\n`;\n\nexport interface RoundProgressProps {\n  /** Ronda actual (1…total). */\n  round: number;\n  /** Rondas posibles (5 en VMC). */\n  total: number;\n  /** Con quién se negocia, si hay varios (p. ej. «Comprador 3»): se lee «… con Comprador 3». */\n  with?: string;\n}\n\nexport function RoundProgress({ round, total, with: who }: RoundProgressProps): JSX.Element {\n  return <>\n    <style href=\"concorde-round-progress\" precedence=\"default\">{ROUND_PROGRESS_CSS}</style>\n    {/* Cada punto corresponde a una ronda: propuesta del comprador + respuesta del vendedor. */}\n    <div className=\"np__meta\"><span>Negociación {round}/{total}{who ? ` con ${who}` : \"\"}</span><i aria-hidden>{Array.from({ length: total }, (_, i) => <b key={i} className={i < round ? \"is-on\" : \"\"} />)}</i></div>\n  </>;\n}\n\nexport default RoundProgress;\n"
+    }
+  ]
+}

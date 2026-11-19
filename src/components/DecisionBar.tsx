@@ -1,0 +1,52 @@
+/**
+ * DecisionBar — barra fija al pie del resultado de una valorización (mi-garaje-lab · Flujo Valorizar / Publicar y el análisis
+ * de Mis valorizaciones). Pregunta y bajada a la izquierda, acciones a la derecha («Guardar · Publicar»). Queda pegada abajo
+ * mientras se lee el resultado; en móvil (≤ 767 px) solo muestra los botones en una fila. `negotiable` le pone el borde teal de
+ * la oferta Negociable (Publicar). Solo depende de React.
+ */
+import type { JSX, ReactNode } from "react";
+
+export const DECISION_BAR_CSS = String.raw`
+.fl-decide { position:sticky; bottom:12px; z-index:2; display:flex; justify-content:space-between; align-items:center; gap:20px; padding:20px 24px; border-radius:22px; background:#fff;
+  border:1px solid transparent; background-image:linear-gradient(#fff,#fff), linear-gradient(120deg,#fff 0%,#F4AC59 35%,#8460E5 75%,#fff 100%); background-origin:border-box; background-clip:padding-box,border-box;
+  box-shadow:0 12px 30px rgba(34,0,92,.10); }
+.fl-decide > div:first-child { display:grid; gap:2px; }
+.fl-decide b { font-size:1rem; font-weight:700; color:#3B1782; }
+.fl-decide span { font-size:.75rem; color:#6C6E6E; }
+.fl-decide__btns { display:flex; align-items:center; gap:12px; flex:none; }
+.fl-decide__btns > button { min-width:0 !important; }
+.fl-decide--neg > div:first-child { flex:1; min-width:0; gap:4px; }
+.fl-decide--neg b { display:flex; align-items:center; flex-wrap:wrap; gap:4px 0; }
+.fl-decide--neg span em { font-style:normal; font-weight:600; color:#006E70; }
+.fl-decide.fl-decide--neg { background-image:linear-gradient(#fff,#fff), linear-gradient(120deg,#fff 0%,#30E8EC 35%,#8460E5 75%,#fff 100%); box-shadow:0 12px 30px rgba(0,104,106,.12); }
+@media (max-width:767px) {
+  .fl-decide { flex-direction:column; align-items:stretch; bottom:8px; padding:10px; gap:0; border-radius:20px; box-shadow:0 -2px 0 rgba(34,0,92,.04), 0 8px 28px rgba(34,0,92,.22); }
+  .fl-decide > div:first-child { display:none; }
+  .fl-decide__btns { display:grid; grid-template-columns:auto 1fr; gap:8px; }
+  .fl-decide .fl-decide__btns > * { justify-content:center; min-width:0; width:100% !important; white-space:nowrap; font-size:.9375rem; }
+  .fl-decide__btns > button { padding-inline:12px !important; }
+}
+`;
+
+export interface DecisionBarProps {
+  /** Pregunta (p. ej. «¿Qué quieres hacer con este valor?»). En móvil se oculta: los botones ya dicen la acción. */
+  title: ReactNode;
+  /** Bajada bajo la pregunta. Un <em> dentro se resalta en teal con `negotiable`. */
+  description: ReactNode;
+  /** Botones, de menor a mayor importancia (p. ej. Guardar y Publicar). */
+  actions: ReactNode;
+  /** Borde teal de la oferta Negociable (al seguir con una publicación). */
+  negotiable?: boolean;
+}
+
+export function DecisionBar({ title, description, actions, negotiable }: DecisionBarProps): JSX.Element {
+  return <>
+    <style href="concorde-decision-bar" precedence="default">{DECISION_BAR_CSS}</style>
+    <footer className={`fl-decide${negotiable ? " fl-decide--neg" : ""}`}>
+      <div><b>{title}</b><span>{description}</span></div>
+      <div className="fl-decide__btns">{actions}</div>
+    </footer>
+  </>;
+}
+
+export default DecisionBar;

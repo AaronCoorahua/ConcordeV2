@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chatday",
+  "type": "registry:component",
+  "title": "ChatDay",
+  "description": "Componente Concorde ChatDay — un solo archivo, ChatDay.tsx.",
+  "dependencies": [
+    "react"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ChatDay.tsx",
+      "type": "registry:file",
+      "target": "components/ChatDay.tsx",
+      "content": "/**\n * ChatDay — separador de día del SubasChat (Mi Garaje, mi-garaje-lab · /m/oferta y el chat del panel de negociación):\n * una píldora gris centrada («Hoy») entre los mensajes. Solo depende de React.\n */\nimport type { JSX } from \"react\";\n\nexport const CHAT_DAY_CSS = String.raw`\n.sc__day { align-self: center; margin: 4px 0; }\n.sc__day span { padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; color: #55526b; background: #e7e5f0; } /* ≥ 4.5:1 (AA) */\n`;\n\nexport interface ChatDayProps {\n  /** Día que separa (p. ej. «Hoy»). */\n  label: string;\n}\n\nexport function ChatDay({ label }: ChatDayProps): JSX.Element {\n  return <>\n    <style href=\"concorde-chat-day\" precedence=\"default\">{CHAT_DAY_CSS}</style>\n    <div className=\"sc__day\"><span>{label}</span></div>\n  </>;\n}\n\nexport default ChatDay;\n"
+    }
+  ]
+}

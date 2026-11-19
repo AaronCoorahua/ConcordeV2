@@ -41,15 +41,22 @@ Sin terminal: fetchea `<nombre>.json` y escribe cada `files[].content` en un arc
 
 ## Catálogo (snapshot — confirma con /r/registry.json)
 
-Componentes: accordion, activitycard, amountoptiongroup, auctionstatus, avatarzone,
-badgestatus, bidmessage, bidposition, bidproposal, businessicon, button, cardtitle,
-cardviewer, categorycard, categoryicon, checkicon, conditionpill, countdown, detailcard, docbutton,
-eyeicon, featuredcard, glassbutton, herocarousel, infoicon, input, lightbar, likebutton,
-logomarquee, lotgallery, offercard, offericon, offershelf, offertype, offertypecards,
-pricebadge, priceicon, profilebutton, progressbar, publicationbadge, qrcard, qrcode,
-riskmeter, salastatus, sendbidicon,
-servicecentericon, signal, staricon, statpill, table, tabselector, termsselector,
-timericon, todayicon, userprofilecard, vidrio, vmcahora, walletbalancecard
+Componentes: accordion, accountcard, actionlist, actiontile, activitycard,
+activitysection, adbanner, addbutton, amountcomposer, amountoptiongroup, auctionstatus,
+avatarzone, badgestatus, bidmessage, bidposition, bidproposal, businessicon, button,
+cardtitle, cardviewer, categorycard, categoryicon, chatbubble, chatcomposer, chatday,
+chatheader, chatnotice, checkicon, combobox, conditionpill, countdown, decisionbar,
+detailcard, docbutton, dropmodal, eyeicon, featuredcard, foldertabs, glassbutton,
+herocarousel, infoicon, input, lightbar, likebutton, logomarquee, lotgallery,
+morebutton, notificationbell, notificationbox, notificationinbox, offercard, offericon,
+offershelf, offertype, offertypecards, pagination, pendingtoggle, pricebadge, priceicon,
+profilebutton, progressbar, projectionchart, proposalmodal, proposalnotice,
+proposalthread, publicationbadge, publishfeebanner, publishswipe, qrcard, qrcode,
+recommendedlist, republishbar, republishmodal, responsetimer, riskmeter, roundprogress,
+salastatus, seasonchart, sectionhead, select, sendbidicon, servicecentericon, sidepanel,
+signal, stagetabs, staricon, statpill, statustag, stepper, table, tabselector,
+termsselector, timericon, todayicon, userprofilecard, valuationcard, valuehero,
+vehiclerow, vidrio, vmcahora, walletbalancecard, walletcard
 
 Bloques: index (nuevo inicio de VMC), homepage (inicio anterior), mi-garaje (cuenta del usuario,
 evolución de zona), valoriza y vendo-mis-cosas (landings; base para

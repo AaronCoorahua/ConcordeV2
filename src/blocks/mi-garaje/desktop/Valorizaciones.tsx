@@ -10,8 +10,10 @@
 import { useEffect, useRef, useState } from "react";
 import type { JSX } from "react";
 import Button from "@/src/components/Button";
-import ProfileButton from "@/src/components/ProfileButton";
-import InfoIcon from "@/src/components/InfoIcon";
+import DecisionBar from "@/src/components/DecisionBar";
+import ValuationCard from "@/src/components/ValuationCard";
+import AddButton from "@/src/components/AddButton";
+import StatusTag, { type StatusTone } from "@/src/components/StatusTag";
 import { Vidrio } from "@/src/components/Vidrio";
 import { Chrome, PHOTO } from "./kit";
 import { Chevron, smooth } from "./Garaje";
@@ -29,7 +31,7 @@ const routes = (vmc: boolean) => vmc ? { home: "/blocks/mi-garaje/m/vmc", valuar
 // El estado dice qué sigue, con los tonos de Tu actividad: lo que te toca hacer va en naranja (action).
 // Estado en gris salvo la revisión (lila, como en Mi Garaje VMC): el teal queda solo para NEGOCIABLE y el naranja para Publicar
 // y lo que cuesta esperar; con todo en color nada destacaba.
-const STATE: Record<Val["state"], [string, string]> = { pub: ["wait", "Publicada"], review: ["progress", "Pendiente de aprobación"], saved: ["wait", "Lista para publicar"] };
+const STATE: Record<Val["state"], [StatusTone, string]> = { pub: ["wait", "Publicada"], review: ["progress", "Pendiente de aprobación"], saved: ["wait", "Lista para publicar"] };
 const short = (d: string) => d.slice(0, 5); // «12/05/2026» → «12/05», como las fechas de Mi Garaje
 
 /** La acción principal según el estado: Publicar lleva a Publicar con los datos ya cargados (solo faltan las fotos);
@@ -41,39 +43,20 @@ function Next({ v, R }: { v: Val; R: ReturnType<typeof routes> }): JSX.Element {
 
 const ORDER: Record<Val["state"], number> = { saved: 0, review: 1, pub: 2 }; // primero lo que pide una acción
 
-/** Tarjeta por vehículo (16/10): responde la pregunta de cada estado.
- *  · Lista para publicar → «¿publico ahora?»: valor y rango, cuánto pierde por mes si espera, señal de venta y Publicar.
+/** Tarjeta por vehículo (16/10): ValuationCard de Concorde.
+ *  · Lista para publicar → «¿publico ahora?»: valor, cuánto pierde si espera (proyección AVT a 12 meses), señal de venta y Publicar.
  *  · Publicada / en revisión (compacta, identidad Negociable) → «¿cómo va mi venta?»: ofertas o revisión y Ver publicación.
  *  Solo datos de AVT y de Mis publicaciones; la estimación Subastop (subasta) queda en el análisis, no se mezcla con Negociable. */
 function Tarjeta({ v, R, onOpen }: { v: Val; R: ReturnType<typeof routes>; onOpen: () => void }): JSX.Element {
   const d = RES[v.id].rdata, s = d.sig, [tone, label] = STATE[v.state], neg = v.state !== "saved";
   const at = v.updated ?? short(v.saved), y12 = d.pf?.find((p) => p.label === "12M")?.v ?? d.market; // hito 12M de projectForward (AVT)
-  const head = <header className="vz-card__head">
-    {neg ? <img className="vz-row__pic" src={PHOTO[v.photo]} alt="" width={64} height={48} /> : <span className="vz-row__pic vz-row__ico" aria-hidden><Vidrio s="auto" size={40} /></span>}
-    <div><h2>{v.brand} {v.model} {v.year}</h2><small>{v.version} · {v.km.toLocaleString("en-US")} km</small></div>
-    <span className="vz-card__tags">{neg ? <span className="vz-neg">Negociable</span> : null}<span className={`g-status g-status--${tone}`}>{label}</span></span>
-  </header>;
-  const more = <button type="button" className="vz-more" onClick={onOpen}>Ver análisis</button>;
-  if (neg) return <li className="vz-card vz-card--neg" style={{ viewTransitionName: `vz-${v.id}` }}>
-    {head}
-    <div className="vz-card__pub">
-      <dl><div><dt>Valor de mercado al {at}</dt><dd>{usd(d.market)}</dd></div><div><dt>{v.state === "pub" ? "Tu publicación" : "Revisión de VMC"}</dt><dd>{v.how}</dd></div></dl>
-      <div className="vz-card__go">{more}<Next v={v} R={R} /></div>
-    </div>
-  </li>;
-  return <li className="vz-card vz-card--todo" style={{ viewTransitionName: `vz-${v.id}` }}>
-    {head}
-    <div className="vz-card__value">
-      <small>Valor de mercado al {at}</small>
-      <b>{usd(d.market)}{v.drift ? <em className={v.drift < 0 ? "is-down" : "is-up"} title="Desde que la guardaste">{v.drift > 0 ? "+" : "−"}{Math.abs(v.drift)} %<span className="sr-only"> desde que la guardaste</span></em> : null}</b>
-    </div>
-    <dl className="vz-card__facts">
-      {/* Lo que cuesta esperar, con la proyección de AVT a 12 meses (y la pérdida diaria cuando AVT la da). */}
-      {y12 < d.market ? <div className="is-loss"><dt>Si esperas un año</dt><dd>−{usd(d.market - y12)}<small>Valdría {usd(y12)}{s.timing.dailyValueLoss > 0 ? <> · <span className="vz-nw">~{usd(s.timing.dailyValueLoss)}/día</span></> : null}</small></dd></div> : null}
-      <div className="vz-sig"><dt>Señal de venta</dt><dd><span className="vz-dots" role="img" aria-label={`${s.signal.level} de 5`}>{[1, 2, 3, 4, 5].map((n) => <i key={n} className={n <= s.signal.level ? "is-on" : ""} />)}</span>{s.signal.label}<small>{s.signal.sublabel}</small></dd></div>
-    </dl>
-    <footer className="vz-card__foot">{more}<Next v={v} R={R} /></footer>
-  </li>;
+  return <ValuationCard title={`${v.brand} ${v.model} ${v.year}`} subtitle={`${v.version} · ${v.km.toLocaleString("en-US")} km`} photo={neg ? PHOTO[v.photo] : undefined}
+    status={{ tone, label }} negotiable={neg} valueLabel={`Valor de mercado al ${at}`} value={usd(d.market)}
+    drift={neg ? undefined : v.drift}
+    waitLoss={!neg && y12 < d.market ? { amount: `−${usd(d.market - y12)}`, worth: usd(y12), perDay: s.timing.dailyValueLoss > 0 ? `~${usd(s.timing.dailyValueLoss)}/día` : undefined } : undefined}
+    signal={neg ? undefined : { level: s.signal.level, label: s.signal.label, sublabel: s.signal.sublabel }}
+    detail={neg ? { label: v.state === "pub" ? "Tu publicación" : "Revisión de VMC", value: v.how ?? "" } : undefined}
+    onAnalysis={onOpen} action={<Next v={v} R={R} />} />;
 }
 
 export default function Valorizaciones({ isEmpty, vmc = false }: { isEmpty: boolean; vmc?: boolean }): JSX.Element {
@@ -101,15 +84,13 @@ export default function Valorizaciones({ isEmpty, vmc = false }: { isEmpty: bool
   // Resultado guardado: el mismo «Revela» del final de Valorizar, quieto y con su barra de decisión.
   const result = (o: Val) => { const pub = o.state !== "saved"; return <section className="fl-result fl-result--ds fl-result--rv" aria-label={`Resultado de ${o.brand} ${o.model} ${o.year}`}>
     <Revela d={RES[o.id].rdata} still at={o.updated ?? short(o.saved)} />
-    <footer className="fl-decide">
-      <div><b>{o.state === "pub" ? "Tu vehículo ya está publicado" : o.state === "review" ? "Tu publicación está en revisión" : "¿Publicamos tu vehículo?"}</b>
-        <span>{o.state === "pub" ? "Se publicó como oferta Negociable con este valor de referencia." : o.state === "review" ? "VMC la aprueba en un plazo corto; te avisamos al publicarse." : "Ya tenemos los datos del vehículo: en Publicar solo agregas las fotos."}</span></div>
-      <div className="fl-decide__btns">{pub ? null : <Button variant="outline" onClick={() => { location.href = R.valuar; }}>Valorizar de nuevo</Button>}<Next v={o} R={R} /></div>
-    </footer>
+    <DecisionBar title={o.state === "pub" ? "Tu vehículo ya está publicado" : o.state === "review" ? "Tu publicación está en revisión" : "¿Publicamos tu vehículo?"}
+      description={o.state === "pub" ? "Se publicó como oferta Negociable con este valor de referencia." : o.state === "review" ? "VMC la aprueba en un plazo corto; te avisamos al publicarse." : "Ya tenemos los datos del vehículo: en Publicar solo agregas las fotos."}
+      actions={<>{pub ? null : <Button variant="outline" onClick={() => { location.href = R.valuar; }}>Valorizar de nuevo</Button>}<Next v={o} R={R} /></>} />
   </section>; };
   // Barra fija del panel: qué auto y en qué estado (sigue visible al hacer scroll); las fechas van en el cuerpo.
   const bar = (o: Val) => { const [tone, label] = STATE[o.state]; return <div className="vz-panel__id"><b>{o.brand} {o.model} {o.year}</b>
-    <span className="vz-card__tags">{o.state !== "saved" ? <span className="vz-neg">Negociable</span> : null}<span className={`g-status g-status--${tone}`}>{label}</span></span></div>; };
+    <span className="vz-card__tags">{o.state !== "saved" ? <span className="vz-neg">Negociable</span> : null}<StatusTag tone={tone}>{label}</StatusTag></span></div>; };
   const saved = (o: Val) => <p className="vz-res__saved">Guardada el {o.saved}{o.updated ? <> · recalculada el {o.updated}{o.drift ? <> · <b>{o.drift > 0 ? "+" : "−"}{Math.abs(o.drift)}{"\u00a0"}%</b> desde que la guardaste</> : null}</> : null}</p>;
 
   return <Chrome vmc={vmc}>
@@ -131,8 +112,7 @@ export default function Valorizaciones({ isEmpty, vmc = false }: { isEmpty: bool
       </section> : <>
         <ul className="vz-cards" aria-label={`${list.length} valorizaciones guardadas`}>{list.map((v) => <Tarjeta key={v.id} v={v} R={R} onOpen={() => show(v)} />)}</ul>
         {/* Acción secundaria: una fila delgada, no una tarjeta más. */}
-        <button type="button" className="vz-add" style={{ viewTransitionName: "vz-add" }} onClick={() => { location.href = R.valuar; }}>
-          <span aria-hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg></span>Valorizar otro vehículo</button>
+        <AddButton onClick={() => { location.href = R.valuar; }}>Valorizar otro vehículo</AddButton>
       </>}
       {/* Panel lateral (PROPUESTA 16/10): el análisis se abre sobre la página, como la vista rápida de Mi Garaje; en móvil sube como hoja. */}
       <dialog ref={dlg} className="vz-panel" aria-labelledby="fl-h" onClose={() => { if (location.hash.includes("det=")) close(); }}

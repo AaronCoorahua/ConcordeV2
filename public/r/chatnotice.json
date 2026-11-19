@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chatnotice",
+  "type": "registry:component",
+  "title": "ChatNotice",
+  "description": "Componente Concorde ChatNotice — un solo archivo, ChatNotice.tsx.",
+  "dependencies": [
+    "react"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ChatNotice.tsx",
+      "type": "registry:file",
+      "target": "components/ChatNotice.tsx",
+      "content": "/**\n * ChatNotice — aviso del sistema dentro del SubasChat (Mi Garaje, mi-garaje-lab · chat del panel de negociación):\n * nube centrada color crema, como el aviso de WhatsApp al activar los mensajes temporales; en verde cuando\n * registra que se aceptó la propuesta (tone=\"done\"). El ícono y el texto van como hijos. Solo depende de React.\n */\nimport type { JSX, ReactNode } from \"react\";\n\nexport const CHAT_NOTICE_CSS = String.raw`\n.sc__sys { align-self:center; display:flex; align-items:flex-start; gap:6px; max-width:86%; margin:2px auto 8px; padding:6px 10px; border-radius:8px; background:#FFF5D6; color:#5E4B12;\n  font-size:.6875rem; line-height:1.45; text-align:center; box-shadow:0 1px .5px rgba(0,0,0,.08); }\n.sc__sys b { font-weight:700; }\n.sc__sys svg { flex:none; margin-top:2px; color:#9A7B1E; }\n.sc__sys--done { background:#E6F7F7; color:#00686A; } .sc__sys--done svg { color:#008688; }\n`;\n\nexport interface ChatNoticeProps {\n  /** Ícono (svg de 14) y texto del aviso. */\n  children: ReactNode;\n  /** «done»: aviso verde de propuesta aceptada. Sin tono: aviso crema del sistema. */\n  tone?: \"done\";\n}\n\nexport function ChatNotice({ children, tone }: ChatNoticeProps): JSX.Element {\n  return <>\n    <style href=\"concorde-chat-notice\" precedence=\"default\">{CHAT_NOTICE_CSS}</style>\n    <div className={`sc__sys${tone ? ` sc__sys--${tone}` : \"\"}`} role=\"note\">{children}</div>\n  </>;\n}\n\nexport default ChatNotice;\n"
+    }
+  ]
+}

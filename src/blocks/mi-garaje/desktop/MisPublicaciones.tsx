@@ -18,9 +18,12 @@ import type { CSSProperties, JSX } from "react";
 import { PagList } from "./Paginado";
 import { PHOTO } from "./kit";
 import { PUBLICATION_LABEL, PublicationBadge, PublicationPin, type PublicationStatus } from "@/src/components/PublicationBadge";
-import { DropModal } from "./lib/DropModal";
-import { REPUBLISH_DAYS, RepublishModal } from "./lib/RepublishModal";
-import ProfileButton from "@/src/components/ProfileButton";
+import { DropModal } from "@/src/components/DropModal";
+import { REPUBLISH_DAYS, RepublishModal } from "@/src/components/RepublishModal";
+import { VehicleRow } from "@/src/components/VehicleRow";
+import { RepublishBar } from "@/src/components/RepublishBar";
+import { MoreButton } from "@/src/components/MoreButton";
+import { ActionList } from "@/src/components/ActionList";
 import { ActionIcon, DROPPED_NOTE, menu, republishSteps, type Action, type PubActions } from "./PublicationFlow";
 import { LabPanel } from "./LabPanel";
 import "./mis-publicaciones.css";
@@ -84,7 +87,6 @@ function republish(row: PubRow, to: PublicationStatus, note: string): void {
 const usePubs = () => useSyncExternalStore((f) => { subs.add(f); return () => subs.delete(f); }, () => state, () => state);
 
 const Chev = () => <svg className="mp-acts__chev" width="16" height="16" viewBox="0 0 20 20" aria-hidden><path d="M8 5l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const Dots = () => <svg width="16" height="16" viewBox="0 0 20 20" aria-hidden><circle cx="4" cy="10" r="1.8" fill="currentColor" /><circle cx="10" cy="10" r="1.8" fill="currentColor" /><circle cx="16" cy="10" r="1.8" fill="currentColor" /></svg>;
 
 /** Hoja de acciones (11/11): sube desde abajo con el auto arriba y cada acción con su explicación. Ventana nativa: foco y Esc. */
 const SHEET_HINT: Record<string, string> = { Republicar: `Gratis, por ${REPUBLISH_DAYS} días`, "Dar de baja": "Sale de Mis publicaciones", "Ver detalle de la venta": "Monto, fecha y comprador" };
@@ -136,7 +138,7 @@ function RowMenu({ row }: { row: PubRow }): JSX.Element | null {
       {next ? <button type="button" className="vd-host mp-glass" aria-label={`${next.label}: ${row.name} ${row.year}`} title={`${next.label} gratis por ${REPUBLISH_DAYS} días`} onClick={() => run(next)}><Vidrio s="republicar" size={24} /></button> : null}
       {bin ? <button type="button" className="vd-host mp-glass" aria-label={`${bin.label}: ${row.name} ${row.year}`} title={bin.label} onClick={() => run(bin)}><Vidrio s="baja" size={24} /></button> : null}
     </> : null}
-    {rest.length ? <button type="button" className="mp-more__btn" aria-label={`Más acciones: ${row.name} ${row.year}`} aria-expanded={open} aria-controls={`mp-acts-${row.id}`} onClick={() => setOpen((v) => !v)}><Dots /></button> : null}
+    {rest.length ? <MoreButton label={`Más acciones: ${row.name} ${row.year}`} expanded={open} controls={`mp-acts-${row.id}`} onClick={() => setOpen((v) => !v)} /> : null}
     {next && rowEl && actStyle === "aviso" ? createPortal(<div className="mp-alert">
       <p><b>{row.status === "desierta" ? "Nadie ofertó esta vez." : "La venta no se concretó."}</b> Republícala gratis por {REPUBLISH_DAYS} días y vuelve a la vista de los compradores.</p>
       <span className="mp-alert__btns"><button type="button" className="mp-alert__go" onClick={() => run(next)}><ActionIcon icon="reload" />{next.label}</button>{binBtn("mp-alert__drop", true)}</span>
@@ -144,18 +146,9 @@ function RowMenu({ row }: { row: PubRow }): JSX.Element | null {
     {next && rowEl && actStyle === "nota" ? createPortal(<span className="mp-links">
       <button type="button" className="mp-link" onClick={() => run(next)}><ActionIcon icon="reload" />Republicar gratis</button><span aria-hidden>·</span>{binBtn("mp-link is-danger", true)}
     </span>, rowEl.querySelector(".fr__main") ?? rowEl) : null}
-    {next && rowEl && actStyle.startsWith("sugerencia") ? createPortal(<div className="mp-step" data-v={actStyle}><button type="button" className="mp-next" onClick={() => run(next)}>
-      <span className="mp-next__ic"><ActionIcon icon="reload" /></span>
-      <span className="mp-next__txt"><b>{next.label}</b><small>Gratis, por {REPUBLISH_DAYS} días</small></span>
-      <svg className="mp-next__go" width="18" height="18" viewBox="0 0 20 20" aria-hidden><path d="M4 10h11M11 5l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-    </button>
-      {binBtn(actStyle === "sugerencia" ? "mp-bin" : "mp-bin mp-bin--in")}
-    </div>, rowEl) : null}
-    {open && rowEl && !sheet ? createPortal(<div id={`mp-acts-${row.id}`} className="mp-acts" data-style="lista" role="group" aria-label={`Acciones: ${row.name} ${row.year}`}
-      onKeyDown={(e) => { if (e.key === "Escape") { setOpen(false); wrap.current?.querySelector<HTMLElement>("[aria-expanded]")?.focus(); } }}>
-      {rest.map((a, i) => !a.icon ? <ProfileButton key={a.label} onClick={() => run(a)}>{a.label}</ProfileButton>
-        : <button key={a.label} type="button" className={a.danger ? "mp-acts__danger" : "mp-acts__go"} autoFocus={i === 0} onClick={() => run(a)}><ActionIcon icon={a.icon} />{a.label}<Chev /></button>)}
-    </div>, rowEl) : null}
+    {next && rowEl && actStyle === "sugerencia" && bin ? createPortal(<RepublishBar name={`${row.name} ${row.year}`} days={REPUBLISH_DAYS} onRepublish={() => run(next)} onDrop={() => run(bin)} />, rowEl) : null}
+    {open && rowEl && !sheet ? createPortal(<ActionList id={`mp-acts-${row.id}`} label={`Acciones: ${row.name} ${row.year}`} items={rest.map((a) => ({ label: a.label, icon: a.icon === "trash" ? "trash" : undefined, danger: a.danger }))}
+      onPick={(i) => run(rest[i])} onClose={() => { setOpen(false); wrap.current?.querySelector<HTMLElement>("[aria-expanded]")?.focus(); }} />, rowEl) : null}
     {open && sheet ? createPortal(<ActionSheet row={row} items={rest} onPick={run} onClose={() => setOpen(false)} />, document.body) : null}
     {drop || repub ? createPortal(<>
     {drop ? <DropModal name={`${row.name} ${row.year}`} photo={PHOTO[row.photo]} note={row.note} onClose={() => setDrop(false)} onConfirm={leave}
@@ -170,13 +163,13 @@ function Row({ row }: { row: PubRow }): JSX.Element {
   const { id, leaving } = row;
   /** Terminada la salida, la fila cierra su espacio para que las de abajo suban sin saltar. */
   const collapse = (el: HTMLElement) => el.animate([{ height: `${el.offsetHeight}px` }, { height: "0px", marginTop: "0px", marginBottom: "0px", paddingTop: "0px", paddingBottom: "0px", borderWidth: "0px" }], { duration: 280, easing: "ease-in-out", fill: "forwards" }).finished.then(() => remove(id));
-  return <div data-pub={id} data-repub={row.phase} className={`fr fr--publication is-regular mp-row mp-row--${row.status}${leaving ? " is-negotiation-leaving is-expiry-exit" : ""}`}
-    style={leaving ? ({ "--salida-espera": "500ms" } as CSSProperties) : undefined} onAnimationEnd={(e) => { if (leaving && e.target === e.currentTarget) void collapse(e.currentTarget); }}>
-    <span className="fr__img"><img src={PHOTO[row.photo]} alt="" width={64} height={48} /></span>
-    <span className="fr__main"><span className="fr__name">{row.status === "desierta" ? <PublicationPin /> : null}{row.name} {row.year}</span><span className={`vpb-note fr__meta${row.status === "revision" || row.status === "publicada" || row.status === "negociacion" ? "" : " mp-note"}`}>{row.note}</span></span>
-    {leaving ? null : <span className="fr__side"><PublicationBadge status={row.status} />{row.status === "negociacion" && row.proposals ? <span className="fr__proposals"><span>Propuestas</span><b>{row.proposals}</b></span> : null}</span>}
+  return <VehicleRow photo={PHOTO[row.photo]} name={row.name} year={row.year} namePrefix={row.status === "desierta" ? <PublicationPin /> : null}
+    meta={row.note} metaClassName={`vpb-note${row.status === "revision" || row.status === "publicada" || row.status === "negociacion" ? "" : " mp-note"}`}
+    className={`fr--publication is-regular mp-row mp-row--${row.status}${leaving ? " is-negotiation-leaving is-expiry-exit" : ""}`} data={{ pub: id, repub: row.phase }}
+    style={leaving ? ({ "--salida-espera": "500ms" } as CSSProperties) : undefined} onAnimationEnd={(e) => { if (leaving && e.target === e.currentTarget) void collapse(e.currentTarget); }}
+    side={leaving ? undefined : <><PublicationBadge status={row.status} />{row.status === "negociacion" && row.proposals ? <span className="fr__proposals"><span>Propuestas</span><b>{row.proposals}</b></span> : null}</>}>
     {leaving ? null : <RowMenu row={row} />}
-  </div>;
+  </VehicleRow>;
 }
 
 /** Republicar todas (11/11): junta las publicaciones sin venta arriba de la lista y las republica de una vez. */

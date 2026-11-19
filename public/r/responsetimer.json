@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "responsetimer",
+  "type": "registry:component",
+  "title": "ResponseTimer",
+  "description": "Componente Concorde ResponseTimer — un solo archivo, ResponseTimer.tsx.",
+  "dependencies": [
+    "react"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ResponseTimer.tsx",
+      "type": "registry:file",
+      "target": "components/ResponseTimer.tsx",
+      "content": "\"use client\";\n\n/**\n * ResponseTimer — plazo para responder una propuesta (Mi Garaje, mi-garaje-lab · panel de negociación):\n * TimerIcon y «Tienes 23:47:58 para responder», con el segundero corriendo en cifras mono.\n * Si te toca a ti (`urgent`) va en magenta; si esperas a la otra parte, en gris.\n */\nimport { useEffect, useState } from \"react\";\nimport type { JSX } from \"react\";\nimport TimerIcon from \"@/concorde/components/TimerIcon\";\n\nexport const RESPONSE_TIMER_CSS = String.raw`\n.np__due { display: inline-flex; align-items: center; gap: 4px; font-size: .75rem; line-height:16px; font-weight: 600; color: #6B6878; white-space: nowrap; }\n.np__due b { font-family: var(--vmc-font-mono); font-weight: 600; }\n.np__due.is-me, .np__due.is-me b { color: #A800D4; }\n`;\n\nexport interface ResponseTimerProps {\n  /** Momento en que vence, en ms (Date.now() + …). */\n  to: number;\n  /** Te toca responder a ti: magenta. */\n  urgent?: boolean;\n  /** Texto antes de la cifra (p. ej. «Tienes» o «Esperando al vendedor»). */\n  pre?: string;\n  /** Texto después de la cifra (p. ej. « para responder»). */\n  post?: string;\n}\n\nexport function ResponseTimer({ to, urgent = false, pre = \"Vence en\", post = \"\" }: ResponseTimerProps): JSX.Element {\n  const [now, setNow] = useState(() => Date.now());\n  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);\n  const left = Math.max(0, to - now), h = Math.floor(left / 3.6e6), m = Math.floor((left % 3.6e6) / 6e4), sec = Math.floor((left % 6e4) / 1e3);\n  const pad = (x: number) => String(x).padStart(2, \"0\");\n  // Solo las cifras en mono; las unidades en la fuente del texto.\n  return <>\n    <style href=\"concorde-response-timer\" precedence=\"default\">{RESPONSE_TIMER_CSS}</style>\n    <span className={`np__due${urgent ? \" is-me\" : \"\"}`} role=\"timer\" aria-label={`Vence en ${h} h ${m} min`}><TimerIcon size={16} />{pre} <b>{pad(h)}:{pad(m)}:{pad(sec)}</b>{post}</span>\n  </>;\n}\n\nexport default ResponseTimer;\n"
+    },
+    {
+      "path": "components/TimerIcon.tsx",
+      "type": "registry:file",
+      "target": "components/TimerIcon.tsx",
+      "content": "/**\n * TimerIcon — Generado por Concorde\n * Fuente: Figma VOYAGER · \"timericon\" (3201)\n *\n * Icono de temporizador/reloj (22×22), trazo redondeado 1.83. Copia exacta del\n * path del SVG. Tamaño y color personalizables (default currentColor).\n */\n\nimport type { JSX } from \"react\";\n\nexport interface TimerIconProps {\n  /** Tamaño en px (default 22) */\n  size?: number;\n  /** Color del trazo (default \"currentColor\") */\n  color?: string;\n  /** Texto accesible. Si se omite, es decorativo (aria-hidden). */\n  title?: string;\n  className?: string;\n}\n\nexport default function TimerIcon({ size = 22, color = \"currentColor\", title, className = \"\" }: TimerIconProps): JSX.Element {\n  return (\n    <svg\n      width={size}\n      height={size}\n      viewBox=\"0 0 22 22\"\n      fill=\"none\"\n      xmlns=\"http://www.w3.org/2000/svg\"\n      className={className}\n      role={title ? \"img\" : undefined}\n      aria-hidden={title ? undefined : true}\n    >\n      {title ? <title>{title}</title> : null}\n      <path\n        d=\"M4.63973 10C5.09082 6.38255 8.17668 3.58333 11.9163 3.58333C15.9664 3.58333 19.2496 6.86658 19.2496 10.9167C19.2496 14.9668 15.9664 18.25 11.9163 18.25H7.33333M11.9167 10.9167V7.25M10.0833 1.75H13.75M2.75 12.75H7.33333M4.58333 15.5H9.16667\"\n        stroke={color}\n        strokeWidth=\"1.83333\"\n        strokeLinecap=\"round\"\n        strokeLinejoin=\"round\"\n      />\n    </svg>\n  );\n}\n"
+    }
+  ]
+}

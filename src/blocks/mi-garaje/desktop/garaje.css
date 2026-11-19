@@ -74,52 +74,20 @@
 
 /* ── Tu actividad ─────────────────────────────────────── */
 .g-activity { display:grid; gap:20px; padding-top:8px; }
-.g-sec { display:grid; gap:14px; padding:20px 24px 12px; background:#fff; border-radius:20px; box-shadow:0 1px 3px rgba(34,0,92,.05), 0 8px 24px rgba(34,0,92,.05); }
-.g-tabs { display:flex; }
-.g-list { display:grid; margin:0 -12px; }
 .g-firstrun { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; padding:16px 20px; border-radius:16px; background:#F5F0FF; color:var(--ink); font-size:.9375rem; }
 .g-firstrun p { margin:0; }
 
-.g-row { display:grid; grid-template-columns:88px minmax(180px,1.2fr) minmax(0,1.3fr) minmax(170px,auto) 20px; gap:16px; align-items:center;
-  padding:12px; border-radius:14px; color:inherit; text-decoration:none; transition:background-color .16s ease-out; position:relative; }
-.g-list > div + div .g-row, .g-list > .g-row + .g-row { box-shadow:0 -1px 0 var(--line); }
-.g-row:hover { background:#F5F0FF; box-shadow:none; }
-.g-list > div:hover + div .g-row, .g-row:hover + .g-row { box-shadow:none; }
-.g-row:active { transform:scale(.995); }
-.g-row:focus-visible { outline:2px solid #8460E5; outline-offset:-2px; }
-.g-row.is-new { background:color-mix(in srgb,#ED8936 7%,#fff); animation:g-arrive .9s cubic-bezier(.16,1,.3,1) both; }
-@keyframes g-arrive { from { opacity:0; transform:translateY(-8px); background:color-mix(in srgb,#ED8936 18%,#fff); } }
-.g-row__img { width:88px; height:66px; object-fit:cover; border-radius:10px; }
-.g-row__main { display:grid; gap:2px; min-width:0; }
-.g-row__name { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:1rem; font-weight:700; color:var(--ink); }
-.g-row__plate { font-size:.8125rem; color:var(--muted); font-variant-numeric:tabular-nums; }
-.g-row__new { display:inline-flex; align-items:center; gap:5px; font-size:.6875rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#B25614; }
-.g-row__new i { width:7px; height:7px; border-radius:9999px; background:#ED8936; }
-.g-row__detail { font-size:.875rem; color:color-mix(in srgb,#191C1C 82%,#fff); font-variant-numeric:tabular-nums; }
-.g-row__status { display:grid; justify-items:end; gap:4px; }
-.g-row__status small { font-size:.75rem; color:var(--muted); font-variant-numeric:tabular-nums; }
-.g-row__status small.is-due { color:#B25614; font-weight:700; }
 .g-chev { color:#ED8936; }
 
+/* Etiqueta de estado. StatusTag (src/components/StatusTag.tsx) trae las que se ven hoy (wait, progress); estas reglas siguen
+   aquí porque Valorizaciones y Flujo pintan spans .g-status directamente. */
 .g-status { display:inline-flex; align-items:center; height:24px; padding:0 10px; border-radius:9999px; font-size:.75rem; font-weight:700; white-space:nowrap; }
 .g-status--action { color:#93420A; background:#FEE9CC; }
 .g-status--progress { color:#5A35C2; background:#F5F0FF; }
 .g-status--done { color:#006466; background:color-mix(in srgb,#00A8AB 12%,#fff); }
 .g-status--wait { color:color-mix(in srgb,#191C1C 82%,#fff); background:color-mix(in srgb,#E1E3E2 60%,#fff); }
 
-@media (max-width:899px) {
-  .g-sec { padding:16px 16px 8px; }
-  .g-list { margin:0 -8px; }
-  .g-row { grid-template-columns:72px minmax(0,1fr) 18px; grid-template-areas:"img main chev" "img detail chev" "img status chev"; gap:2px 12px; padding:10px 8px; align-items:start; }
-  .g-row__img { grid-area:img; width:72px; height:56px; }
-  .g-row__main { grid-area:main; } .g-row__detail { grid-area:detail; font-size:.8125rem; }
-  .g-row__status { grid-area:status; display:flex; justify-items:start; align-items:center; gap:8px; margin-top:4px; }
-  .g-row .g-chev { grid-area:chev; align-self:center; }
-  .g-row__name { font-size:.9375rem; }
-}
 
-.g-empty { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; padding:0 0 12px; }
-.g-empty p { margin:0; max-width:56ch; font-size:.875rem; line-height:1.5; color:color-mix(in srgb,#191C1C 82%,#fff); }
 
 .g-skel { display:grid; gap:12px; padding-bottom:12px; }
 .g-skel div { display:grid; grid-template-columns:88px 1fr; grid-template-rows:auto auto; gap:8px 16px; align-items:center; }
@@ -137,7 +105,7 @@
 @media (max-width:767px) { .g-subaspass { padding:18px 20px; } .g-subaspass b { font-size:1.125rem; } }
 
 ::selection { background:#8460E5; color:#fff; }
-@media (prefers-reduced-motion:reduce) { .g-row.is-new, .g-skel i, .g-skel b { animation:none; } .g-actioncard, .g-row { transition:none; } }
+@media (prefers-reduced-motion:reduce) { .g-skel i, .g-skel b { animation:none; } .g-actioncard { transition:none; } }
 
 /* ── 1A · Banda de estado ─────────────────────────────── */
 .g-band { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:12px 14px; border-radius:16px; background:#fff; box-shadow:0 1px 3px rgba(34,0,92,.05), 0 8px 24px rgba(34,0,92,.05); }
@@ -180,28 +148,10 @@
   .g-page .g-next__actions > button { width:100%; }
 }
 
-/* ── 1B · Seguimiento por etapas ──────────────────────── */
-.g-row.has-track { grid-template-rows:auto auto; }
-.g-track { grid-column:2 / -1; list-style:none; margin:4px 0 2px; padding:0; display:flex; gap:0; }
-.g-track li { flex:1; position:relative; display:grid; gap:6px; font-size:.75rem; font-weight:600; color:var(--muted); }
-.g-track li i { display:block; height:4px; border-radius:9999px; background:#E1E3E2; margin-right:4px; }
-.g-track li.is-done { color:#5A35C2; }
-.g-track li.is-done i { background:linear-gradient(90deg,#8460E5,#5A35C2); }
-.g-track li.is-now { color:#B25614; font-weight:800; }
-.g-track li.is-now i { background:linear-gradient(90deg,#F4AC59,#ED8936); }
-@media (max-width:899px) { .g-track { grid-column:1 / -1; grid-row:auto; margin-top:8px; } .g-row.has-track { grid-template-areas:"img main chev" "img detail chev" "img status chev" "track track track"; } .g-row.has-track .g-track { grid-area:track; } }
+/* ── Mis participaciones: StageTabs de Concorde (src/components/StageTabs.tsx). En Mi Garaje el fondo que se desliza es
+   la pestaña de carpeta blanca (en todas las formas del lab, como antes); el componente solo trae el relleno de la activa. */
 
-/* ── 1C · Secciones plegadas (al día) ─────────────────── */
-.g-sec--folded { padding:0; }
-.g-fold { all:unset; box-sizing:border-box; width:100%; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:16px 24px; border-radius:20px; }
-.g-fold:hover { background:#F5F0FF; }
-.g-fold:focus-visible { outline:2px solid #8460E5; outline-offset:2px; }
-.g-fold span { display:grid; gap:2px; }
-.g-fold b { font-size:1.0625rem; color:var(--ink); }
-.g-fold small { font-size:.8125rem; color:var(--muted); }
-@media (max-width:899px) { .g-fold { padding:14px 16px; } }
 
-.g-sec { scroll-margin-top:24px; }
 @media (prefers-reduced-motion:reduce) { .g-band__dot, .g-band--loading i { animation:none; } .g-band__chip { transition:none; } }
 
 /* ── Modelo 2 · Títulos Concorde refinados ────────────── */
@@ -213,8 +163,6 @@
 .g-stamp h2, .g-stamp h3 { margin:0; display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:1.375rem; line-height:1.2; font-weight:800; letter-spacing:-0.015em; color:var(--ink); text-wrap:balance; }
 .g-stamp p { margin:3px 0 0; font-size:.8125rem; color:var(--muted); }
 .g-head--stamp { display:flex; justify-content:space-between; align-items:flex-end; gap:16px; }
-.g--concorde .g-fold b { position:relative; padding-left:14px; }
-.g--concorde .g-fold b::before { content:""; position:absolute; left:0; top:2px; width:7px; height:7px; border-top:2px solid #ED8936; border-left:2px solid #ED8936; border-top-left-radius:3px; }
 @media (max-width:767px) { .g-stamp h2 { font-size:1.1875rem; } }
 
 /* ── Modelo 3 · Fernando+ ─────────────────────────────── */
@@ -237,19 +185,17 @@
   .g-page > .g-top { order:0; } .g-page > .g-band { order:1; } .g-page > .g-next, .g-page > .g-livenext { order:2; } .g-page > .g-zona { order:3; }
   .g-page > .g-mobile-only { order:4; } .g-page > .g-activity { order:5; } .g-page > .g-subaspass { order:6; } .g-page > .g-qv { order:7; }
   .g-zona > .g-acc3 { order:2; }
-  .g-row-extra { display:none; }
   .g-mobile-only .g-account { padding:14px 16px; border-radius:16px; background:#fff; box-shadow:0 1px 3px rgba(34,0,92,.05); }
 }
 
 /* ── QuickView: <dialog> nativo (foco atrapado, Esc cierra). ── */
-.g-qv { padding:0; border:0; margin:0 0 0 auto; width:min(460px,100vw); max-width:none; height:100dvh; max-height:none; background:transparent; overflow:visible; }
-.g-qv::backdrop { background:rgba(16,0,48,.45); backdrop-filter:blur(2px); }
-.g-qv[open] { animation:g-qv-in .28s cubic-bezier(.16,1,.3,1); }
-@keyframes g-qv-in { from { transform:translateX(32px); opacity:0; } }
-.g-qv__panel { height:100%; display:grid; grid-template-rows:auto 1fr auto; background:#fff; box-shadow:-20px 0 60px rgba(16,0,48,.25); }
+
+
+
+
+
 .g-qv__head { position:relative; }
 .g-qv__head > img { display:block; width:100%; height:240px; object-fit:cover; }
-.g-qv__head .kit-gal { padding-bottom:4px; }
 .g-qv__close { all:unset; cursor:pointer; position:absolute; top:14px; right:14px; display:grid; place-items:center; width:40px; height:40px; border-radius:9999px; color:#fff;
   background:rgba(16,0,48,.55); backdrop-filter:blur(6px); }
 .g-qv__close:hover { background:rgba(16,0,48,.75); }
@@ -260,7 +206,6 @@
 .g-qv__status { display:flex; align-items:center; gap:10px; }
 .g-qv__status small { font-size:.8125rem; font-weight:700; color:#B25614; }
 .g-qv__detail { margin:0; font-size:1rem; color:color-mix(in srgb,#191C1C 82%,#fff); font-variant-numeric:tabular-nums; }
-.g-qv .g-track { margin:4px 0; }
 .g-qv h3 { margin:8px 0 0; font-size:.8125rem; font-weight:800; color:var(--ink); }
 .g-qv__hist { list-style:none; margin:0; padding:0; display:grid; gap:0; }
 .g-qv__hist li { position:relative; padding:0 0 14px 20px; font-size:.875rem; color:color-mix(in srgb,#191C1C 82%,#fff); }
@@ -287,21 +232,18 @@
 .g-livebuy__activity .g-qv__hist li { padding-bottom:11px; font-size:.8125rem; }
 @keyframes g-livebuy-pulse { 0% { transform:scale(.65); opacity:.7; } 75%,100% { transform:scale(1.45); opacity:0; } }
 @media (max-width:767px) {
-  .g-qv { inset:auto 0 0 0; margin:0; width:100vw; height:auto; max-height:88dvh; }
-  .g-qv[open] { animation-name:g-qv-up; }
-  @keyframes g-qv-up { from { transform:translateY(40px); opacity:0; } }
-  .g-qv__panel { height:auto; max-height:88dvh; border-radius:24px 24px 0 0; overflow:hidden; box-shadow:0 -20px 60px rgba(16,0,48,.25); }
-  .g-qv__head .kit-gal__main { height:200px !important; }
+  
+  
+  
+  
   .g-qv__body { padding:18px 16px; }
   .g-qv__foot { padding:14px 16px 20px; flex-wrap:wrap; }
   .g-qv__foot > button { flex:1 1 100%; }
 }
-@media (prefers-reduced-motion:reduce) { .g-qv[open] { animation:none; } .g-row:active { transform:none; } }
+
 
 /* ── Fernando + DS ampliado ───────────────────────────── */
 .g-activity__head { display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; }
-.g-row__status .cp-count { justify-items:end; }
-.g-row__status .cp-count b { font-size:.9375rem; }
 
 /* LiveNowCard ancho */
 .g-livenext { position:relative; isolation:isolate; overflow:hidden; min-height:260px; display:grid; align-items:end; border-radius:24px; background:#100030;
@@ -388,24 +330,24 @@
 
 /* ── Fernando+ · Tu actividad v2 ──────────────────────── */
 .fa { background:#fff; border-radius:22px; box-shadow:0 1px 3px rgba(34,0,92,.05), 0 10px 30px rgba(34,0,92,.06); overflow:hidden; }
-.fs + .fs { border-top:1px solid var(--line); }
-.fs { scroll-margin-top:24px; }
-.fs__head { display:flex; align-items:center; gap:16px; padding:6px 20px 6px 8px; }
-.fs__toggle { all:unset; box-sizing:border-box; flex:1; min-width:0; cursor:pointer; display:flex; align-items:center; gap:16px; padding:14px 12px; border-radius:14px; transition:background-color .15s; }
-.fs__toggle:hover { background:var(--vmc-color-vault-100); }
-.fs__toggle:focus-visible { outline:2px solid #8460E5; outline-offset:-2px; }
-.fs__title { display:flex; align-items:center; gap:10px; flex:none; }
-.fs__h { margin:0; flex:1; min-width:0; display:flex; font:inherit; }
-.fs__name { font-size:1.125rem; font-weight:800; letter-spacing:-0.01em; color:var(--ink); }
+
+
+
+
+
+
+
+
+
 .fs__count { min-width:24px; height:24px; display:inline-grid; place-items:center; padding:0 7px; border-radius:9999px; font-size:.75rem; font-weight:800; color:#5A35C2; background:#F5F0FF; font-variant-numeric:tabular-nums; }
 .fs__summary { flex:1; min-width:0; font-size:.8125rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .fs__thumbs { display:inline-flex; }
 .fs__thumbs img { width:28px; height:28px; border-radius:9999px; object-fit:cover; box-shadow:0 0 0 2px #fff; }
 .fs__thumbs img + img { margin-left:-8px; }
-.fs__chev { margin-left:auto; display:grid; transition:transform .2s cubic-bezier(.2,.8,.2,1); }
-.fs__chev { transform:rotate(90deg); } /* acordeón (Accordion de Concorde): cerrado ↓, abierto ↑ */
-.fs.is-open .fs__chev { transform:rotate(-90deg); }
-.fs__body { display:grid; gap:8px; padding:0 20px 14px; }
+
+ /* acordeón (Accordion de Concorde): cerrado ↓, abierto ↑ */
+
+
 .fs__more { display:none; }
 .f-src .fs__more { display:flex; padding:6px 0 2px; } /* Fuente: «Ver todas» al pie de cada sección también en escritorio (Stage 1: conservar el destino) */
 .fs__tabs { display:flex; gap:4px; padding:0 0 6px; border-bottom:1px solid var(--line); }
@@ -426,22 +368,17 @@
 .fs__empty p { margin:0; max-width:56ch; font-size:.875rem; line-height:1.5; color:color-mix(in srgb,#191C1C 82%,#fff); }
 .fs--compras .fs__empty, .fs--participaciones .fs__empty { justify-content:center; text-align:center; }
 
-.fr { all:unset; box-sizing:border-box; position:relative; width:100%; cursor:pointer; display:grid; grid-template-columns:64px minmax(0,1fr) auto 20px; gap:14px; align-items:center; padding:10px; border-radius:12px; transition:background-color .15s; }
+/* La fila (.fr) es VehicleRow de Concorde (src/components/VehicleRow.tsx): aquí quedan sus variantes y estados del bloque. */
 .fr__demo-arrow { position:absolute; z-index:3; left:4px; top:50%; display:grid; place-items:center; width:46px; height:38px; border-radius:999px; color:#ED8936; background:rgba(255,255,255,.96); box-shadow:0 3px 10px rgba(112,52,11,.30); transform:translateY(-50%); animation:fr-guide 1s ease-in-out infinite alternate; pointer-events:none; }
 .fr__demo-arrow svg { width:40px; height:32px; }
 @keyframes fr-guide { from { transform:translate(-3px,-50%); } to { transform:translate(5px,-50%); } }
 .fs__list > div:hover + div .fr { box-shadow:none; }
-.fr:focus-visible { outline:2px solid #8460E5; outline-offset:-2px; }
-.fr:active { transform:scale(.996); }
-.fr img { width:64px; height:48px; object-fit:cover; border-radius:10px; }
-.fr__main { display:grid; gap:2px; min-width:0; }
-.fr__name { display:flex; align-items:center; gap:8px; font-size:.9375rem; font-weight:700; color:var(--ink); }
 .fr__new { display:inline-flex; align-items:center; gap:5px; font-size:.6875rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#CC00FF; }
 .fr__new { background:linear-gradient(90deg,#CC00FF,#FF0066); -webkit-background-clip:text; background-clip:text; color:transparent; }
 .fr__new i { width:7px; height:7px; border-radius:9999px; background:linear-gradient(135deg,#CC00FF,#FF0066); box-shadow:0 0 6px rgba(204,0,255,.6), 0 0 10px rgba(255,0,102,.35); }
 .fr.is-new { animation:g-arrive .9s cubic-bezier(.16,1,.3,1) both; }
+@keyframes g-arrive { from { opacity:0; transform:translateY(-8px); background:color-mix(in srgb,#ED8936 18%,#fff); } }
 .fr.is-new.is-relocated { animation:none; }
-.fr:hover, .fr.is-new:hover { background:var(--vmc-color-orange-200); }
 /* Regreso de Valorizar/Publicar: el mismo gesto de llegada que una acción
    importante, pero sin una pantalla de «terminado». El trazo desaparece y la
    fila queda como parte normal de Mi Garaje. */
@@ -451,72 +388,54 @@
 .fr.is-arrival--valorizacion::after, .fr.is-arrival--publicacion::after { content:""; position:absolute; z-index:2; inset:0; padding:2px; border-radius:inherit; pointer-events:none; background:linear-gradient(112deg,#00B7BA 0%,#8460E5 52%,#CC00FF 100%); -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; }
 @keyframes fr-arrival-pulse { 0% { box-shadow:0 0 0 0 rgba(204,0,255,.26); } 24% { box-shadow:0 0 0 6px rgba(0,168,171,.12),0 8px 20px rgba(90,53,194,.14); } 72% { box-shadow:0 0 0 4px rgba(204,0,255,.08),0 8px 20px rgba(90,53,194,.14); } 100% { box-shadow:0 0 0 0 transparent; } }
 /* Fila nueva: gradiente del countdown del chat (ProgressBar «rainbow»: #CC00FF→#FF0066) + texto en negrita para separarla de las demás (sin fondo propio). */
-.fr.is-new .fr__name { font-weight:800; }
-.fr.is-new .fr__meta { font-weight:700; color:var(--ink); }
-.fr__meta { font-size:.8125rem; color:color-mix(in srgb,#191C1C 74%,#fff); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-variant-numeric:tabular-nums; }
-.fr__step { font-size:.75rem; font-weight:700; color:#5A35C2; }
-.fr__side { display:grid; justify-items:end; gap:4px; }
+
+
 /* La píldora EN VIVO ocupa el alto de la fila: así queda centrada respecto de
    foto, nombre y detalle, en lugar de pegarse al borde superior. */
-.fr__side:has(.badgestatus) { align-self:stretch; align-items:center; }
-.fr__side small { font-size:.75rem; color:var(--muted); font-variant-numeric:tabular-nums; }
-/* Contrapropuesta nueva: el plazo vive a la derecha de la fila; no se confunde
-   con «Ahora», que marca solamente la llegada de la notificación. */
-.fr__name .fr__timer { display:inline-flex; flex:none; align-items:center; margin-left:6px; padding-left:8px; border-left:1px solid #D9D6E1; }
-.fr.is-new .fr__name .fr__timer { border-left:2px solid #191C1C; }
-.fr__timer .cp-count { justify-items:end; gap:0; }
-.fr__timer .cp-count small { display:none; }
-.fr__timer .cp-count b { font-family:inherit; font-size:.75rem; font-weight:inherit; line-height:1.2; color:inherit; white-space:nowrap; }
+
 
 @media (max-width:829px) {
-  .fs__head { padding:4px; }
-  .fs__head > :not(.fs__h) { display:none; }
-  .fs__toggle { padding:14px 12px; gap:4px 10px; flex-wrap:wrap; }
-  .fs__title { flex:1; min-width:0; flex-wrap:wrap; }
-  .fs__chev { order:2; }
+  
+  
+  
+  
+  
   .fs__more { display:flex; padding:6px 0 2px; }
   .fs__summary { order:3; flex-basis:100%; white-space:normal; }
   .fs__thumbs { display:none; }
-  .fs__body { padding:0 14px 12px; }
+  
   .fs__tabs { overflow-x:auto; }
-  .fr { grid-template-columns:56px minmax(0,1fr) 18px; grid-template-areas:"img main chev" "img side chev"; gap:4px 12px; align-items:start; }
   /* Una valorización no tiene chevron ni estado debajo del texto: su CTA vive
      en la misma fila y se centra respecto de la miniatura y las dos líneas. */
   .fr.fr--publishable { grid-template-columns:56px minmax(0,1fr) auto; grid-template-areas:"img main side"; align-items:center; }
-  .fr--publishable .fr__side { grid-area:side; align-self:center; min-height:44px; }
-  .fr img { grid-area:img; width:56px; height:44px; }
-  .fr__main { grid-area:main; } .fr .g-chev { grid-area:chev; align-self:center; }
-  .fr__side { grid-area:side; display:flex; align-items:center; gap:8px; justify-items:start; margin-top:2px; }
-  .fr__meta { white-space:normal; }
+  .fr--publishable .fr__side { grid-area:side; align-self:center; min-height:44px; margin-top:2px; }
 }
-@media (prefers-reduced-motion:reduce) { .fr.is-new, .fr__demo-arrow { animation:none; } .fs__chev, .fr, .fs__toggle { transition:none; } .fr:active { transform:none; } }
+@media (prefers-reduced-motion:reduce) { .fr.is-new, .fr__demo-arrow { animation:none; }  }
 
 /* Publicar · patrón de confirmación visual. El control se siente como swipe,
    pero siempre responde a clic, tap y teclado; no exige descubrir el gesto. */
-.f-publishswipe { all:unset; box-sizing:border-box; display:block; width:84px; height:24px; cursor:pointer; border-radius:9999px; }
+
 .fr--publishable .fr__side { align-self:center; display:flex; align-items:center; justify-content:flex-end; min-height:48px; }
 /* En escritorio, las filas nuevas del inbox se dividen en dos pistas para el
    tiempo/punto de notificación. Una valorización no usa esas pistas: si hereda
    la primera, el CTA queda arriba. Aquí conserva una sola línea centrada. */
 .g--vmc.g-page .fa .fr.fr--publishable.is-new .fr__side { align-self:center; display:flex; align-items:center; justify-content:flex-end; min-height:48px; grid-template-rows:none; }
-.f-publishswipe__track { position:relative; display:flex; align-items:center; justify-content:center; width:100%; height:100%; overflow:visible; border:1px solid rgba(255,255,255,.42); border-radius:inherit; color:#fff; background:linear-gradient(135deg,#F4AC59 0%,#ED8936 46%,#D46E20 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.34),0 2px 6px rgba(212,110,32,.25); }
-.f-publishswipe__track::before { content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(255,255,255,.18),transparent 62%); pointer-events:none; }
-.f-publishswipe__label { position:relative; z-index:1; padding-left:14px; font-size:.625rem; font-weight:800; text-shadow:none; transition:transform .28s cubic-bezier(.16,1,.3,1),opacity .2s; }
-.f-publishswipe__thumb { position:absolute; z-index:2; top:-3px; bottom:-3px; left:-4px; display:grid; place-items:center; width:24px; border:1px solid rgba(255,255,255,.68); border-radius:9999px; color:#fff; background:rgba(255,255,255,.20); box-shadow:0 2px 6px rgba(178,86,20,.28),inset 0 1px 0 rgba(255,255,255,.52); backdrop-filter:blur(8px); transition:left .32s cubic-bezier(.16,1,.3,1),transform .2s ease; }
-.f-publishswipe__thumb svg { width:15px; height:15px; }
-.f-publishswipe__thumb svg circle { display:none; }
-.f-publishswipe:not(.is-confirming) .f-publishswipe__thumb { animation:f-publishswipe-nudge 2.6s cubic-bezier(.16,1,.3,1) 1.2s infinite; }
-.f-publishswipe:hover .f-publishswipe__thumb { transform:translateX(4px); }
-.f-publishswipe:active .f-publishswipe__thumb { transform:scale(.94); }
-.f-publishswipe.is-confirming { pointer-events:none; }
-.f-publishswipe.is-confirming .f-publishswipe__track { animation:f-publishswipe-loading .72s ease-in-out infinite alternate; }
-.f-publishswipe.is-confirming .f-publishswipe__thumb { left:calc(100% - 20px); animation:none; color:#fff; }
-.f-publishswipe.is-confirming .f-publishswipe__label { transform:translateX(-9px); }
-.f-publishswipe:focus-visible { outline:2px solid #8460E5; outline-offset:3px; }
-@keyframes f-publishswipe-nudge { 0%,62%,100% { transform:translateX(0); box-shadow:0 2px 6px rgba(178,86,20,.28),inset 0 1px 0 rgba(255,255,255,.52); } 76% { transform:translateX(8px); box-shadow:0 2px 10px rgba(255,255,255,.38),inset 0 1px 0 rgba(255,255,255,.62); } 88% { transform:translateX(2px); } }
-@keyframes f-publishswipe-loading { from { filter:brightness(1); box-shadow:inset 0 1px 0 rgba(255,255,255,.34),0 2px 6px rgba(212,110,32,.25); } to { filter:brightness(1.13); box-shadow:inset 0 1px 0 rgba(255,255,255,.52),0 3px 12px rgba(237,137,54,.52); } }
-@media (max-width:767px) { .f-publishswipe { width:80px; } }
-@media (prefers-reduced-motion:reduce) { .f-publishswipe__label, .f-publishswipe__thumb { transition:none; } .f-publishswipe:not(.is-confirming) .f-publishswipe__thumb, .f-publishswipe.is-confirming .f-publishswipe__track { animation:none; } }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Publicaciones autorrenovables: el total se alinea con «Publicado», sin iconografía adicional. */
 .fr--publication .fr__side { align-self:stretch; display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:6px; padding:0; }
@@ -531,39 +450,33 @@
 /* ── Fernando+ · acciones Publicar / Valorizar v2 ─────── */
 .f-actions { display:grid; gap:8px; justify-items:end; }
 .f-actions__row { display:grid; grid-template-columns:repeat(2,minmax(0,272px)); gap:12px; }
-.f-act { all:unset; box-sizing:border-box; cursor:pointer; display:grid; grid-template-columns:40px 1fr 20px; gap:12px; align-items:center; min-height:72px; padding:14px 14px 14px 16px; border-radius:18px;
-  transition:transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease-out; }
-.f-act:focus-visible { outline:2px solid #8460E5; outline-offset:3px; }
-.f-act:hover { transform:translateY(-2px); }
-.f-act:active { transform:translateY(0) scale(.99); }
-.f-act__icon { display:grid; place-items:center; width:40px; height:40px; border-radius:9999px; }
-.f-act__icon svg { width:22px; height:22px; stroke-width:2.2; }
-.f-act__text { display:grid; gap:1px; min-width:0; }
-.f-act__text b { font-size:1.0625rem; letter-spacing:-0.01em; }
-.f-act__text small { font-size:.8125rem; }
-.f-act__go { display:grid; transition:transform .2s cubic-bezier(.2,.8,.2,1); }
-.f-act:hover .f-act__go { transform:translateX(3px); }
+
+
+
+
+
+
+
+
+
+
+
 /* Publicar: naranja dominante; el vault solo entra en la esquina (evita el tono rosado-marrón del medio). */
-.f-act--publish { color:#fff; background:linear-gradient(135deg,#F4AC59 0%,#ED8936 45%,#D46E20 80%,#8460E5 135%);
-  box-shadow:0 8px 20px rgba(212,110,32,.30), inset 0 1px 0 rgba(255,255,255,.35); }
-.f-act--publish:hover { box-shadow:0 14px 28px rgba(212,110,32,.38), inset 0 1px 0 rgba(255,255,255,.35); }
-.f-act--publish .f-act__icon { background:rgba(255,255,255,.22); box-shadow:inset 0 0 0 1px rgba(255,255,255,.35); }
-.f-act--publish small { color:#FFF8F1; }
-.f-act--publish .g-chev { color:#fff; }
-.f-act--value { color:var(--ink); border:1px solid transparent;
-  background-image:linear-gradient(#fff,#fff), linear-gradient(120deg,#fff 0%,#F4AC59 35%,#8460E5 75%,#fff 100%); background-origin:border-box; background-clip:padding-box,border-box;
-  box-shadow:0 4px 14px rgba(34,0,92,.06); }
-.f-act--value:hover { box-shadow:0 12px 26px rgba(34,0,92,.12); }
-.f-act--value .f-act__icon { color:#5A35C2; background:#F5F0FF; }
-.f-act--value small { color:#5A35C2; }
-@media (min-width:830px) { .f-act__text small { white-space:nowrap; } }
+
+
+
+
+
+
+
+
+
 @media (max-width:829px) {
   .f-actions { justify-items:stretch; }
   .f-actions__row { grid-template-columns:1fr 1fr; }
-  .f-act { grid-template-columns:1fr 18px; grid-template-areas:"icon go" "text text"; gap:10px; padding:14px; }
-  .f-act__icon { grid-area:icon; } .f-act__go { grid-area:go; align-self:start; } .f-act__text { grid-area:text; }
+  
+    
 }
-@media (prefers-reduced-motion:reduce) { .f-act, .f-act__go { transition:none; } .f-act:hover, .f-act:active { transform:none; } }
 
 /* ── Fernando+ v3 · arriba en dos columnas: «tú y lo pendiente» | «lo que puedes hacer» ── */
 .f-top2 { display:grid; grid-template-columns:minmax(0,1fr) 375px; gap:24px; align-items:start; }
@@ -575,27 +488,25 @@
 .f-rail .f-act { min-height:64px; }
 
 /* Wallet v3 */
-.f-wallet { position:relative; isolation:isolate; overflow:hidden; display:grid; gap:16px; padding:20px; border-radius:20px; color:#fff;
-  background:linear-gradient(116deg,#5A35C2 0%,#2E0F70 55%,#100030 100%); box-shadow:0 18px 44px rgba(34,0,92,.28); }
-.f-wallet::before { content:""; position:absolute; z-index:-1; width:280px; height:280px; right:-110px; top:-130px; border-radius:50%;
-  background:radial-gradient(closest-side, rgba(237,137,54,.32), rgba(132,96,229,.10) 60%, transparent); }
-.f-wallet header { display:flex; justify-content:space-between; align-items:center; }
-.f-wallet h2 { margin:0; font-size:1.0625rem; font-weight:700; }
-.f-wallet header a { display:inline-flex; align-items:center; gap:2px; font-size:.8125rem; font-weight:700; color:#FDD8A4; text-decoration:none; }
-.f-wallet header a .g-chev { color:#FDD8A4; }
-.f-wallet header a:hover { color:#fff; }
-.f-wallet header a:focus-visible { outline:2px solid #fff; outline-offset:2px; border-radius:4px; }
-.f-wallet__bal { margin:0; display:grid; grid-template-columns:1.25fr 1fr; }
-.f-wallet__bal div { display:grid; gap:2px; }
-.f-wallet__bal div + div { padding-left:16px; border-left:1px solid rgba(255,255,255,.18); }
-.f-wallet__bal dt { font-size:.75rem; color:#CFBAFF; }
-.f-wallet__bal dd { margin:0; font-size:1.75rem; line-height:1.15; font-weight:800; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; white-space:nowrap; }
-.f-wallet__bal div + div dd { font-size:1.375rem; padding-top:4px; }
-.f-wallet__bal dd small { font-size:.8125rem; font-weight:700; color:#E8DEFF; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .f-wallet__last { margin:0; padding:10px 12px; border-radius:12px; background:rgba(255,255,255,.08); font-size:.75rem; color:#E8DEFF; font-variant-numeric:tabular-nums; }
 .f-wallet__last span { display:block; font-size:.6875rem; color:#CFBAFF; }
 .f-wallet__last b { color:#fff; }
-.f-wallet > button { justify-self:start; }
+
 
 /* Pendientes: resumen agrupado del resto */
 .f-pend__more { all:unset; box-sizing:border-box; cursor:pointer; display:flex; align-items:center; gap:12px; margin:4px -10px 0; padding:12px 10px; border-radius:12px; border-top:1px solid var(--line); font-size:.8125rem; }
@@ -611,7 +522,7 @@
 @media (max-width:829px) {
   .f-top2, .f-main, .f-rail { display:contents; }
   .g-page > .f-top2 { order:0; }
-  .f-head { order:0; } .f-rail .f-actions { order:1; } .f-pend { order:2; } .f-wallet { order:3; }
+  .f-head { order:0; } .f-rail .f-actions { order:1; } .f-pend { order:2; } 
   .f-rail .f-actions__row { grid-template-columns:1fr 1fr; }
   .f-pend__more { flex-wrap:wrap; } .f-pend__more span:first-child { flex-basis:calc(100% - 32px); }
 }
@@ -629,7 +540,7 @@
 .f-grid > .f-pend { height:100%; }
 .f-grid > .f-wallet { height:100%; align-content:start; }
 .f-grid > .f-wallet > button { margin-top:auto; align-self:end; }
-.f-wallet { grid-template-rows:auto auto auto 1fr; }
+
 .f-wallet__last b { margin-right:4px; }
 
 /* Pendientes: columnas fijas → cuentas regresivas y botones en la misma vertical y del mismo ancho */
@@ -651,11 +562,9 @@
 .f-grid > .f-wallet { display:flex; flex-direction:column; justify-content:space-between; gap:14px; }
 .f-grid > .f-wallet > button { margin-top:0; align-self:flex-start; }
 /* Wallet: CTA de extremo a extremo (mismo ancho que el bloque de saldos), contenido centrado. */
-.f-grid > .f-wallet > button, .f-wallet > button { align-self:stretch; width:100%; justify-content:center; height:44px; }
-.fr__img { position:relative; display:block; width:64px; height:48px; }
+.f-grid > .f-wallet > button { align-self:stretch; width:100%; justify-content:center; height:44px; }
 .fr__nphotos { position:absolute; right:4px; bottom:4px; display:inline-flex; align-items:center; gap:3px; padding:1px 6px; border-radius:9999px; font-size:.625rem; font-weight:800; color:#fff; background:rgba(16,0,48,.62); font-variant-numeric:tabular-nums; }
 .fr__nphotos::before { content:""; width:9px; height:7px; border:1.5px solid #fff; border-radius:2px; }
-@media (max-width:829px) { .fr__img { grid-area:img; width:56px; height:44px; } }
 
 /* ── Pulso Fuente · sin Pendientes: cabecera | acciones, y debajo Tu actividad | riel (Wallet + SubasPass) ── */
 /* Dos columnas, no cuatro cuadrantes: Tu actividad ocupa toda la altura de la izquierda y el riel
@@ -665,14 +574,14 @@
 .f-src .f-head__acct nav { border-left:0; padding-left:0; }
 .f-src .f-actions { justify-items:stretch; }
 .f-src .f-actions__row { grid-template-columns:1fr; gap:10px; }
-.f-src .f-act { min-height:64px; }
+
 .f-src__main .g-activity { padding-top:0; }
 .f-src__rail { position:sticky; top:24px; display:grid; gap:16px; }
 .f-src__rail .g-subaspass { flex-direction:column; align-items:stretch; padding:20px; gap:10px; }
 @media (max-width:1100px) {
   .f-src { grid-template-columns:1fr; gap:24px; }
   .f-src__main, .f-src__rail { display:contents; }
-  .f-src .f-head { order:0; } .f-src .f-actions { order:1; } .f-src .f-wallet { order:2; } .f-src__main .g-activity { order:3; } .f-src__rail .g-subaspass { order:4; }
+  .f-src .f-head { order:0; } .f-src .f-actions { order:1; }  .f-src__main .g-activity { order:3; } .f-src__rail .g-subaspass { order:4; }
   .f-src .f-actions__row { grid-template-columns:1fr 1fr; }
 }
 
@@ -680,30 +589,30 @@
    1º Publicar (único naranja de bloque) · 2º Tu actividad y lo que pide acción · 3º Wallet · 4º SubasPass (promo, la más tranquila).
    Naranja = algo que hacer. Turquesa = novedad. Morado = estructura. */
 .f-src .g-head h2 { font-size:1.5rem; }
-.f-src .fs__name { font-size:1.0625rem; }
+
 .f-src .g-newcount { color:#008688; background:#E0F5F5; }
 .fs__act { flex:none; white-space:nowrap; display:inline-flex; align-items:center; height:22px; padding:0 9px; border-radius:9999px; font-size:.75rem; font-weight:700; color:#fff; background:#ED8936; }
-.f-src .f-wallet__bal dd { font-size:1.5rem; }
-.f-src .f-wallet__bal div + div dd { font-size:1.25rem; }
-.f-src .f-wallet { box-shadow:0 8px 24px rgba(34,0,92,.16); }
+
+
+
 .f-src .g-subaspass { color:var(--ink); background:#fff; box-shadow:inset 0 0 0 1px var(--line); border-left:4px solid #ED8936; }
 .f-src .g-subaspass b { font-size:1.0625rem; }
 .f-src .g-subaspass span { color:var(--muted); }
-.fs__icon { flex:none; display:grid; place-items:center; width:30px; height:30px; border-radius:9px; color:#5A35C2; background:#F5F0FF; }
+
 .f-head__title p.is-todo { font-weight:700; color:#B25614; }
 
 /* ── Pulso Fuente · organización: columnas fijas en los encabezados de sección para que todo alinee en vertical ── */
 .f-src .f-head__title { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
 .f-head__links { display:flex; gap:16px; padding-top:10px; }
 .g--vmc.g-page .f-head__links { align-items:center; padding-top:2px; }
-.f-src .fs__toggle { display:grid; grid-template-columns:270px 150px minmax(0,1fr) 20px; gap:12px; }
-.f-src .fs__name { white-space:nowrap; }
+
+
 .f-src .fs__chips { display:flex; gap:6px; flex-wrap:wrap; min-width:0; }
-.f-src .fs__chev { margin-left:0; justify-self:end; grid-column:4; }
+
 .f-src .fs.is-open .fs__summary { display:none; }
 @media (max-width:829px) {
-  .f-src .fs__toggle { grid-template-columns:minmax(0,1fr) 20px; }
-  .f-src .fs__chips { grid-column:1; grid-row:2; } .f-src .fs__summary { grid-column:1; } .f-src .fs__chev { grid-row:1; grid-column:2; }
+  
+  .f-src .fs__chips { grid-column:1; grid-row:2; } .f-src .fs__summary { grid-column:1; } 
   .f-src .f-head__title { flex-wrap:wrap; }
 }
 .f-src > .f-head { justify-content:flex-start; gap:20px; }
@@ -724,25 +633,25 @@
 /* ── Pulso Fuente · tarjeta de cuenta (13/10). Patrón UserProfileCard: rótulo arriba, valor abajo, en columnas;
    SubasPass como banda al pie con el gradiente de Zona. Mismo lenguaje de tarjeta blanca que Tu actividad. */
 .f-src .f-head__acct { display:block; }
-.f-acct { overflow:hidden; border-radius:20px; background:#fff; box-shadow:0 1px 2px rgba(34,0,92,.06), inset 0 0 0 1px var(--line); }
-.f-acct__row { display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr); grid-template-rows:auto auto auto; }
-.f-acct__row > * { padding:16px 20px; }
-.f-acct__row > * + * { border-left:1px solid var(--line); }
+
+
+
+
 /* Las tres columnas comparten filas (subgrid): rótulo, valor y enlace caen a la misma altura. */
-.f-acct__stat { display:grid; grid-row:span 3; grid-template-rows:subgrid; row-gap:6px; justify-items:start; align-items:center; }
-.f-acct__k { display:inline-flex; align-items:center; gap:6px; font-size:.6875rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
-.f-acct__v { display:inline-flex; align-items:center; gap:8px; min-height:36px; }
-.f-acct__v b { font-size:1.25rem; font-weight:800; color:var(--ink); font-variant-numeric:tabular-nums; }
-.f-acct__v svg { margin:-4px -4px -4px -6px; }
-.f-acct__summary { grid-template-columns:max-content max-content; grid-template-rows:subgrid; column-gap:16px; justify-content:start; align-items:normal; }
-.f-acct__metric { display:grid; grid-row:span 3; grid-template-rows:subgrid; row-gap:6px; justify-items:start; align-items:center; min-width:0; }
-.f-acct__metric .pprofilebtn { align-self:end; }
-.f-acct__membership { grid-template-rows:subgrid; align-items:center; }
-.f-acct__expiry { align-self:end; font-size:.8125rem; font-weight:600; line-height:1.2; color:#3B1782; font-variant-numeric:tabular-nums; white-space:nowrap; }
-.f-rep { --rep:#00A8AB; --rep-ink:#006466; }
-.f-rep.is-bajo, .f-rep.is-regular { --rep:#8460E5; --rep-ink:var(--vmc-color-vault-700); }
-.f-rep.is-alto { --rep:linear-gradient(135deg,#CC00FF,#FF0066); --rep-ink:#A800D4; }
-.f-rep .f-acct__v b { color:var(--rep-ink); }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .f-tip { position:relative; text-transform:none; letter-spacing:0; font-weight:400; }
 .f-tip summary { list-style:none; display:grid; place-items:center; width:28px; height:28px; margin:-7px; border-radius:9999px; cursor:pointer; }
 .f-tip summary::-webkit-details-marker { display:none; }
@@ -753,36 +662,31 @@
 .f-tip__body ul { margin:0; padding:0; list-style:none; display:grid; gap:4px; }
 .f-tip__body li { display:flex; justify-content:space-between; gap:12px; color:var(--muted); }
 .f-tip__body li b { color:var(--ink); }
-.f-acct__pass { display:flex; align-items:center; gap:12px; padding:12px 20px; color:#fff; text-decoration:none; background:linear-gradient(110deg,#22005C 0%,#5A35C2 55%,#ED8936 100%); }
-.f-acct__pass.is-active { background:linear-gradient(110deg,#22005C 0%,#3B1782 100%); }
-.f-acct__passname { font-weight:800; white-space:nowrap; } .f-acct__passname span { color:#FBC47D; }
-.f-acct__passmsg { flex:1; font-size:.875rem; padding-left:12px; border-left:1px solid rgba(255,255,255,.35); }
-.f-acct__passcta { display:inline-flex; align-items:center; gap:2px; font-size:.875rem; font-weight:700; white-space:nowrap; }
-.f-acct__passcta .g-chev { width:16px; height:16px; color:#fff; transition:transform .15s; }
-.f-acct__pass:hover .f-acct__passcta .g-chev { transform:translateX(3px); }
-.f-acct__pass:focus-visible { outline:2px solid #fff; outline-offset:-4px; }
+
+
+ 
+
+
+
+
+
 @media (max-width:767px) {
-  .f-acct__row { grid-template-columns:1fr 1fr; } .f-acct__me { grid-column:1 / -1; border-bottom:1px solid var(--line); }
-  .f-acct__row > .f-acct__stat:first-of-type { border-left:0; } .f-acct__pass { flex-wrap:wrap; } .f-acct__passmsg { flex-basis:100%; order:3; padding-left:0; border-left:0; }
+   
+    
   .f-tip__body { left:auto; right:-8px; transform:none; }
 }
-@media (prefers-reduced-motion:reduce) { .f-acct__passcta .g-chev { transition:none; } }
-.f-acct__v b { white-space:nowrap; }
-.f-acct__passcta { margin-left:auto; }
-@media (max-width:767px) { .f-rep .f-acct__v { flex-wrap:wrap; gap:6px 8px; } }
-.f-acct__stat > .pprofile, .f-acct__stat > a, .f-acct__stat > button { align-self:end; }
-@media (max-width:767px) { .f-acct__row { grid-template-rows:auto auto auto auto auto auto; } .f-acct__me { grid-row:1 / span 3; border-bottom:1px solid var(--line); } }
-@media (max-width:767px) { .f-acct__me + .f-acct__stat { border-left:0; } }
+
+
+
 
 /* ── Pulso Fuente · interruptor «Solo lo que te necesita» en el encabezado de Tu actividad (13/10). */
-.f-only { all:unset; box-sizing:border-box; cursor:pointer; display:inline-flex; align-items:center; gap:10px; min-height:36px; padding:0 4px; font-size:.875rem; font-weight:600; color:var(--ink); }
-.f-only b { min-width:20px; height:20px; display:inline-grid; place-items:center; padding:0 6px; border-radius:9999px; font-size:.75rem; font-weight:700; line-height:1; color:#fff; background:#3B1782; font-variant-numeric:tabular-nums; }
-.f-only__track { position:relative; width:36px; height:20px; border-radius:9999px; background:#C9CCCB; transition:background-color .15s; }
-.f-only__track i { position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:9999px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25); transition:transform .15s; }
-.f-only[aria-checked="true"] .f-only__track { background:var(--vmc-color-orange-600,#ED8936); }
-.f-only[aria-checked="true"] .f-only__track i { transform:translateX(16px); }
-.f-only:focus-visible { outline:2px solid #8460E5; outline-offset:2px; border-radius:8px; }
-@media (prefers-reduced-motion:reduce) { .f-only__track, .f-only__track i { transition:none; } }
+
+
+
+
+
+
+
 
 /* ══ Pulso Fuente · auditoría de jerarquía (13/10) ══════════════════════════════════════════════
    Escala: Display 40/800 · Headline 24/800 · Title 18/800 · Body fuerte 15/600 · Label 14/600 (Concorde label-md)
@@ -790,36 +694,36 @@
    Texto: morado de marca (principal) + un solo gris (--muted). Espacios en múltiplos de 8 (4 dentro de piezas chicas).
    Cyan queda para NEGOCIABLE (Concorde): lo «bueno» y lo completado ya no lo usan. */
 /* Headline */
-.f-src .f-wallet__bal dd, .f-src .f-wallet__bal div + div dd { font-size:1.5rem; font-weight:800; }
-.f-src .f-wallet__bal dd small { font-size:.875rem; font-weight:600; }
+
+
 /* Title 18/800 */
-.f-src .fs__name, .f-src .f-act__text b, .f-src .f-wallet h2, .f-src .f-acct__stat:not(.f-acct__me) .f-acct__v b { font-size:1.125rem; font-weight:800; }
+
 /* Body fuerte 15/600 */
-.f-src .f-acct__me .f-acct__v b { font-size:.9375rem; font-weight:600; }
+
 /* Una fila se lee de un solo peso: completa en light al verla y completa en bold
    mientras sea una novedad. No mezclar el nombre fuerte con los metadatos tenues. */
-.f-src .fr__name { font-size:.9375rem; font-weight:400; }
-.f-src .fr.is-new .fr__name { font-weight:700; color:#191C1C; }
-.f-src .f-acct__passname { font-size:.9375rem; font-weight:800; }
+
+
+
 /* Wallet (14/10): ghost de Concorde, la variante para fondo oscuro; en una línea y secundaria frente a «Publicar». */
-.f-src .f-wallet .psec { width:100%; font-size:.9375rem; white-space:nowrap; gap:8px; } .f-src .f-wallet .psec svg { width:20px; height:20px; flex:none; }
-.f-src .f-wallet .f-wallet__acquire-circle { flex:none; display:grid; place-items:center; width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.34); box-shadow:inset 0 0 0 1px rgba(255,255,255,.32),0 1px 3px rgba(34,0,92,.18); color:#fff; font-family:var(--vmc-font-mono,ui-monospace,monospace); font-size:10px; font-weight:800; letter-spacing:-.04em; line-height:1; text-shadow:0 1px 2px rgba(34,0,92,.42); }
+ 
+
 /* Label 14/600 */
-.f-src .fs__tabs button, .f-src .f-wallet header a, .f-src .f-acct__passcta, .f-src .f-only { font-size:.875rem; font-weight:600; }
+.f-src .fs__tabs button { font-size:.875rem; font-weight:600; }
 /* Body 14/400 */
-.f-src .fr__meta, .f-src .fs__summary, .f-src .f-act__text small, .f-src .f-acct__passmsg, .f-tip__body { font-size:.875rem; font-weight:400; }
-.f-src .fr__meta { color:var(--muted); }
-.f-src .fr.is-new .fr__meta { font-weight:700; color:var(--ink); }
+.f-src .fs__summary, .f-tip__body { font-size:.875rem; font-weight:400; }
+
+
 .f-src .fr.is-sent .fr__name { font-weight:400; }
-.f-src .fr.is-unread .fr__name, .f-src .fr.is-unread .fr__meta { font-weight:700; color:#191C1C; }
+
 .f-src .fr.is-regular:not(.is-new):not(.is-unread) .fr__name { font-weight:400; }
 .f-src .fr.is-detail-strong .fr__name, .f-src .fr.is-detail-strong .fr__meta, .f-src .fr.is-detail-strong .fr__side small { font-weight:700; color:#191C1C; }
 .f-src .fr__side .fr__due { font-weight:700; color:#191C1C; }
 .f-tip__body li b { font-weight:600; }
 /* Caption 12/600 */
-.f-src .f-acct__k, .f-src .fs__count, .f-src .fs__tabs button span, .f-src .fs__act, .f-src .f-only b, .f-src .g-status, .f-src .fr__step, .f-src .f-wallet__last b, .f-src .g-newcount { font-size:.75rem; font-weight:600; }
-.f-src .f-wallet__last span, .f-src .fr__side small, .f-src .f-wallet__bal dt { font-size:.75rem; font-weight:400; }
-.f-src .fr.is-new .fr__side small, .f-src .fr.is-unread .fr__side small { font-weight:700; color:#191C1C; }
+.f-src .fs__count, .f-src .fs__tabs button span, .f-src .fs__act, .f-src .g-status, .f-src .fr__step, .f-src .f-wallet__last b, .f-src .g-newcount { font-size:.75rem; font-weight:600; }
+.f-src .f-wallet__last span { font-size:.75rem; font-weight:400; }
+
 /* Leídas: todo va en el mismo light real (300), incluso el nombre, el detalle y el vencimiento.
    Solo is-new/is-unread es una notificación y por eso puede usar bold. */
 .f-src .fr:not(.is-new):not(.is-unread):not(.is-detail-strong) .fr__name,
@@ -830,26 +734,26 @@
 /* Un solo gris de texto */
 .f-src .g-status--wait, .f-src .g-status--done { color:var(--muted); background:color-mix(in srgb,#E1E3E2 60%,#fff); }
 /* Riesgo: el estado bueno es el termómetro lleno en morado, no el cyan (Concorde: cyan = negociable) */
-.f-rep, .f-rep.is-bajo, .f-rep.is-regular { --rep:#8460E5; --rep-ink:#3B1782; }
+
 /* Espacios en la grilla de 8 */
 .f-src .f-head { gap:16px; }
 .f-src__main { gap:40px; }
 .f-src .g-activity { gap:16px; }
-.f-src .fr { padding:12px; gap:16px; }
+
 
 /* ── Notificación de sección (13/10): número en círculo magenta (badge) + texto corto en magenta, sin píldora. */
 .g-sr { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 .f-src .fs__act, .f-src .fs__act--live { height:auto; padding:0; gap:6px; background:none; box-shadow:none; border:0; color:var(--mg-text); font-size:.75rem; font-weight:600; }
 .f-src .fs__act > b { min-width:20px; height:20px; display:inline-grid; place-items:center; padding:0 6px; border-radius:9999px; font-size:.75rem; font-weight:800; color:#fff; background:var(--mg-ink); box-shadow:0 0 0 2px #fff, 0 2px 6px rgba(204,0,255,.35); font-variant-numeric:tabular-nums; }
-.f-acct__passname em { margin-left:6px; padding:1px 7px; border-radius:9999px; font-style:normal; font-size:.75rem; font-weight:800; letter-spacing:.04em; color:#22005C; background:#FBC47D; }
+
 
 /* ── Vista rápida: un solo scroll (13/10). Todo el panel desliza junto (foto, título, propuesta); solo las acciones quedan
    pegadas abajo y la página de atrás no se mueve mientras el panel está abierto. */
-.g-qv__panel { display:flex; flex-direction:column; overflow-y:auto; overscroll-behavior:contain; }
+
 .g-qv__body { overflow:visible; flex:1 0 auto; }
 .g-qv__foot { position:sticky; bottom:0; z-index:2; background:#fff; }
 .g-qv .np__foot { bottom:0; z-index:2; }
-html:has(dialog.g-qv[open]) { overflow:hidden; }
+
 /* Si el contenido es corto, las acciones bajan al borde inferior del panel (sin hueco debajo). */
 .g-qv__body { display:flex; flex-direction:column; }
 .g-qv .np { flex:1; display:flex; flex-direction:column; }
@@ -858,16 +762,16 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 
 /* ══ Mi Wallet · jerarquía (14/10): título → saldos → acción. «Transacciones» baja a enlace secundario,
    saldos en dos columnas iguales con la misma línea base, y la acción separada por aire y un divisor. */
-.f-src .f-wallet { gap:0; padding:20px 20px 18px; }
-.f-src .f-wallet header { margin-bottom:16px; }
-.f-src .f-wallet header a { font-size:.8125rem; font-weight:600; color:rgba(255,255,255,.72); }
-.f-src .f-wallet header a .g-chev { color:currentColor; }
-.f-src .f-wallet header a:hover { color:#fff; }
-.f-src .f-wallet__bal { grid-template-columns:1fr 1fr; align-items:end; }
-.f-src .f-wallet__bal dd, .f-src .f-wallet__bal div + div dd { font-size:1.5rem; padding-top:0; }
-.f-src .f-wallet__bal div + div { padding-left:20px; }
-.f-src .f-wallet__bal { padding-bottom:20px; border-bottom:1px solid rgba(255,255,255,.14); }
-.f-src .f-wallet > button { margin-top:18px; }
+
+
+
+
+
+
+
+
+
+
 
 /* ── Pulso Fuente · estados (14/10). La píldora queda solo para Concorde (BadgeStatus EN VIVO / PRÓXIMA).
    El resto del estado es texto: gris si toca esperar, magenta si te toca actuar. Sin estado cuando la sección
@@ -878,27 +782,27 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 
 /* ── Pulso Fuente · Wallet plana (14/10): sin el brillo naranja (se mezclaba en marrón y competía con «Publicar»).
    Degradado de Concorde (TabSelector activo). */
-.f-src .f-wallet { background:linear-gradient(160deg,#3B1782 0%,#22005C 100%); }
-.f-src .f-wallet::before { display:none; }
+
+
 
 /* ══ Pulso Fuente · movimiento y claridad (14/10, pedido de Julio vía Cobblepot)
    Curva y duración: las que Concorde repite en sus componentes (0.2s cubic-bezier(.25,.8,.25,1)); no hay tokens de movimiento aún. */
 .f-src { --mg-ease:cubic-bezier(.25,.8,.25,1); }
 /* Acordeón: altura y opacidad, sin rebote ni filas escalonadas. El cuerpo queda montado e inert cuando está cerrado. */
-.f-src .fs__wrap { display:grid; grid-template-rows:0fr; opacity:0; overflow:hidden; transition:grid-template-rows .2s var(--mg-ease), opacity .2s var(--mg-ease); }
-.f-src .fs.is-open .fs__wrap { grid-template-rows:1fr; opacity:1; }
-.f-src .fs__wrap > .fs__body { min-height:0; overflow:hidden; }
+
+
+
 /* Filtro: reacomodo de 200 ms; las filas que salen solo se desvanecen (sin escala). */
 ::view-transition-group(*) { animation-duration:.2s; animation-timing-function:cubic-bezier(.25,.8,.25,1); }
 ::view-transition-old(*), ::view-transition-new(*) { height:100%; object-fit:none; object-position:left top; }
 /* Encabezado de sección: total junto al título; lo que pide acción a la derecha, antes de la flecha, visible plegado o abierto. */
-.f-src .fs__toggle { grid-template-columns:minmax(0,1fr) auto auto 20px; }
+
 .f-src .fs__summary { order:2; text-align:right; }
 .f-src .fs__chips { order:3; justify-self:end; }
-.f-src .fs__chev { order:4; grid-column:auto; }
+
 @media (max-width:829px) {
-  .f-src .fs__toggle { grid-template-columns:minmax(0,1fr) auto 20px; }
-  .f-src .fs__chips { grid-column:2; grid-row:1; } .f-src .fs__chev { grid-column:3; grid-row:1; } .f-src .fs__summary { grid-column:1 / -1; grid-row:2; text-align:left; }
+  
+  .f-src .fs__chips { grid-column:2; grid-row:1; }  .f-src .fs__summary { grid-column:1 / -1; grid-row:2; text-align:left; }
 }
 /* Publicidad: rotulada, con el espacio reservado; un brillo del borde al aparecer y luego quieta (la Wallet no se mueve). */
 .f-ad { display:grid; gap:6px; }
@@ -911,7 +815,7 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
   -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude;
   animation:f-ad-shine 1.6s .6s var(--mg-ease) 1 both; }
 @keyframes f-ad-shine { from { background-position:200% 0; } to { background-position:-100% 0; } }
-@media (prefers-reduced-motion:reduce) { .f-src .fs__wrap { transition:none; } .f-ad__slot::before { animation:none; opacity:0; } ::view-transition-group(*) { animation:none; } }
+@media (prefers-reduced-motion:reduce) {  .f-ad__slot::before { animation:none; opacity:0; } ::view-transition-group(*) { animation:none; } }
 /* Riel más alto que la pantalla: baja con la página hasta mostrar su final y ahí queda fijo (--rail-h lo mide Garaje.tsx).
    Si entra entero, se queda arriba como antes. */
 .f-src__rail { top:min(24px, calc(100vh - var(--rail-h, 0px) - 24px)); }
@@ -919,9 +823,9 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 .f-ad__k { user-select:none; } /* el rótulo no se selecciona al hacer doble clic cerca */
 /* Mobile: no entra título + total + «1 Por responder» en una línea; el aviso baja a la segunda, el total queda junto al título. */
 @media (max-width:829px) {
-  .f-src .fs__toggle { grid-template-columns:minmax(0,1fr) 20px; }
-  .f-src .fs__title { flex-wrap:nowrap; }
-  .f-src .fs__chev { grid-column:2; grid-row:1; }
+  
+  
+  
   .f-src .fs__chips { grid-column:1; grid-row:2; justify-self:start; }
   .f-src .fs__summary { grid-column:1; grid-row:3; }
 }
@@ -934,19 +838,18 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 .f-shelf .pcard { scroll-snap-align:start; }
 @media (max-width:1100px) { .f-src__main .f-shelf { order:4; } }
 /* Publicar y Valorizar: hover y pressed visibles (antes solo subían 2 px). Curva de Concorde. */
-.f-src .f-act { transition:transform .2s cubic-bezier(.25,.8,.25,1), box-shadow .2s cubic-bezier(.25,.8,.25,1), background-color .2s, border-color .2s, filter .2s; }
-.f-src .f-act--publish:hover { filter:brightness(1.06) saturate(1.05); box-shadow:0 14px 28px rgba(212,110,32,.4), inset 0 1px 0 rgba(255,255,255,.4); }
-.f-src .f-act--publish:active { transform:scale(.98); filter:brightness(.94); box-shadow:inset 0 2px 6px rgba(120,50,0,.35); }
-.f-src .f-act--value:hover { border-color:#CFBAFF; background-color:#FBF9FF; box-shadow:0 12px 26px rgba(34,0,92,.12); }
-.f-src .f-act--value:hover .f-act__icon { color:#ED8936; background:#FFF1E2; }
-.f-src .f-act--value:active { transform:scale(.98); background-color:#F5F0FF; box-shadow:inset 0 2px 6px rgba(34,0,92,.12); }
-.f-src .f-act__icon { transition:color .2s, background-color .2s; }
+
+
+
+
+
+
+
 /* Íconos de sección: degradado vault (TabSelector activo) en un mosaico suave; naranja al pasar, como la barra lateral de Concorde. */
-.f-src .fs__icon { width:36px; height:36px; border-radius:12px; background:linear-gradient(135deg,#F5F0FF,#EDE6FF); box-shadow:inset 0 1px 0 #fff, inset 0 0 0 1px rgba(132,96,229,.14); transition:background .2s; }
-.f-src .fs__icon path { fill:var(--ico); }
-.f-src .fs__toggle:hover .fs__icon { background:linear-gradient(135deg,#FFF8F1,#FFEBD6); }
-.f-src .fs__toggle:hover .fs__icon path { fill:var(--ico-h); }
-@media (prefers-reduced-motion:reduce) { .f-src .f-act, .f-src .fs__icon { transition:none; } .f-src .f-act:active { transform:none; } }
+
+
+
+
 .f-shelf { min-width:0; max-width:100%; } .f-shelf > div:last-child { min-width:0; } /* en la grilla, el estante no impone sus 766 px */
 
 /* ── Maqueta VMC (15/10): Pulso Fuente tal cual, compactado a la columna de ~766 px de vmcsubastas.com.
@@ -958,8 +861,8 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
   .g--vmc .f-src__main { display:grid; gap:24px; }
   .g--vmc .f-src__rail { display:grid; gap:12px; position:sticky; }
   .g--vmc .f-src .f-actions__row { grid-template-columns:1fr; gap:10px; } /* entre 1024 y 1100 px Fuente las pone lado a lado */
-  .g--vmc .f-src .fs__toggle { grid-template-columns:minmax(0,1fr) auto 20px; }
-  .g--vmc .f-src .fs__chips { grid-column:2; grid-row:1; justify-content:flex-end; } .g--vmc .f-src .fs__summary { grid-column:1 / 3; grid-row:2; } .g--vmc .f-src .fs__chev { grid-row:1; grid-column:3; }
+  
+  .g--vmc .f-src .fs__chips { grid-column:2; grid-row:1; justify-content:flex-end; } .g--vmc .f-src .fs__summary { grid-column:1 / 3; grid-row:2; } 
   .g--vmc .f-src .f-head__title { flex-wrap:wrap; }
 }
 
@@ -976,38 +879,38 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 @media (min-width:1024px) {
   .g--vmc .f-src { grid-template-columns:minmax(0,1fr) 256px; }
   .g--vmc .f-head .g-head h1, .g--vmc .f-head h1 { font-size:1.5rem; }
-  .g--vmc .g-activity .g-head h2, .g--vmc .f-recs .g-head h2 { font-size:1.125rem; }
-  .g--vmc .f-src .fs__name { font-size:.9375rem; }
+  .g--vmc .g-activity .g-head h2 { font-size:1.125rem; }
+  
   /* Tarjeta de cuenta: rótulos en una línea, valores al mismo tamaño. */
-  .g--vmc .f-acct__row > * { padding:12px 16px; }
-  .g--vmc .f-acct__k { font-size:.75rem; font-weight:600; letter-spacing:.04em; white-space:nowrap; }
-  .g--vmc .f-acct__v { min-height:28px; }
-  .g--vmc .f-acct__pass { padding:10px 16px; gap:8px; }
-  .g--vmc .f-acct__passname { font-size:.875rem; }
-  .g--vmc .f-acct__passmsg, .g--vmc .f-acct__passcta { font-size:.75rem; }
-  .g--vmc .f-acct__passmsg { padding-left:8px; }
+  
+  
+  
+  
+  
+  
+  
   /* Riel: Publicar/Valorizar y Wallet a la medida de 256 px. */
-  .g--vmc .f-act { grid-template-columns:32px 1fr 16px; gap:10px; min-height:56px; padding:10px 12px; border-radius:16px; }
-  .g--vmc .f-act__icon { width:32px; height:32px; }
-  .g--vmc .f-act__text b { font-size:.9375rem; } .g--vmc .f-act__text small { font-size:.75rem; }
-  .g--vmc .f-src .f-wallet { padding:16px; gap:12px; border-radius:16px; }
-  .g--vmc .f-wallet h2 { font-size:.9375rem; font-weight:800; }
-  .g--vmc .f-src .f-wallet a, .g--vmc .f-src .f-wallet h2 + * { font-size:.75rem; }
-  .g--vmc .f-src .f-wallet__bal dd, .g--vmc .f-src .f-wallet__bal div + div dd { font-size:1.125rem; padding-top:0; }
-  .g--vmc .f-src .f-wallet__bal dd small { font-size:.75rem; }
-  .g--vmc .f-wallet__bal div + div { padding-left:12px; }
-  .g--vmc .f-wallet .psec { font-size:.875rem; }
+  
+  
+   
+  
+  
+  
+  
+  
+  
+  
   /* Revisión final: Wallet sin aire de más, íconos a la medida del texto de 15 px, SubasPass con respiro. */
-  .g--vmc .f-src .f-wallet { grid-template-rows:none; align-content:start; }
-  .g--vmc .f-src .f-wallet__bal { padding-bottom:12px; }
-  .g--vmc .f-act__icon svg { width:18px; height:18px; }
-  .g--vmc .f-src .fs__icon { width:32px; height:32px; }
-  .g--vmc .f-acct__pass { gap:12px; }
-  .g--vmc .f-acct__passmsg { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  
+  
+  
+  
+  
+  
 }
 
 /* Íconos de vidrio en las secciones de Pulso Fuente (15/10): sin mosaico, el ícono es la composición. Hover/foco del encabezado los anima. */
-.f-src .fs__icon--glass, .f-src .fs__toggle:hover .fs__icon--glass { width:40px; height:40px; border-radius:0; background:none; box-shadow:none; }
+
 /* Resto de íconos de vidrio en Pulso Fuente (15/10). Publicar: el ícono va sobre un círculo blanco para leerse sobre el naranja.
    Wallet: sólido naranja sobre el fondo vault (el violeta se perdería). «Requieren tu acción»: la campana suena al pasar. */
 /* Íconos de vidrio en Publicar/Valorizar (15/10): son ilustrativos, no glifos. Un glifo en botón mide ~1,1× el texto;
@@ -1019,8 +922,8 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 .f-act--publish .vd { --solid:#fff; --glass:#FFE3C7; }
 .f-act--publish .vd :is([fill="#fff"]) { fill:#C2560F; } .f-act--publish .vd :is([stroke="#fff"]) { stroke:#C2560F; }
 .f-act--publish .vd .vd-edge { stroke:#fff; stroke-opacity:.8; }
-.f-wallet h2 { display:flex; align-items:center; gap:8px; }
-.f-wallet .vd { --solid:#ED8936; --glass:#CFBAFF; }
+
+
 .f-only .vd { flex:none; margin:-4px 0; }
 
 /* ── Maqueta VMC · revisión (15/10) ──
@@ -1029,8 +932,8 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
    3) Anuncio como banner con botón HTML clicable (en VMC es una imagen entera). */
 @media (min-width:1024px) {
   .g--vmc .f-src { grid-template-columns:minmax(0,451px) 300px; gap:16px 12px; justify-content:space-between; }
-  .g--vmc .f-src .f-wallet { background:linear-gradient(116deg,#5A35C2 0%,#2E0F70 55%,#100030 100%); box-shadow:0 12px 32px rgba(34,0,92,.28); }
-  .g--vmc .f-src .f-wallet::before { display:block; }
+  
+  
 }
 .f-ad--banner { display:block; }
 .f-ad__banner { position:relative; overflow:hidden; display:grid; align-content:space-between; gap:16px; min-height:250px; padding:20px; border-radius:16px; color:#fff;
@@ -1043,27 +946,27 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 .f-ad__cta:hover { transform:translateY(-1px); } .f-ad__cta:focus-visible { outline:2px solid #fff; outline-offset:2px; }
 @media (prefers-reduced-motion:reduce) { .f-ad__cta { transition:none; } }
 /* Columna de 451 px: el precio de la fila nunca se corta; el texto pasa a una segunda línea. */
-@media (min-width:1024px) { .g--vmc .fr__meta { white-space:normal; overflow:visible; text-overflow:clip; } }
+
 /* Columna de 451 px (revisión 15/10): la cuenta y las filas toman su versión móvil para no pasar por debajo del riel. */
 @media (min-width:1024px) {
   .g--vmc .f-src__main > *, .g--vmc .f-head, .g--vmc .f-head__acct { min-width:0; }
   .g--vmc .f-tip__body { left:auto; right:-8px; transform:none; }
-  .g--vmc .f-src .fr { grid-template-columns:56px minmax(0,1fr) 18px; grid-template-areas:"img main chev" "img side chev"; gap:4px 12px; align-items:start; }
-  .g--vmc .fr img { grid-area:img; width:56px; height:44px; }
-  .g--vmc .fr__main { grid-area:main; min-width:0; } .g--vmc .fr .g-chev { grid-area:chev; align-self:center; }
-  .g--vmc .fr__side { grid-area:side; display:flex; align-items:center; gap:8px; justify-items:start; margin-top:2px; }
+  
+  
+   
+  
 }
 @media (min-width:1024px) { .g--vmc .f-src .fs__summary { justify-self:start; text-align:left; padding-left:52px; } }
 /* «Tu cuenta» en sus tres columnas de siempre dentro de 451 px (pedido de Abraham, 15/10): mismos bloques, tamaños un paso abajo. */
 @media (min-width:1024px) {
   /* La cuenta necesita margen para el saludo; el resumen central se ajusta al ancho real de sus dos métricas. */
-  .g--vmc .f-acct__row { grid-template-columns:minmax(160px,1fr) minmax(230px,1.25fr) minmax(150px,1fr); }
-  .g--vmc .f-acct__row > * { padding:12px; }
-  .g--vmc .f-acct__k { font-size:.6875rem; letter-spacing:.03em; }
-  .g--vmc .f-src .f-acct__me .f-acct__v b { font-size:.875rem; }
-  .g--vmc .f-src .f-acct__stat:not(.f-acct__me) .f-acct__v b { font-size:.9375rem; }
-  .g--vmc .f-acct__v { gap:6px; min-height:28px; }
-  .g--vmc .f-acct__v :is(img, svg, .avatar, [class*="avatar"]) { width:24px; height:24px; }
+  
+  
+  
+  
+  
+  
+  
 }
 /* Anuncio a media página IAB (300 × 600, pedido de Abraham 15/10): aprovecha el riel libre y es un formato que los anunciantes ya producen. */
 @media (min-width:1024px) { .g--vmc .f-ad__banner { min-height:600px; padding:24px; } .g--vmc .f-ad__banner b { font-size:1.375rem; } .g--vmc .f-ad__banner span { font-size:.9375rem; } }
@@ -1071,8 +974,8 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
    Página 24/800 › Tu actividad 18/800 › sección 15/800 › fila 14/600 (nueva 14/800) › estado y rótulos 12.
    El anuncio no compite con el título de la página; los enlaces de la cuenta quedan por debajo del saludo. */
 @media (min-width:1024px) {
-  .g--vmc .f-src .fr__name, .g--vmc .f-src .fr.is-new .fr__name { font-size:.875rem; }
-  .g--vmc .f-src .fr.is-new .fr__name { font-weight:800; }
+  
+  
   .g--vmc .f-ad__banner b, .g--vmc .f-ad__banner b { font-size:1.125rem; }
   .g--vmc .f-ad__banner span { font-size:.875rem; }
   .g--vmc .f-ad__cta { font-weight:600; }
@@ -1081,8 +984,8 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
    (41 px = alto del título de 24 px + su separación). Valorizar: borde degradado solo en hover; en reposo, el borde gris de las tarjetas. */
 @media (min-width:1024px) {
   .g--vmc .f-src__rail { margin-top:41px; }
-  .g--vmc .f-act--value { background-image:linear-gradient(#fff,#fff), linear-gradient(var(--line),var(--line)); }
-  .g--vmc .f-src .f-act--value:hover, .g--vmc .f-src .f-act--value:focus-visible { background-image:linear-gradient(#FBF9FF,#FBF9FF), linear-gradient(120deg,#fff 0%,#F4AC59 35%,#8460E5 75%,#fff 100%); }
+  
+  
 }
 /* ══ Jerarquía tipográfica de la maqueta VMC (15/10, reemplaza los ajustes de tamaño anteriores) ══
    Base: la escala real de vmcsubastas.com (títulos 14–16/600 en #3B1782, texto 12–14/400, precios 700, secundario en gris)
@@ -1094,28 +997,28 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
   .g--vmc.g-page { --t-ink:#3B1782; --t-txt:#191C1C; --t-mute:#6B6878; }
   /* Página y bloques */
   .g--vmc.g-page .f-head h1 { font-size:1.5rem; line-height:1.1; font-weight:800; letter-spacing:-.02em; color:var(--t-ink); }
-  .g--vmc.g-page .g-activity .g-head h2, .g--vmc.g-page .f-recs .g-head h2, .g--vmc.g-page .f-wallet h2 { font-size:1rem; font-weight:700; }
-  .g--vmc.g-page .g-activity .g-head h2, .g--vmc.g-page .f-recs .g-head h2 { color:var(--t-ink); }
+  .g--vmc.g-page .g-activity .g-head h2 { font-size:1rem; font-weight:700; }
+  .g--vmc.g-page .g-activity .g-head h2 { color:var(--t-ink); }
   /* Tu cuenta: rótulo gris pequeño arriba, valor enfatizado abajo (patrón rótulo-valor) */
-  .g--vmc.g-page .f-acct__k { font-size:.6875rem; font-weight:600; color:var(--t-mute); }
-  .g--vmc.g-page .f-src .f-acct__v b, .g--vmc.g-page .f-src .f-acct__stat:not(.f-acct__me) .f-acct__v b, .g--vmc.g-page .f-src .f-acct__me .f-acct__v b { font-size:.875rem; font-weight:600; }
-  .g--vmc.g-page .f-acct__passname { font-size:.875rem; font-weight:700; }
-  .g--vmc.g-page .f-acct__passmsg { font-size:.75rem; font-weight:400; }
-  .g--vmc.g-page .f-acct__passcta { font-size:.75rem; font-weight:600; }
-  .g--vmc.g-page .f-only { font-size:.875rem; font-weight:400; color:var(--t-txt); }
+  
+  
+  
+  
+  
+  
   /* Secciones y filas */
-  .g--vmc.g-page .f-src .fs__name { font-size:.875rem; font-weight:700; color:var(--t-ink); }
-  .g--vmc.g-page .f-src .fr__name { font-size:.875rem; font-weight:400; color:var(--t-txt); }
-  .g--vmc.g-page .f-src .fr.is-new .fr__name { font-weight:700; color:#191C1C; }
+  
+  
+  
   .g--vmc.g-page .f-src .fr.is-sent .fr__name { font-weight:400; }
-  .g--vmc.g-page .f-src .fr.is-unread .fr__name, .g--vmc.g-page .f-src .fr.is-unread .fr__meta { font-weight:700; color:#191C1C; }
+  
   .g--vmc.g-page .f-src .fr.is-regular:not(.is-new):not(.is-unread) .fr__name { font-weight:400; }
   .g--vmc.g-page .f-src .fr.is-detail-strong .fr__name, .g--vmc.g-page .f-src .fr.is-detail-strong .fr__meta, .g--vmc.g-page .f-src .fr.is-detail-strong .fr__side small { font-weight:700; color:#191C1C; }
   .g--vmc.g-page .f-src .fr__side .fr__due { font-weight:700; color:#191C1C; }
-  .g--vmc.g-page .f-src .fr__meta { font-size:.75rem; font-weight:400; color:var(--t-mute); }
-  .g--vmc.g-page .f-src .fr.is-new .fr__meta { font-weight:700; color:var(--t-txt); }
-  .g--vmc.g-page .fr__side small { font-size:.75rem; font-weight:400; color:var(--t-mute); }
-  .g--vmc.g-page .f-src .fr.is-new .fr__side small, .g--vmc.g-page .f-src .fr.is-unread .fr__side small { font-weight:700; color:#191C1C; }
+  
+  
+  
+  
   .g--vmc.g-page .f-src .fr:not(.is-new):not(.is-unread):not(.is-detail-strong) .fr__name,
   .g--vmc.g-page .f-src .fr:not(.is-new):not(.is-unread):not(.is-detail-strong) .fr__meta,
   .g--vmc.g-page .f-src .fr:not(.is-new):not(.is-unread):not(.is-detail-strong) .fr__side small { font-weight:300; }
@@ -1123,13 +1026,13 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
   .g--vmc.g-page .g-status--action { font-weight:600; color:#A800D4; }
   .g--vmc.g-page .f-src .fs__more .pprofilebtn__label { font-size:.75rem; font-weight:600; }
   /* Riel */
-  .g--vmc.g-page .f-act__text b { font-size:.875rem; font-weight:700; }
-  .g--vmc.g-page .f-act__text small { font-size:.75rem; font-weight:400; }
-  .g--vmc.g-page .f-wallet header a { font-size:.75rem; font-weight:600; }
-  .g--vmc.g-page .f-src .f-wallet__bal dt { font-size:.75rem; font-weight:400; }
-  .g--vmc.g-page .f-src .f-wallet__bal dd, .g--vmc.g-page .f-src .f-wallet__bal div + div dd { font-size:1.125rem; font-weight:700; }
-  .g--vmc.g-page .f-src .f-wallet__bal dd small { font-size:.75rem; font-weight:600; }
-  .g--vmc.g-page .f-wallet .psec { font-size:.875rem; font-weight:600; }
+  
+  
+  
+  
+  
+  
+  
   .g--vmc.g-page .f-ad__banner b { font-size:1rem; font-weight:700; }
   .g--vmc.g-page .f-ad__banner span { font-size:.75rem; font-weight:400; }
   .g--vmc.g-page .f-ad__cta { font-size:.875rem; font-weight:600; }
@@ -1138,28 +1041,28 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
    Íconos a la medida del texto (≈1,2× el texto de 14 → 16–20 px), sin márgenes negativos que los saquen de la línea. */
 @media (min-width:1024px) {
   /* Tu cuenta: rótulo, valor y enlace arrancan en el mismo x */
-  .g--vmc.g-page .f-acct__v svg { margin:0; width:20px; height:20px; }
-  .g--vmc.g-page .f-acct__v { gap:6px; }
-  .g--vmc.g-page .f-acct__stat .pprofilebtn { margin-left:-4px; }
-  .g--vmc.g-page .f-acct__row > * { padding:12px 12px 8px; }
+  
+  
+  
+  
   /* Encabezado de sección: 56 px, ícono de 28 con glifo de 16 */
-  .g--vmc.g-page .fs__head { padding:4px 16px 4px 4px; }
-  .g--vmc.g-page .fs__toggle { padding:10px 12px; gap:10px; }
-  .g--vmc.g-page .f-src .fs__icon { width:28px; height:28px; border-radius:8px; }
-  .g--vmc.g-page .f-src .fs__icon svg { width:16px; height:16px; }
-  .g--vmc.g-page .fs__body { padding:0 16px 8px; }
+  
+  
+  
+  
+  
   /* Filas: estado pegado al detalle, sin el alto de píldora */
-  .g--vmc.g-page .f-src .fr { padding:8px; row-gap:2px; }
-  .g--vmc.g-page .fr__side { margin-top:2px; }
+  
+  
   .g--vmc.g-page .fr__side .g-status { height:auto; padding:0; background:none; }
   .g--vmc.g-page .fs__more { padding:0 0 8px; }
   /* Mi Wallet: 16 entre título, montos y botón */
-  .g--vmc.g-page .f-src .f-wallet { gap:16px; }
-  .g--vmc.g-page .f-wallet header { margin:0; }
-  .g--vmc.g-page .f-src .f-wallet__bal { padding-bottom:16px; }
-  .g--vmc.g-page .f-wallet .psec { margin:0; }
+  
+  
+  
+  
 }
-@media (min-width:1024px) { .g--vmc.g-page .fr__img { grid-area:img; align-self:start; } } /* la foto abarca las dos líneas de la fila */
+ /* la foto abarca las dos líneas de la fila */
 /* ══ Maqueta VMC · revisión crítica (15/10): hablar el lenguaje de vmcsubastas.com ══
    1) (Título con corchetes en Tu actividad: descartado por Abraham el 15/10.)
    2) Tarjetas con el radio de VMC (8) y 16 px entre bloques (gap-4 de VMC).
@@ -1173,28 +1076,27 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
   .g--vmc.g-page .g-activity { gap:12px; padding-top:8px; }
   .g--vmc.g-page .g-activity__head { align-items:center; }
   /* 2 · Radios de VMC */
-  .g--vmc.g-page .f-acct, .g--vmc.g-page .fa, .g--vmc.g-page .f-shelf, .g--vmc.g-page .f-src .f-wallet, .g--vmc.g-page .f-act { border-radius:8px; }
-  .g--vmc.g-page .f-acct__pass { border-radius:0 0 8px 8px; }
+  .g--vmc.g-page .fa, .g--vmc.g-page .f-shelf { border-radius:8px; }
+  
   /* 3 · Filas en una línea */
-  .g--vmc.g-page .f-src .fr { grid-template-columns:48px minmax(0,1fr) auto 16px; grid-template-areas:"img main side chev"; gap:0 12px; align-items:center; padding:8px; }
-  .g--vmc.g-page .fr__img, .g--vmc.g-page .fr img { width:48px; height:36px; border-radius:6px; align-self:center; }
-  .g--vmc.g-page .fr__side { display:grid; justify-items:end; gap:2px; margin:0; text-align:right; }
+  
+  
+  
   .g--vmc.g-page .f-src .fr.fr--live .fr__side { align-self:stretch; align-items:center; transform:translateY(8px); }
-  .g--vmc.g-page .fr .g-chev { width:16px; height:16px; }
-  .g--vmc.g-page .f-src .fr__meta { white-space:normal; }
+  
+  
   /* 4 · Un solo acento numérico */
   .g--vmc.g-page .fs__count { color:#6B6878; background:#F1F0F5; }
   /* 5 · Sin «…» */
-  .g--vmc.g-page .f-acct__passmsg { white-space:normal; overflow:visible; text-overflow:clip; line-height:1.3; }
+  
 }
 @media (min-width:1024px) {
-  .g--vmc.g-page .f-acct__passmsg, .g--vmc.g-page .f-src .fr__meta { text-wrap:balance; } /* sin palabras huérfanas («0») */
+   /* sin palabras huérfanas («0») */
   .g--vmc.g-page .f-src .fs__summary { padding-left:38px; font-size:.75rem; color:#6B6878; } /* alineado con el nombre de la sección */
   .g--vmc.g-page .f-shelf { margin-top:0; }
 }
 /* Filas como notificación (maqueta VMC, 15/10): sin abrir = fondo gris suave + punto magenta a la derecha del estado; debajo, cuándo llegó. */
 .fr--notif .fr__top { display:inline-flex; align-items:center; gap:6px; }
-.fr__dot { flex:none; width:8px; height:8px; border-radius:50%; background:linear-gradient(135deg,#CC00FF,#FF0066); }
 @media (min-width:1024px) {
   .g--vmc.g-page .f-src .fr--notif.is-new { background:#F4F3F7; }
   .g--vmc.g-page .f-src .fr--notif.is-new:hover { background:#EEEDF3; }
@@ -1202,42 +1104,34 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 }
 /* Revisión 15/10: SubasPass en una sola línea («Participa con consignación 0») e íconos de la cuenta en una misma caja de 24 px.
    La estrella de Concorde trae margen interno: se dibuja a 32 dentro de la caja para igualar su peso al del avatar y el check. */
-@media (min-width:1024px) {
-  .g--vmc.g-page .f-acct__passopt { display:none; }
-  .g--vmc.g-page .f-acct__passmsg { white-space:nowrap; text-wrap:nowrap; }
-  .g--vmc.g-page .f-acct__v > :first-child { flex:none; width:24px !important; height:24px !important; margin:0; display:grid; place-items:center; overflow:visible; }
-  .g--vmc.g-page .f-acct__v > svg:first-child, .g--vmc.g-page .f-acct__v > :first-child svg { width:24px !important; height:24px !important; }
-  .g--vmc.g-page .f-acct__stat:last-child .f-acct__v > :first-child svg, .g--vmc.g-page .f-acct__stat:last-child .f-acct__v > svg:first-child { width:32px !important; height:32px !important; margin:-4px; }
-  .g--vmc.g-page .f-acct__v { gap:8px; }
-}
 /* Anuncio a 300 × 250 (rectángulo mediano IAB, revisión 15/10): el botón queda a la vista sin hacer scroll; va justo bajo el texto. */
 @media (min-width:1024px) { .g--vmc.g-page .f-ad__banner { min-height:250px; padding:20px; align-content:start; } }
 /* ══ Aire (revisión 15/10): la columna de 451 px se sentía apretada. Relleno de 16 como las tarjetas de VMC, filas sin flecha
    (toda la fila ya es el botón; VMC no usa flechas en listas) para que el detalle quepa en una línea, e interlineado 1,4. ══ */
 @media (min-width:1024px) {
-  .g--vmc.g-page .f-acct__row > * { padding:16px 16px 12px; }
-  .g--vmc.g-page .f-acct__stat { row-gap:8px; }
-  .g--vmc.g-page .f-acct__pass { padding:12px 16px; }
-  .g--vmc.g-page .fs__head { padding:8px 16px 8px 8px; }
-  .g--vmc.g-page .fs__body { padding:0 8px 12px; }
-  .g--vmc.g-page .f-src .fr { grid-template-columns:48px minmax(0,1fr) auto; grid-template-areas:"img main side"; gap:0 12px; padding:12px; }
-  .g--vmc.g-page .f-src .fr .g-chev { display:none; }
-  .g--vmc.g-page .fr__main { gap:4px; }
-  .g--vmc.g-page .f-src .fr__meta, .g--vmc.g-page .fr__side small { line-height:1.4; }
-  .g--vmc.g-page .fr__side { gap:4px; }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   .g--vmc.g-page .fs__more { padding:4px 8px 4px; }
   .g--vmc.g-page .f-src .fs__summary { padding:0 16px 12px 46px; }
 }
 /* Íconos de vidrio en la maqueta VMC (15/10), a la medida de su columna (451) y su riel (300). */
 @media (min-width:1024px) {
-  .g--vmc.g-page .f-src .fs__icon.fs__icon--glass { width:36px; height:36px; border-radius:0; background:none; box-shadow:none; }
-  .g--vmc.g-page .f-src .fs__icon--glass svg.vd { width:36px; height:36px; }
+  
+  
   .g--vmc.g-page .f-src .fs__summary { padding-left:54px; }
   .g--vmc.g-page .f-act:has(.f-act__icon--glass) { grid-template-columns:40px 1fr 16px; gap:12px; padding:8px 12px; }
   .g--vmc.g-page .f-act .f-act__icon.f-act__icon--glass { width:40px; height:40px; }
   .g--vmc.g-page .f-act .f-act__icon--glass svg.vd { width:40px !important; height:40px !important; }
   .g--vmc.g-page .f-act--value .f-act__icon--glass { background:none; }
-  .g--vmc.g-page .f-wallet h2 .vd { width:28px; height:28px; }
+  
   .g--vmc.g-page .f-only .vd { width:24px; height:24px; }
 }
 /* Publicar (15/10): el + de vidrio va en su paleta violeta sobre un círculo blanco; en vidrio blanco se perdía contra el naranja. */
@@ -1246,7 +1140,7 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 .f-act--publish .f-act__icon--glass svg.vd { width:34px !important; height:34px !important; }
 /* Contador de sección como bandeja de entrada (Pulso Fuente y maqueta VMC, 15/10): solo lo que te necesita (Por responder / En vivo / Por pagar),
    violeta oscuro con número blanco junto al nombre; sin pendientes, sin número. El total queda en «Ver todas (n)». */
-.fs__badge { display:inline-grid; place-items:center; min-width:20px; height:20px; padding:0 6px; border-radius:9999px; font-size:.75rem; font-weight:700; line-height:1; color:#fff; background:#3B1782; font-variant-numeric:tabular-nums; }
+
 /* ══ Pulso Fuente con el lenguaje de la maqueta VMC (15/10, pedido de Abraham: «todo») ══
    Comparte todas las reglas .g--vmc; .g--wide devuelve solo lo que depende del ancho: contenedor de 1165, columna flexible + riel de 320
    y el texto completo de SubasPass (en 813 px entra). */
@@ -1265,94 +1159,78 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 }
 
 /* Tu actividad: los bloques y sus filas se separan por aire, no por líneas. */
-.g--vmc.g-page .fa .fs + .fs { border-top:1px solid #E1E3E2; }
+
 .g--vmc.g-page .fa .fs__list > div + div .fr { box-shadow:none; }
-.g--vmc.g-page .fa .fr:hover,
-.g--vmc.g-page .fa .fr.is-new:hover,
-.g--vmc.g-page .fa .fs__toggle:hover { background:#F4F3F7; }
-.g--vmc.g-page .fa .fr.is-new .fr__side { align-self:stretch; grid-template-rows:1fr 1fr; align-items:center; }
-.g--vmc.g-page .f-only b { background:#3B1782; }
-.g--vmc.g-page .f-acct__points { gap:4px; white-space:nowrap; }
-.g--vmc.g-page .f-acct__points-star { width:20px !important; height:20px !important; margin:0 !important; }
-.g--vmc.g-page .f-acct__points-info { width:14px !important; height:14px !important; margin:0 !important; }
-@media (max-width:767px) {
-  .f-acct__summary { grid-column:1 / -1; }
-  .f-acct__membership { grid-column:1 / -1; }
-}
+
+
+
+
+
+
 
 /* Pulso Fuente · secciones colapsadas livianas (16/10): solo el encabezado, sin resumen ni el relleno del cuerpo cerrado. */
-.f-src .fs__body { transition:padding .2s var(--mg-ease); }
-.f-src .fs:not(.is-open) .fs__body { padding-block:0; }
-.f-src .fs__head, .f-src .fs__toggle { transition:padding .2s var(--mg-ease), background-color .15s; }
-.f-src .fs:not(.is-open) > .fs__head { padding-block:2px; }
-.f-src .fs:not(.is-open) .fs__toggle { padding-block:6px; }
+
+
+
+
+
 .f-src .fs__chips:empty { display:none; }
-@media (prefers-reduced-motion:reduce) { .f-src .fs__body, .f-src .fs__head, .f-src .fs__toggle { transition:none; } }
 /* Recomendados en el riel (16/10 noche): card blanca como Valorizar, filas con la gramática de Tu actividad. */
-.f-recs { display:grid; gap:4px; padding:16px 8px 8px; border-radius:16px; background:#fff; box-shadow:0 1px 3px rgba(34,0,92,.05), 0 10px 30px rgba(34,0,92,.06); }
-.f-recs__head { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 8px 4px; }
-.f-recs__head .g-head { margin:0; padding:0; }
-.f-recs__head h2 { font-size:1rem !important; font-weight:700 !important; color:#3B1782 !important; }
-.f-recs__list { list-style:none; margin:0; padding:0; display:grid; }
-.f-recs__list li + li { border-top:1px solid #F0EEF4; }
-.f-recs__row { display:grid; grid-template-columns:64px minmax(0,1fr) 24px; align-items:start; gap:10px; padding:10px 8px; border-radius:10px; color:inherit; }
-.f-recs__row:hover { background:#F8F6FC; }
-.f-recs__row:focus-visible { outline:2px solid #8460E5; outline-offset:-2px; }
-.f-recs__row img { width:64px; height:52px; border-radius:8px; object-fit:cover; }
-.f-recs__txt { min-width:0; display:grid; grid-template-rows:16px 18px 18px; gap:1px; line-height:1.2; }
-.f-recs__txt--no-price { grid-template-rows:16px 18px; }
-.f-recs__state { flex:none; display:flex; align-items:center; }
-.f-recs__state .badgestatus { transform:scale(.74); transform-origin:left center; }
-.f-recs__txt b { font-size:.75rem; font-weight:700; color:#3B1782; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.f-recs__price { display:flex; align-items:center; gap:4px; min-width:0; }
-.f-recs__price .priceicon { flex:none; width:16px; height:16px; }
-.f-recs__price .priceicon svg { width:16px; height:16px; }
-.f-recs__txt strong { flex:none; font-size:.8125rem; font-weight:700; color:#5A35C2; }
-.f-recs__txt small { font-size:.625rem; color:#6B6878; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-variant-numeric:tabular-nums; }
-.f-recs__row > .plike { align-self:start; margin-top:1px; }
-.g--vmc.g-page .f-recs__txt b { font-weight:700; }
-.f-recs__neg { display:inline-flex; align-items:center; height:20px; padding:0 8px; border-radius:6px; font-size:.625rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#fff;
-  background:linear-gradient(90deg, #30E8EC 0%, #00CACE 50%, #008688 100%); text-shadow:0 1px 2px rgba(0,0,0,.18); }
-@media (prefers-reduced-motion:reduce) { .f-recs__row { transition:none; } }
-.g--vmc.g-page .f-recs { border-radius:8px; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @media (max-width:1100px) { .f-src__rail .f-recs { order:4; } } /* móvil: después de Tu actividad, antes de la publicidad */
 /* Recomendados · ajuste (16/10 noche): cabecera como «Mis compras»; NEGOCIABLE con la forma y tamaño de BadgeStatus (9 px, píldora, 80 de ancho mín.). */
-.f-recs__head { justify-content:flex-start; gap:12px; margin:0; padding:0 8px 4px; }
-.f-recs__head .fs__name { font-size:.875rem; font-weight:700; color:var(--t-ink, #3B1782); }
-.f-recs__foot { padding:8px 8px 8px; }
-.f-recs__txt b { font-weight:500; }
-.f-recs__neg { height:auto; padding:3px 8px; border-radius:9999px; font-size:9px; letter-spacing:.07em; text-shadow:none;
-  background-image:linear-gradient(135deg, #30E8EC 0%, #00CACE 45%, #008688 100%); box-shadow:rgba(0,134,136,.4) 0 2px 10px, rgba(255,255,255,.14) 0 1px 0 inset; }
+
+
+
+
+
 /* Solo la flecha naranja de ProfileButton junto al contador (sin «Ver todas» al pie). */
-.f-recs__head .pprofilebtn__label { display:none; }
-.f-recs__head .pprofilebtn { gap:0; padding:0; min-height:0; }
-.f-recs { padding-bottom:8px; }
+
+
+
 /* Cabecera = enlace con el chevron naranja de las secciones (a la derecha, apuntando →). */
-.f-recs__h { margin:0; }
-.f-recs__head { display:flex; align-items:center; color:inherit; text-decoration:none; border-radius:10px; padding:4px 8px 8px; }
-.f-recs__head:hover { background:#F8F6FC; }
-.f-recs__head:focus-visible { outline:2px solid #8460E5; outline-offset:-2px; }
+
+
+
+
 /* Recomendados con la misma escala que las secciones de Tu actividad (16/10): nombre de fila 600 como .fr__name;
    bajo 1024 px las secciones suben a 18/800 con ícono de 40, así que Recomendados también. */
-.f-recs__txt b { font-weight:600; }
+
 /* Las valorizaciones guardadas son contenido de consulta, no una novedad: el nombre completo se lee en peso regular. */
 .f-src .fr--publishable .fr__name,
 .g--vmc.g-page .f-src .fr--publishable .fr__name { font-weight:400; }
 /* Tu actividad: el corte va antes del siguiente bloque, nunca entre su título y sus filas. */
-.g--vmc.g-page .fa .fs + .fs { border-top:1px solid #E1E3E2; }
-.g--vmc.g-page .fa .fs__body { padding-top:4px; }
-@media (max-width:1023px) {
-  .f-recs__head .fs__name { font-size:1.125rem; font-weight:800; }
-  .f-recs__head .fs__icon, .f-recs__head .fs__icon svg.vd { width:40px; height:40px; }
-  .f-recs__txt b { font-size:.9375rem; }
-  .f-recs__txt small { font-size:.875rem; }
-}
+
+
 /* Encabezados de bloque (16/10): la misma escala en Mi Garaje, Publicar (.fl-sh) y Valorizar (.rva-head),
    en móvil y escritorio: ícono 36, separación 12, título 16/700. Página y región («Tu actividad») van sin ícono:
    regla 6 de entregas-abraham-2026-10-09/02-mapa-componentes-modelo-3.md. */
-.g--vmc .f-src .fs__title, .g--vmc .f-recs__head { gap:12px; }
-.g--vmc.g-page .f-src .fs__name, .g--vmc.g-page .f-recs__head .fs__name { font-size:1rem; font-weight:700; }
-.g--vmc .f-src .fs__icon--glass, .g--vmc .f-src .fs__icon--glass svg.vd { width:36px; height:36px; }
+
+
+
 /* Vista rápida (16/10), con la escala de Concorde y de Mi Garaje VMC: título 20/700, todo lo secundario a 14,
    «Historial» como encabezado de bloque sin ícono (solo 2 bloques: regla 6) y «Ver detalle completo» siempre a la derecha. */
 .g-qv__body { gap:16px; padding:24px; }
@@ -1382,14 +1260,14 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
      Con el menú abierto, tres bloques superiores preservan legibilidad; la
      membresía ocupa una fila propia. El resumen se aplana para que Riesgo y
      Puntos conserven sus propios divisores. */
-  .g--vmc.g-page .f-acct__row { grid-template-columns:minmax(180px,1.1fr) minmax(146px,1fr) minmax(122px,.9fr); grid-template-rows:auto auto auto auto; }
-  .g--vmc.g-page .f-acct__me { grid-column:1; grid-row:1 / span 3; }
-  .g--vmc.g-page .f-acct__summary { display:contents; }
-  .g--vmc.g-page .f-acct__summary .f-acct__metric { display:grid; grid-row:1 / span 3; grid-template-rows:subgrid; row-gap:8px; min-width:0; align-items:center; box-sizing:border-box; padding:16px 12px 12px; }
-  .g--vmc.g-page .f-acct__summary .f-acct__metric:first-child { grid-column:2; border-left:1px solid var(--line); }
-  .g--vmc.g-page .f-acct__summary .f-acct__metric:last-child { grid-column:3; border-left:1px solid var(--line); }
-  .g--vmc.g-page .f-acct__membership { grid-column:1 / -1; grid-row:4; grid-template-columns:max-content max-content minmax(0,1fr); grid-template-rows:none; align-items:center; column-gap:10px; padding:10px 16px; border-left:0; border-top:1px solid var(--line); }
-  .g--vmc.g-page .f-acct__membership .f-acct__expiry { align-self:center; justify-self:end; white-space:nowrap; }
+  
+  
+  
+  
+  
+  
+  
+  
 
   /* Al colapsar el menú hay 153 px adicionales: ambas columnas los absorben
      proporcionalmente, para que el riel no quede fijo mientras crece la zona
@@ -1415,10 +1293,10 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 /* Mi billetera: el naranja vive como halo discreto en la esquina inferior,
    mientras el cuerpo sigue siendo inequívocamente morado. */
 @media (min-width:1024px) {
-  .g--vmc.g-page .f-src .f-wallet { background:radial-gradient(92% 68% at 20% -24%,rgba(174,142,255,.26) 0%,rgba(132,96,229,.10) 42%,transparent 76%),radial-gradient(125% 105% at 54% 122%,rgba(244,172,89,.32) 0%,rgba(237,137,54,.13) 36%,transparent 72%),linear-gradient(145deg,#5A35C2 0%,#3B1782 52%,#22005C 100%); }
-  .g--vmc.g-page .f-src .f-wallet::before { display:none; }
-  .g--vmc.g-page .f-wallet header { min-height:28px; align-items:center; }
-  .g--vmc.g-page .f-wallet header :is(h2,a) { align-self:center; margin-block:0; }
+  
+  
+  
+  
   /* El reparto de las dos columnas acompaña los 280 ms del sidebar, en vez
      de esperar al final de su animación y redistribuirse de golpe. */
   .g--vmc.g-page .f-src { transition:grid-template-columns .28s cubic-bezier(.4,0,.2,1); }
@@ -1426,27 +1304,20 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 
 /* Acciones del riel: el borde en hover replica las variantes nativas del DS.
    Publicar usa el trazo cálido→lila del Primary; Valorizar, el lila del Secondary. */
-.f-src .f-act--publish { border:2px solid transparent; background-image:linear-gradient(135deg,#F4AC59 0%,#ED8936 45%,#D46E20 80%,#8460E5 135%),linear-gradient(transparent,transparent); background-origin:padding-box,border-box; background-clip:padding-box,border-box; }
-.f-src .f-act--publish:hover,
-.g--vmc.g-page .f-src .f-act--publish:hover { filter:none; background-image:linear-gradient(135deg,#FBC47D 0%,#ED8936 45%,#D46E20 80%,#8460E5 135%),linear-gradient(135deg,#fff 0%,#FBC47D 25%,#AE8EFF 75%,#fff 100%); box-shadow:rgba(255,255,255,.22) 0 1px 0 2px inset,rgba(132,96,229,.35) 0 8px 24px,rgba(237,137,54,.4) 0 4px 10px; }
-.f-src .f-act--value:hover,
-.g--vmc.g-page .f-src .f-act--value:hover { border-color:transparent; background-image:linear-gradient(#FBF9FF,#FBF9FF),linear-gradient(135deg,#CFBAFF 0%,#fff 35%,#AE8EFF 65%,#CFBAFF 100%); box-shadow:rgba(255,255,255,.2) 0 1px 0 2px inset,rgba(132,96,229,.4) 0 8px 24px,rgba(132,96,229,.25) 0 4px 10px; }
-.f-src .f-act--value:hover .f-act__icon,
-.g--vmc.g-page .f-src .f-act--value:hover .f-act__icon { color:#5A35C2; background:#F5F0FF; }
+
+
+
+
 
 /* El borde se dibuja como capa independiente: así no se pierde contra el
    relleno de las tarjetas y puede recorrer el gradiente al hacer hover. */
-.f-src .f-act { position:relative; isolation:isolate; }
-.f-src .f-act > * { position:relative; z-index:1; }
-.f-src .f-act::after { content:""; position:absolute; z-index:2; inset:0; padding:2px; border-radius:inherit; pointer-events:none; opacity:0; background-size:220% 220%; background-position:0% 50%; -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; transition:opacity .18s ease-out; }
-.f-src .f-act--publish::after { background-image:linear-gradient(115deg,#fff 0%,#FBC47D 26%,#ED8936 45%,#AE8EFF 74%,#fff 100%); }
-.f-src .f-act--value::after { background-image:linear-gradient(115deg,#CFBAFF 0%,#fff 32%,#AE8EFF 65%,#CFBAFF 100%); }
-.f-src .f-act--publish:hover::after,
-.f-src .f-act--publish:focus-visible::after,
-.f-src .f-act--value:hover::after,
-.f-src .f-act--value:focus-visible::after { opacity:1; animation:f-act-stroke-flow 3.2s cubic-bezier(.45,0,.25,1) infinite alternate; }
-@keyframes f-act-stroke-flow { from { background-position:0% 50%; } to { background-position:100% 50%; } }
-@media (prefers-reduced-motion:reduce) { .f-src .f-act::after { animation:none !important; } }
+
+
+
+
+
+
+
 @media (prefers-reduced-motion:reduce) { .g--vmc.g-page .f-src { transition:none; } }
 /* ══ Campaña «Venta para empresas» (20/10) · Promo, cuarta ronda: jerarquía y recetas de los banners de vmc-index-lab.
    Z: chip (11–12 · 800) → titular (18 · 700, columna angosta) → bajada (12 · 400) → CTA abajo a la izquierda; la flota recortada
@@ -1540,8 +1411,10 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 .kit-shell--vmc [data-slot="sidebar-banner"]:has(.pr-arte) { height:400px !important; }
 /* 22/10 (Abraham): aire entre «Centro de Ayuda» y el banner. */
 .kit-shell--vmc .sb-banner:has(.pr-arte) { max-height:none; padding-top:16px; }
-.pr--side, .pr-arte--side { position:absolute; inset:0; border-radius:inherit; }
-.pr-arte--side { display:block; width:100%; height:100%; border:0; }
+/* El banner de la barra lateral en Valorizar y Publicar (Flujo.tsx lo pinta sin AdBanner): mismas reglas que AdBanner «side». */
+.pr-arte--side { position:absolute; inset:0; display:block; width:100%; height:100%; border:0; border-radius:inherit; }
+.pr--side { position:absolute; inset:0; border-radius:inherit; }
+
 .pr--side { min-height:0; padding:16px; }
 .pr--side .pr__chip { height:22px; font-size:.6875rem; }
 .pr--side .pr__h { max-width:none; margin-top:10px; font-size:1.0625rem; }
@@ -1665,9 +1538,9 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 .pr--flota .pr__link svg { color:#ED8936; }
 
 /* Arte original (riel): JPG a tamaño nativo, sin recorte. */
-.f-camp--arte iframe { display:block; width:100%; border:0; border-radius:8px; box-shadow:0 0 0 1px #E1E3E2; }
-.f-camp__lg { height:320px; } /* alto inicial; fitBanner() lo ajusta al contenido */ .f-camp__sm { display:none !important; max-width:776px; aspect-ratio:776/232; }
-@media (max-width:1100px) { .f-camp__lg { display:none !important; } .f-camp__sm { display:block !important; } }
+
+ /* alto inicial; fitBanner() lo ajusta al contenido */ 
+
 
 /* Accesibilidad: sin movimiento, sin transparencia (vidrio sólido) y colores forzados. */
 @media (prefers-reduced-motion:reduce) { .pr__car, .pr__link svg, .pr-glass, .pr:hover .pr__shine::before { animation:none; transition:none; } .pr:hover .pr__cta { transform:none; } }
@@ -1721,10 +1594,10 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 }
 
 /* Cierre del panel (23/10): se pliega hacia la derecha (abajo en móvil); la flecha apunta hacia allí. */
-.g-qv.is-closing { animation:g-qv-out .62s cubic-bezier(.55,0,.75,.2) forwards; }
-.g-qv.is-closing::backdrop { animation:g-qv-fade .62s ease forwards; }
-@keyframes g-qv-out { to { transform:translateX(100%); } }
-@keyframes g-qv-fade { to { opacity:0; } }
+
+
+
+
 .fr.is-negotiation-leaving { pointer-events:none; animation:fr-negotiation-leave .62s cubic-bezier(.55,0,.75,.2) forwards; }
 /* Expiración vista comprador: al salir la hoja lateral/inferior, esta fila es
    la única que se mueve. Todo su contenido gana peso en ese instante para
@@ -1749,17 +1622,17 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 @media (prefers-reduced-motion:reduce) { [data-salida] .fr.is-negotiation-leaving { animation:none; } }
 .g-qv__close--arrow svg { transition:transform .2s; } .g-qv__close--arrow:hover svg { transform:translateX(2px); }
 @media (max-width:767px) { /* = hoja inferior del panel */
-  .g-qv.is-closing { animation-name:g-qv-down; }
-  @keyframes g-qv-down { to { transform:translateY(100%); } }
+  
+  
   .fr.is-negotiation-leaving { animation-name:fr-negotiation-leave-down; }
   @keyframes fr-negotiation-leave-down { to { opacity:0; transform:translateY(32px) scale(.98); } }
   .g-qv__close--arrow svg { rotate:90deg; } .g-qv__close--arrow:hover svg { transform:translateX(2px); }
 }
-@media (prefers-reduced-motion:reduce) { .g-qv.is-closing, .g-qv.is-closing::backdrop, .fr.is-negotiation-leaving { animation:none; } }
+@media (prefers-reduced-motion:reduce) { .fr.is-negotiation-leaving { animation:none; } }
 /* 26/10: la propuesta aceptada viaja a Ganadas más despacio que el reacomodo general (.2s) para que se lea el movimiento. */
 ::view-transition-group(fr-bp1) { animation-duration:.8s; animation-timing-function:cubic-bezier(.65,0,.35,1); z-index:2; }
 /* 26/10 (Abraham): modal de la demo (no es diseño de VMC): elegir cómo se habilitó el chat tras la aceptación. */
-.lab-ask { padding:16px; border:0; background:transparent; max-width:none; } .lab-ask::backdrop { background:rgba(34,0,92,.45); }
+.lab-ask { margin:auto; padding:16px; border:0; background:transparent; max-width:none; } .lab-ask::backdrop { background:rgba(34,0,92,.45); }
 .lab-ask__card { width:min(400px,100%); display:grid; gap:10px; padding:20px; border:2px dashed #CFBAFF; border-radius:16px; background:#fff; color:#22005C; box-shadow:0 20px 48px rgba(34,0,92,.3); }
 .lab-ask__k { justify-self:start; padding:2px 8px; border-radius:9999px; background:#F3EFFD; color:#3B1782; font-size:.6875rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
 .lab-ask__card h2 { margin:0; font-size:1.125rem; font-weight:800; } .lab-ask__card p { margin:0 0 4px; font-size:.875rem; color:#6B6878; }
@@ -1769,3 +1642,17 @@ html:has(dialog.g-qv[open]) { overflow:hidden; }
 .lab-ask__card .lab-ask__x { justify-self:center; padding:6px 12px; border:0; font-weight:600; color:#6B6878; }
 /* 26/10 (lab): un simulador por pestaña de Mis negociaciones, en el mismo lugar. */
 html[data-neg-tab="ventas"] .f-sw--sim-buy, html:not([data-neg-tab="ventas"]) .f-sw--sim-sell { display:none; }
+/* Mi billetera (WalletCard de Concorde) en la columna de la página: su lugar en móvil. */
+@media (max-width:829px) { .f-wallet { order:3; } }
+@media (max-width:1100px) { .f-src .f-wallet { order:2; } }
+
+/* Mis valorizaciones (Valorizaciones.tsx) pinta el mismo interruptor «Por publicar» con las clases de PendingToggle, sin el componente. */
+.vz-top .f-only { all:unset; box-sizing:border-box; cursor:pointer; display:inline-flex; align-items:center; gap:10px; min-height:36px; padding:0 4px; font-size:.875rem; font-weight:600; color:#3B1782; }
+.vz-top .f-only b { min-width:20px; height:20px; display:inline-grid; place-items:center; padding:0 6px; border-radius:9999px; font-size:.75rem; font-weight:600; line-height:1; color:#fff; background:#3B1782; font-variant-numeric:tabular-nums; }
+.vz-top .f-only__track { position:relative; width:36px; height:20px; border-radius:9999px; background:#C9CCCB; transition:background-color .15s; }
+.vz-top .f-only__track i { position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:9999px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25); transition:transform .15s; }
+.vz-top .f-only[aria-checked="true"] .f-only__track { background:var(--vmc-color-orange-600,#ED8936); }
+.vz-top .f-only[aria-checked="true"] .f-only__track i { transform:translateX(16px); }
+.vz-top .f-only:focus-visible { outline:2px solid #8460E5; outline-offset:2px; border-radius:8px; }
+@media (min-width:1024px) { .vz-top .f-only { font-weight:400; color:#191C1C; } }
+@media (prefers-reduced-motion:reduce) { .vz-top .f-only__track, .vz-top .f-only__track i { transition:none; } }

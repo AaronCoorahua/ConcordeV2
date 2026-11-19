@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "addbutton",
+  "type": "registry:component",
+  "title": "AddButton",
+  "description": "Componente Concorde AddButton — un solo archivo, AddButton.tsx.",
+  "dependencies": [
+    "react"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/AddButton.tsx",
+      "type": "registry:file",
+      "target": "components/AddButton.tsx",
+      "content": "/**\n * AddButton — acción secundaria «agregar otro» al final de una lista (mi-garaje-lab · Mis valorizaciones: «Valorizar otro vehículo»).\n * Fila delgada con borde punteado lila y un + en círculo, para que no compita con las tarjetas. Solo depende de React.\n */\nimport type { JSX } from \"react\";\n\nexport const ADD_BUTTON_CSS = String.raw`\n.vz-add { all:unset; box-sizing:border-box; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; min-height:52px; padding:0 16px; border-radius:12px; border:1.5px dashed #D9CFF5; font-size:.9375rem; font-weight:700; color:#5A35C2; transition:background-color .15s; }\n.vz-add span { display:grid; place-items:center; width:28px; height:28px; border-radius:9999px; background:#F5F0FF; }\n.vz-add:hover { background:#F8F6FC; }\n.vz-add:focus-visible { outline:2px solid #8460E5; outline-offset:2px; }\n@media (prefers-reduced-motion:reduce) { .vz-add { transition:none; } }\n`;\n\nexport interface AddButtonProps {\n  /** Texto de la acción (p. ej. «Valorizar otro vehículo»). */\n  children: string;\n  /** Se llama al tocar la fila. */\n  onClick: () => void;\n}\n\nexport function AddButton({ children, onClick }: AddButtonProps): JSX.Element {\n  return <>\n    <style href=\"concorde-add-button\" precedence=\"default\">{ADD_BUTTON_CSS}</style>\n    <button type=\"button\" className=\"vz-add\" onClick={onClick}>\n      <span aria-hidden><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" strokeWidth=\"2.4\" strokeLinecap=\"round\"><path d=\"M12 5v14M5 12h14\" /></svg></span>{children}</button>\n  </>;\n}\n\nexport default AddButton;\n"
+    }
+  ]
+}

@@ -13,7 +13,9 @@ import { createContext, useCallback, useContext, useEffect, useLayoutEffect, use
 import type { JSX, ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { LabPanel } from "./LabPanel";
-import { Vidrio } from "@/src/components/Vidrio";
+import { NotificationBell } from "@/src/components/NotificationBell";
+import { NotificationInbox } from "@/src/components/NotificationInbox";
+import { NotificationBox } from "@/src/components/NotificationBox";
 import "./notifs.css";
 
 export type NotifMode = "campana" | "vidrio" | "bienvenido" | "avatar" | "previa" | "isla" | "banda" | "toast" | "caja" | "fab";
@@ -241,13 +243,8 @@ function Inbox({ at = "header" }: { at?: "header" | "fab" }): JSX.Element | null
     const esc = (e: KeyboardEvent) => { if (e.key === "Escape") setInbox(false); };
     addEventListener("pointerdown", close); addEventListener("keydown", esc); return () => { clearInterval(t); removeEventListener("pointerdown", close); removeEventListener("keydown", esc); }; }, [inbox, setInbox]);
   if (!inbox) return null;
-  return <div ref={ref} className={`nt-inbox nt-inbox--${at}`} role="dialog" aria-label="Notificaciones">
-    <header><b>Notificaciones</b>{unread ? <button type="button" onClick={readAll}>Marcar todo como leído</button> : null}</header>
-    {items.length ? <ul>{items.map((it) => <li key={it.n}><button type="button" className={it.read ? "" : "is-unread"} onClick={() => open(it)}>
-      <img src={photo(it.photo)} alt="" /><span><b>{it.title}</b><small>{it.body}</small><em>{ago(it.at, now)}</em></span>{it.read ? null : <i className="nt-dot" aria-label="Sin leer" />}</button></li>)}</ul>
-      : <p className="nt-empty">Cuando una negociación, subasta o compra tenga novedades, las verás aquí.</p>}
-    <a className="nt-inbox__all" href="/blocks/mi-garaje/m/vmc">Ver todo en Mi Garaje</a>
-  </div>;
+  return <div ref={ref} className="nt-inbox-host"><NotificationInbox className={`nt-inbox--${at}`} allHref="/blocks/mi-garaje/m/vmc" onReadAll={readAll} onOpen={(i) => open(items[i])}
+    items={items.map((it) => ({ id: it.n, photo: photo(it.photo), title: it.title, body: it.body, time: ago(it.at, now), unread: !it.read }))} /></div>;
 }
 
 /** Lo que va dentro del header (desktop o móvil). Se ubica respecto del botón «Bienvenido» (--welcome-w, medido). */
@@ -259,8 +256,9 @@ export function NotifHeader(): JSX.Element {
   const toggle = () => setInbox(!inbox);
   const [peek, setPeek] = useState(false); // vista previa / isla: el mensaje se muestra unos segundos al llegar
   useEffect(() => { if (!tick || (mode !== "previa" && mode !== "isla")) return; setPeek(true); const t = setTimeout(() => setPeek(false), mode === "isla" ? 4000 : 5000); return () => clearTimeout(t); }, [tick, mode]);
-  const bell = (glass: boolean) => <button type="button" data-nt-opener className={`nt-bell${glass ? " nt-bell--glass vd-host" : ""}`} aria-label={label(unread)} aria-expanded={inbox} onClick={toggle}>
-    <span key={tick} className="nt-bell__icon">{glass ? <Vidrio s="alertas" size={30} /> : <Bell />}</span><Badge n={unread} tick={tick} /></button>;
+  const bell = (glass: boolean) => glass ? <NotificationBell count={unread} expanded={inbox} onClick={toggle} arrival={tick} />
+    : <button type="button" data-nt-opener className="nt-bell" aria-label={label(unread)} aria-expanded={inbox} onClick={toggle}>
+    <span key={tick} className="nt-bell__icon"><Bell /></span><Badge n={unread} tick={tick} /></button>;
   return <div ref={box} className={`nt-h nt-h--${mode}`}>
     {mode === "campana" || mode === "previa" ? bell(false) : mode === "vidrio" ? bell(true) : null}
     {mode === "previa" && peek && last ? <div key={tick} className="nt-peek" role="status"><img src={photo(last.photo)} alt="" /><span><b>{last.title}</b><small>{last.body}</small></span></div> : null}
@@ -294,10 +292,7 @@ export function NotifFloat(): JSX.Element | null {
   // cuyo badge queda con el acumulado de pendientes.
   useEffect(() => { if (!tick) return; setVisible(true); const t = setTimeout(() => setVisible(false), 2400); return () => clearTimeout(t); }, [tick]);
   if (typeof document === "undefined") return null;
-  return visible && last ? createPortal(<section key={tick} className="nt-box nt-box--arriving" aria-label="Nueva notificación">
-    <header><b>Nueva notificación</b></header>
-    <ul><li><button type="button" onClick={() => open(last)}><img src={photo(last.photo)} alt="" /><span><b>{last.title}</b><small>{last.body}</small></span><em>{ago(last.at, now)}</em></button></li></ul>
-  </section>, document.body) : null;
+  return visible && last ? createPortal(<NotificationBox key={tick} className="nt-float" photo={photo(last.photo)} title={last.title} body={last.body} time={ago(last.at, now)} onOpen={() => open(last)} />, document.body) : null;
 }
 
 /** Panel del lab (dock izquierdo), el mismo LabPanel que los demás. */

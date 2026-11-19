@@ -1,11 +1,12 @@
 /* Mis publicaciones con casuísticas (ver MisPublicaciones.tsx) */
 .mp { display: grid; gap: 10px; }
 /* Fila en dos niveles (05/11, Julio): a la izquierda nombre y motivo; a la derecha los íconos o las propuestas y debajo el badge, todos pegados al borde derecho */
-.mp-row { grid-template-columns: auto minmax(0, 1fr) auto !important; grid-template-rows: auto auto; grid-template-areas: "img main more" "img main side" !important; gap: 2px 12px !important; align-items: center !important; }
+/* .fr.mp-row (no .mp-row): la base .fr de VehicleRow se carga después y lleva all:unset; con dos clases esto sigue ganando. */
+.fr.mp-row { grid-template-columns: auto minmax(0, 1fr) auto !important; grid-template-rows: auto auto; grid-template-areas: "img main more" "img main side" !important; gap: 2px 12px !important; align-items: center !important; }
 .mp-row .fr__img { grid-area: img; }
 .mp-row .fr__main { grid-area: main; }
 .mp-row .mp-more { grid-area: more; justify-self: end; margin-right: -6px; }
-.g--vmc.g-page .fr.mp-row .fr__side { grid-area: side; align-self: end; display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; margin: 0; }
+.g--vmc.g-page .fr.mp-row .fr__side { grid-area: side; align-self: end; justify-items: start; text-align: start; display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; margin: 0; }
 /* Con propuestas, el número va arriba del badge, donde irían los íconos */
 .g--vmc.g-page .fr.mp-row:has(.fr__proposals) .fr__side { grid-row: 1 / span 2; grid-column: 3; flex-direction: column-reverse; justify-content: flex-start; }
 /* Lo que dice la fila tras una acción (dónde se vendió o el motivo): negro y en negrita */
@@ -13,7 +14,7 @@
 /* Al republicar una desierta, baja a su lugar deslizándose */
 .mp-sliding::view-transition-group(*) { animation-duration: .55s; animation-timing-function: cubic-bezier(.65, 0, .35, 1); }
 /* Desierta: fijada arriba */
-.mp-row--desierta { background: #F8F5FF; }
+.fr.mp-row--desierta { background: #F8F5FF; }
 /* Dar de baja: la salida de cuando expira una negociación (crece, se achica y se va), también con las animaciones del sistema apagadas */
 @media (prefers-reduced-motion: reduce) { .g-page .fr.mp-row.is-negotiation-leaving { position: relative; z-index: 2; animation: fr-salida-crece var(--salida-ms, 1.2s) ease-in-out var(--salida-espera, 0s) forwards; } }
 .mp-empty { margin: 8px 10px; font-size: 13px; color: #6B6878; }
@@ -32,10 +33,10 @@
 .mp-glass .vd * { transition: fill .15s, color .15s; }
 
 /* Menú ⋯ */
-.mp-more { position: relative; display: inline-flex; align-items: center; gap: 2px; }
-.mp-more__btn { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--mp-ic, #3B1782); cursor: pointer; }
-.mp-more__btn:hover, .mp-more__btn[aria-expanded="true"] { background: #F3EFFD; }
-.mp-more__btn.is-danger { color: var(--mp-ic-danger, var(--mp-ic, #3B1782)); }
+
+
+
+
 /* Estilos de los íconos (lab): con fondo o borde, el botón queda alineado con el borde del badge */
 .mp-more__txt { display: none; }
 .mp:not([data-ic-style="solo"]) .mp-more { margin-right: 0; gap: 6px; }
@@ -50,47 +51,44 @@
   .mp[data-ic-style="texto"] .mp-more__txt { display: inline; font: 600 12.5px/1 var(--vmc-font-display); white-space: nowrap; }
 }
 @media (max-width: 767px) { .mp[data-ic-style="texto"] .mp-more__btn { background: color-mix(in srgb, var(--mp-ic) 11%, transparent); } }
-.mp-more__btn:focus-visible { outline: 2px solid #8460E5; outline-offset: 2px; }
+
 /* Acciones de la fila (11/11, propuesta para Julio): sin menú flotante; el ⋯ las abre dentro de la fila. El estilo se elige en el lab
    (data-style). Colores del DS: vault (violeta), naranja de acento y el rojo de DropModal para Dar de baja. */
 .mp-row.is-acting { background: #F6F4FB; }
-.mp-acts { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 2px 0 2px; animation: mp-acts-in .2s cubic-bezier(.2,.8,.2,1); font-family: var(--vmc-font-display); }
-@keyframes mp-acts-in { from { opacity: 0; transform: translateY(-6px); } }
-.mp-acts svg { flex: none; width: 16px; height: 16px; }
-.mp-acts button { font-family: inherit; line-height: 1.2; cursor: pointer; }
-.mp-acts button:focus-visible { outline: 2px solid #8460E5; outline-offset: 2px; }
+
+
+
+
+
 /* Base de Republicar y Dar de baja hechos a mano */
-.mp-acts__go, .mp-acts__danger { display: inline-flex; align-items: center; gap: 6px; border: 0; font-size: 13px; font-weight: 600; transition: background-color .15s, transform .15s; }
-.mp-acts__go { color: #3B1782; } .mp-acts__danger { color: #B42318; }
+
+ 
 
 /* Siguiente paso (11/11, propuesta para Julio): la fila desierta o no concretada muestra su paso natural sin abrir nada.
    Franja blanca en la columna del texto, ícono en círculo vault, texto violeta y flecha naranja (el gesto de ProfileButton).
    Toda la franja es el botón; la flecha avanza al pasar el mouse. Dar de baja queda en el ⋯ (raro y destructivo). */
-.mp-next { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 40px; margin-top: 2px; padding: 4px 12px 4px 4px; border: 0; border-radius: 12px;
-  background: #fff; box-shadow: inset 0 0 0 1px #E4DCF9, 0 1px 2px rgba(59,23,130,.06); color: var(--vmc-color-vault-700, #3B1782);
-  font-family: var(--vmc-font-display); text-align: left; cursor: pointer; transition: box-shadow .2s cubic-bezier(.2,.8,.2,1), background-color .2s; }
-.mp-next:hover { background: #FBF9FF; box-shadow: inset 0 0 0 1px #C9B8F5, 0 6px 16px -10px rgba(59,23,130,.45); }
-.mp-next:active { background: #F5F0FF; }
-.mp-next:focus-visible { outline: 2px solid var(--vmc-color-vault-500, #8460E5); outline-offset: 2px; }
-.mp-next__ic { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 9px; background: #F1EBFF; }
-.mp-next__ic svg { width: 16px; height: 16px; transition: transform .5s cubic-bezier(.2,.8,.2,1); }
-.mp-next:hover .mp-next__ic svg { transform: rotate(-180deg); }
-.mp-next__txt { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; min-width: 0; }
-.mp-next__txt b { font-size: 14px; font-weight: 700; line-height: 1.2; }
-.mp-next__txt small { font-size: 12.5px; font-weight: 500; line-height: 1.2; color: #6B6878; }
+
+
+
+
+
+
+
+
+
+
 .mp-row:has(.mp-step) .mp-acts { grid-column: 2 / -1; } /* el ⋯ abierto queda en la misma columna que la franja */
-.mp-next__go { flex: none; margin-left: auto; color: var(--vmc-color-orange-600, #ED8936); transition: transform .2s cubic-bezier(.2,.8,.2,1); }
-.mp-next:hover .mp-next__go { transform: translateX(3px); }
+
+
 /* Contenedor de la franja + tacho, en la columna del texto */
-.mp-step { grid-column: 2 / -1; display: flex; align-items: stretch; gap: 8px; margin-top: 2px; }
-.mp-step .mp-next { flex: 1; margin-top: 0; }
+
+
 /* Tacho al lado: cuadrado blanco con el tacho rojo, mismo alto que la franja */
-.mp-bin { display: grid; place-items: center; flex: none; width: 40px; border: 0; border-radius: 12px; background: #fff; color: #B42318; cursor: pointer;
-  box-shadow: inset 0 0 0 1px #F2D4D0, 0 1px 2px rgba(180,35,24,.06); transition: background-color .15s, box-shadow .15s; }
-.mp-bin svg { width: 18px; height: 18px; transition: transform .2s cubic-bezier(.3,1.4,.5,1); }
-.mp-bin:hover { background: #FDECEA; box-shadow: inset 0 0 0 1px rgba(180,35,24,.3); }
-.mp-bin:hover svg { transform: rotate(-10deg) scale(1.08); }
-.mp-bin:focus-visible { outline: 2px solid #B42318; outline-offset: 2px; }
+
+
+
+
+
 /* Tacho dentro: franja y tacho comparten borde; una línea los separa */
 .mp-step[data-v="sugerencia-dentro"] { gap: 0; border: 1px solid #E4DCF9; border-radius: 13px; box-shadow: 0 1px 2px rgba(59,23,130,.06); background: #fff; overflow: hidden; }
 .mp-step[data-v="sugerencia-dentro"] .mp-next { box-shadow: none; border-radius: 12px 0 0 12px; }
@@ -98,11 +96,11 @@
 .mp-bin--in { width: 48px; border-radius: 0 12px 12px 0; box-shadow: inset 1px 0 0 #ECE6FA; background: transparent; }
 .mp-bin--in:hover { box-shadow: inset 1px 0 0 #ECE6FA; }
 /* Lista: un renglón por acción, con ícono y flecha, dentro de una tarjeta blanca */
-.mp-acts[data-style="lista"] { display: grid; gap: 0; padding: 4px; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1px #ECE8F7; }
-.mp-acts[data-style="lista"] :is(.mp-acts__go, .mp-acts__danger) { width: 100%; min-height: 44px; padding: 0 12px; border-radius: 8px; background: none; font-size: 14px; }
-.mp-acts[data-style="lista"] :is(.mp-acts__go, .mp-acts__danger):hover { background: #F6F4FB; }
-.mp-acts[data-style="lista"] button + button { box-shadow: 0 -1px 0 #F0EDF8; }
-.mp-acts__chev { margin-left: auto; color: #B3A8DA; }
+
+
+
+
+
 
 /* Aviso (11/11): la fila explica qué pasó y ofrece las dos salidas. Bloque lila suave en la columna del texto. */
 .mp-alert { grid-column: 2 / -1; display: grid; gap: 10px; margin-top: 2px; padding: 12px 14px; border-radius: 12px; background: #F5F0FF; box-shadow: inset 0 0 0 1px #E8DEFF; font-family: var(--vmc-font-display); }
@@ -160,6 +158,10 @@
 .mp-all__go { flex: none; margin-left: auto; min-height: 36px; padding: 0 16px; border: 0; border-radius: 999px; background: #3B1782; color: #fff; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background-color .15s; }
 .mp-all__go:hover { background: #4E2AA6; }
 
-@media (prefers-reduced-motion: reduce) { .mp-acts, .mp-sheet, .mp-sheet::backdrop { animation: none; } .mp-acts button, .mp-alert__go { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .mp-sheet, .mp-sheet::backdrop { animation: none; } .mp-alert__go { transition: none; } }
 
 
+
+/* Lugar de las piezas de Concorde dentro de la fila (RepublishBar y ActionList; su aspecto vive en src/components). */
+.mp-row > .mp-step { grid-column: 2 / -1; }
+.mp-row > .mp-acts { grid-column: 1 / -1; }

@@ -14,6 +14,16 @@ import Button from "@/src/components/Button";
 import ProfileButton from "@/src/components/ProfileButton";
 import BidMessage from "@/src/components/BidMessage";
 import TimerIcon from "@/src/components/TimerIcon";
+import AmountComposer from "@/src/components/AmountComposer";
+import ChatBubble from "@/src/components/ChatBubble";
+import ChatComposer from "@/src/components/ChatComposer";
+import ChatDay from "@/src/components/ChatDay";
+import ChatHeader from "@/src/components/ChatHeader";
+import ChatNotice from "@/src/components/ChatNotice";
+import ProposalThread from "@/src/components/ProposalThread";
+import { MODAL_HOUSE_CSS } from "@/src/components/RepublishModal";
+import ResponseTimer from "@/src/components/ResponseTimer";
+import RoundProgress from "@/src/components/RoundProgress";
 import { DEPOSIT } from "./Propuesta";
 import SubasChat from "./SubasChat";
 import { COPY, MODES, chatUntil, type ChatMode } from "./chat";
@@ -45,6 +55,8 @@ export const roundOf = (n: Pick<Neg, "side" | "thread" | "sessionStart">) => Mat
  *  «Aceptaste la propuesta» (23/10). Luego se va y sube la nube de espera del fee. */
 // Animaciones de «aceptada» que el comprador ya vio (para no repetirla cada vez que abre el panel).
 const FX_SEEN = new Set<string>();
+// Las tarjetas de aceptar y rechazar usan la casa de los modales de Mi Garaje (procesando, celebración, tarjeta .va/.vh).
+const HOUSE = <style href="concorde-modal-house" precedence="default">{MODAL_HOUSE_CSS}</style>;
 function AcceptFx({ amount, onEnd, theyAccepted = false, sell = true }: { amount: number; onEnd: () => void; theyAccepted?: boolean; sell?: boolean }): JSX.Element {
   const ref = useRef<HTMLLIElement>(null);
   const [step, setStep] = useState<"procesa" | "celebra" | "tarjeta" | "salida">(theyAccepted ? "celebra" : "procesa"); // si aceptó la otra parte, no hay nada que registrar
@@ -55,7 +67,7 @@ function AcceptFx({ amount, onEnd, theyAccepted = false, sell = true }: { amount
       reduced ? 180 : step === "procesa" ? 1100 : step === "celebra" ? 1600 : step === "tarjeta" ? 1800 : 420);
     return () => clearTimeout(t);
   }, [step]);
-  return <li ref={ref} className="np__fx va vh">
+  return <li ref={ref} className="np__fx va vh">{HOUSE}
     {step === "procesa" ? <div className="va__card vh__processing" role="status" aria-live="polite">
       <div className="vh__loader" aria-hidden><i /><i /><i /></div>
       <h2>Aceptando la propuesta</h2>
@@ -107,7 +119,7 @@ function RejectFx({ sell, expiredBy, onEnd }: { sell: boolean; expiredBy?: Side;
   }, [step, onEnd, sell, expiredBy]);
   const buyer = !sell;
   if (step === "notice") return null;
-  if (step === "preparing") return <li ref={ref} data-step={step} className="np__fx np__rejectfx np__rejectfx--prepare" aria-hidden>
+  if (step === "preparing") return <li ref={ref} data-step={step} className="np__fx np__rejectfx np__rejectfx--prepare" aria-hidden>{HOUSE}
     <div className="va__card vh__reject vh__reject--preparing"><span className="vh__closing-bridge"><i /><i /></span></div>
   </li>;
   const consequence = (buyer || !!expiredBy) && (step === "consequence" || step === "leaving");
@@ -126,7 +138,7 @@ function RejectFx({ sell, expiredBy, onEnd }: { sell: boolean; expiredBy?: Side;
     ? (released ? (buyer ? "La enviamos de vuelta a tu Billetera." : "Volvió a su Billetera.") : expiredBy ? "" : "La propuesta dejará de aparecer en En venta.")
     : expiredBy ? (mine ? "Porque dejaste de contraproponer o aceptar por +24 horas." : `El ${expiredBy} dejó de contraproponer o aceptar por +24 horas.`)
     : "La negociación se cerrará.";
-  return <li ref={ref} data-step={step} className={`np__fx va vh np__rejectfx${buyer ? " np__rejectfx--buyer" : " np__rejectfx--seller"}${step === "leaving" ? " is-leaving" : ""}`} role="status" aria-live="polite">
+  return <li ref={ref} data-step={step} className={`np__fx va vh np__rejectfx${buyer ? " np__rejectfx--buyer" : " np__rejectfx--seller"}${step === "leaving" ? " is-leaving" : ""}`} role="status" aria-live="polite">{HOUSE}
     <div className="va__card vh__reject">
       {released ? <div className="vh__release-stage" aria-hidden>
         <i className="vh__release-coin vh__release-coin--one">&gt;S&lt;</i><i className="vh__release-coin vh__release-coin--two">&gt;S&lt;</i><i className="vh__release-coin vh__release-coin--three">&gt;S&lt;</i>
@@ -171,16 +183,7 @@ function glide(el: HTMLElement, foot?: HTMLElement | null, top = false): void {
 // Consignación del comprador al iniciar: la fija cada oferta (T&C IV.6.2.a); la de ejemplo es la del modal de Propuesta.tsx.
 const FEE = DEPOSIT.sc;
 const usd = (n: number) => `US$ ${n.toLocaleString("en-US")}`;
-// Plazo con TimerIcon y cifras en mono (Concorde: countdowns en --vmc-font-mono). 23/10 (Silvana): siempre con segundero,
-// «23:59:24», para que se vea que el tiempo corre de verdad (urgencia en ambos lados).
-function DueIn({ to, mine, pre = "Vence en", post = "" }: { to: number; mine: boolean; pre?: string; post?: string }): JSX.Element {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
-  const left = Math.max(0, to - now), h = Math.floor(left / 3.6e6), m = Math.floor((left % 3.6e6) / 6e4), sec = Math.floor((left % 6e4) / 1e3);
-  const pad = (x: number) => String(x).padStart(2, "0");
-  // Solo las cifras en mono; las unidades en la fuente del texto (en mono «h» y «min» se separaban demasiado).
-  return <span className={`np__due${mine ? " is-me" : ""}`} role="timer" aria-label={`Vence en ${h} h ${m} min`}><TimerIcon size={16} />{pre} <b>{pad(h)}:{pad(m)}:{pad(sec)}</b>{post}</span>;
-}
+// Plazo: ResponseTimer de Concorde. 23/10 (Silvana): siempre con segundero, «23:59:24», para que se vea que el tiempo corre.
 // La flecha permite leer la dirección del cambio de un vistazo: ↑ cuando sube, ↓ cuando baja.
 // Vencimiento de la propuesta vigente, fijo mientras no llegue otra: se guarda por propuesta (lado, comprador, negociación,
 // ronda y monto) en memoria y en sessionStorage, para que cerrar y abrir el panel (o recargar) no lo vuelva a poner en 24 h.
@@ -279,8 +282,6 @@ export function NegList({ peers, onPick, back }: { peers: Peer[]; onPick: (id: s
 export default function NegPanel({ n, coins, onDone, peers, active, onBack, onCancel, chat, autoFee, chatReady, chatMessageText, purchaseConfirmed = false, onSim, onFeePaid, onPurchaseConfirmed, onChatOpen, onClosed }: { n: Neg; coins: number; onDone: (n: Neg, r: NegResult) => void; peers?: Peer[]; active?: string; onBack?: () => void; onCancel?: () => void; chat?: string; autoFee?: boolean; chatReady?: boolean; chatMessageText?: string; purchaseConfirmed?: boolean; onSim?: (k: "contra" | "acepta") => void; onFeePaid?: () => void; onPurchaseConfirmed?: () => void; onChatOpen?: (open: boolean) => void; onClosed?: (n: Neg, expired?: boolean) => void }): JSX.Element {
   const [mode, setMode] = useState<"" | "contra" | "aceptar" | "rechazar">("");
   const [val, setVal] = useState(0);
-  const [custom, setCustom] = useState("");
-  const customRef = useRef("");
   // Toda propuesta vence a las 24 h (T&C IV.6.2.f); al vencer, la negociación termina (estado «expirada», solo en la vista).
   // 23/10 (Silvana): el plazo ya no se reinicia al salir y volver; se fija una vez por propuesta (dueOf).
   const [due, setDue] = useState(() => dueOf(n));
@@ -288,7 +289,7 @@ export default function NegPanel({ n, coins, onDone, peers, active, onBack, onCa
   // 30/10 (Aaron): al vencer, cierra con la animación. Quien no actuó es a quien le tocaba: «ofrece» = a mí, «enviada» = a la otra parte.
   // El lab lo adelanta con «Simula expiración» (los 4 casos: 2 aquí y 2 en la otra pestaña).
   const [expiredBy, setExpiredBy] = useState<Side | null>(n.expiredBy ?? null);
-  useEffect(() => { setMode(""); setVal(0); setCustom(""); customRef.current = ""; setDue(dueOf(n)); setExpired(false); setExpiredBy(n.expiredBy ?? null); }, [n]);
+  useEffect(() => { setMode(""); setVal(0); setDue(dueOf(n)); setExpired(false); setExpiredBy(n.expiredBy ?? null); }, [n]);
   useEffect(() => { if (expired && (n.state === "ofrece" || n.state === "enviada")) setExpiredBy((n.state === "ofrece") === (n.side === "vende") ? "vendedor" : "comprador"); }, [expired, n.state, n.side]);
   useEffect(() => {
     if (n.state !== "ofrece" && n.state !== "enviada") return;
@@ -379,11 +380,10 @@ export default function NegPanel({ n, coins, onDone, peers, active, onBack, onCa
   const done = (r: NegResult) => { onDone(n, r); setMode(""); };
 
   const live = !expired && (n.state === "ofrece" || n.state === "enviada");
-  // Lo que cedió cada parte respecto de su propuesta anterior, y lo que aún los separa (Backus et al.: lo habitual es partir la diferencia).
-  const steps = n.thread.map((t, i) => { const prev = n.thread.slice(0, i).reverse().find((x) => x.me === t.me); return { ...t, delta: prev ? t.amount - prev.amount : 0 }; });
+  // Lo que aún los separa (Backus et al.: lo habitual es partir la diferencia).
   const last = n.thread[n.thread.length - 1], lastOther = [...n.thread].reverse().find((t) => t.me !== last?.me);
   const gap = live && last && lastOther ? Math.abs(last.amount - lastOther.amount) : 0;
-  const dueIndicator = live ? <DueIn to={due} mine={n.state === "ofrece"} /> : null;
+  const dueIndicator = live ? <ResponseTimer to={due} urgent={n.state === "ofrece"} /> : null;
   const acceptedBuy = false; // 23/10: el comprador usa el mismo flujo de «aceptada» que el vendedor
 
   // Vendedor (23/10, Abraham): pestaña flotante del lab para simular que el comprador pagó su fee.
@@ -420,15 +420,12 @@ export default function NegPanel({ n, coins, onDone, peers, active, onBack, onCa
           : <><p className="np__offer-refs">Acuerdo <b>{usd(n.amount)}</b></p>
           <p className="np__offer-ask">Consignación <b>&gt;S&lt; {FEE}</b> <span>·</span> se aplica a tu compra</p></>}
           <h3>{n.buyer ? `Historial con ${n.buyer}` : "Historial de propuestas"}</h3>
-          <div className="sc__day"><span>{n.thread[0]?.when.split(" ")[0] ?? "Hoy"}</span></div>
-          {n.thread.map((t, i) => <div key={i} className={`sc__row sc__row--bid${t.me ? " is-mine" : ""}`}><div className="sc__bubble"><p><b>{usd(t.amount)}</b></p>
-            <span className="sc__meta">{t.me ? "Tú" : sell ? n.buyer ?? "Comprador" : "Vendedor"} · {t.when.split(" ").slice(1).join(" ") || t.when}</span></div></div>)}
-          <div className="sc__sys sc__sys--done" role="note"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden><path d="m5 10 3.1 3.1L15.5 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            <span>{doneNote}</span></div>
+          <ChatDay label={n.thread[0]?.when.split(" ")[0] ?? "Hoy"} />
+          {n.thread.map((t, i) => <ChatBubble key={i} className="sc__row--bid" mine={t.me} time={`${t.me ? "Tú" : sell ? n.buyer ?? "Comprador" : "Vendedor"} · ${t.when.split(" ").slice(1).join(" ") || t.when}`}><b>{usd(t.amount)}</b></ChatBubble>)}
+          <ChatNotice tone="done"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden><path d="m5 10 3.1 3.1L15.5 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <span>{doneNote}</span></ChatNotice>
         </section>
-        <header className="sc__head np__chathead"><span className="sc__avatar" aria-hidden>{me.cuu.slice(0, 2)}</span>
-          <div className="sc__who"><b>{me.cuu}</b><span>{me.other}</span></div>
-          <div className="sc__deal"><small>{me.deal}</small><b>{usd(n.amount)}</b></div></header></>}
+        <ChatHeader className="np__chathead" name={me.cuu} role={me.other} dealLabel={me.deal} amount={usd(n.amount)} /></>}
       system={<><svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden><rect x="4" y="9" width="12" height="8" rx="2" fill="currentColor" /><path d="M7 9V7a3 3 0 0 1 6 0v2" stroke="currentColor" strokeWidth="2" /></svg>
         <span suppressHydrationWarning><b>{sell ? (autoFee ? `Se cobró el fee de habilitación de ${me.cuu} de su consignación.` : `${me.cuu} pagó su fee de habilitación.`) : autoFee ? `Se cobró tu fee de habilitación de tu consignación (>S<\u00a0${FEE}).` : "Pagaste tu fee de habilitación."}</b> Coordinen aquí la visita y el pago hasta el {chatUntil()}.</span></>} />
     {sim}
@@ -452,13 +449,9 @@ export default function NegPanel({ n, coins, onDone, peers, active, onBack, onCa
 
     <section className={acceptedBuy ? "np__history np__history--accepted" : n.state === "aceptada" || fx ? "np__history np__history--sold" : "np__history"} aria-label="Historial de propuestas" ref={lastRef}>
       <div className="np__hhead"><h3>{n.buyer && open.length > 1 ? `Historial con ${n.buyer}` : "Historial de propuestas"}</h3>
-        <div className="np__meta"><span>{/* Cada punto corresponde a una negociación: propuesta del comprador + respuesta del vendedor. */}Negociación {round}/{MAX}{sell && n.buyer ? ` con ${n.buyer}` : ""}</span><i aria-hidden>{Array.from({ length: MAX }, (_, i) => <b key={i} className={i < round ? "is-on" : ""} />)}</i></div></div>
+        <RoundProgress round={round} total={MAX} with={sell ? n.buyer : undefined} /></div>
       {/* BidMessage de Concorde: lo tuyo en vault (sent), lo de la otra parte en white (received). Sin «live»: el naranja es en vivo. */}
-      <ol className="np__thread">{steps.map((t, i) => { const [day, ...hh] = t.when.split(" "), prevDay = i ? steps[i - 1].when.split(" ")[0] : "";
-        return [day !== prevDay ? <li key={`d${i}`} className="np__day"><span>{day}</span></li> : null,
-          <li key={i} className={t.me ? "is-me" : ""}>{t.me ? null : <span className="np__avatar" aria-hidden>{sell ? (n.buyer ? `C${n.buyer.replace(/\D/g, "")}` : "C") : "V"}</span>}
-            <div><BidMessage side={t.me ? "sent" : "received"} type={t.me ? "vault" : "white"}><b>{usd(t.amount)}</b></BidMessage>
-              <span className="np__at">{t.me ? "Tú" : sell ? (n.buyer ?? "Comprador") : "Vendedor"} · {hh.join(" ") || day}{t.me ? <i aria-label="Enviada"> ✓✓</i> : null}</span></div></li>]; })}
+      <ProposalThread items={n.thread.map((t) => ({ me: t.me, amount: usd(t.amount), when: t.when }))} other={sell ? (n.buyer ?? "Comprador") : "Vendedor"} initials={sell ? (n.buyer ? `C${n.buyer.replace(/\D/g, "")}` : "C") : "V"}>
         {!sell && n.state === "rechazada" ? <li className="np__reply"><span className="np__avatar" aria-hidden>V</span><div>
           <BidMessage side="received" type="white" className="np__reply-bubble"><b>El vendedor rechazó tu propuesta.</b><span>{terminalReject ? "La negociación se cerrará." : "La negociación se cerró."}</span></BidMessage>
           <span className="np__at">Vendedor · Ahora</span>
@@ -489,7 +482,7 @@ export default function NegPanel({ n, coins, onDone, peers, active, onBack, onCa
           </div>
         </li> : null}
         {sell && n.state === "aceptada" && !fx ? <li className="np__wait" role="status"><span><svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden><rect x="4" y="9" width="12" height="8" rx="2" fill="currentColor" /><path d="M7 9V7a3 3 0 0 1 6 0v2" stroke="currentColor" strokeWidth="2" /></svg>
-          {sell ? "El chat se abre cuando el comprador pague su fee." : "El chat se abre cuando pagues tu fee de habilitación."}</span></li> : null}</ol>
+          {sell ? "El chat se abre cuando el comprador pague su fee." : "El chat se abre cuando pagues tu fee de habilitación."}</span></li> : null}</ProposalThread>
       {gap ? <p className="np__gap">Diferencia actual <b>{usd(gap)}</b></p> : null}
     </section>
 
@@ -499,16 +492,11 @@ export default function NegPanel({ n, coins, onDone, peers, active, onBack, onCa
     {closing ? <footer className="np__foot np__closed-foot" ref={footRef} aria-hidden /> : n.state === "aceptada" || fx ? <footer className="np__foot np__chatoff" ref={footRef}>
       {/* Comprador: el pago del fee es lo que abre el chat (en el lab, lo simula). */}
       {/* El botón de pagar va dentro de la tarjeta (23/10). */}
-      <div className="sc__compose" aria-disabled="true">
-        <button type="button" className="sc__tool" aria-label="Emojis" disabled>😊</button>
-        <button type="button" className="sc__tool" aria-label="Enviar imagen" disabled><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2" /><circle cx="9" cy="10" r="1.6" /><path d="M21 16l-5-5-8 8" /></svg></button>
-        <textarea rows={1} placeholder="Escribe un mensaje…" aria-label={sell ? "Mensaje (disponible cuando el comprador pague)" : "Mensaje (disponible cuando pagues tu fee)"} disabled />
-        <button type="button" className="sc__send" aria-label="Enviar" disabled><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden><path d="M4 12l16-8-6 16-2-7z" fill="currentColor" /></svg></button>
-      </div>
+      <ChatComposer disabled label={sell ? "Mensaje (disponible cuando el comprador pague)" : "Mensaje (disponible cuando pagues tu fee)"} />
     </footer> : <footer className="np__foot" ref={footRef}>
       {/* 23/10 (Abraham): el plazo del vendedor va junto a las acciones que lo cumplen (antes, arriba junto a «Propuestas»). */}
-      {sell && live ? <p className="np__foot-due"><DueIn to={due} mine={n.state === "ofrece"} pre={n.state === "ofrece" ? "Tienes" : "El comprador tiene"} post=" para responder" /></p> : null}
-      {!sell && (live || n.state === "rechazada") && !finalRejected ? <p className="np__foot-due"><DueIn to={due} mine={n.state !== "enviada"} pre={n.state === "enviada" ? "Esperando al vendedor" : "Tienes"} post={n.state === "enviada" ? "" : " para responder"} /></p> : null}
+      {sell && live ? <p className="np__foot-due"><ResponseTimer to={due} urgent={n.state === "ofrece"} pre={n.state === "ofrece" ? "Tienes" : "El comprador tiene"} post=" para responder" /></p> : null}
+      {!sell && (live || n.state === "rechazada") && !finalRejected ? <p className="np__foot-due"><ResponseTimer to={due} urgent={n.state !== "enviada"} pre={n.state === "enviada" ? "Esperando al vendedor" : "Tienes"} post={n.state === "enviada" ? "" : " para responder"} /></p> : null}
       {/* «aceptada» ya no llega aquí: usa el pie del chat desactivado (arriba). */}
       {finalRejected ? <div className="np__closed-final" aria-disabled="true"><div className="np__compose"><label><span>US$</span><input disabled placeholder="No puedes enviar más propuestas" aria-label="Propuestas agotadas" /></label><button type="button" className="np__send" disabled aria-label="Enviar deshabilitado"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M12 19V5m0 0-5 5m5-5 5 5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg></button></div></div>
       : n.state === "rechazaste" ? finalRound && !sell ? <div className="np__done is-off"><b>Dejaste pasar la última contrapropuesta</b><span>Se completaron las 5 de 5 propuestas. La negociación terminó.</span></div> : null
@@ -517,12 +505,9 @@ export default function NegPanel({ n, coins, onDone, peers, active, onBack, onCa
       : n.state === "enviada" && !expired ? <div className="np__done is-wait"><div>{sell ? <b><TimerIcon size={16} />Esperando respuesta del {other}</b> : null /* el comprador ya lo lee en la fila de arriba */}<span>{sell ? "Si el comprador no te brinda una respuesta antes de que el tiempo finalice, la negociación termina. Te notificaremos cuando te responda." : "Si el vendedor no te brinda una respuesta antes de que el tiempo finalice, tu consignación será devuelta a tu Billetera. Te notificaremos cuando te responda."}</span></div></div>
       : mode === "contra" || restart ? <div className={`np__form${restart ? " np__form--restart" : ""}`}>
           {restart && negsLeft <= 0 ? <p className="np__err">Usaste las {MAX} negociaciones de esta oferta.</p> : <>
-          {opts.length ? <div className="np__chips" role="group" aria-label="Montos sugeridos">{opts.map(([label, amount]) => <button key={label} type="button" className={label.startsWith("Comprador") ? "is-buyer" : ""} aria-pressed={val === amount} onClick={() => { const text = amount.toLocaleString("en-US"); customRef.current = text; setCustom(text); setVal(amount); }}><small>{label}</small><b>{usd(amount)}</b></button>)}</div> : null}
-          <form className="np__compose" onSubmit={(e) => { e.preventDefault(); if (ok && !short) done({ kind: restart ? "nueva" : "enviada", amount: val }); }}>
-            <label><span>US$</span><input inputMode="numeric" value={custom} placeholder={sell ? "Escribe tu contrapropuesta" : "Escribe tu propuesta"} aria-label={sell ? "Tu contrapropuesta en US$" : "Tu propuesta en US$"}
-              onChange={(e) => { const amount = Number(e.target.value.replace(/\D/g, "")) || 0; const text = amount ? amount.toLocaleString("en-US") : ""; customRef.current = text; setCustom(text); setVal(amount); }} /></label>
-            <button type="submit" className="np__send" disabled={!ok || short} aria-label={ok ? `Enviar ${usd(val)}` : "Enviar"}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M12 19V5m0 0-5 5m5-5 5 5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
-          </form>
+          <AmountComposer value={val} onChange={setVal} canSend={ok && !short} onSubmit={() => done({ kind: restart ? "nueva" : "enviada", amount: val })}
+            placeholder={sell ? "Escribe tu contrapropuesta" : "Escribe tu propuesta"} label={sell ? "Tu contrapropuesta en US$" : "Tu propuesta en US$"}
+            suggestions={opts.map(([label, amount]) => ({ label, amount }))} />
           {sell && hi && ok && val < hi.ask ? <p className="np__warn"><b>Estás proponiendo {usd(val)}</b><span>Son {usd(hi.ask - val)} menos que lo pedido a {hi.buyer}. Si acepta, se cierran las demás negociaciones.</span></p> : null}
           {val > 0 && !ok ? <p className="np__err">{sell ? `Ingresa un monto mayor a ${usd(n.amount)} y hasta tu precio publicado (${usd(n.list)}).` : `Ingresa un monto menor a ${usd(n.amount)}.`}</p> : null}
           {short ? <div className="np__short"><b>Fondos insuficientes</b><Button variant="secondary">Adquiere SubasCoins</Button><ProfileButton>Realizar una recarga</ProfileButton></div>

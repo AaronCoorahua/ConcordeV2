@@ -1,0 +1,61 @@
+/**
+ * RepublishBar — siguiente paso de una publicación sin venta (Mi Garaje, /blocks/mi-garaje/m/vmc · Mis publicaciones: filas
+ * Desierta y No concretada). Franja blanca «Republicar · Gratis, por 7 días →» (todo es el botón; la flecha avanza al pasar)
+ * y, a su derecha, un botón cuadrado con el tacho rojo para dar de baja. Solo depende de React.
+ */
+import type { JSX } from "react";
+
+export const REPUBLISH_BAR_CSS = String.raw`
+.mp-step { display:flex; align-items:stretch; gap:8px; margin-top:2px; }
+.mp-next { display:flex; flex:1; align-items:center; gap:12px; width:100%; min-height:40px; margin-top:0; padding:4px 12px 4px 4px; border:0; border-radius:12px;
+  background:#fff; box-shadow:inset 0 0 0 1px #E4DCF9, 0 1px 2px rgba(59,23,130,.06); color:var(--vmc-color-vault-700, #3B1782);
+  font-family:var(--vmc-font-display); text-align:left; cursor:pointer; transition:box-shadow .2s cubic-bezier(.2,.8,.2,1), background-color .2s; }
+.mp-next:hover { background:#FBF9FF; box-shadow:inset 0 0 0 1px #C9B8F5, 0 6px 16px -10px rgba(59,23,130,.45); }
+.mp-next:active { background:#F5F0FF; }
+.mp-next:focus-visible { outline:2px solid var(--vmc-color-vault-500, #8460E5); outline-offset:2px; }
+.mp-next__ic { display:grid; place-items:center; flex:none; width:32px; height:32px; border-radius:9px; background:#F1EBFF; }
+.mp-next__ic svg { width:16px; height:16px; transition:transform .5s cubic-bezier(.2,.8,.2,1); }
+.mp-next:hover .mp-next__ic svg { transform:rotate(-180deg); }
+.mp-next__txt { display:flex; flex-wrap:wrap; align-items:baseline; column-gap:8px; min-width:0; }
+.mp-next__txt b { font-size:14px; font-weight:700; line-height:1.2; }
+.mp-next__txt small { font-size:12.5px; font-weight:500; line-height:1.2; color:#6B6878; }
+.mp-next__go { flex:none; margin-left:auto; color:var(--vmc-color-orange-600, #ED8936); transition:transform .2s cubic-bezier(.2,.8,.2,1); }
+.mp-next:hover .mp-next__go { transform:translateX(3px); }
+.mp-bin { display:grid; place-items:center; flex:none; width:40px; border:0; border-radius:12px; background:#fff; color:#B42318; cursor:pointer;
+  box-shadow:inset 0 0 0 1px #F2D4D0, 0 1px 2px rgba(180,35,24,.06); transition:background-color .15s, box-shadow .15s; }
+.mp-bin svg { width:18px; height:18px; transition:transform .2s cubic-bezier(.3,1.4,.5,1); }
+.mp-bin:hover { background:#FDECEA; box-shadow:inset 0 0 0 1px rgba(180,35,24,.3); }
+.mp-bin:hover svg { transform:rotate(-10deg) scale(1.08); }
+.mp-bin:focus-visible { outline:2px solid #B42318; outline-offset:2px; }
+`;
+
+export interface RepublishBarProps {
+  /** Vehículo de la fila (p. ej. «Suzuki Swift 2020»), para el nombre accesible del tacho. */
+  name: string;
+  /** Días que dura la republicación gratis. */
+  days: number;
+  /** Al tocar la franja (en Mi Garaje abre RepublishModal). */
+  onRepublish: () => void;
+  /** Al tocar el tacho (en Mi Garaje abre DropModal). */
+  onDrop: () => void;
+}
+
+const Icon = ({ d, size }: { d: string; size: number }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d={d} /></svg>;
+const RELOAD = "M20 12a8 8 0 1 1-2.6-5.9M20 3v5h-5";
+const TRASH = "M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3";
+
+export function RepublishBar({ name, days, onRepublish, onDrop }: RepublishBarProps): JSX.Element {
+  return <>
+    <style href="concorde-republish-bar" precedence="default">{REPUBLISH_BAR_CSS}</style>
+    <div className="mp-step">
+      <button type="button" className="mp-next" onClick={onRepublish}>
+        <span className="mp-next__ic"><Icon d={RELOAD} size={18} /></span>
+        <span className="mp-next__txt"><b>Republicar</b><small>Gratis, por {days} días</small></span>
+        <svg className="mp-next__go" width="18" height="18" viewBox="0 0 20 20" aria-hidden><path d="M4 10h11M11 5l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </button>
+      <button type="button" className="mp-bin" aria-label={`Dar de baja: ${name}`} title="Dar de baja" onClick={onDrop}><Icon d={TRASH} size={18} /></button>
+    </div>
+  </>;
+}
+
+export default RepublishBar;

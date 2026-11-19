@@ -27,7 +27,20 @@ import AvatarZone from "@/src/components/AvatarZone";
 import StarIcon from "@/src/components/StarIcon";
 import CheckIcon from "@/src/components/CheckIcon";
 import InfoIcon from "@/src/components/InfoIcon";
-import { Chrome, Gallery, PHOTO, photosOf } from "./kit";
+import { Chrome, PHOTO, photosOf } from "./kit";
+import { StatusTag } from "@/src/components/StatusTag";
+import { VehicleRow } from "@/src/components/VehicleRow";
+import { StageTabs } from "@/src/components/StageTabs";
+import { FolderTabs } from "@/src/components/FolderTabs";
+import { PendingToggle } from "@/src/components/PendingToggle";
+import { PublishSwipe } from "@/src/components/PublishSwipe";
+import { ActivitySection } from "@/src/components/ActivitySection";
+import { RecommendedList, type RecommendedItem } from "@/src/components/RecommendedList";
+import { AccountCard } from "@/src/components/AccountCard";
+import { ActionTile } from "@/src/components/ActionTile";
+import { WalletCard } from "@/src/components/WalletCard";
+import { SidePanel } from "@/src/components/SidePanel";
+import { AdBanner } from "@/src/components/AdBanner";
 import { Vidrio, type Sec as VSec } from "@/src/components/Vidrio";
 import { buildResult, ansFrom } from "./Flujo";
 import { VALS } from "./valorizaciones-data";
@@ -44,7 +57,7 @@ import { PIEZAS, RIEL_TIPOS, bannerKey, bannerSrc, type Pieza } from "./bannersV
 import { FocoInline, FocoLayer, FocoPanel, useFoco } from "./Foco";
 import { LabPanel } from "./LabPanel";
 import { PagLab, PagList, usePag } from "./Paginado";
-import { AcuerdoLab, DealBadge, NegotiatingBadge, useAcuerdo, type Deal, type DetailGo } from "./Acuerdo";
+import { AcuerdoLab, useAcuerdo, type Deal, type DetailGo } from "./Acuerdo";
 import { PubActionsLab, PubList, type PubRow } from "./MisPublicaciones";
 import { NO_DEAL_NOTE, TIME_OUT_NOTE } from "./PublicationFlow";
 import type { PublicationStatus } from "@/src/components/PublicationBadge";
@@ -180,40 +193,6 @@ function RoleBadge({ side }: { side: "compra" | "vende" }): JSX.Element {
   return <span className={`badgestatus rb rb--${side}`}><span className="rb__a">{buy ? "Compra" : "Venta"}</span><span className="rb__b">{buy ? "Ofreces" : "Te ofrecen"}</span></span>;
 }
 
-/** PROPUESTA: etiqueta de estado (Concorde solo trae BadgeStatus live/próxima). */
-export function Status({ tone, children }: { tone: Tone; children: ReactNode }): JSX.Element {
-  if (tone === "live") return <BadgeStatus variant="live" label="EN VIVO" />;
-  if (children === "Próxima") return <BadgeStatus variant="proxima" />;
-  return <span className={`g-status g-status--${tone}`}>{children}</span>;
-}
-
-/** PROPUESTA: fila de vehículo del mockup de Fernando. Toda la fila es el destino; la etiqueta dice la acción. */
-/** PROPUESTA: seguimiento por etapas (Baymard: el usuario quiere saber en qué paso está y qué sigue). */
-function Tracker({ steps, step }: { steps: string[]; step: number }): JSX.Element {
-  return <ol className="g-track" aria-label={`Paso ${Math.min(step + 1, steps.length)} de ${steps.length}`}>
-    {steps.map((t, i) => <li key={t} className={i < step ? "is-done" : i === step ? "is-now" : ""} aria-current={i === step ? "step" : undefined}><i aria-hidden />{t}</li>)}
-  </ol>;
-}
-
-export function VehicleRow({ r, tracker, onOpen, deadlineTo }: { r: Row; tracker?: boolean; onOpen?: (r: Row) => void; deadlineTo?: number }): JSX.Element {
-  return <a href="#" aria-haspopup={onOpen ? "dialog" : undefined} onClick={onOpen ? (e) => { e.preventDefault(); onOpen(r); } : undefined}
-    className={`g-row${r.isNew ? " is-new" : ""}${tracker && r.steps ? " has-track" : ""}`}>
-    <img className="g-row__img" src={PHOTO[r.photo]} alt="" width={88} height={66} />
-    <span className="g-row__main">
-      <span className="g-row__name">{r.name} · {r.year}{r.isNew ? <span className="g-row__new"><i aria-hidden />Nuevo</span> : null}</span>
-      {r.plate ? <span className="g-row__plate">Placa {r.plate}</span> : null}
-    </span>
-    <span className="g-row__detail">{r.detail}</span>
-    <span className="g-row__status"><Status tone={r.tone}>{r.status}</Status>{deadlineTo ? <Countdown to={deadlineTo} label={r.tone === "live" ? "Cierra en" : r.id === "c1" ? "Paga en" : "Vence en"} /> : r.when ? <small className={r.tone === "action" ? "is-due" : ""}>{r.when}</small> : null}</span>
-    <Chevron />
-    {tracker && r.steps ? <Tracker steps={r.steps} step={r.step ?? 0} /> : null}
-  </a>;
-}
-
-function Skeleton(): JSX.Element {
-  return <div className="g-skel" role="status" aria-label="Cargando">{[0, 1].map((i) => <div key={i}><i /><b /><b /></div>)}</div>;
-}
-
 function Heading({ variant, title, sub, action, news, level = 2, group }: { variant: Variant; title: string; sub?: string; action?: ReactNode; news?: number; level?: 1 | 2; group?: boolean }): JSX.Element {
   const badge = news ? <span className="g-newcount">{news} {news === 1 ? "nueva" : "nuevas"}</span> : null;
   // Modelo 2: el sello completo (CardTitle) solo en la página y en el grupo «Tu actividad»;
@@ -224,31 +203,6 @@ function Heading({ variant, title, sub, action, news, level = 2, group }: { vari
   if (variant === "concorde") return <div className="g-head g-head--stamp"><StampTitle sub={sub}>{title}{badge}</StampTitle>{action}</div>;
   const H = level === 1 ? "h1" : "h2";
   return <div className={`g-head g-head--${level}`}><div><H>{title}{badge}</H>{sub ? <p>{sub}</p> : null}</div>{action}</div>;
-}
-
-function Section({ s, variant, loading, f, onOpen, seen }: { s: Sec; variant: Variant; loading: boolean; f: Features; onOpen: (r: Row) => void; seen: Set<string> }): JSX.Element {
-  const [tab, setTab] = useState(0);
-  const pending = s.rows.some((r) => r.due);
-  const [open, setOpen] = useState(!f.compact || pending);
-  const isUnread = (r: Row) => Boolean((r.isNew || r.unread) && !seen.has(r.id));
-  const news = s.rows.filter(isUnread).length;
-  const rows = s.tabs ? s.rows.filter((r) => r.tab === tab) : s.rows;
-  if (f.compact && !open) return <section id={`sec-${s.id}`} className="g-sec g-sec--folded" aria-label={s.title}>
-    <button type="button" className="g-fold" aria-expanded={false} onClick={() => setOpen(true)}>
-      <span><b>{s.title}</b><small>{loading ? "Cargando…" : s.rows.length ? `${plural(s.rows.length, s.unit)} · al día` : "Sin actividad todavía"}</small></span><Chevron />
-    </button>
-  </section>;
-  return <section id={`sec-${s.id}`} className="g-sec" aria-labelledby={`h-${s.id}`}>
-    <Heading variant={variant} title={s.title} news={news}
-      sub={loading ? "Cargando…" : s.rows.length ? plural(s.rows.length, s.unit) : "Sin actividad todavía"}
-      action={!loading && s.rows.length > 2 ? <ProfileButton>{`Ver todas (${s.rows.length})`}</ProfileButton> : !loading && s.rows.length ? <ProfileButton>Ver todas</ProfileButton> : undefined} />
-    {loading ? <Skeleton /> : !s.rows.length
-      ? <div className="g-empty"><p>{s.empty}</p>{s.emptyCta ? <Button variant={s.emptyCta === "Publicar" ? "primary" : "outline"}>{s.emptyCta}</Button> : null}</div>
-      : <>
-        {s.tabs ? <div className="g-tabs"><TabSelector options={s.tabs.map((t, i) => `${t} · ${s.rows.filter((r) => r.tab === i).length}`)} value={tab} onChange={setTab} aria-label={s.title} /></div> : null}
-        <div className="g-list">{rows.slice(0, 3).map((r, i) => <div key={r.id} className={i >= 2 ? "g-row-extra" : undefined}><VehicleRow r={{ ...r, isNew: r.isNew && !seen.has(r.id) }} tracker={f.tracker} onOpen={onOpen} deadlineTo={variant === "fernando" ? DEADLINE[r.id] : undefined} /></div>)}</div>
-      </>}
-  </section>;
 }
 
 export type Pending = Row & { sec: string; secTitle: string };
@@ -298,22 +252,13 @@ function NextStep({ secs, loading, variant }: { secs: Sec[]; loading: boolean; v
   </section>;
 }
 
-function GaugeIcon(): JSX.Element {
-  // Material «speed», la misma familia que Concorde y el mismo ícono que «Mis valorizaciones».
-  return <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden fill="currentColor">{SEC_ICON.valorizaciones}</svg>;
-}
-function PlusIcon(): JSX.Element {
-  return <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="9" /><path d="M12 8v8M8 12h8" /></svg>;
-}
-function SubasCoinsAcquireIcon(): JSX.Element {
-  return <span className="f-wallet__acquire-circle" aria-hidden>&gt;S&lt;</span>;
-}
 /** glass: íconos de vidrio (+ en Publicar, aguja en Valorizar) en Pulso Fuente; la maqueta VMC conserva los de Material. */
-function Actions({ variant, sober, glass, vmc }: { variant: Variant; sober?: boolean; glass?: boolean; vmc?: boolean }): JSX.Element {
+function Actions({ variant, sober, vmc }: { variant: Variant; sober?: boolean; vmc?: boolean }): JSX.Element {
+  // Publicar y Valorizar: ActionTile de Concorde.
   if (variant === "fernando") return <div className="f-actions">
     <div className="f-actions__row">
-      <button type="button" className={`f-act f-act--publish${glass ? " vd-host" : ""}`} onClick={() => { location.href = vmc ? "/blocks/mi-garaje/m/vmc-publica" : sober ? "/blocks/mi-garaje/m/publica" : "/blocks/mi-garaje/m/publicar"; }}><span className={`f-act__icon${glass ? " f-act__icon--glass" : ""}`}>{glass ? <Vidrio s="publicar" size={48} /> : <PlusIcon />}</span><span className="f-act__text"><b>Publica tu Vehículo</b><small>¡Un solo pago hasta que lo vendas!</small></span><span className="f-act__go"><Chevron /></span></button>
-      <button type="button" className={`f-act f-act--value${glass ? " vd-host" : ""}`} onClick={() => { location.href = vmc ? "/blocks/mi-garaje/m/vmc-valuar" : sober ? "/blocks/mi-garaje/m/valuar" : "/blocks/mi-garaje/m/valorizar"; }}><span className={`f-act__icon${glass ? " f-act__icon--glass" : ""}`}>{glass ? <Vidrio s="valorizaciones" size={48} /> : <GaugeIcon />}</span><span className="f-act__text"><b>Valoriza tu vehículo</b><small>Obtén una tasación en minutos</small></span><span className="f-act__go"><Chevron /></span></button>
+      <ActionTile tone="publish" title="Publica tu Vehículo" hint="¡Un solo pago hasta que lo vendas!" onClick={() => { location.href = vmc ? "/blocks/mi-garaje/m/vmc-publica" : sober ? "/blocks/mi-garaje/m/publica" : "/blocks/mi-garaje/m/publicar"; }} />
+      <ActionTile tone="value" title="Valoriza tu vehículo" hint="Obtén una tasación en minutos" onClick={() => { location.href = vmc ? "/blocks/mi-garaje/m/vmc-valuar" : sober ? "/blocks/mi-garaje/m/valuar" : "/blocks/mi-garaje/m/valorizar"; }} />
     </div>
   </div>;
   return <div className="g-actions">
@@ -322,26 +267,10 @@ function Actions({ variant, sober, glass, vmc }: { variant: Variant; sober?: boo
   </div>;
 }
 
-/** En pausa (pedido de Abraham, 15/10): el código queda listo; true lo activa.
- *  actions: vidrio en Publicar (+) y Valorizar · bell: campana en «Requieren tu acción» · notif: filas como notificación en la maqueta VMC (punto a la derecha, «Hace 15 min», fondo gris). */
-const PAUSA = { actions: false, notif: false, bell: false };
 
-// «Último movimiento» (de Transacciones): guardado para ofrecerlo más adelante (14/10). true lo vuelve a mostrar.
-const SHOW_LAST_MOVE = false;
-
-function Wallet({ variant, sober, withData = true, glass }: { variant: Variant; sober?: boolean; withData?: boolean; glass?: boolean }): JSX.Element {
-  // Fernando+: jerarquía de saldos y el CTA real de WalletBalanceCard (sm-guest).
-  if (variant === "fernando") return <section className={`f-wallet${glass ? " vd-host" : ""}`} aria-labelledby="f-wallet">
-    <i className="f-wallet__shine" aria-hidden /><i className="f-wallet__beam" aria-hidden />
-    <header><h2 id="f-wallet">{glass ? <Vidrio s="billetera" size={32} /> : null}Mi billetera</h2><a href="#">Transacciones <Chevron /></a></header>
-    <dl className="f-wallet__bal">
-      <div><dt>Saldo</dt><dd>US$ {withData ? "320" : "0"}<small>.00</small></dd></div>
-      {/* 22/10: SubasCoins con el signo >S< delante, como en Concorde (>S< 60). */}
-      <div><dt>SubasCoins</dt><dd><small className="f-wallet__sign">&gt;S&lt;</small>{withData ? "1,250" : "0"}</dd></div>
-    </dl>
-    {!SHOW_LAST_MOVE ? null : withData ? <p className="f-wallet__last"><span>Último movimiento · 07/10</span><b>− US$ 50.00</b> Consignación · Hyundai Accent</p> : <p className="f-wallet__last"><span>Último movimiento</span>Sin movimientos todavía</p>}
-    <Button variant={sober ? "secondary" : "sm-guest"} icon={sober ? undefined : <SubasCoinsAcquireIcon />}>{sober ? <><SubasCoinsAcquireIcon />Adquiere SubasCoins</> : "Adquiere SubasCoins"}</Button>
-  </section>;
+function Wallet({ variant, withData = true }: { variant: Variant; withData?: boolean }): JSX.Element {
+  // Fernando+ (la pantalla): WalletCard de Concorde, con el brillo de carta elegido el 22/10.
+  if (variant === "fernando") return <WalletCard balance={withData ? "320" : "0"} subasCoins={withData ? "1,250" : "0"} transactionsHref="#" />;
   return <WalletBalanceCard title="Mi Wallet" subasCoins=">S< 1,250" saldo="US$ 320.00" className="g-wallet" />;
 }
 
@@ -375,27 +304,12 @@ const VEH_VIEWS: { id: Veh; label: string; hint: string }[] = [
 /** Campaña «Venta para empresas» (20/10, rev. 3 de POPs), variante 04-flotas. Cuarta ronda: jerarquía y recetas de los banners de
  *  vmc-index-lab («Un solo pago», maquinaria A y C, «¿Vendes varios vehículos?»). Lectura en Z: chip → titular → bajada → CTA, con la flota
  *  recortada como la masa visual abajo a la derecha. Un solo enlace (el CTA); la pieza entera es clicable delegando en él. Copy aprobado. */
-/** El iframe del riel toma el alto de su contenido (mismo origen): el riel cambia de ancho y el texto de líneas, un alto fijo cortaba el botón. */
-function fitBanner(f: HTMLIFrameElement | null): void {
-  if (!f) return;
-  // ponytail: ref y no onLoad, porque el iframe puede cargar antes de la hidratación y el onLoad de React no llega.
-  const go = () => {
-    const d = f.contentDocument, w = f.contentWindow;
-    if (!d || !w || d.location.href === "about:blank") return;
-    const fit = () => { const c = d.querySelector(".cta"); if (c) f.style.height = `${Math.ceil(c.getBoundingClientRect().bottom) + 16}px`; };
-    fit(); void d.fonts.ready.then(fit); w.addEventListener("resize", fit);
-  };
-  if (f.contentDocument?.readyState === "complete") go();
-  f.addEventListener("load", go);
-}
 function Promo({ slot, view, veh, b }: { slot: "rail" | "side"; view: CampView; veh: Veh; b: Pieza }): JSX.Element {
   const href = CAMP_HREF(slot === "side" ? "side264" : view === "arte" ? "side400" : view);
+  // La pieza HTML de /banners (el enlace vive dentro del iframe): AdBanner de Concorde.
   if (view === "arte") return slot === "side"
-    ? <iframe className="pr-arte pr-arte--side" src={bannerSrc(b, "side400")} title={`Publicidad: ${b.titulo}`} />
-    // ponytail: el original de POPs rehecho en HTML con el DS de subastop.com (public/banners/venta-empresa.html); el enlace vive dentro del iframe.
-    : <aside className="f-ad f-camp--arte" aria-label="Publicidad">
-      <iframe key={bannerKey(b)} className="f-camp__lg" src={bannerSrc(b, "side400")} title={`Publicidad: ${b.titulo}`} ref={fitBanner} />
-      <iframe className="f-camp__sm" src={bannerSrc(b, "strip776")} title={`Publicidad: ${b.titulo}`} /></aside>;
+    ? <AdBanner slot="side" src={bannerSrc(b, "side400")} title={`Publicidad: ${b.titulo}`} />
+    : <AdBanner slot="rail" src={bannerSrc(b, "side400")} stripSrc={bannerSrc(b, "strip776")} title={`Publicidad: ${b.titulo}`} />;
   const side = slot === "side", dark = view === "noche", row = view === "flota";
   const cars = veh === "flota" ? FLEET : ([[veh, "pr__car--front"]] as const);
   const sr = <span className="sr-only"> (se abre en otra pestaña)</span>;
@@ -437,75 +351,6 @@ const BILL = [
 ] as const;
 const BILL_LETRAS = 6; // las primeras son solo letras; las demás tocan la tarjeta
 type Bill = (typeof BILL)[number]["id"];
-/** Las 4 etapas de Mis participaciones (23/10). Usa las clases del TabSelector de Concorde, así que color, forma y disposición
- *  del panel «Pestañas» aplican igual. Cuando la fila no entra (forma Carpeta o disposición Deslizable), la pista elegida
- *  (data-indicio en .g-page) cambia cómo se recorre:
- *  · flechas: botones ‹ › a cada lado, solo del lado que tiene más; también se arrastra con el mouse y se desliza con el dedo.
- *  · barra: una barra propia bajo la línea; se arrastra el pulgar o se toca el riel. Los tabs no se arrastran con el mouse.
- *  · mas: sin deslizar; entran las que caben y el resto va en «Más ▾». La elegida siempre se ve. */
-function StageTabs({ labels, counts, value, onChange }: { labels: string[]; counts: number[]; value: number; onChange: (i: number) => void }): JSX.Element {
-  const row = useRef<HTMLDivElement>(null), box = useRef<HTMLDivElement>(null), ghost = useRef<HTMLDivElement>(null);
-  const [mode, setMode] = useState("flecha");
-  const [more, setMore] = useState({ start: false, end: false, w: 100, x: 0 });
-  const [fit, setFit] = useState(labels.length);
-  const [menu, setMenu] = useState(false);
-  // La pista vive en .g-page (panel del lab): se sigue con un MutationObserver.
-  useEffect(() => { const page = box.current?.closest(".g-page"); if (!page) return;
-    const read = () => setMode(page.getAttribute("data-indicio") ?? "flecha"); read();
-    const mo = new MutationObserver(read); mo.observe(page, { attributes: true, attributeFilter: ["data-indicio", "data-forma", "data-etapas"] }); return () => mo.disconnect(); }, []);
-  const measure = () => { const el = row.current; if (!el) return; const end = el.scrollWidth - el.clientWidth - el.scrollLeft;
-    setMore({ start: el.scrollLeft > 2, end: end > 2, w: (el.clientWidth / el.scrollWidth) * 100, x: (el.scrollLeft / el.scrollWidth) * 100 }); };
-  // «Más»: cuántas entran, medidas en una fila fantasma con todas (la visible cambia según lo que entra).
-  const fitCount = () => { const g = ghost.current, b = box.current; if (!g || !b) return;
-    const ws = [...g.children].map((c) => (c as HTMLElement).offsetWidth), avail = b.clientWidth - 8, moreW = 92;
-    let n = 0, acc = 0; for (const w of ws) { if (acc + w > avail - (n < ws.length - 1 ? moreW : 0)) break; acc += w; n++; }
-    setFit(Math.max(1, Math.min(ws.length, n))); };
-  useEffect(() => { measure(); fitCount(); const ro = new ResizeObserver(() => { measure(); fitCount(); });
-    if (box.current) ro.observe(box.current); return () => ro.disconnect(); }, [mode]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { if (!menu) return; const close = (e: MouseEvent) => { if (!box.current?.contains(e.target as Node)) setMenu(false); };
-    addEventListener("pointerdown", close); return () => removeEventListener("pointerdown", close); }, [menu]);
-  // Arrastre con el mouse sobre los tabs (no en «barra» ni en «más»): más de 5 px no cuenta como clic.
-  const drag = useRef<{ x: number; left: number; moved: boolean } | null>(null);
-  const onDown = (e: React.PointerEvent<HTMLDivElement>) => { if (e.pointerType === "mouse" && mode === "flecha") drag.current = { x: e.clientX, left: e.currentTarget.scrollLeft, moved: false }; };
-  const onMove = (e: React.PointerEvent<HTMLDivElement>) => { const d = drag.current; if (!d) return; const dx = e.clientX - d.x;
-    if (Math.abs(dx) > 5) { d.moved = true; e.currentTarget.classList.add("is-dragging"); } if (d.moved) e.currentTarget.scrollLeft = d.left - dx; };
-  const onUp = (e: React.PointerEvent<HTMLDivElement>) => { e.currentTarget.classList.remove("is-dragging"); setTimeout(() => { drag.current = null; }, 0); };
-  // Sin flechas superpuestas: al dejar el mouse sobre las etapas, su rueda recorre el riel horizontal.
-  const onWheel = (e: React.WheelEvent<HTMLDivElement>) => { const el = e.currentTarget; if (el.scrollWidth <= el.clientWidth) return;
-    const dx = e.deltaX || e.deltaY; if (!dx) return; e.preventDefault(); el.scrollBy({ left: dx, behavior: "smooth" }); };
-  // Barra: arrastrar el pulgar o tocar el riel.
-  const track = useRef<HTMLSpanElement>(null);
-  const onBar = (e: React.PointerEvent<HTMLSpanElement>) => { const el = row.current, t = track.current; if (!el || !t) return;
-    const r = t.getBoundingClientRect(), k = el.scrollWidth / r.width, onThumb = (e.target as HTMLElement).tagName === "I";
-    if (!onThumb) el.scrollTo({ left: (e.clientX - r.left) * k - el.clientWidth / 2, behavior: "smooth" });
-    const x0 = e.clientX, l0 = onThumb ? el.scrollLeft : (e.clientX - r.left) * k - el.clientWidth / 2;
-    t.setPointerCapture(e.pointerId); t.classList.add("is-dragging");
-    const mv = (ev: PointerEvent) => { el.scrollLeft = l0 + (ev.clientX - x0) * k; };
-    const up = () => { t.removeEventListener("pointermove", mv); t.classList.remove("is-dragging"); };
-    t.addEventListener("pointermove", mv); t.addEventListener("pointerup", up, { once: true }); t.addEventListener("pointercancel", up, { once: true }); };
-  const tab = (i: number, extra = "") => <button key={labels[i]} type="button" role="tab" aria-selected={value === i} className={`ptabs__tab${value === i ? " ptabs__tab--active" : ""}${counts[i] > 0 ? " ptabs__tab--unread" : " ptabs__tab--read"}${extra}`}
-    style={{ viewTransitionName: `stage-${labels[i].toLowerCase().replaceAll(" ", "-")}` }}
-    onClick={(e) => { if (drag.current?.moved) return; onChange(i); setMenu(false); e.currentTarget.scrollIntoView({ inline: "nearest", block: "nearest", behavior: "smooth" }); }}>
-    {value === i ? <motion.span layoutId="participation-stage-active" className="st__active-bg" transition={{ type: "spring", stiffness: 420, damping: 34, mass: .7 }} /> : null}
-    {counts[i] > 0 ? <span className="st__n">{counts[i]}</span> : null}<span className="st__t">{labels[i]}</span></button>;
-  const all = labels.map((_, i) => i);
-  // «Más»: si la elegida no entra, ocupa el último lugar visible.
-  const base = all.slice(0, fit);
-  const shownSet = mode === "mas" && fit < labels.length ? (base.includes(value) ? base : [...base.slice(0, -1), value]) : all;
-  const hidden = all.filter((i) => !shownSet.includes(i));
-  return <div ref={box} className="fs__split fs__split--stages" data-mode={mode} style={{ "--thumb-w": `${more.w}%`, "--thumb-x": `${more.x}%` } as React.CSSProperties}>
-    <div ref={row} className="ptabs" role="tablist" aria-label="Etapa de tus participaciones" data-more={`${more.start ? "start" : ""} ${more.end ? "end" : ""}`.trim()}
-      onScroll={measure} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerLeave={onUp} onWheel={onWheel}>
-      {shownSet.map((i) => tab(i))}
-      {hidden.length ? <span className="st__more-wrap"><button type="button" className={`ptabs__tab st__more${hidden.includes(value) ? " ptabs__tab--active" : ""}`} aria-haspopup="menu" aria-expanded={menu} onClick={() => setMenu((m) => !m)}>
-        <span className="st__t">Más</span><span className="st__more-n">{hidden.length}</span><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button></span> : null}
-    </div>
-    {menu && hidden.length ? <div className="st__menu" role="menu">{hidden.map((i) => <button key={i} type="button" role="menuitem" onClick={() => { onChange(i); setMenu(false); }}>{labels[i]}<b>{counts[i]}</b></button>)}</div> : null}
-    <span ref={track} className="st__bar" aria-hidden onPointerDown={onBar} hidden={!more.start && !more.end}><i /></span>
-    <div ref={ghost} className="ptabs st__ghost" aria-hidden>{labels.map((t, i) => <span key={t} className="ptabs__tab">{counts[i] > 0 ? <span className="st__n">{counts[i]}</span> : null}<span className="st__t">{t}</span></span>)}</div>
-  </div>;
-}
-
 /** Selector de pestañas (23/10): color y forma de los selectores de Mis negociaciones y Mis participaciones (?pill=…&forma=…). */
 const PILL_COLOR = [
   { id: "morado", label: "Morado", hint: "La de Concorde: relleno violeta oscuro, texto blanco." },
@@ -627,25 +472,17 @@ function Ad({ banner, camp = "reservado", veh = "caja", b }: { banner?: boolean;
 /** PROPUESTA (14/10): Recomendados de VMC, filtrados por lo que el usuario ya ofertó (marca/segmento de sus negociaciones y participaciones).
  *  Dos filas como máximo: el riel es sticky y no puede pasar el alto de la pantalla. Sin actividad de compra no se muestra. */
 // Recomendados (pedido de Julio, 14/10): va bajo Tu actividad.
-type Rec = Omit<OfferShelfItem, "badge"> & { badge: "live" | "negotiable" };
-const RECS: Rec[] = [
-  { name: "Nissan Versa", year: 2020, price: "US$ 9,300", variant: "negotiable", imageSrc: PHOTO.versa, badge: "negotiable" },
-  { name: "Nissan Sentra", year: 2021, price: "US$ 11,500", variant: "live", imageSrc: PHOTO.sentra, badge: "live" },
-  { name: "Suzuki Swift", year: 2019, price: "US$ 7,800", variant: "live", imageSrc: PHOTO.swift, badge: "live" },
+const RECS: RecommendedItem[] = [
+  { name: "Nissan Versa", year: 2020, price: "US$ 9,300", imageSrc: PHOTO.versa, badge: "negotiable" },
+  { name: "Nissan Sentra", year: 2021, price: "US$ 11,500", imageSrc: PHOTO.sentra, badge: "live" },
+  { name: "Suzuki Swift", year: 2019, price: "US$ 7,800", imageSrc: PHOTO.swift, badge: "live" },
 ];
 // Recomendados (16/10 noche, mirando toda la página): lista compacta en el riel, bajo la publicidad. En la columna principal
 // alargaba la página ~600 px bajo Tu actividad mientras el riel terminaba a la mitad con un hueco vacío. Filas con la misma
 // gramática que Tu actividad (foto, nombre · año, dato, estado a la derecha); es secundario, así que no compite con tus tareas.
 function Recs({ withData }: { withData: boolean }): JSX.Element | null {
   if (!withData) return null;
-  return <section className="f-recs" aria-label="Recomendados">
-    <h2 className="f-recs__h"><a href="#" className="f-recs__head" aria-label={`Recomendados: ver las ${RECS.length}`}><span className="fs__icon fs__icon--glass" aria-hidden><Vidrio s="auto" size={36} /></span><span className="fs__name">Recomendados</span><span className="fs__badge">{RECS.length}</span></a></h2>
-    <ul className="f-recs__list">{RECS.map((o) => <li key={o.name}><div className="f-recs__row">
-      <img src={o.imageSrc} alt="" width={64} height={48} />
-      <span className={`f-recs__txt${o.badge === "negotiable" ? " f-recs__txt--no-price" : ""}`}><span className="f-recs__state">{o.badge === "live" ? <BadgeStatus variant="live" /> : <span className="badgestatus f-recs__neg">NEGOCIABLE</span>}</span><b>{o.name} {o.year}</b>{o.badge === "live" && o.price ? <span className="f-recs__price"><PriceIcon size="sm" title="Precio base" /><strong>{o.price}</strong></span> : null}</span>
-      <LikeButton size="sm" aria-label={`Guardar ${o.name}`} />
-    </div></li>)}</ul>
-    </section>;
+  return <RecommendedList items={RECS} href="#" />;
 }
 
 /** Mobile: UserProfileCard mide 766 fijos; se compone con sus mismas piezas (caso para Julio). */
@@ -664,34 +501,16 @@ const RISK: Record<Risk, { label: string; level: number; pts: number }> = {
   muybajo: { label: "Muy bajo", level: 4, pts: 500 }, bajo: { label: "Bajo", level: 3, pts: 210 }, regular: { label: "Regular", level: 2, pts: 80 }, alto: { label: "Alto", level: 1, pts: -30 },
 };
 
-function FernandoHead({ sober, risk = "muybajo", pass, withData = true }: { sober?: boolean; risk?: Risk; pass?: boolean; withData?: boolean }): JSX.Element {
-  const riskHigh = risk === "alto"; const r = RISK[risk];
+function FernandoHead({ sober, risk = "muybajo" }: { sober?: boolean; risk?: Risk }): JSX.Element {
+  const r = RISK[risk];
   const sub = "Tus vehículos, ofertas y compras.";
   return <div className="f-head">
     <div className="f-head__title"><div>
       <h1>Mi Garaje</h1>{sober ? null : <p>{sub}</p>}</div></div>
     <div className="f-head__acct">
       {sober ? <>
-        {/* Tarjeta de cuenta (patrón UserProfileCard de Concorde / Zona): rótulo arriba, valor abajo; SubasPass como banda al pie. */}
-        <section className="f-acct" aria-label="Tu cuenta">
-          <div className="f-acct__row">
-            <div className="f-acct__stat f-acct__me"><span className="f-acct__k">Tu cuenta</span><span className="f-acct__v"><AvatarZone size={32} /><b>¡Hola, ZAEX5G!</b></span><ProfileButton /></div>
-            <div className="f-acct__stat f-acct__summary">
-              {/* 22/10 (Aaron): el riesgo se queda; sale el enlace «Historial». */}
-              <div className={`f-acct__metric f-rep is-${risk}`}><span className="f-acct__k">Riesgo del perfil</span>
-                <span className="f-acct__v"><b>{r.label}</b></span></div>
-              <div className="f-acct__metric"><span className="f-acct__k">Puntos VMC</span>
-                <span className="f-acct__v f-acct__points"><StarIcon className="f-acct__points-star" size={20} /><b>{r.pts.toLocaleString("en-US")} pts</b><InfoIcon className="f-acct__points-info" size={14} title="Más información sobre los puntos VMC" /></span></div>
-            </div>
-            <div className="f-acct__stat f-acct__membership">
-              <span className="f-acct__k">SubasPass</span><BadgeStatus variant="live" label="Activo" /><span className="f-acct__expiry">Expira&nbsp; 16/01/2026</span>
-            </div>
-          </div>
-          {/* SubasPass con peso propio, unido a la cuenta (doc 01: «debajo de Cuenta»). Vende consignación 0 (T&C IV.9.b). */}
-          <a href="#" className={`f-acct__pass${pass ? " is-active" : ""}`}><span className="f-acct__passname"><span aria-hidden>✦</span> SubasPass{pass ? <em>VIP</em> : null}</span>
-            <span className="f-acct__passmsg">{pass ? <>Participación ilimitada hasta el {withData ? "12/11" : "—"}</> : riskHigh ? "Participa sin límites, también con riesgo alto" : <>Participa <span className="f-acct__passopt">sin límites, </span>con consignación 0</>}</span>
-            <span className="f-acct__passcta">{pass ? "Mi plan" : "Ver planes"}<Chevron /></span></a>
-        </section>
+        {/* Tarjeta de cuenta: AccountCard de Concorde. Con ?pass=1 (lab) se dibujaba SubasPass VIP; en la pantalla no se llega. */}
+        <AccountCard username="ZAEX5G" risk={r.label} points={r.pts} passExpiry="16/01/2026" passHref="#" />
       </> : <>
         <AvatarZone size={32} />
         <b>¡Hola, ZAEX5G!</b>
@@ -749,71 +568,34 @@ export function smooth(f: () => void): void {
 /** notif (maqueta VMC, 15/10): patrón de notificación. El punto de «sin abrir» va a la derecha junto al estado, debajo cuándo llegó
  *  («Hace 15 min»; VMC guarda la fecha de cada oferta) y el vencimiento pasa al detalle. Sin abrir = fondo gris suave.
  *  Subastas próximas: «Inicia 15/10 · 1:00 pm», como la ficha de detalle de VMC («Inicia HOY · 01:20 pm»). */
-function PublishSwipe({ onPublish }: { onPublish: () => void }): JSX.Element {
-  const [confirming, setConfirming] = useState(false);
-  const activate = () => {
-    if (confirming) return;
-    setConfirming(true);
-    window.setTimeout(onPublish, 2000);
-  };
-  return <button type="button" className={`f-publishswipe${confirming ? " is-confirming" : ""}`} onClick={activate} aria-label={confirming ? "Publicando vehículo" : "Publicar vehículo"} aria-busy={confirming}>
-    <span className="f-publishswipe__track" aria-hidden>
-      <span className="f-publishswipe__label">{confirming ? "CARGANDO" : "PUBLICAR"}</span>
-      <span className="f-publishswipe__thumb"><PlusIcon /></span>
-    </span>
-  </button>;
-}
-
-function FRow({ r, onOpen, bare, plain, notif, starts, publishable, previewOnly, guided }: { r: Row; onOpen: (r: Row) => void; bare?: boolean; plain?: boolean; notif?: boolean; starts?: boolean; publishable?: boolean; previewOnly?: boolean; guided?: boolean }): JSX.Element {
+function FRow({ r, onOpen, bare, plain, starts, publishable, previewOnly, guided }: { r: Row; onOpen: (r: Row) => void; bare?: boolean; plain?: boolean; starts?: boolean; publishable?: boolean; previewOnly?: boolean; guided?: boolean }): JSX.Element {
   const detail = starts && r.start ? `Inicia ${r.start}` : r.detail.replace(/US\$ /g, "US$\u00a0");
   const ownOffer = detail.match(/US\$\u00a0[\d,]+/)?.[0];
   // Una contrapropuesta entrante conserva su plazo incluso después de abrirla. El
   // tiempo es la acción pendiente; «Ahora» es solamente cuándo llegó el aviso.
-  const responseTimer = plain && ((r.side === "compra" && (r.tone === "action" || r.status === "Rechazada" || r.status === "Esperando respuesta")) || (r.side === "vende" && r.status === "Responder")) && r.dueAt
-    ? <span className="fr__timer"><Countdown to={r.dueAt} label="Tiempo para responder" /></span>
-    : null;
+  const showTimer = plain && ((r.side === "compra" && (r.tone === "action" || r.status === "Rechazada" || r.status === "Esperando respuesta")) || (r.side === "vende" && r.status === "Responder"));
   const pendingFee = r.status === "Pagar fee";
   const marquee = pendingFee || Boolean(r.chatMessage) || detail.length > 48;
   const needsEntry = r.entryHint || (r.isNew && (pendingFee || r.status === "Proceso de compra"));
   const round = !pendingFee && plain && r.side === "compra" && r.round ? ` (${r.round}/5)` : "";
   const meta = <>{r.plate && !plain ? `Placa ${r.plate} · ` : ""}{plain && r.sentByMe ? (ownOffer ? `Tú: ${ownOffer}` : detail) : detail}{round}{r.ago && !(plain && r.sentByMe) ? ` · ${r.ago}` : null}</>;
   const activate = () => { if (!previewOnly) onOpen(r); };
-  if (notif) return <button type="button" className={`fr fr--notif${r.isNew ? " is-new" : ""}${previewOnly ? " fr--preview" : ""}${guided ? " fr--guided" : ""}`} onClick={activate} aria-haspopup={previewOnly ? undefined : "dialog"} style={plain ? { viewTransitionName: `fr-${r.id}` } : undefined}>
-    <span className="fr__img">{r.photo ? <img src={PHOTO[r.photo]} alt="" width={64} height={48} /> : <Vidrio s="auto" size={40} />}</span>
-    <span className="fr__main">
-      <span className="fr__name">{r.name} {r.year}{r.isNew ? <span className="g-sr"> · Sin abrir</span> : null}</span>
-      <span className="fr__meta">{r.start ? `Inicia ${r.start}` : r.detail.replace(/US\$ /g, "US$\u00a0")}{r.ago && r.when ? ` · ${r.when.toLowerCase()}` : ""}</span>
-      {r.steps ? <span className="fr__step">Paso {Math.min((r.step ?? 0) + 1, r.steps.length)} de {r.steps.length} · {r.steps[Math.min(r.step ?? 0, r.steps.length - 1)]}</span> : null}
-    </span>
-    <span className="fr__side"><span className="fr__top">{bare ? null : <Status tone={r.tone}>{r.status}</Status>}{r.isNew ? <i className="fr__dot" aria-hidden /> : null}</span>{r.ago ?? r.when ? <small>{r.ago ?? r.when}</small> : null}</span>
-    {guided ? <span className="fr__demo-arrow" aria-hidden><svg width="30" height="24" viewBox="0 0 30 24" fill="none"><path d="M2 12h20m-7-7 7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span> : null}
-    <Chevron />
-  </button>;
-  if (publishable) return <div className={`fr fr--publishable${r.regularName ? " is-regular" : ""}${r.boldDetail ? " is-detail-strong" : ""}${r.isNew ? " is-new" : ""}${r.arrival ? ` is-arrival--${r.arrival}` : ""}`}>
-      <span className="fr__img">{r.photo ? <img src={PHOTO[r.photo]} alt="" width={64} height={48} /> : <Vidrio s="auto" size={40} />}</span>
-      <span className="fr__main"><span className="fr__name">{r.name} {r.year}</span><span className="fr__meta">{detail}</span></span>
-      <span className="fr__side"><PublishSwipe onPublish={() => onOpen(r)} /></span>
-    </div>;
-  // 29/10: con un acuerdo (aceptada, vendida o no concretada) el badge lo dice y ya no cuenta propuestas: las demás se cerraron.
-  if (r.proposals !== undefined) return <div className={`fr fr--publication${r.regularName ? " is-regular" : ""}${r.isNew ? " is-new" : ""}${r.arrival ? ` is-arrival--${r.arrival}` : ""}${r.deal ? ` is-deal--${r.deal}` : ""}`}>
-    <span className="fr__img"><img src={PHOTO[r.photo]} alt="" width={64} height={48} /></span>
-    <span className="fr__main"><span className="fr__name">{r.name} {r.year}</span><span className="fr__meta">{r.deal ? <span className="fr__deal-note">{detail}</span> : detail}</span></span>
-    <span className="fr__side">{r.deal ? <DealBadge deal={r.deal} /> : r.proposals > 0 ? <NegotiatingBadge /> : r.status ? <BadgeStatus variant={r.status === "Publicada" ? "live" : "proxima"} label={r.status === "Publicada" ? "PUBLICADA" : "EN REVISIÓN"} icon={false} /> : null}{r.proposals > 0 && !r.deal ? <span className="fr__proposals" aria-label={`${r.proposals} ${r.proposals === 1 ? "propuesta recibida" : "propuestas recibidas"}`}><span>Propuestas</span><b>{r.proposals}</b></span> : null}</span>
-  </div>;
+  // Valorizaciones: fila de solo lectura; su acción es el botón Publicar del lado derecho.
+  if (publishable) return <VehicleRow photo={PHOTO[r.photo]} name={r.name} year={r.year} meta={detail} isNew={r.isNew}
+    className={`fr--publishable${r.regularName ? " is-regular" : ""}${r.boldDetail ? " is-detail-strong" : ""}${r.arrival ? ` is-arrival--${r.arrival}` : ""}`}
+    side={<PublishSwipe onPublish={() => onOpen(r)} />} />;
   const isFinalMover = r.id === "bp1" || r.id === "sf1";
-  return <motion.button type="button" data-row-id={r.id} layout={isFinalMover} layoutId={isFinalMover ? `final-row-${r.id}` : undefined} transition={isFinalMover ? { type: "spring", stiffness: 310, damping: 27, mass: .75 } : undefined} className={`fr${r.isNew ? " is-new" : ""}${r.unread ? " is-unread" : ""}${r.flash ? " is-flash" : ""}${r.sentByMe ? " is-sent" : ""}${pendingFee ? " fr--pending-fee" : ""}${r.chatMessage ? " fr--chat-message" : ""}${marquee ? " fr--marquee" : ""}${r.tone === "live" ? " fr--live" : ""}${needsEntry ? " fr--attention" : ""}${r.regularName ? " is-regular" : ""}${r.boldDetail ? " is-detail-strong" : ""}${r.sideNote ? " has-side-note" : ""}${r.relocated ? " is-relocated" : ""}${r.leaving ? " is-negotiation-leaving" : ""}${r.expiryExit ? " is-expiry-exit" : ""}${r.arrival ? ` is-arrival--${r.arrival}` : ""}${previewOnly ? " fr--preview" : ""}${guided ? " fr--guided" : ""}`} onClick={activate} aria-haspopup={previewOnly ? undefined : "dialog"}>
-    <span className="fr__img">{r.photo ? <img src={PHOTO[r.photo]} alt="" width={64} height={48} /> : <Vidrio s="auto" size={40} />}</span>
-    <span className="fr__main">
-      <span className="fr__name">{r.name} {r.year}{responseTimer}{r.isNew && !plain ? <span className="fr__new"><i aria-hidden /><span>Nuevo</span></span> : null}</span>
-      <span className={`fr__meta${marquee ? " fr__meta--marquee" : ""}`}>{marquee ? <span className="fr__marquee">{meta}</span> : meta}</span>
-      {r.steps ? <span className="fr__step">Paso {Math.min((r.step ?? 0) + 1, r.steps.length)} de {r.steps.length} · {r.steps[Math.min(r.step ?? 0, r.steps.length - 1)]}</span> : null}
-    </span>
-    <span className="fr__side">{r.side && plain && !r.noRole ? <RoleBadge side={r.side} /> : null}{r.tone === "live" ? <Status tone="live">{r.status}</Status> : r.sideNote ? <span className={`fr__side-note${r.evaluation ? " fr__side-note--evaluation" : ""}${r.isNew ? " fr__side-note--new" : ""}`}>{(r.evaluation || r.isNew) ? <i className="fr__dot" aria-hidden /> : null}<small>{r.sideNote}</small></span> : bare ? null : plain && r.expiryExit ? <><span className="g-sr">Negociación expirada</span><i className="fr__dot" aria-hidden />{r.when || r.ago ? <small className="fr__due">{r.when ?? r.ago}</small> : null}</> : plain && r.sentByMe ? <>{r.unread ? <><span className="g-sr">Sin abrir</span><i className="fr__dot" aria-hidden /></> : null}{r.ago ? <small className="fr__ago">{r.ago}</small> : null}</> /* como Instagram: punto si no la abriste y el tiempo debajo */
-      : plain && r.isNew ? <><span className="g-sr">Nueva negociación</span><i className="fr__dot" aria-hidden /><small className="fr__due">{r.ago ?? r.when}</small></> : plain ? (r.when ? <small>{r.when}</small> : null) : r.hideStatus ? (r.when ? <small>{r.when}</small> : null) : <><Status tone={r.tone}>{r.status}</Status>{r.when ? <small>{r.when}</small> : null}</>}</span>
+  return <VehicleRow photo={PHOTO[r.photo]} name={r.name} year={r.year} respondBy={showTimer && r.dueAt ? r.dueAt : undefined} meta={meta} marquee={marquee}
+    isNew={r.isNew} unread={r.unread} onClick={activate} opensDialog={!previewOnly} data={{ "row-id": r.id }}
+    layoutId={isFinalMover ? `final-row-${r.id}` : undefined} transition={isFinalMover ? { type: "spring", stiffness: 310, damping: 27, mass: .75 } : undefined}
+    className={[r.flash && "is-flash", r.sentByMe && "is-sent", pendingFee && "fr--pending-fee", r.chatMessage && "fr--chat-message", r.tone === "live" && "fr--live", needsEntry && "fr--attention",
+      r.regularName && "is-regular", r.boldDetail && "is-detail-strong", r.sideNote && "has-side-note", r.relocated && "is-relocated", r.leaving && "is-negotiation-leaving",
+      r.expiryExit && "is-expiry-exit", r.arrival && `is-arrival--${r.arrival}`, previewOnly && "fr--preview", guided && "fr--guided"].filter(Boolean).join(" ")}
+    side={<>{r.side && plain && !r.noRole ? <RoleBadge side={r.side} /> : null}{r.tone === "live" ? <StatusTag tone="live">{r.status}</StatusTag> : r.sideNote ? <span className={`fr__side-note${r.evaluation ? " fr__side-note--evaluation" : ""}${r.isNew ? " fr__side-note--new" : ""}`}>{(r.evaluation || r.isNew) ? <i className="fr__dot" aria-hidden /> : null}<small>{r.sideNote}</small></span> : bare ? null : plain && r.expiryExit ? <><span className="g-sr">Negociación expirada</span><i className="fr__dot" aria-hidden />{r.when || r.ago ? <small className="fr__due">{r.when ?? r.ago}</small> : null}</> : plain && r.sentByMe ? <>{r.unread ? <><span className="g-sr">Sin abrir</span><i className="fr__dot" aria-hidden /></> : null}{r.ago ? <small className="fr__ago">{r.ago}</small> : null}</> /* como Instagram: punto si no la abriste y el tiempo debajo */
+      : plain && r.isNew ? <><span className="g-sr">Nueva negociación</span><i className="fr__dot" aria-hidden /><small className="fr__due">{r.ago ?? r.when}</small></> : r.when ? <small>{r.when}</small> : null}</>}>
     {r.entryHint ? <span className="fr__chat-hint" aria-hidden><span>{r.side === "vende" ? "Aquí puedes abrir el SubasChat con el comprador" : "Aquí puedes abrir el SubasChat"}</span><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M10 3v12m0 0-5-5m5 5 5-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg></span> : null}
     {guided ? <span className="fr__demo-arrow" aria-hidden><svg width="30" height="24" viewBox="0 0 30 24" fill="none"><path d="M2 12h20m-7-7 7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span> : null}
-    <Chevron />
-  </motion.button>;
+  </VehicleRow>;
 }
 
 function FlightCue({ from, to }: { from: { x: number; y: number }; to: { x: number; y: number } }): JSX.Element {
@@ -825,27 +607,8 @@ function FlightCue({ from, to }: { from: { x: number; y: number }; to: { x: numb
   </motion.div>;
 }
 
-/** Íconos de sección (Baymard: ayudan a escanear el panel de cuenta en visitas poco frecuentes).
- *  Misma familia que Concorde (Material Symbols, relleno, 24 px): Negociaciones usa el trazo de OfferIcon de Concorde;
- *  el resto son Material (gavel · shopping_bag · sell · speed) porque Concorde aún no los trae. */
-const SEC_ICON: Record<string, ReactNode> = {
-  negociaciones: <path d="M15.3867 4H9.38672V11H15.3867V4ZM20.3867 4H17.3867V11H20.3867V4ZM14.7617 13H8.38672V19H13.9367C14.2867 19 14.6242 18.9417 14.9492 18.825C15.2742 18.7083 15.5701 18.5333 15.8367 18.3L19.9867 14.875C19.8534 14.7417 19.7034 14.6417 19.5367 14.575C19.3701 14.5083 19.1951 14.4583 19.0117 14.425C18.7284 14.375 18.4534 14.3833 18.1867 14.45C17.9201 14.5167 17.6701 14.6417 17.4367 14.825L14.7367 17H10.3867V15H14.0367L15.1367 14.1C15.2201 14.05 15.2826 13.9833 15.3242 13.9C15.3659 13.8167 15.3867 13.725 15.3867 13.625C15.3867 13.4583 15.3242 13.3125 15.1992 13.1875C15.0742 13.0625 14.9284 13 14.7617 13ZM6.38672 13H4.38672V20H6.38672V13ZM7.38672 13V4C7.38672 3.45 7.58255 2.97917 7.97422 2.5875C8.36589 2.19583 8.83672 2 9.38672 2H20.3867C20.9367 2 21.4076 2.19583 21.7992 2.5875C22.1909 2.97917 22.3867 3.45 22.3867 4V11C22.3867 11.55 22.1909 12.0208 21.7992 12.4125C21.4076 12.8042 20.9367 13 20.3867 13H7.38672ZM6.38672 22H4.38672C3.83672 22 3.36589 21.8042 2.97422 21.4125C2.58255 21.0208 2.38672 20.55 2.38672 20V13C2.38672 12.45 2.58255 11.9792 2.97422 11.5875C3.36589 11.1958 3.83672 11 4.38672 11H14.7617C16.1784 11 17.5451 11.2417 18.8617 11.725C20.1784 12.2083 21.2367 13.025 22.0367 14.175L22.7117 15.2L17.1367 19.85C16.6867 20.2333 16.1867 20.5208 15.6367 20.7125C15.0867 20.9042 14.5201 21 13.9367 21H8.11172C7.92839 21.3 7.68672 21.5417 7.38672 21.725C7.08672 21.9083 6.75339 22 6.38672 22Z" />,
-  participaciones: <path d="M1 21h12v2H1v-2zM5.245 8.07l2.83-2.827 14.14 14.142-2.828 2.828L5.245 8.07zM12.317 1l5.657 5.656-2.83 2.83-5.654-5.66L12.317 1zM3.825 9.485l5.657 5.657-2.828 2.828-5.657-5.657 2.828-2.828z" />,
-  compras: <path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm6 16H6V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h4v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z" />,
-  publicaciones: <path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.42zM13 20.01L4 11V4h7v-.01l9 9-7 7.02zM6.5 5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 1 0 0-3z" />,
-  valorizaciones: <path d="M20.38 8.57l-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 15.58 6.85l1.85-1.23A10 10 0 0 0 3.35 19a2 2 0 0 0 1.72 1h13.85a2 2 0 0 0 1.74-1 10 10 0 0 0-.27-10.44zm-9.79 6.84a2 2 0 0 0 2.83 0l5.66-8.49-8.49 5.66a2 2 0 0 0 0 2.83z" />,
-};
-function SecIcon({ id }: { id: string }): JSX.Element {
-  const u = useId().replace(/:/g, "");
-  return <span className="fs__icon" aria-hidden style={{ "--ico": `url(#${u}a)`, "--ico-h": `url(#${u}h)` } as React.CSSProperties}>
-    <svg width="20" height="20" viewBox="0 0 24 24"><defs>
-      <linearGradient id={`${u}a`} x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stopColor="#8460E5" /><stop offset="1" stopColor="#3B1782" /></linearGradient>
-      <linearGradient id={`${u}h`} x1="12" y1="1" x2="12" y2="21" gradientUnits="userSpaceOnUse"><stop stopColor="#F4AC59" /><stop offset=".4" stopColor="#ED8936" /><stop offset="1" stopColor="#B25614" /></linearGradient>
-    </defs>{SEC_ICON[id]}</svg></span>;
-}
-
 /** glass (15/10): íconos de vidrio esmerilado (app/iconos) en Pulso Fuente; la maqueta VMC conserva los de Material. */
-function FSection({ s, loading, compact, onOpen, seen, act, glass, vmc, tip, guideId, stageFocus }: { s: Sec; loading: boolean; compact?: boolean; onOpen: (r: Row) => void; seen: Set<string>; act?: boolean; glass?: boolean; vmc?: boolean; tip?: ReactNode; guideId?: string; stageFocus?: number }): JSX.Element {
+function FSection({ s, loading, compact, onOpen, seen, act, vmc, tip, guideId, stageFocus }: { s: Sec; loading: boolean; compact?: boolean; onOpen: (r: Row) => void; seen: Set<string>; act?: boolean; vmc?: boolean; tip?: ReactNode; guideId?: string; stageFocus?: number }): JSX.Element {
   const [tab, setTab] = useState(0);
   const isUnread = (r: Row) => Boolean((r.isNew || r.unread) && !seen.has(r.id));
   const news = s.rows.filter(isUnread).length;
@@ -881,47 +644,28 @@ function FSection({ s, loading, compact, onOpen, seen, act, glass, vmc, tip, gui
     // 29/10 (bug de la app real): siempre arriba lo más reciente, esté leído o no. Antes subía primero lo sin abrir y una
     // novedad de hace 4 h quedaba sobre un movimiento de hace 1 min. Empate (misma hora): gana lo sin abrir.
     .sort((a, b) => lastAt(b) - lastAt(a) || Number(Boolean(b.isNew || b.unread)) - Number(Boolean(a.isNew || a.unread)));
-  const summary = [...new Set(s.rows.map((r) => r.status))].join(" · ");
   // Pulso Fuente (act): columnas fijas título | lo que pide acción | el resto del estado, sin repetir lo mismo dos veces.
   const isAct = (r: Row) => r.tone === "action" || r.tone === "live";
-  const showNews = news > 0 && (!act || s.rows.some((r) => r.isNew && !seen.has(r.id) && !isAct(r)));
-  const newsBadge = showNews ? <span className="fs__badge"><span aria-hidden>{news}</span><span className="g-sr">{news} {news === 1 ? "novedad sin abrir" : "novedades sin abrir"}</span></span> : null;
   const rest = Object.entries(live.filter((r) => !isAct(r)).reduce<Record<string, number>>((m, r) => ({ ...m, [r.status]: (m[r.status] ?? 0) + 1 }), {}))
     .map(([st, n]) => `${st} (${n})`).join(" · ");
   const guiding = Boolean(guideId && s.rows.some((r) => r.id === guideId));
   // Paginado (29/10): con «8 publicaciones de ejemplo» la sección pasa el tope de 3 y se ve cómo pagina cada forma.
   const pag = usePag();
   const listRows = s.id === "publicaciones" && pag.extra ? [...EXTRA_PUBS, ...rows].sort((a, b) => lastAt(b) - lastAt(a)) : rows; // mismo orden: lo más reciente arriba
-  return <section className={`fs fs--${s.id}${open ? " is-open" : ""}${guiding ? " fs--guided" : ""}`} id={`sec-${s.id}`} aria-labelledby={`fs-${s.id}`}>
-    <header className="fs__head" style={act ? { viewTransitionName: `fsh-${s.id}` } : undefined}>
-      <h3 className="fs__h"><button type="button" className={glass ? "fs__toggle vd-host" : "fs__toggle"} aria-expanded={open} aria-controls={`fs-body-${s.id}`} onClick={() => setOpen(!open)}>
-        <span className="fs__title">{act ? glass ? <span className="fs__icon fs__icon--glass" aria-hidden><Vidrio s={s.id as VSec} size={36} /></span> : <SecIcon id={s.id} /> : null}<span id={`fs-${s.id}`} className="fs__name">{s.title}</span>{act ? /* El círculo funciona como inbox: solo muestra novedades sin abrir. */
-            (news && !loading && !s.hideCount ? <span className="fs__badge"><span aria-hidden>{news}</span><span className="g-sr">{news} {news === 1 ? "notificación sin abrir" : "notificaciones sin abrir"}</span></span> : null)
-          : !s.hideCount ? <span className="fs__count">{loading ? "…" : live.length}</span> : null}
-          {act ? null : newsBadge}</span>
-        {/* Pulso Fuente (16/10): colapsada queda solo el encabezado; el detalle se ve al abrir. */}
-        {!open && !loading && !act ? <span className="fs__summary">{!s.rows.length ? "Sin actividad todavía" : summary}</span> : null}
-        {!open && !loading && !act ? <span className="fs__thumbs" aria-hidden>{s.rows.slice(0, 3).map((r) => <img key={r.id} src={PHOTO[r.photo]} alt="" width={28} height={28} />)}</span> : null}
-        <span className="fs__chev"><Chevron /></span>
-      </button></h3>
-      {open && s.rows.length && !act ? <ProfileButton href={s.id === "valorizaciones" ? (vmc ? "/blocks/mi-garaje/m/vmc-valorizaciones" : "/blocks/mi-garaje/m/valorizaciones") : undefined}>{s.rows.length > 2 ? `Ver todas (${s.rows.length})` : "Ver todas"}</ProfileButton> : null}
-    </header>
-    {open || act ? <div className="fs__wrap" inert={!open}><div id={`fs-body-${s.id}`} className="fs__body">
+  // Encabezado y cuerpo plegable: ActivitySection de Concorde. El círculo funciona como inbox: solo muestra novedades sin abrir.
+  return <ActivitySection id={s.id} title={s.title} icon={s.id as VSec} count={news && !loading && !s.hideCount ? news : 0} open={open} onToggle={() => setOpen(!open)} className={guiding ? "fs--guided" : undefined}>
       {loading ? <div className="g-skel"><div><i /><b /><b /></div></div>
-        : !s.rows.length ? <div className="fs__empty"><p>{s.empty}</p>{s.emptyCta ? <Button variant={s.emptyCta === "Publicar" ? "primary" : "outline"}>{s.emptyCta}</Button> : null}</div>
-        : <>
-          {split ? <div className="fs__split"><TabSelector options={(["compra", "vende"] as const).map((side) => { const n = unseenInSide(side); return `${side === "compra" ? "Compras" : "En venta"}${n ? ` (${n})` : ""}`; })} notificationIndices={(["compra", "vende"] as const).flatMap((side, i) => unseenInSide(side) ? [i] : [])} value={sideTab} onChange={setSideTab} aria-label="Compras o vehículos en venta" /></div> : null}
-          {/* Mis participaciones: las mismas clases del TabSelector de Concorde (color y forma del panel aplican igual), con el número
-              aparte para que la disposición (data-etapas) pueda mostrarlo entre paréntesis, en círculo o encima. */}
-          {staged ? <StageTabs labels={stageOrder.map((i) => STAGES[i])} counts={stageOrder.map(unseenInStage)} value={stageOrder.indexOf(stageTab)} onChange={(i) => setStageTab(stageOrder[i])} /> : null}
-          {s.tabs && !act ? <div className="fs__tabs" role="tablist" aria-label={s.title}>{s.tabs.map((t, i) => <button key={t} type="button" role="tab" aria-selected={tab === i} onClick={() => setTab(i)}>
-            {t}<span>{s.rows.filter((r) => r.tab === i).length}</span></button>)}</div> : null}
-          {vmc && s.id === "publicaciones" ? <PubList rows={rows.map(pubRowOf)} title={s.title} /> : <div className="fs__list" role={s.tabs && !act ? "tabpanel" : undefined}>{listRows.length ? <PagList rows={listRows} title={s.title} reset={`${sideTab}-${stageTab}`} render={(r, i) => <div key={r.id} className={`${r.id === guideId ? " g-row-guided" : ""}`} data-foco-row={r.id === "bp1" ? "" : undefined}>
-            {/* UX (21/10): la ayuda va junto a lo que explica. Participaciones y el Kia son previews (Julio); la negociación aceptada entra a Proceso de compra y conserva el acceso al chat. */}<FRow r={{ ...r, isNew: r.isNew && !seen.has(r.id), unread: r.unread && !seen.has(r.id) }} onOpen={vmc && s.id === "valorizaciones" ? (x) => { location.href = `/blocks/mi-garaje/m/vmc-publica?desde=${x.id}`; } : onOpen} bare={act && !!r.steps && !isAct(r)} plain={act} notif={act && vmc && PAUSA.notif} starts={act} publishable={vmc && s.id === "valorizaciones"} previewOnly={vmc && ((s.id === "participaciones" && r.id !== "bp1" && r.id !== "sf1") || r.id === "sc1")} guided={r.id === guideId} />{tip && r.id === "bp1" ? tip : null}</div>} /> : staged && stageTab === 3 ? <div className="fs__empty"><p>Aún no tienes participaciones rechazadas.</p></div> : null}</div>}
-          {act ? null : <div className="fs__more"><ProfileButton href={s.id === "valorizaciones" ? (vmc ? "/blocks/mi-garaje/m/vmc-valorizaciones" : "/blocks/mi-garaje/m/valorizaciones") : undefined}>{s.rows.length > 2 ? `Ver todas (${s.rows.length})` : "Ver todas"}</ProfileButton></div>}
-        </>}
-    </div></div> : null}
-  </section>;
+      : !s.rows.length ? <div className="fs__empty"><p>{s.empty}</p>{s.emptyCta ? <Button variant={s.emptyCta === "Publicar" ? "primary" : "outline"}>{s.emptyCta}</Button> : null}</div>
+      : <>
+        {split ? <FolderTabs options={(["compra", "vende"] as const).map((side) => { const n = unseenInSide(side); return `${side === "compra" ? "Compras" : "En venta"}${n ? ` (${n})` : ""}`; })} notificationIndices={(["compra", "vende"] as const).flatMap((side, i) => unseenInSide(side) ? [i] : [])} value={sideTab} onChange={setSideTab} aria-label="Compras o vehículos en venta" /> : null}
+        {/* Mis participaciones: las mismas clases del TabSelector de Concorde (color y forma del panel aplican igual), con el número
+            aparte para que la disposición (data-etapas) pueda mostrarlo entre paréntesis, en círculo o encima. */}
+        {staged ? <StageTabs labels={stageOrder.map((i) => STAGES[i])} counts={stageOrder.map(unseenInStage)} value={stageOrder.indexOf(stageTab)} onChange={(i) => setStageTab(stageOrder[i])}
+          ariaLabel="Etapa de tus participaciones" layoutId="participation-stage-active" /> : null}
+        {vmc && s.id === "publicaciones" ? <PubList rows={rows.map(pubRowOf)} title={s.title} /> : <div className="fs__list" role={s.tabs && !act ? "tabpanel" : undefined}>{listRows.length ? <PagList rows={listRows} title={s.title} reset={`${sideTab}-${stageTab}`} render={(r, i) => <div key={r.id} className={`${r.id === guideId ? " g-row-guided" : ""}`} data-foco-row={r.id === "bp1" ? "" : undefined}>
+          {/* UX (21/10): la ayuda va junto a lo que explica. Participaciones y el Kia son previews (Julio); la negociación aceptada entra a Proceso de compra y conserva el acceso al chat. */}<FRow r={{ ...r, isNew: r.isNew && !seen.has(r.id), unread: r.unread && !seen.has(r.id) }} onOpen={vmc && s.id === "valorizaciones" ? (x) => { location.href = `/blocks/mi-garaje/m/vmc-publica?desde=${x.id}`; } : onOpen} bare={act && !!r.steps && !isAct(r)} plain={act} starts={act} publishable={vmc && s.id === "valorizaciones"} previewOnly={vmc && ((s.id === "participaciones" && r.id !== "bp1" && r.id !== "sf1") || r.id === "sc1")} guided={r.id === guideId} />{tip && r.id === "bp1" ? tip : null}</div>} /> : staged && stageTab === 3 ? <div className="fs__empty"><p>Aún no tienes participaciones rechazadas.</p></div> : null}</div>}
+      </>}
+  </ActivitySection>;
 }
 
 /** Momento del último movimiento de una fila (ms), para ordenar de lo más reciente a lo más antiguo. Usa la llegada real
@@ -1035,7 +779,7 @@ const SPEC: Record<string, { version: string; km: string; caja: string; fuel: st
 function LivePurchaseDetail({ r }: { r: Row }): JSX.Element {
   return <>
     <div className="g-qv__top">
-      <div className="g-qv__status"><Status tone="wait">En evaluación</Status><small>Quedan 6 días hábiles</small></div>
+      <div className="g-qv__status"><StatusTag tone="wait">En evaluación</StatusTag><small>Quedan 6 días hábiles</small></div>
       <h2 id="g-qv-title">{r.name} {r.year}</h2>
       <p>Mejor postor</p>
     </div>
@@ -1055,16 +799,8 @@ function LivePurchaseDetail({ r }: { r: Row }): JSX.Element {
 }
 const GoArrow = () => <svg width="12" height="12" viewBox="0 0 20 20" aria-hidden><path d="M6 14 14 6M8 6h6v6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 function QuickView({ r, onClose, neg, go, closeSignal = 0 }: { r: Row | null; onClose: () => void; neg?: ReactNode; go?: { href: string; mode: DetailGo }; closeSignal?: number }): JSX.Element {
-  const ref = useRef<HTMLDialogElement>(null);
-  // 23/10: se cierra deslizándose (a la derecha en desktop, hacia abajo en móvil) y recién ahí se desmonta.
-  const close = () => { const d = ref.current; if (!d || matchMedia("(prefers-reduced-motion: reduce)").matches) { onClose(); return; }
-    // 26/10: desmonta al terminar la salida del propio panel (no de sus hijos); el temporizador queda de respaldo.
-    let t = 0; const end = (e?: AnimationEvent) => { if (e && e.target !== d) return; d.removeEventListener("animationend", end); clearTimeout(t); onClose(); };
-    d.addEventListener("animationend", end); t = window.setTimeout(end, 500); d.classList.add("is-closing"); };
-  useEffect(() => { const d = ref.current; if (!d) return; if (r && !d.open) { d.classList.remove("is-closing"); d.showModal(); } if (!r && d.open) d.close(); }, [r]);
-  useEffect(() => { if (closeSignal && r) close(); }, [closeSignal]); // eslint-disable-line react-hooks/exhaustive-deps
-  return <dialog ref={ref} className="g-qv" aria-labelledby="g-qv-title" onClose={onClose} onCancel={(e) => { e.preventDefault(); close(); }} onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
-    {r ? <div className="g-qv__panel">
+  // El panel (diálogo, entrada, salida deslizándose y velo) es SidePanel de Concorde; aquí va su contenido.
+  return <SidePanel open={Boolean(r)} onClose={onClose} labelledBy="g-qv-title" closeSignal={closeSignal}>{(close) => r ? <>
       {/* Negociando, lo que se decide es el monto: foto chica junto al nombre en vez de la galería (en móvil ocupaba 40 % de la pantalla). */}
       {neg ? <header className="g-qv__head is-compact">
         {/* Retrato con el borde negociable de Concorde (CardViewer · negotiable). */}
@@ -1082,7 +818,7 @@ function QuickView({ r, onClose, neg, go, closeSignal = 0 }: { r: Row | null; on
           <svg width="16" height="16" viewBox="0 0 20 20" aria-hidden><path className="g-qv__arr" d="M4 10h11M11 5l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </button>
       </header> : <header className="g-qv__head">
-        <Gallery slug={r.photo} alt={`${r.name} ${r.year}`} />
+        <img src={photosOf(r.photo)[0]} alt="" />
         <button type="button" className="g-qv__close" onClick={close} aria-label="Cerrar">
           <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
         </button>
@@ -1092,10 +828,9 @@ function QuickView({ r, onClose, neg, go, closeSignal = 0 }: { r: Row | null; on
             es la propia acción («Pagar»), se nombra como en Tu actividad («Por pagar») para que la fila nunca quede vacía.
             En la negociación, Negociable va junto a la placa y el estado y el plazo los dice el panel. */}
         {neg || r.id === "sc1" ? null : <div className="g-qv__top">
-          <div className={`g-qv__status${r.tone === "action" ? " is-act" : ""}`}><Status tone={r.tone}>{r.status === r.nextCta ? ({ Responder: "Por responder", Pagar: "Por pagar" } as Record<string, string>)[r.status] ?? r.status : r.status}</Status>{r.when ? <small>{r.when}</small> : null}</div>
+          <div className={`g-qv__status${r.tone === "action" ? " is-act" : ""}`}><span className={`g-status g-status--${r.tone}`}>{r.status === r.nextCta ? ({ Responder: "Por responder", Pagar: "Por pagar" } as Record<string, string>)[r.status] ?? r.status : r.status}</span>{r.when ? <small>{r.when}</small> : null}</div>
           <h2 id="g-qv-title">{r.name} {r.year}</h2>{r.plate ? <p>Placa {r.plate}</p> : null}</div>}
         {neg ?? (r.id === "sc1" ? <LivePurchaseDetail r={r} /> : <><p className="g-qv__detail">{r.detail}</p>
-        {r.steps ? <Tracker steps={r.steps} step={r.step ?? 0} /> : null}
         {(r.history ?? HISTORY[r.id]) ? <><h3>Historial</h3>
         <ol className="g-qv__hist">{(r.history ?? HISTORY[r.id]).map((h) => <li key={h}>{h}</li>)}</ol></> : null}</>)}
       </div>
@@ -1103,11 +838,10 @@ function QuickView({ r, onClose, neg, go, closeSignal = 0 }: { r: Row | null; on
         {r.nextCta ? <Button variant={/^s?n/.test(r.id) ? "negotiable" : "primary"} onClick={() => { if (r.chat) location.href = r.chat; else onClose(); }}>{r.nextCta}</Button> : null}
         <ProfileButton>Ver detalle completo</ProfileButton>
       </footer>}
-    </div> : null}
-  </dialog>;
+    </> : null}</SidePanel>;
 }
 
-export default function Garaje({ variant, withNews, isEmpty, isLoading, many = false, sober = false, vmc = false, withData = true, risk = "muybajo", pass = false, camp: camp0 = "reservado", lateral = "reservado", vehiculo = "caja", variante, propuesta: sent, compra, features = {} , demo = false}: { demo?: boolean; variant: Variant; variante?: string; propuesta?: number; compra?: number; camp?: CampView; lateral?: SideView; vehiculo?: Veh; withNews: boolean; isEmpty: boolean; isLoading: boolean; many?: boolean; sober?: boolean; vmc?: boolean; withData?: boolean; risk?: Risk; pass?: boolean; features?: Features }): JSX.Element {
+export default function Garaje({ variant, withNews, isEmpty, isLoading, many = false, sober = false, vmc = false, withData = true, risk = "muybajo", camp: camp0 = "reservado", lateral = "reservado", vehiculo = "caja", variante, propuesta: sent, compra, features = {} , demo = false}: { demo?: boolean; variant: Variant; variante?: string; propuesta?: number; compra?: number; camp?: CampView; lateral?: SideView; vehiculo?: Veh; withNews: boolean; isEmpty: boolean; isLoading: boolean; many?: boolean; sober?: boolean; vmc?: boolean; withData?: boolean; risk?: Risk; pass?: boolean; features?: Features }): JSX.Element {
   const ac = useAcuerdo();
   // over: cambios de estado hechos en el lab (aceptar, rechazar, contraproponer) sobre los datos de ejemplo.
   // ?compra=<monto>: vuelta desde el chat, la negociable aceptada permanece en Mis negociaciones · Compras.
@@ -1754,17 +1488,15 @@ export default function Garaje({ variant, withNews, isEmpty, isLoading, many = f
         <div className="g-activity__head">
           <Heading variant={variant} title="Tu actividad" group sub={variant === "concorde" ? "Tus procesos en VMC" : undefined} />
           {/* Filtro junto a lo que filtra: deja solo lo que te necesita, sin pestañas para no esconder nada. */}
-          {sober && todo > 0 && !isLoading ? <button type="button" role="switch" aria-checked={filtering} className={`f-only${glass ? " vd-host" : ""}`} onClick={() => smooth(() => setOnlyTodo((x) => !x))}><span className="f-only__track" aria-hidden><i /></span>{glass && PAUSA.bell ? <Vidrio s="alertas" size={28} /> : null}Pendientes <b>{todo}</b></button> : null}
+          {sober && todo > 0 && !isLoading ? <PendingToggle count={todo} checked={filtering} onToggle={() => smooth(() => setOnlyTodo((x) => !x))} /> : null}
           {variant === "fernando" && !isEmpty && !sober ? <TabSelector options={["Todo", "Comprando", "Vendiendo"]} value={role} onChange={setRole} aria-label="Filtrar por rol" /> : null}
         </div>
         {isEmpty && !isLoading ? <div className="g-firstrun">
           <p><b>Todavía no tienes actividad.</b> Participa en una subasta o publica tu vehículo y aquí verás cada proceso.</p>
           <ProfileButton>Ver subastas de hoy</ProfileButton>
         </div> : null}
-        {variant === "fernando"
-          ? <LayoutGroup id="mi-garaje-flows"><div className="fa">{shown.map((s) => <FSection key={`${s.id}-${role}-${filtering}`} s={s} loading={isLoading} compact={features.compact} onOpen={openRow} seen={seen} act={sober} glass={glass} vmc={vmc} guideId={demoGuide ? "bp1" : undefined}
+        <LayoutGroup id="mi-garaje-flows"><div className="fa">{shown.map((s) => <FSection key={`${s.id}-${role}-${filtering}`} s={s} loading={isLoading} compact={features.compact} onOpen={openRow} seen={seen} act={sober} vmc={vmc} guideId={demoGuide ? "bp1" : undefined}
             tip={sent && s.id === "negociaciones" ? <FocoInline f={foco} /> : undefined} stageFocus={s.id === "participaciones" ? stageFocus : undefined} />)}</div></LayoutGroup>
-          : shown.map((s) => <Section key={`${s.id}-${role}`} s={s} variant={variant} loading={isLoading} f={features} onOpen={openRow} seen={seen} />)}
       </div>
   );
   const subaspass = (
@@ -1779,14 +1511,14 @@ export default function Garaje({ variant, withNews, isEmpty, isLoading, many = f
       style={{ "--salida-ms": `${salidaMs}ms`, "--salida-espera": `${salidaEspera}ms` } as React.CSSProperties}>
       {flight ? <FlightCue {...flight} /> : null}
       {sober ? <><div className="f-src">
-        <div className="f-src__main"><FernandoHead sober risk={risk} pass={pass} withData={withData} />
+        <div className="f-src__main"><FernandoHead sober risk={risk} />
         {activity}</div>
-        <div className="f-src__rail" ref={railRef}><Actions variant={variant} sober glass={glass && PAUSA.actions} vmc={vmc} /><Wallet variant={variant} sober withData={withData} glass={glass} /><Ad banner camp={camp} veh={veh} b={pieza(ban.riel)!} /><Recs withData={withData} /></div>
+        <div className="f-src__rail" ref={railRef}><Actions variant={variant} sober vmc={vmc} /><Wallet variant={variant} withData={withData} /><Ad banner camp={camp} veh={veh} b={pieza(ban.riel)!} /><Recs withData={withData} /></div>
       </div></> : variant === "fernando" ? <div className="f-grid">
         <FernandoHead sober={sober} />
         <Actions variant={variant} sober={sober} />
         <PendingPanel secs={secs} loading={isLoading} onOpen={openRow} sober={sober} />
-        <Wallet variant={variant} sober={sober} withData={!sober || withData} />
+        <Wallet variant={variant} withData={!sober || withData} />
       </div> : <header className="g-top">
         <Heading variant={variant} level={1} title="Mi Garaje" sub="Tus vehículos, ofertas y compras." />
         <div className="g-top__actions"><Actions variant={variant} /></div>

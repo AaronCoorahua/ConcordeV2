@@ -42,10 +42,10 @@ const NEW = [
 ];
 
 const PENDING = [
-  "Pasar a componentes de Concorde las piezas que todavía viven dentro del bloque: NegotiationPanel, SubasChat, QuickView, StageTabs, Paginado, Gallery, DropModal y RepublishModal. Están más acopladas al CSS global del bloque.",
-  "El CSS del bloque es global (unas 5.000 líneas en archivos .css del lab, con clases cortas). Por eso se ve en iframes. Al pasar cada pieza a componente se mueve su CSS dentro del componente.",
+  "Todo lo que muestran las 6 pantallas ya es componente de Concorde (44 nuevos, en la lista de abajo). En el bloque quedan solo el armado de cada pantalla, los datos de ejemplo y las reglas de posición.",
+  "Las pantallas se ven en iframes con la base del lab (sin el reset de Tailwind de Concorde, Plus Jakarta Sans, alto de línea normal), para que midan lo mismo que en VMC Laptop.",
   "Usa framer-motion (animaciones de pestañas y filas) y qrcode-generator, aceptadas como dependencias de Concorde.",
-  "Las copias de componentes del lab traían la paleta ajustada a tokens (naranja, vault y teal un poco distintos). El bloque usa los componentes canónicos de Concorde con su paleta de siempre.",
+  "BadgeStatus, LikeButton, ProfileButton y TabSelector tomaron la versión del lab (paleta de marca #ED8936 / #22005C, EN VIVO y PRÓXIMA de 80 px, pestañas con novedades en negrita): Mi Garaje se ve igual que en el lab.",
   "Datos, saldos, propuestas y resultados AVT son de ejemplo. Los banners del Sidebar y del riel llevan a las pantallas de Valorizar y Publicar del mismo bloque.",
 ];
 

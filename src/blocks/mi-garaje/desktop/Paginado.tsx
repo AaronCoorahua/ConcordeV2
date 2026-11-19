@@ -7,6 +7,7 @@
  */
 import { useEffect, useState, useSyncExternalStore } from "react";
 import type { JSX, ReactNode } from "react";
+import Pagination from "@/src/components/Pagination";
 import { LabPanel } from "./LabPanel";
 import "./paginado.css";
 
@@ -29,7 +30,6 @@ const set = (x: Partial<typeof state>) => { state = { ...state, ...x }; subs.for
 export const usePag = () => useSyncExternalStore((f) => { subs.add(f); return () => subs.delete(f); }, () => state, () => state);
 
 const PER = 5; // 29/10: 5 por página
-const Chev = ({ dir }: { dir: 1 | -1 }) => <svg width="14" height="14" viewBox="0 0 20 20" aria-hidden><path d={dir > 0 ? "M8 5l5 5-5 5" : "M12 5l-5 5 5 5"} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /** Envuelve la lista de una sección: 5 filas por página y la numeración al pie (solo si hay más de 5). */
 export function PagList<T extends { id: string }>({ rows, title, render, reset }: { rows: T[]; title: string; render: (r: T, i: number) => ReactNode; reset?: unknown }): JSX.Element {
@@ -38,12 +38,9 @@ export function PagList<T extends { id: string }>({ rows, title, render, reset }
   useEffect(() => { setPage(0); }, [reset]);
   const n = rows.length, pages = Math.max(1, Math.ceil(n / PER));
   if (n <= PER) return <>{rows.map(render)}</>;
-  const p = Math.min(page, pages - 1), go = (x: number) => setPage(Math.max(0, Math.min(pages - 1, x)));
+  const p = Math.min(page, pages - 1);
   return <>{rows.slice(p * PER, p * PER + PER).map((r, i) => render(r, p * PER + i))}
-    <nav className={`pg-foot pg-nums pg-nums--${mode} pg-nums--${size}`} aria-label={`Páginas de ${title}`}>
-      <button type="button" className="pg-arrow" aria-label="Página anterior" disabled={p === 0} onClick={() => go(p - 1)}><Chev dir={-1} /></button>
-      <span className="pg-nums__set">{Array.from({ length: pages }, (_, i) => <button key={i} type="button" className="pg-num" aria-current={i === p ? "page" : undefined} onClick={() => go(i)}>{i + 1}</button>)}</span>
-      <button type="button" className="pg-arrow" aria-label="Página siguiente" disabled={p === pages - 1} onClick={() => go(p + 1)}><Chev dir={1} /></button></nav></>;
+    <Pagination page={p} pages={pages} onChange={setPage} label={title} variant={mode === "glass" ? "glass" : "solid"} size={size} /></>;
 }
 
 /** Panel del lab. */
