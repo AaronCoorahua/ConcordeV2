@@ -5,6 +5,7 @@ import PromoBanner from "@/src/blocks/banners/desktop/PromoBanner";
 import { EMPRESA_HEIGHT } from "@/src/blocks/banners/desktop/EmpresaBanner";
 import EmpresaBannerAlt from "@/src/blocks/banners/desktop/EmpresaBannerAlt";
 import { BANNER_WIDTH, BANNER_HEIGHT } from "@/src/blocks/banners/desktop/dimensions";
+import LandingSubascarsBanner, { LANDING_SUBASCARS_WIDTH, LANDING_SUBASCARS_HEIGHT } from "@/src/blocks/banners/desktop/LandingSubascarsBanner";
 
 /**
  * /banners — Catálogo de banners 766×272. Cada card es una categoría; dentro,
@@ -18,6 +19,8 @@ interface BannerCategoryEntry {
   width: number;
   height: number;
   node: ReactNode;
+  /** Medida real si no es la del catálogo (766×192). */
+  size?: string;
 }
 
 const GAP = 16;
@@ -59,6 +62,7 @@ const CATEGORIES: BannerCategoryEntry[] = [
   { id: "negociable", name: "Negociable", variantCount: 12, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: NEGOCIABLE_PREVIEW },
   { id: "categoria",  name: "Categoría",  variantCount: 9, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: CATEGORIA_PREVIEW },
   { id: "empresas",   name: "Empresas",   variantCount: 7, width: BANNER_WIDTH, height: EMPRESA_PREVIEW_H,  node: EMPRESAS_PREVIEW },
+  { id: "landing-subascars", name: "Landing Subascars", variantCount: 1, width: LANDING_SUBASCARS_WIDTH, height: LANDING_SUBASCARS_HEIGHT, size: `${LANDING_SUBASCARS_WIDTH} × ${LANDING_SUBASCARS_HEIGHT}`, node: <LandingSubascarsBanner /> },
 ];
 
 const THUMB_H = 260;
@@ -94,7 +98,7 @@ export default function BannersPage(): JSX.Element {
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px" }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                     <span className="bnr-name" style={{ fontSize: 14, fontWeight: 700, color: "var(--ui-ink)", letterSpacing: "-0.01em" }}>{c.name}</span>
-                    <span style={{ fontSize: 12, color: "var(--ui-muted)", fontWeight: 500 }}>{BANNER_WIDTH} × {BANNER_HEIGHT} · {c.variantCount} variantes</span>
+                    <span style={{ fontSize: 12, color: "var(--ui-muted)", fontWeight: 500 }}>{c.size ?? `${BANNER_WIDTH} × ${BANNER_HEIGHT}`} · {c.variantCount} {c.variantCount === 1 ? "variante" : "variantes"}</span>
                   </div>
                   <span className="bnr-arrow" aria-hidden="true" style={{ fontSize: 15, color: "var(--ui-border-hover)" }}>→</span>
                 </div>
