@@ -6,7 +6,7 @@
  * descripción y medidas. Reutilizado por /banners/principal|secundario|sidebar.
  */
 
-import { useRef, useState, type JSX, type ReactNode } from "react";
+import { useEffect, useRef, useState, type JSX, type ReactNode } from "react";
 
 /**
  * Convierte el DOM renderizado del banner a SVG vectorial (texto, rects,
@@ -98,6 +98,27 @@ export interface BannerGalleryProps {
   slot: string;
   description: string;
   templates: BannerTemplate[];
+  /** Con selector: una versión a la vez, elegida en una barra de pestañas (queda en la URL como ?v=id). */
+  selectable?: boolean;
+}
+
+/** Barra de versiones: pestañas con el nombre corto (lo que va antes del «·» en el nombre de la plantilla). */
+function VersionTabs({ templates, active, onPick }: { templates: BannerTemplate[]; active: string; onPick: (id: string) => void }): JSX.Element {
+  return (
+    <div role="tablist" aria-label="Versiones" style={{ display: "inline-flex", flexWrap: "wrap", gap: 4, padding: 4, marginBottom: 24, borderRadius: 12, background: "var(--ui-subtle)", border: "1px solid var(--ui-border-soft)" }}>
+      {templates.map(function renderTab(t, i) {
+        const on = t.id === active;
+        return (
+          <button key={t.id} type="button" role="tab" aria-selected={on} onClick={() => onPick(t.id)}
+            style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 14px", border: 0, borderRadius: 9, cursor: "pointer", fontFamily: "inherit",
+              fontSize: 13, fontWeight: 700, color: on ? "var(--ui-accent)" : "var(--ui-body)", background: on ? "#ffffff" : "transparent",
+              boxShadow: on ? "0 1px 3px rgba(15,23,42,0.12), 0 0 0 1px var(--ui-border-soft)" : "none", transition: "background 0.15s, color 0.15s" }}>
+            <span style={{ fontFamily: "monospace", fontSize: 11, opacity: 0.7 }}>V{i + 1}</span>{t.name.split(" · ")[0]}
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
 export default function BannerGallery({
@@ -106,7 +127,20 @@ export default function BannerGallery({
   slot,
   description,
   templates,
+  selectable,
 }: BannerGalleryProps): JSX.Element {
+  const [active, setActive] = useState(templates[0]?.id ?? "");
+  // La versión elegida vive en la URL (?v=…): recargar o compartir el enlace abre la misma.
+  useEffect(function readVersion() {
+    if (!selectable) return;
+    const v = new URLSearchParams(location.search).get("v");
+    if (v && templates.some((t) => t.id === v)) setActive(v);
+  }, [selectable, templates]);
+  function pick(id: string): void {
+    setActive(id);
+    const u = new URL(location.href); u.searchParams.set("v", id); history.replaceState(null, "", u);
+  }
+  const shown = selectable ? templates.filter((t) => t.id === active) : templates;
   return (
     <main style={{ maxWidth: 1120, margin: "0 auto", padding: "40px 40px 80px" }}>
       {/* Breadcrumb */}
@@ -129,10 +163,12 @@ export default function BannerGallery({
       </div>
       <p style={{ fontSize: 14, color: "var(--ui-body)", lineHeight: 1.6, margin: "0 0 40px", maxWidth: 640 }}>{description}</p>
 
+      {selectable ? <VersionTabs templates={templates} active={active} onPick={pick} /> : null}
+
       {/* Plantillas */}
       <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
-        {templates.map(function renderTemplate(t, i) {
-          return <TemplateSection key={t.id} t={t} index={i} />;
+        {shown.map(function renderTemplate(t) {
+          return <TemplateSection key={t.id} t={t} index={templates.indexOf(t)} />;
         })}
       </div>
     </main>
