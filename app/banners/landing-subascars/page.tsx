@@ -4,12 +4,22 @@ import BannerGallery, { type BannerTemplate } from "@/app/banners/_components/Ba
 import LandingSubascarsBanner, { LANDING_SUBASCARS_WIDTH, LANDING_SUBASCARS_HEIGHT } from "@/src/blocks/banners/desktop/LandingSubascarsBanner";
 import LandingSubascarsGlass from "@/src/blocks/banners/desktop/LandingSubascarsGlass";
 import { isBadgeStyle, type BadgeStyle } from "@/src/blocks/banners/desktop/LandingSubascarsBadges";
+import LandingSubascarsPhoto from "@/src/blocks/banners/desktop/LandingSubascarsPhoto";
 import BadgeTabs from "./BadgeTabs";
 
 /**
  * /banners/landing-subascars — hero de vmcsubastas.com/landing-subascars (V1, con las correcciones de Julio)
- * y cuatro versiones más glass (V2–V5), con selector. ?v=<id> abre una versión y ?b=<estilo> cambia los precios.
+ * cuatro versiones más glass (V2–V5) y cinco con foto (V6–V10), con selector. ?v=<id> abre una versión y ?b=<estilo> cambia los precios.
  */
+
+/** Versiones con foto: la foto entera de fondo y encima solo titular, botón y tres propuestas. */
+const PHOTO_VERSIONS: [string, string, string][] = [
+  ["camioneta", "Camioneta · Foto naranja", "Él entrega la llave sentado en la tolva de una camioneta blanca, fondo naranja con luces. El texto va sobre el naranja vacío de la izquierda."],
+  ["suv", "SUV · Foto teal", "Ella con la llave junto a una SUV roja, fondo teal y lila. Las propuestas flotan en el aire libre, sin taparle la cara."],
+  ["sedan", "Sedán · Foto verde", "Él ofrece la llave apoyado en un sedán oscuro, fondo verde con luces violetas."],
+  ["van", "Van · Foto morada", "Ella ofrece la llave saliendo de una van, fondo morado con luces rosadas."],
+  ["plateado", "Plateado · Foto lila", "Ella camina con la llave junto a un carro plateado, fondo lila con luces naranjas."],
+];
 
 const templates = (b: BadgeStyle): BannerTemplate[] => [
   {
@@ -42,6 +52,7 @@ const templates = (b: BadgeStyle): BannerTemplate[] => [
     description: "Todo dentro de una tarjeta de vidrio sobre un fondo con luces más vivas; la tarjeta empieza más abajo y la cabeza de la persona sale por arriba, con la primera propuesta montada sobre el borde.",
     node: <LandingSubascarsGlass version={5} badges={b} />,
   },
+  ...PHOTO_VERSIONS.map(([id, name, description], i) => ({ id, name, description, node: <LandingSubascarsPhoto photo={(i + 1) as 1 | 2 | 3 | 4 | 5} badges={b} /> })),
 ];
 
 export default async function BannerLandingSubascarsPage({ searchParams }: { searchParams: Promise<{ b?: string }> }): Promise<JSX.Element> {
@@ -54,7 +65,7 @@ export default async function BannerLandingSubascarsPage({ searchParams }: { sea
         title="Banner landing Subascars"
         format={`${LANDING_SUBASCARS_WIDTH} × ${LANDING_SUBASCARS_HEIGHT}`}
         slot="Landing Subascars → hero (escritorio)"
-        description="Hero de la landing de Subascars (V1, producción con las correcciones de Julio) y cuatro versiones más glass para comparar. Elige la versión arriba."
+        description="Hero de la landing de Subascars (V1, producción con las correcciones de Julio), cuatro versiones más glass (V2–V5) y cinco con foto (V6–V10). Elige la versión arriba."
         templates={templates(badges)}
         selectable
         toolbar={<BadgeTabs active={badges} />}

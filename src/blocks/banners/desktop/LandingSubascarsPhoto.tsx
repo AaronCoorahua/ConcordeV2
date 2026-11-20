@@ -1,0 +1,71 @@
+/**
+ * LandingSubascarsPhoto — versiones con foto (20/11): la foto completa de fondo y encima solo el titular, el botón
+ * «¡Publica ahora!» y tres propuestas. El texto va a la izquierda, donde la foto está vacía, con un velo del color
+ * de la foto para que se lea; las propuestas van en el aire libre alrededor de la persona, sin taparle la cara.
+ * Fotos (Descargas, 2752×1536) reducidas a 1600 px en /public/banners/landing-subascars/fotos/.
+ */
+import type { CSSProperties, JSX } from "react";
+import GlassButton from "@/src/components/GlassButton";
+import { ACCENT, CTA_CSS, IMG, LANDING_SUBASCARS_HEIGHT, LANDING_SUBASCARS_WIDTH, MoneyIcon, jakarta } from "./LandingSubascarsBanner";
+import { PriceBadges, type BadgeStyle, type Item } from "./LandingSubascarsBadges";
+
+type Photo = {
+  src: string;
+  /** Recorte vertical de la foto (object-position y): 0% = arriba. */
+  y: string;
+  /** Velo de la izquierda, del color de la foto. */
+  veil: string;
+  places: Item[];
+};
+
+const amounts = ["US$ 19,850", "US$ 13,200", "US$ 20,550"];
+const at = (p: [number, number, number, number][]): Item[] =>
+  p.map(([left, top, r, s], i) => ({ amount: amounts[i], left, top, r, s, d: ["0s", "-1.4s", "-2.6s"][i] }));
+
+export const PHOTOS: Record<number, Photo> = {
+  1: { src: "foto-1", y: "10%", veil: "rgba(140, 52, 6, 0.5)", places: at([[500, 14, -6, 0.9], [262, 144, 5, 0.92], [622, 104, 6, 0.88]]) },
+  2: { src: "foto-2", y: "15%", veil: "rgba(0, 86, 100, 0.6)", places: at([[462, 12, -6, 0.9], [244, 206, 5, 0.9], [626, 118, 6, 0.88]]) },
+  3: { src: "foto-3", y: "15%", veil: "rgba(0, 70, 36, 0.55)", places: at([[600, 14, -6, 0.9], [276, 146, 5, 0.92], [620, 96, 6, 0.86]]) },
+  4: { src: "foto-4", y: "10%", veil: "rgba(34, 6, 100, 0.6)", places: at([[520, 6, -6, 0.88], [270, 150, 5, 0.92], [618, 116, 6, 0.86]]) },
+  5: { src: "foto-5", y: "12%", veil: "rgba(52, 18, 116, 0.6)", places: at([[556, 18, -6, 0.9], [290, 150, 5, 0.92], [610, 76, 6, 0.86]]) },
+};
+
+/** Propuesta plana (estilo «Planos»), con la inclinación de su lugar. */
+function Flat({ it, id }: { it: Item; id: string }): JSX.Element {
+  return (
+    <span style={{ position: "absolute", left: it.left, top: it.top, height: 34, display: "inline-flex", alignItems: "center", gap: 4, borderRadius: 9999, background: "#fff",
+      padding: "0 11px 0 8px", fontSize: 13, fontWeight: 800, whiteSpace: "nowrap", boxShadow: "0 6px 16px 0 rgba(34,0,92,0.28)", transform: `rotate(${it.r}deg) scale(${it.s})` }}>
+      <MoneyIcon id={id} />
+      <span style={{ background: "linear-gradient(193deg, rgb(174, 142, 255) 0%, rgb(90, 53, 194) 100%)", WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent" }}>{it.amount}</span>
+    </span>
+  );
+}
+
+export default function LandingSubascarsPhoto({ photo, href, badges = "original" }: { photo: 1 | 2 | 3 | 4 | 5; href?: string; badges?: BadgeStyle }): JSX.Element {
+  const p = PHOTOS[photo];
+  const idp = `lsp${photo}`;
+  const shadow: CSSProperties = { textShadow: "0 2px 14px rgba(0,0,0,0.25)" };
+  return (
+    <section className={jakarta.className} style={{ position: "relative", width: LANDING_SUBASCARS_WIDTH, height: LANDING_SUBASCARS_HEIGHT, overflow: "hidden", borderRadius: 16,
+      background: "#22005C", fontFamily: jakarta.style.fontFamily }}>
+      <style href="landing-subascars-cta" precedence="default">{CTA_CSS}</style>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img alt="Persona entregando la llave de su carro" src={`${IMG}/fotos/${p.src}.jpg`} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: `50% ${p.y}` }} />
+      <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: `linear-gradient(90deg, ${p.veil} 0%, ${p.veil} 28%, transparent 56%)`, pointerEvents: "none" }} />
+      <h1 style={{ position: "absolute", left: 36, top: 32, width: 336, margin: 0, color: "#fff", fontSize: 28, lineHeight: "36px", fontWeight: 800, letterSpacing: "-0.0255em", ...shadow }}>
+        <span style={ACCENT}>¡Publica tu carro</span> y recibe propuestas hoy, <span style={ACCENT}>véndelo al mejor postor!</span>
+      </h1>
+      <div style={{ position: "absolute", left: 36, top: 184 }}>
+        {href
+          ? <GlassButton href={href} className="lsc-cta">¡Publica ahora!</GlassButton>
+          : <GlassButton className="lsc-cta">¡Publica ahora!</GlassButton>}
+      </div>
+      {badges === "original"
+        ? p.places.map((it, i) => <Flat key={i} it={it} id={`${idp}-${i}`} />)
+        : <PriceBadges style={badges} idp={idp} places={badges === "fondo"
+          // En la foto no hay capa «detrás de la persona»: las fichas grandes van delante, más chicas y sin salirse.
+          ? p.places.map((it, i) => ({ ...it, s: it.s * 0.74, left: i === 1 ? it.left : it.left - 28 }))
+          : p.places} />}
+    </section>
+  );
+}

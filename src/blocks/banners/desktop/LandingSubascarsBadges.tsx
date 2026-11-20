@@ -25,7 +25,7 @@ export const BADGE_STYLES: { id: BadgeStyle; name: string }[] = [
 
 export const isBadgeStyle = (v: unknown): v is BadgeStyle => BADGE_STYLES.some((b) => b.id === v);
 
-type Item = { amount: string; left: number; top: number; r: number; s: number; d: string };
+export type Item = { amount: string; left: number; top: number; r: number; s: number; d: string };
 
 /** Montos y lugar de cada propuesta: r = inclinación, s = escala (profundidad), d = desfase del movimiento. */
 const ITEMS: Item[] = [
@@ -106,11 +106,11 @@ const CSS = String.raw`
 @media (prefers-reduced-motion: reduce) { .lsb-hang, .lsb-float, .lsb-floor, .lsb-drift, .lsb-chip--glass::after { animation: none; } .lsb-hang { transform: rotate(var(--r)) scale(var(--s)); } }
 `;
 
-export function PriceBadges({ style, idp }: { style: Exclude<BadgeStyle, "original">; idp: string }): JSX.Element {
+export function PriceBadges({ style, idp, places }: { style: Exclude<BadgeStyle, "original">; idp: string; places?: Item[] }): JSX.Element {
   return (
     <>
       <style href="landing-subascars-badges" precedence="default">{CSS}</style>
-      {(PLACES[style] ?? ITEMS).map(function renderBadge(it, i) {
+      {(places ?? PLACES[style] ?? ITEMS).map(function renderBadge(it, i) {
         const vars = { "--r": `${it.r}deg`, "--s": it.s, "--d": it.d } as CSSProperties;
         const id = `${idp}-${style}-${i}`;
         if (style === "colgante") return (
