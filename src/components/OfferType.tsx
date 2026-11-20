@@ -170,7 +170,7 @@ const POFTYPE_STYLES = `
 }
 
 .poftype--live .poftype-top {
-  background: linear-gradient(120deg, #ff9639 0%, #ef852e 50%, #be3d00 100%);
+  background: linear-gradient(120deg, var(--vmc-color-orange-gradient-start, #ff9639) 0%, var(--vmc-color-orange-gradient-mid, #ef852e) 50%, var(--vmc-color-orange-gradient-end, #be3d00) 100%);
 }
 
 .poftype--live .poftype-bottom {

@@ -81,7 +81,7 @@ export const TABSELECTOR_STYLES = `
   -webkit-text-fill-color: #ffffff;
   background-image:
     linear-gradient(150deg, #8460E5 0%, #3B1782 100%),
-    linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 75%, #ffffff 100%);
+    linear-gradient(120deg, #ffffff 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22%, #8460E5 75%, #ffffff 100%);
   background-origin: border-box;
   background-clip: padding-box, border-box;
   box-shadow: rgba(34, 0, 92,0.2) 0px 8px 16px;

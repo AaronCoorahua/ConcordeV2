@@ -67,7 +67,7 @@ const BADGESTATUS_STYLES = `
    bg naranja diagonal + borde gradiente cálido + ring naranja */
 .badgestatus--live {
   background-image:
-    linear-gradient(135deg, #f4ac59 0%, #ed8936 40%, #b25614 100%),
+    linear-gradient(135deg, var(--vmc-color-orange-gradient-light, #f4ac59) 0%, #ed8936 40%, #b25614 100%),
     linear-gradient(135deg, #fbc47d 0%, rgba(255,255,255,0.45) 40%, #d46e20 75%, #fbc47d 100%);
   background-origin: padding-box, border-box;
   background-clip: padding-box, border-box;

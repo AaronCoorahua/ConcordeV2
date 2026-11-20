@@ -62,7 +62,7 @@ export default function SubasCoinsCard({ className = "" }: SubasCoinsCardProps):
           <span
             style={{
               // VYGradientOrange1: #FF9639 → #EF852E → #BE3D00
-              backgroundImage: "linear-gradient(135deg, #FF9639 0%, #EF852E 50%, #BE3D00 100%)",
+              backgroundImage: "linear-gradient(135deg, var(--vmc-color-orange-gradient-start, #FF9639) 0%, var(--vmc-color-orange-gradient-mid, #EF852E) 50%, var(--vmc-color-orange-gradient-end, #BE3D00) 100%)",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
               color: "transparent",

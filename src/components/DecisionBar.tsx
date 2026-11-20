@@ -8,7 +8,7 @@ import type { JSX, ReactNode } from "react";
 
 export const DECISION_BAR_CSS = String.raw`
 .fl-decide { position:sticky; bottom:12px; z-index:2; display:flex; justify-content:space-between; align-items:center; gap:20px; padding:20px 24px; border-radius:22px; background:#fff;
-  border:1px solid transparent; background-image:linear-gradient(#fff,#fff), linear-gradient(120deg,#fff 0%,#F4AC59 35%,#8460E5 75%,#fff 100%); background-origin:border-box; background-clip:padding-box,border-box;
+  border:1px solid transparent; background-image:linear-gradient(#fff,#fff), linear-gradient(120deg,#fff 0%,var(--vmc-color-orange-gradient-light, #F4AC59) 35%,#8460E5 75%,#fff 100%); background-origin:border-box; background-clip:padding-box,border-box;
   box-shadow:0 12px 30px rgba(34,0,92,.10); }
 .fl-decide > div:first-child { display:grid; gap:2px; }
 .fl-decide b { font-size:1rem; font-weight:700; color:#3B1782; }

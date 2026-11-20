@@ -79,7 +79,7 @@ const PROFILEBUTTON_STYLES = `
   inset: 0;
   border-radius: inherit;
   padding: 1.5px;
-  background: linear-gradient(135deg, #f4ac59 0%, #ed8936 40%, #b25614 100%);
+  background: linear-gradient(135deg, var(--vmc-color-orange-gradient-light, #f4ac59) 0%, #ed8936 40%, #b25614 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -94,7 +94,7 @@ const PROFILEBUTTON_STYLES = `
 
 /* ── Hover: círculo RELLENO naranja + sombra, chevron blanco, lift ── */
 .pprofilebtn:hover:not(:disabled) .pprofilebtn__circle {
-  background: linear-gradient(90deg, #f4ac59 0%, #ed8936 40%, #b25614 100%);
+  background: linear-gradient(90deg, var(--vmc-color-orange-gradient-light, #f4ac59) 0%, #ed8936 40%, #b25614 100%);
   color: #ffffff;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   transform: translateY(-1px);

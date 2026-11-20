@@ -87,7 +87,7 @@
 .cp-steps li { flex:1; display:grid; gap:4px; font-size:.6875rem; font-weight:600; color:var(--muted); }
 .cp-steps li::before { content:""; height:4px; border-radius:9999px; background:#E1E3E2; }
 .cp-steps li.is-done { color:#5A35C2; } .cp-steps li.is-done::before { background:#8460E5; }
-.cp-steps li.is-now { color:#B25614; font-weight:800; } .cp-steps li.is-now::before { background:linear-gradient(90deg,#F4AC59,#ED8936); }
+.cp-steps li.is-now { color:#B25614; font-weight:800; } .cp-steps li.is-now::before { background:linear-gradient(90deg,var(--vmc-color-orange-gradient-light, #F4AC59),#ED8936); }
 
 /* ── Tu actividad con RoleFilter ────────────────────────── */
 .cp-activity { display:grid; gap:16px; }

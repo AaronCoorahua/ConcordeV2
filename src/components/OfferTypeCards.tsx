@@ -53,7 +53,7 @@ export const OFFER_TYPE_CARDS_CSS = String.raw`
   opacity: 0; pointer-events: none; transform: translate(-50%, -40%) scale(0.92);
   transition: opacity 0.3s, transform 0.35s cubic-bezier(0.3,0,0,1), background-color 0.25s, box-shadow 0.25s; }
 .vot__cta::before { content: ""; position: absolute; inset: 0; padding: 1.5px; border-radius: inherit; pointer-events: none;
-  background: linear-gradient(94deg, #FFFFFF 0%, #F4AC59 22.1%, #8460E5 74.5%, #FFFFFF 100%);
+  background: linear-gradient(94deg, #FFFFFF 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22.1%, #8460E5 74.5%, #FFFFFF 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
 .vot__card:hover .vot__cta, .vot__card:focus-visible .vot__cta { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 .vot__card:active .vot__cta { transform: translate(-50%, calc(-50% + 1px)) scale(0.97); background-color: rgba(32,0,104,0.22);
