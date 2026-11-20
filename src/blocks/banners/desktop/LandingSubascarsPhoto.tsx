@@ -20,8 +20,8 @@ type Photo = {
   places: Item[];
 };
 
-const amounts = ["US$ 19,850", "US$ 13,200", "US$ 20,550"];
-const at = (p: [number, number, number, number][]): Item[] =>
+export const amounts = ["US$ 19,850", "US$ 13,200", "US$ 20,550"];
+export const at = (p: [number, number, number, number][]): Item[] =>
   p.map(([left, top, r, s], i) => ({ amount: amounts[i], left, top, r, s, d: ["0s", "-1.4s", "-2.6s"][i] }));
 
 export const PHOTOS: Record<number, Photo> = {
@@ -33,7 +33,7 @@ export const PHOTOS: Record<number, Photo> = {
 };
 
 /** Propuesta plana (estilo «Planos»), con la inclinación de su lugar. */
-function Flat({ it, id }: { it: Item; id: string }): JSX.Element {
+export function Flat({ it, id }: { it: Item; id: string }): JSX.Element {
   return (
     <span style={{ position: "absolute", left: it.left, top: it.top, height: 34, display: "inline-flex", alignItems: "center", gap: 4, borderRadius: 9999, background: "#fff",
       padding: "0 11px 0 8px", fontSize: 13, fontWeight: 800, whiteSpace: "nowrap", boxShadow: "0 6px 16px 0 rgba(34,0,92,0.28)", transform: `rotate(${it.r}deg) scale(${it.s})` }}>

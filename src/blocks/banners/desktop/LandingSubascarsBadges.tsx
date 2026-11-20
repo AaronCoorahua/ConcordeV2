@@ -106,7 +106,7 @@ const CSS = String.raw`
 @media (prefers-reduced-motion: reduce) { .lsb-hang, .lsb-float, .lsb-floor, .lsb-drift, .lsb-chip--glass::after { animation: none; } .lsb-hang { transform: rotate(var(--r)) scale(var(--s)); } }
 `;
 
-export function PriceBadges({ style, idp, places }: { style: Exclude<BadgeStyle, "original">; idp: string; places?: Item[] }): JSX.Element {
+export function PriceBadges({ style, idp, places, hangFrom = 0 }: { style: Exclude<BadgeStyle, "original">; idp: string; places?: Item[]; /** Colgantes: desde dónde baja el hilo (mobile: debajo del botón). */ hangFrom?: number }): JSX.Element {
   return (
     <>
       <style href="landing-subascars-badges" precedence="default">{CSS}</style>
@@ -114,7 +114,7 @@ export function PriceBadges({ style, idp, places }: { style: Exclude<BadgeStyle,
         const vars = { "--r": `${it.r}deg`, "--s": it.s, "--d": it.d } as CSSProperties;
         const id = `${idp}-${style}-${i}`;
         if (style === "colgante") return (
-          <div key={id} className="lsb-hang" style={{ ...vars, left: it.left, height: it.top + 40 }}>
+          <div key={id} className="lsb-hang" style={{ ...vars, left: it.left, top: hangFrom, height: it.top - hangFrom + 40 }}>
             <span className="lsb-hang__str" /><span className="lsb-hang__ring" />
             <span className="lsb-chip lsb-chip--hang"><MoneyIcon id={id} /><span className="lsb-amt">{it.amount}</span></span>
           </div>
