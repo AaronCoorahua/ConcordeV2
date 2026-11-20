@@ -5,7 +5,8 @@ import PromoBanner from "@/src/blocks/banners/desktop/PromoBanner";
 import { EMPRESA_HEIGHT } from "@/src/blocks/banners/desktop/EmpresaBanner";
 import EmpresaBannerAlt from "@/src/blocks/banners/desktop/EmpresaBannerAlt";
 import { BANNER_WIDTH, BANNER_HEIGHT } from "@/src/blocks/banners/desktop/dimensions";
-import LandingSubascarsBanner, { LANDING_SUBASCARS_WIDTH, LANDING_SUBASCARS_HEIGHT } from "@/src/blocks/banners/desktop/LandingSubascarsBanner";
+import { LANDING_SUBASCARS_WIDTH, LANDING_SUBASCARS_HEIGHT } from "@/src/blocks/banners/desktop/LandingSubascarsBanner";
+import LandingSubascarsPhoto from "@/src/blocks/banners/desktop/LandingSubascarsPhoto";
 
 /**
  * /banners — Catálogo de banners 766×272. Cada card es una categoría; dentro,
@@ -62,7 +63,7 @@ const CATEGORIES: BannerCategoryEntry[] = [
   { id: "negociable", name: "Negociable", variantCount: 12, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: NEGOCIABLE_PREVIEW },
   { id: "categoria",  name: "Categoría",  variantCount: 9, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: CATEGORIA_PREVIEW },
   { id: "empresas",   name: "Empresas",   variantCount: 7, width: BANNER_WIDTH, height: EMPRESA_PREVIEW_H,  node: EMPRESAS_PREVIEW },
-  { id: "landing-subascars", name: "Landing Subascars", variantCount: 10, width: LANDING_SUBASCARS_WIDTH, height: LANDING_SUBASCARS_HEIGHT, size: `${LANDING_SUBASCARS_WIDTH} × ${LANDING_SUBASCARS_HEIGHT}`, node: <LandingSubascarsBanner /> },
+  { id: "landing-subascars", name: "Landing Subascars", variantCount: 5, width: LANDING_SUBASCARS_WIDTH, height: LANDING_SUBASCARS_HEIGHT, size: `${LANDING_SUBASCARS_WIDTH} × ${LANDING_SUBASCARS_HEIGHT}`, node: <LandingSubascarsPhoto photo={1} /> },
 ];
 
 const THUMB_H = 260;
