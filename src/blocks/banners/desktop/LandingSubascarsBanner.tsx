@@ -9,6 +9,7 @@
 import type { CSSProperties, JSX } from "react";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import GlassButton from "@/src/components/GlassButton";
+import { PriceBadges, type BadgeStyle } from "./LandingSubascarsBadges";
 
 // Concorde carga Plus Jakarta solo en 600 (app/layout.tsx); producción usa 800 en el titular y 700 en las píldoras.
 export const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["600", "700", "800"], display: "swap" });
@@ -58,7 +59,7 @@ export interface LandingSubascarsBannerProps {
   href?: string;
 }
 
-export default function LandingSubascarsBanner({ href }: LandingSubascarsBannerProps): JSX.Element {
+export default function LandingSubascarsBanner({ href, badges = "original" }: LandingSubascarsBannerProps & { badges?: BadgeStyle }): JSX.Element {
   return (
     <section className={jakarta.className} style={{ position: "relative", width: LANDING_SUBASCARS_WIDTH, height: LANDING_SUBASCARS_HEIGHT, overflow: "hidden", borderRadius: 16,
       background: "linear-gradient(164deg, rgb(0, 174, 177) 0%, rgb(132, 96, 229) 100%)", fontFamily: jakarta.style.fontFamily }}>
@@ -77,11 +78,14 @@ export default function LandingSubascarsBanner({ href }: LandingSubascarsBannerP
           : <GlassButton className="lsc-cta">¡Publica ahora!</GlassButton>}
       </div>
       {/* eslint-disable-next-line @next/next/no-img-element */}
+      {badges === "fondo" ? <PriceBadges style="fondo" idp="lsc" /> : null}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img alt="Persona señalando ofertas recibidas en su celular" src={`${IMG}/hero-car.png`} style={{ position: "absolute", left: 378.27, top: 28, width: 360, height: 250, objectFit: "cover" }} />
       {/* Más grandes que en producción (pedido de Julio): se corren un poco para no tapar la cara ni salirse del banner. */}
+      {badges === "fondo" ? null : badges !== "original" ? <PriceBadges style={badges} idp="lsc" /> : <>
       <Pill id="lsc-g1" left={452} top={38} amount="US$ 19,850" />
       <Pill id="lsc-g2" left={486} top={212} amount="US$ 13,200" />
-      <Pill id="lsc-g3" left={640} top={96} amount="US$ 20,550" />
+      <Pill id="lsc-g3" left={640} top={96} amount="US$ 20,550" /></>}
     </section>
   );
 }

@@ -100,6 +100,8 @@ export interface BannerGalleryProps {
   templates: BannerTemplate[];
   /** Con selector: una versión a la vez, elegida en una barra de pestañas (queda en la URL como ?v=id). */
   selectable?: boolean;
+  /** Controles extra debajo del selector de versiones (p. ej. el estilo de los precios). */
+  toolbar?: ReactNode;
 }
 
 /** Barra de versiones: pestañas con el nombre corto (lo que va antes del «·» en el nombre de la plantilla). */
@@ -128,6 +130,7 @@ export default function BannerGallery({
   description,
   templates,
   selectable,
+  toolbar,
 }: BannerGalleryProps): JSX.Element {
   const [active, setActive] = useState(templates[0]?.id ?? "");
   // La versión elegida vive en la URL (?v=…): recargar o compartir el enlace abre la misma.
@@ -164,6 +167,7 @@ export default function BannerGallery({
       <p style={{ fontSize: 14, color: "var(--ui-body)", lineHeight: 1.6, margin: "0 0 40px", maxWidth: 640 }}>{description}</p>
 
       {selectable ? <VersionTabs templates={templates} active={active} onPick={pick} /> : null}
+      {toolbar}
 
       {/* Plantillas */}
       <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>

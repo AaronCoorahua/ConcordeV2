@@ -10,6 +10,7 @@
  */
 import type { CSSProperties, JSX, ReactNode } from "react";
 import GlassButton from "@/src/components/GlassButton";
+import { PriceBadges, type BadgeStyle } from "./LandingSubascarsBadges";
 import { ACCENT, CTA_CSS, GLOW, IMG, LANDING_SUBASCARS_HEIGHT, LANDING_SUBASCARS_WIDTH, MoneyIcon, jakarta } from "./LandingSubascarsBanner";
 
 export type GlassVersion = 2 | 3 | 4 | 5;
@@ -96,7 +97,11 @@ function Frame({ v, background, children }: { v: GlassVersion; background: strin
 
 const V1_BG = "linear-gradient(164deg, rgb(0, 174, 177) 0%, rgb(132, 96, 229) 100%)";
 
-export default function LandingSubascarsGlass({ version, href }: { version: GlassVersion; href?: string }): JSX.Element {
+export default function LandingSubascarsGlass({ version, href, badges = "original" }: { version: GlassVersion; href?: string; badges?: BadgeStyle }): JSX.Element {
+  // Con otro estilo de precios, las tres píldoras de la versión se reemplazan por las de LandingSubascarsBadges.
+  const alt = badges === "original" ? null : badges === "fondo" ? <></> : <PriceBadges style={badges} idp={`lsg${version}`} />;
+  // «Al fondo» va antes que la foto, para que la persona quede delante.
+  const back = badges === "fondo" ? <PriceBadges style="fondo" idp={`lsg${version}`} /> : null;
   if (version === 2) return (
     <Frame v={2} background={V1_BG}>
       <Blob style={{ left: 555, top: -124 }} /><Blob style={{ left: -176, top: -15 }} />
@@ -105,10 +110,12 @@ export default function LandingSubascarsGlass({ version, href }: { version: Glas
       <div className="lsg-glass" style={{ left: 20, top: 20, width: 420, height: 232, borderRadius: 22 }} />
       <Title style={{ left: 42, top: 38, width: 380, fontSize: 30, lineHeight: "38px" }} />
       <Cta href={href} style={{ left: 42, top: 182 }} />
+      {back}
       <Person />
+      {alt ?? <>
       <Pill id="lsg2-a" left={452} top={38} amount="US$ 19,850" />
       <Pill id="lsg2-b" left={486} top={212} amount="US$ 13,200" />
-      <Pill id="lsg2-c" left={636} top={96} amount="US$ 20,550" />
+      <Pill id="lsg2-c" left={636} top={96} amount="US$ 20,550" /></>}
     </Frame>
   );
   if (version === 3) return (
@@ -121,10 +128,12 @@ export default function LandingSubascarsGlass({ version, href }: { version: Glas
       <div className="lsg-glass" style={{ left: 392, top: 196, width: 46, height: 46, borderRadius: "50%" }} />
       <Title style={{ left: 36, top: 30, width: 407, fontSize: 32, lineHeight: "42px" }} />
       <Cta href={href} style={{ left: 36, top: 192 }} />
+      {back}
       <Person />
+      {alt ?? <>
       <Pill id="lsg3-a" left={452} top={38} amount="US$ 19,850" />
       <Pill id="lsg3-b" left={486} top={212} amount="US$ 13,200" />
-      <Pill id="lsg3-c" left={636} top={96} amount="US$ 20,550" />
+      <Pill id="lsg3-c" left={636} top={96} amount="US$ 20,550" /></>}
     </Frame>
   );
   if (version === 4) return (
@@ -136,10 +145,12 @@ export default function LandingSubascarsGlass({ version, href }: { version: Glas
       <div className="lsg-glass lsg-glass--dark" style={{ left: 20, top: 20, width: 420, height: 232, borderRadius: 22 }} />
       <Title accent={ACCENT_TEAL} style={{ left: 42, top: 38, width: 380, fontSize: 30, lineHeight: "38px" }} />
       <Cta href={href} style={{ left: 42, top: 182 }} />
+      {back}
       <Person />
+      {alt ?? <>
       <Pill id="lsg4-a" left={452} top={38} amount="US$ 19,850" dark />
       <Pill id="lsg4-b" left={486} top={212} amount="US$ 13,200" dark />
-      <Pill id="lsg4-c" left={636} top={96} amount="US$ 20,550" dark />
+      <Pill id="lsg4-c" left={636} top={96} amount="US$ 20,550" dark /></>}
     </Frame>
   );
   return (
@@ -151,10 +162,12 @@ export default function LandingSubascarsGlass({ version, href }: { version: Glas
       <div className="lsg-glass" style={{ left: 14, top: 72, width: 738, height: 186, borderRadius: 24 }} />
       <Title accent={ACCENT_WARM} style={{ left: 38, top: 88, width: 380, fontSize: 26, lineHeight: "33px" }} />
       <Cta href={href} style={{ left: 38, top: 196 }} />
+      {back}
       <Person top={22} left={386} />
+      {alt ?? <>
       <Pill id="lsg5-a" left={452} top={30} amount="US$ 19,850" />
       <Pill id="lsg5-b" left={494} top={206} amount="US$ 13,200" />
-      <Pill id="lsg5-c" left={636} top={92} amount="US$ 20,550" />
+      <Pill id="lsg5-c" left={636} top={92} amount="US$ 20,550" /></>}
     </Frame>
   );
 }
