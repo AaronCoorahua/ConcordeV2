@@ -1,5 +1,5 @@
 /**
- * LandingSubascarsPhotoMobile — versión mobile (400×616, la medida del hero mobile de producción) de las cinco
+ * LandingSubascarsPhotoMobile — versión mobile (400×616, la medida del hero mobile de producción) de las
  * versiones con foto. Arriba el titular y el botón; abajo la foto, recortada a lo ancho para que entren la persona,
  * la llave y parte del carro, fundida por arriba con la misma foto desenfocada. Tres propuestas alrededor de la persona.
  */
@@ -7,7 +7,7 @@ import type { CSSProperties, JSX } from "react";
 import GlassButton from "@/src/components/GlassButton";
 import { ACCENT, CTA_CSS, IMG, jakarta } from "../desktop/LandingSubascarsBanner";
 import { PriceBadges, type BadgeStyle } from "../desktop/LandingSubascarsBadges";
-import { Flat, PHOTOS, at } from "../desktop/LandingSubascarsPhoto";
+import { Flat, PHOTOS, at, type PhotoId } from "../desktop/LandingSubascarsPhoto";
 
 export const LANDING_SUBASCARS_MOBILE_WIDTH = 400;
 export const LANDING_SUBASCARS_MOBILE_HEIGHT = 616;
@@ -17,15 +17,13 @@ const H = 400;
 const W = Math.round((H * 1600) / 893);
 
 /** Por foto: left = corrimiento horizontal (centra a la persona con la llave y deja ver el carro), y las propuestas. */
-const MOBILE: Record<number, { left: number; places: ReturnType<typeof at> }> = {
-  1: { left: -272, places: at([[226, 218, -6, 0.88], [14, 290, 5, 0.88], [262, 336, 6, 0.86]]) },
+const MOBILE: Record<PhotoId, { left: number; places: ReturnType<typeof at> }> = {
   2: { left: -272, places: at([[10, 214, -6, 0.88], [232, 236, 5, 0.88], [12, 330, 6, 0.86]]) },
-  3: { left: -287, places: at([[226, 214, -6, 0.88], [8, 340, 5, 0.88], [258, 304, 6, 0.86]]) },
   4: { left: -294, places: at([[10, 226, -6, 0.88], [256, 226, 5, 0.88], [10, 350, 6, 0.86]]) },
   5: { left: -308, places: at([[8, 236, -6, 0.88], [240, 218, 5, 0.88], [256, 332, 6, 0.86]]) },
 };
 
-export default function LandingSubascarsPhotoMobile({ photo, href, badges = "original" }: { photo: 1 | 2 | 3 | 4 | 5; href?: string; badges?: BadgeStyle }): JSX.Element {
+export default function LandingSubascarsPhotoMobile({ photo, href, badges = "colgante" }: { photo: PhotoId; href?: string; badges?: BadgeStyle }): JSX.Element {
   const p = PHOTOS[photo];
   const m = MOBILE[photo];
   const idp = `lspm${photo}`;

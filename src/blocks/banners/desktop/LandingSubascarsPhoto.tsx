@@ -24,10 +24,10 @@ export const amounts = ["US$ 19,850", "US$ 13,200", "US$ 20,550"];
 export const at = (p: [number, number, number, number][]): Item[] =>
   p.map(([left, top, r, s], i) => ({ amount: amounts[i], left, top, r, s, d: ["0s", "-1.4s", "-2.6s"][i] }));
 
-export const PHOTOS: Record<number, Photo> = {
-  1: { src: "foto-1", h: 290, top: -8, veil: "rgba(140, 52, 6, 0.5)", places: at([[606, 8, -6, 0.88], [392, 66, 5, 0.9], [626, 128, 6, 0.86]]) },
+export type PhotoId = 2 | 4 | 5;
+
+export const PHOTOS: Record<PhotoId, Photo> = {
   2: { src: "foto-2", h: 290, top: -8, veil: "rgba(0, 86, 100, 0.6)", places: at([[396, 18, -6, 0.88], [372, 150, 5, 0.9], [628, 100, 6, 0.86]]) },
-  3: { src: "foto-3", h: 290, top: -8, veil: "rgba(0, 70, 36, 0.55)", places: at([[628, 6, -6, 0.88], [404, 60, 5, 0.9], [412, 180, 6, 0.86]]) },
   4: { src: "foto-4", h: 290, top: -8, veil: "rgba(34, 6, 100, 0.6)", places: at([[408, 20, -6, 0.88], [384, 150, 5, 0.9], [626, 70, 6, 0.86]]) },
   5: { src: "foto-5", h: 290, top: -8, veil: "rgba(52, 18, 116, 0.6)", places: at([[624, 8, -6, 0.88], [416, 60, 5, 0.9], [410, 172, 6, 0.86]]) },
 };
@@ -43,7 +43,7 @@ export function Flat({ it, id }: { it: Item; id: string }): JSX.Element {
   );
 }
 
-export default function LandingSubascarsPhoto({ photo, href, badges = "original" }: { photo: 1 | 2 | 3 | 4 | 5; href?: string; badges?: BadgeStyle }): JSX.Element {
+export default function LandingSubascarsPhoto({ photo, href, badges = "colgante" }: { photo: PhotoId; href?: string; badges?: BadgeStyle }): JSX.Element {
   const p = PHOTOS[photo];
   const idp = `lsp${photo}`;
   const shadow: CSSProperties = { textShadow: "0 2px 14px rgba(0,0,0,0.25)" };

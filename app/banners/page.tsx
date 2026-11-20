@@ -63,7 +63,7 @@ const CATEGORIES: BannerCategoryEntry[] = [
   { id: "negociable", name: "Negociable", variantCount: 12, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: NEGOCIABLE_PREVIEW },
   { id: "categoria",  name: "Categoría",  variantCount: 9, width: BANNER_WIDTH, height: ASSET_PLUS_LAYOUT,  node: CATEGORIA_PREVIEW },
   { id: "empresas",   name: "Empresas",   variantCount: 7, width: BANNER_WIDTH, height: EMPRESA_PREVIEW_H,  node: EMPRESAS_PREVIEW },
-  { id: "landing-subascars", name: "Landing Subascars", variantCount: 5, width: LANDING_SUBASCARS_WIDTH, height: LANDING_SUBASCARS_HEIGHT, size: `${LANDING_SUBASCARS_WIDTH} × ${LANDING_SUBASCARS_HEIGHT}`, node: <LandingSubascarsPhoto photo={1} /> },
+  { id: "landing-subascars", name: "Landing Subascars", variantCount: 3, width: LANDING_SUBASCARS_WIDTH, height: LANDING_SUBASCARS_HEIGHT, size: `${LANDING_SUBASCARS_WIDTH} × ${LANDING_SUBASCARS_HEIGHT}`, node: <LandingSubascarsPhoto photo={4} /> },
 ];
 
 const THUMB_H = 260;
