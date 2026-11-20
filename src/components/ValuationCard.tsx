@@ -31,7 +31,7 @@ export const VALUATION_CARD_CSS = String.raw`
 .vz-card__value small { font-size:.8125rem; font-weight:500; color:#6B6878; }
 .vz-card__value b { display:flex; align-items:center; gap:10px; font-size:2rem; line-height:1.1; font-weight:800; letter-spacing:-0.02em; color:#3B1782; font-variant-numeric:tabular-nums; }
 .vz-card__value em { font-style:normal; font-size:.75rem; font-weight:700; padding:3px 8px; border-radius:9999px; letter-spacing:0; color:#B25614;
-  border:1px solid transparent; background:linear-gradient(#fff,#fff) padding-box, linear-gradient(90deg,#F4AC59,#8460E5) border-box; }
+  border:1px solid transparent; background:linear-gradient(#fff,#fff) padding-box, linear-gradient(90deg,var(--vmc-color-orange-gradient-light, #F4AC59),#8460E5) border-box; }
 .vz-card__value em.is-up { color:#5A35C2; background:linear-gradient(#fff,#fff) padding-box, linear-gradient(90deg,#AE8EFF,#8460E5) border-box; }
 .vz-card__value span { font-size:.8125rem; font-weight:500; color:#6B6878; font-variant-numeric:tabular-nums; }
 .vz-card__facts { margin:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(0,1fr)); gap:8px; }
@@ -47,7 +47,7 @@ export const VALUATION_CARD_CSS = String.raw`
 .vz-dots { display:inline-flex; gap:3px; }
 .vz-sig .vz-dots { margin:2px 0; }
 .vz-dots i { width:8px; height:8px; border-radius:50%; background:#ECEAF2; box-shadow:inset 0 1px 2px rgba(34,0,92,.12); }
-.vz-dots i.is-on { background:linear-gradient(135deg,#F4AC59 0%,#ED8936 50%,#B25614 100%); box-shadow:0 1px 3px rgba(178,86,20,.35); }
+.vz-dots i.is-on { background:linear-gradient(135deg,var(--vmc-color-orange-gradient-light, #F4AC59) 0%,#ED8936 50%,#B25614 100%); box-shadow:0 1px 3px rgba(178,86,20,.35); }
 .vz-card__foot { display:grid; grid-template-columns:auto minmax(0,1fr); align-items:center; gap:16px; padding-top:16px; border-top:1px solid #ECEAF2; }
 .vz-card__foot > .pvbtn, .vz-card__foot > button:last-child { width:100%; }
 /* Negociable (compacta) */

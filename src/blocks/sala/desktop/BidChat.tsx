@@ -104,7 +104,7 @@ function buildMessages(): JSX.Element[] {
 
 // Panel: morado (paint0) + glass white 8% + borde gradiente (paint1)
 const PANEL_BG = "linear-gradient(0deg, rgba(255,255,255,0.08), rgba(255,255,255,0.08)), linear-gradient(115deg, #5F3ED8 0%, #340091 50%, #140046 100%)";
-const PANEL_BORDER = "linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 74.5%, #ffffff 100%)";
+const PANEL_BORDER = "linear-gradient(120deg, #ffffff 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22%, #8460E5 74.5%, #ffffff 100%)";
 
 const STYLE_ID = "concorde-bidchat-styles";
 const BIDCHAT_STYLES = `
@@ -176,7 +176,7 @@ const BIDCHAT_STYLES = `
 }
 .bidchat-box::before {
   content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px;
-  background: linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 74.5%, #ffffff 100%);
+  background: linear-gradient(120deg, #ffffff 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22%, #8460E5 74.5%, #ffffff 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
 }

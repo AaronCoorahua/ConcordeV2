@@ -71,7 +71,7 @@ const TERMS_STYLES = `
   /* marcado: relleno gradiente + borde gradiente (white → F4AC59 → 8460E5 → white) */
   background-image:
     linear-gradient(150deg, #8460E5 0%, #3B1782 100%),
-    linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 75%, #ffffff 100%);
+    linear-gradient(120deg, #ffffff 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22%, #8460E5 75%, #ffffff 100%);
 }
 .pterms__input:focus-visible + .pterms__box { outline: 2px solid #8460E5; outline-offset: 2px; }
 .pterms__check { width: 10px; height: 10px; opacity: 0; transition: opacity 0.12s; }

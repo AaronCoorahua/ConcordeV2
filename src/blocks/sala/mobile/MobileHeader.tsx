@@ -25,9 +25,9 @@ const CAR_WIDTH = 110;
 
 // Tarjeta sala (paint0 fill + paint1 borde) — diagonal naranja→morado
 const INFO_FILL = "linear-gradient(125deg, #ED8936 0%, #ED8936 40%, #8460E5 100%)";
-const INFO_BORDER = "linear-gradient(125deg, #ffffff 0%, #F4AC59 22%, #8460E5 74.5%, #ffffff 100%)";
+const INFO_BORDER = "linear-gradient(125deg, #ffffff 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22%, #8460E5 74.5%, #ffffff 100%)";
 // Pill naranja 60×22 (paint8 fill + paint9 borde)
-const LIVE_FILL = "linear-gradient(180deg, #FF9639 0%, #EF852E 40%, #BE3D00 100%)";
+const LIVE_FILL = "linear-gradient(180deg, var(--vmc-color-orange-gradient-start, #FF9639) 0%, var(--vmc-color-orange-gradient-mid, #EF852E) 40%, var(--vmc-color-orange-gradient-end, #BE3D00) 100%)";
 const LIVE_BORDER = "linear-gradient(140deg, #FFBC83 0%, rgba(255,255,255,0.45) 40%, #DA6C1E 75%, #FFBC83 100%)";
 
 // Placa glass 54×22 (paint13 fill + paint15 borde lila) · glass real vía máscara

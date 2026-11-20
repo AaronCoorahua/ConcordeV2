@@ -18,6 +18,14 @@
   --vmc-color-orange-400: #fbc47d; /* Primary/Hover   stop-a */
   --vmc-color-orange-900: #b73700; /* Ghost/Outline Pressed stop-b */
 
+  /* ── Color · stops de gradiente naranja ── (fuera de la escala; usados en gradientes de componentes)
+     Brand diagonal (Button/OfferCard/OfferType/Signal): start → mid → end. */
+  --vmc-color-orange-gradient-start: #ff9639;
+  --vmc-color-orange-gradient-mid: #ef852e;
+  --vmc-color-orange-gradient-end: #be3d00;
+  /* Stop claro de los gradientes claro→600 (BadgeStatus, ProfileButton, ActionTile, Mi Garaje…) */
+  --vmc-color-orange-gradient-light: #f4ac59;
+
   /* ── Color · vault (purple) ── (hex exactos de Figma) ─────────────────── */
   --vmc-color-vault-900: #22005c; /* Secondary/Pressed stop-b */
   --vmc-color-vault-700: #3b1782; /* Secondary/Default stop-b */

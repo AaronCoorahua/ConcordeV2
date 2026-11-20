@@ -63,7 +63,7 @@ const STYLES = `
   /* Borde VYStrokes1 — dirección exacta del SVG (paint20: vector 283.9,21.1 → 94deg) */
   background:
     linear-gradient(#2E0F70, #2E0F70) padding-box,
-    linear-gradient(94deg, #FFFFFF 0%, #F4AC59 22.1%, #8460E5 74.5%, #FFFFFF 100%) border-box;
+    linear-gradient(94deg, #FFFFFF 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22.1%, #8460E5 74.5%, #FFFFFF 100%) border-box;
   transition: width 0.28s ${EASE};
 }
 .sb-banner {

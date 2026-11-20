@@ -32,7 +32,7 @@ export const PUBLICATION_BADGE_CSS = String.raw`
 .vpb--revision { background-image: linear-gradient(135deg, #8460E5 0%, #3B1782 100%), linear-gradient(135deg, #AE8EFF 0%, rgba(255,255,255,0.4) 38%, #5A35C2 68%, #AE8EFF 100%);
   box-shadow: rgba(34,0,92,0.5) 0 2px 10px, rgba(255,255,255,0.1) 0 1px 0 inset; }
 /* Publicada: naranja */
-.vpb--publicada { background-image: linear-gradient(135deg, #F4AC59 0%, #ED8936 40%, #B25614 100%), linear-gradient(135deg, #FBC47D 0%, rgba(255,255,255,0.45) 40%, #D46E20 75%, #FBC47D 100%);
+.vpb--publicada { background-image: linear-gradient(135deg, var(--vmc-color-orange-gradient-light, #F4AC59) 0%, #ED8936 40%, #B25614 100%), linear-gradient(135deg, #FBC47D 0%, rgba(255,255,255,0.45) 40%, #D46E20 75%, #FBC47D 100%);
   box-shadow: rgba(237,137,54,0.45) 0 2px 10px, rgba(255,255,255,0.14) 0 1px 0 inset; }
 /* En negociación: cian, el mismo de Negociable */
 .vpb--negociacion { background-image: linear-gradient(135deg, #30E8EC 0%, #00CACE 45%, #008688 100%); box-shadow: rgba(0,134,136,0.4) 0 2px 10px, rgba(255,255,255,0.14) 0 1px 0 inset; }

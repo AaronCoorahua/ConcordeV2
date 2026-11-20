@@ -16,7 +16,7 @@ export const GLASS_CSS = String.raw`
   text-shadow: rgba(0,0,0,0.25) 0 1px 3px;
   transition: background-color 0.25s, box-shadow 0.25s, transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); }
 .hib-glass::before { content: ""; position: absolute; inset: 0; padding: 1.5px; border-radius: inherit; pointer-events: none;
-  background: linear-gradient(94deg, #FFFFFF 0%, #F4AC59 22.1%, #8460E5 74.5%, #FFFFFF 100%); /* VYStrokes1 */
+  background: linear-gradient(94deg, #FFFFFF 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22.1%, #8460E5 74.5%, #FFFFFF 100%); /* VYStrokes1 */
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
 .hib-glass:hover { transform: translateY(-1px); background-color: rgba(255,255,255,0.1);
   box-shadow: rgba(0,0,0,0.16) 0 12px 28px, inset 0 1px 8px rgba(255,255,255,0.6); }

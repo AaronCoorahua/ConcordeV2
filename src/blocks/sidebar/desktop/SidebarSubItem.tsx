@@ -61,7 +61,7 @@ const STYLES = `
 .sbsi-item--hover::before {
   padding: 1px;
   /* VYGradientOrange0 — dirección exacta del SVG (vector 94.42,127.15 → 143deg) */
-  background: linear-gradient(143deg, #FF9639 0%, #EF852E 50%, #BE3D00 100%);
+  background: linear-gradient(143deg, var(--vmc-color-orange-gradient-start, #FF9639) 0%, var(--vmc-color-orange-gradient-mid, #EF852E) 50%, var(--vmc-color-orange-gradient-end, #BE3D00) 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -70,7 +70,7 @@ const STYLES = `
 .sbsi-item--active::before {
   padding: 1.5px;
   /* VYStrokes1 — dirección exacta del SVG (vector 94.42,127.15 → 143deg) */
-  background: linear-gradient(143deg, #FFFFFF 0%, #F4AC59 22.1%, #8460E5 74.5%, #FFFFFF 100%);
+  background: linear-gradient(143deg, #FFFFFF 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22.1%, #8460E5 74.5%, #FFFFFF 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);

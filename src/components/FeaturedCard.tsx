@@ -44,7 +44,7 @@ export const FEATURED_CARD_CSS = String.raw`
 .vfc-pill { display: inline-flex; align-items: center; gap: 5px; height: 18px; padding: 0 8px 0 6px; border-radius: 999px; font-size: 9px; font-weight: 700; letter-spacing: 0.07em;
   color: #fff; text-transform: uppercase; white-space: nowrap; box-shadow: rgba(0,0,0,0.18) 0 2px 6px; }
 .vfc-pill svg { flex: none; width: 10px; height: 10px; }
-.vfc-pill--live { background: linear-gradient(135deg, #FF9639 0%, #EF852E 40%, #BE3D00 100%); }
+.vfc-pill--live { background: linear-gradient(135deg, var(--vmc-color-orange-gradient-start, #FF9639) 0%, var(--vmc-color-orange-gradient-mid, #EF852E) 40%, var(--vmc-color-orange-gradient-end, #BE3D00) 100%); }
 .vfc-pill--negotiable { background: linear-gradient(110deg, #00A9B0 0%, #3F7FD0 45%, #6A35D6 100%); }
 .vfc-pill--featured { background: linear-gradient(135deg, #8460E5 0%, #3B1782 100%); }
 
