@@ -45,7 +45,7 @@ const PROGRESSBAR_STYLES = `
   left: 0;
   top: 0;
   height: 100%;
-  background: linear-gradient(135deg, #FFFFFF 0%, #F4AC59 22%, #8460E5 74.5%, #FFFFFF 100%);
+  background: linear-gradient(135deg, #FFFFFF 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22%, #8460E5 74.5%, #FFFFFF 100%);
   transition: width 0.3s cubic-bezier(0.3,0,0,1);
 }
 /* Rainbow horizontal (no diagonal): white → lila → magenta → rosa */

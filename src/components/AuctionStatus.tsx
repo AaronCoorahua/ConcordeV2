@@ -49,7 +49,7 @@ const AUCTIONSTATUS_STYLES = `
   box-shadow: rgba(0,0,0,0.1) 0px 0px 16px 4px;
   font-family: var(--vmc-font-display, "Plus Jakarta Sans", -apple-system, sans-serif);
 }
-.pauction--live { background: linear-gradient(156deg, #FF9639 0%, #EF852E 50%, #BE3D00 100%); }
+.pauction--live { background: linear-gradient(156deg, var(--vmc-color-orange-gradient-start, #FF9639) 0%, var(--vmc-color-orange-gradient-mid, #EF852E) 50%, var(--vmc-color-orange-gradient-end, #BE3D00) 100%); }
 .pauction--negotiable { background: linear-gradient(90deg, #00DAE0 0%, #008688 100%); }
 .pauction::before {
   content: "";

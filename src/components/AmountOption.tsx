@@ -136,7 +136,7 @@ const AMOUNTOPTION_STYLES = `
   border-width: 1.5px;
   background-image:
     linear-gradient(165deg, #8460E5 0%, #3B1782 100%),
-    linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 75%, #ffffff 100%);
+    linear-gradient(120deg, #ffffff 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22%, #8460E5 75%, #ffffff 100%);
 }
 .pamount--input:focus-within .pamount__radio,
 .pamount--input.pamount--active .pamount__radio { border-color: rgba(255,255,255,0.5); }
@@ -154,7 +154,7 @@ const AMOUNTOPTION_STYLES = `
   border-width: 1.5px;
   background-image:
     linear-gradient(165deg, #8460E5 0%, #3B1782 100%),
-    linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 75%, #ffffff 100%);
+    linear-gradient(120deg, #ffffff 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22%, #8460E5 75%, #ffffff 100%);
 }
 .pamount--selected .pamount__radio { border-color: rgba(255,255,255,0.5); }
 .pamount--selected .pamount__dot { opacity: 1; }

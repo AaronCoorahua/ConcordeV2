@@ -73,8 +73,8 @@ const STYLES = `
 .sbi-item--active {
   border: 1.5px solid transparent;
   background:
-    linear-gradient(180deg, #FF9639 0%, #EF852E 40%, #BE3D00 100%) padding-box,
-    linear-gradient(143deg, #FFFFFF 0%, #F4AC59 22.1%, #8460E5 74.5%, #FFFFFF 100%) border-box;
+    linear-gradient(180deg, var(--vmc-color-orange-gradient-start, #FF9639) 0%, var(--vmc-color-orange-gradient-mid, #EF852E) 40%, var(--vmc-color-orange-gradient-end, #BE3D00) 100%) padding-box,
+    linear-gradient(143deg, #FFFFFF 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22.1%, #8460E5 74.5%, #FFFFFF 100%) border-box;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   box-shadow: 0px 2px 25px -2px rgba(237,137,54,0.55);

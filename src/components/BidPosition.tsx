@@ -137,8 +137,8 @@ const BIDPOSITION_STYLES = `
 .pbidpos__row--live {
   border: 1px solid transparent;
   background-image:
-    linear-gradient(180deg, #FF9639 0%, #EF852E 40%, #BE3D00 100%),
-    linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 74.5%, #ffffff 100%);
+    linear-gradient(180deg, var(--vmc-color-orange-gradient-start, #FF9639) 0%, var(--vmc-color-orange-gradient-mid, #EF852E) 40%, var(--vmc-color-orange-gradient-end, #BE3D00) 100%),
+    linear-gradient(120deg, #ffffff 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22%, #8460E5 74.5%, #ffffff 100%);
   background-origin: border-box;
   background-clip: padding-box, border-box;
 }

@@ -209,7 +209,7 @@ const OFFERCARD_STYLES = `
   left: 0;
   right: 0;
   height: 8px;
-  background: linear-gradient(90deg, #ff9639 0%, #ef852e 50%, #be3d00 100%);
+  background: linear-gradient(90deg, var(--vmc-color-orange-gradient-start, #ff9639) 0%, var(--vmc-color-orange-gradient-mid, #ef852e) 50%, var(--vmc-color-orange-gradient-end, #be3d00) 100%);
   border-radius: 0 0 var(--vmc-radius-sm, 4px) var(--vmc-radius-sm, 4px);
 }
 

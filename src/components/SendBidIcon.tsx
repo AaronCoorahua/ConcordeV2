@@ -49,7 +49,7 @@ const SENDBIDICON_STYLES = `
   border: 1px solid transparent;
   background-image:
     linear-gradient(#ffffff, #ffffff),
-    linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 74.5%, #ffffff 100%);
+    linear-gradient(120deg, #ffffff 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22%, #8460E5 74.5%, #ffffff 100%);
   background-origin: border-box;
   background-clip: padding-box, border-box;
 }

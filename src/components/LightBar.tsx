@@ -6,7 +6,7 @@ export const LIGHT_BAR_CSS = String.raw`
 /* LightBar */
 @keyframes vlb-run { from { left: -30%; } to { left: 100%; } }
 .vlb { position: relative; display: block; flex: none; width: 100%; height: var(--vlb-h, 9px); overflow: hidden; }
-.vlb > i { position: relative; display: block; width: 100%; height: 100%; overflow: hidden; background: linear-gradient(90deg, #FF9639, #EF852E 60%, #BE3D00); }
+.vlb > i { position: relative; display: block; width: 100%; height: 100%; overflow: hidden; background: linear-gradient(90deg, var(--vmc-color-orange-gradient-start, #FF9639), var(--vmc-color-orange-gradient-mid, #EF852E) 60%, var(--vmc-color-orange-gradient-end, #BE3D00)); }
 .vlb--negotiable > i { background: linear-gradient(90deg, #00DAE0, #008688); }
 /* Luz que cruza de izquierda a derecha */
 .vlb > i::after { content: ""; position: absolute; top: 0; width: 30%; height: 100%;

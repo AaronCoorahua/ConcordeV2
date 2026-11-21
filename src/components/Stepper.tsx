@@ -24,7 +24,7 @@ export const STEPPER_CSS = String.raw`
   --seg:calc((100% - (var(--n, 3) - 1) * 6px) / var(--n, 3));
   -webkit-mask:repeating-linear-gradient(90deg, #000 0 var(--seg), transparent var(--seg) calc(var(--seg) + 6px));
           mask:repeating-linear-gradient(90deg, #000 0 var(--seg), transparent var(--seg) calc(var(--seg) + 6px)); }
-.fl-steps .pprogbar__fill { background:linear-gradient(90deg, #F4AC59 0%, #ED8936 30%, #8460E5 100%); transition:width .6s cubic-bezier(.16,1,.3,1); }
+.fl-steps .pprogbar__fill { background:linear-gradient(90deg, var(--vmc-color-orange-gradient-light, #F4AC59) 0%, #ED8936 30%, #8460E5 100%); transition:width .6s cubic-bezier(.16,1,.3,1); }
 .fl-steps__of { display:none; }
 /* Móvil: solo el paso actual con «paso N de M»; la barra de tramos muestra el resto. */
 @media (max-width:767px) {

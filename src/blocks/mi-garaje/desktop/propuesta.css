@@ -166,7 +166,7 @@
 
 /* 23/10: el borde del selector de Mis negociaciones y Mis participaciones, en lila claro (el degradado del DS pesaba mucho). */
 .fs__split .ptabs { background-image:linear-gradient(#fff, #fff), linear-gradient(330deg, #D9CCFA 0%, #F5F0FF 100%); }
-/* 23/10: la pestaña activa sin el naranja en su borde (blanco → #F4AC59 → violeta); queda lila suave con blanco. */
+/* 23/10: la pestaña activa sin el naranja en su borde (blanco → var(--vmc-color-orange-gradient-light, #F4AC59) → violeta); queda lila suave con blanco. */
 .fs__split .ptabs__tab--active { background-image:linear-gradient(150deg, #8460E5 0%, #3B1782 100%), linear-gradient(120deg, #fff 0%, #CFBAFF 45%, #AE8EFF 75%, #fff 100%); }
 
 /* 23/10: el detalle de cada fila en una sola línea (nombre + detalle = 2 líneas); si no entra, «…». */

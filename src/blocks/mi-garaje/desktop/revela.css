@@ -100,12 +100,12 @@
   box-shadow:0 2px 4px rgba(59,23,130,.18); }
 
 /* 19/10 · Señal (AVT: 5 puntos + etiqueta). Pastilla con la superficie de AmountOption; puntos con el degradado naranja de
-   Signal / EN VIVO (#F4AC59 → #ED8936 → #B25614), apagados en el lila del riel. Sin la caja oscura ni el «N de 5» */
+   Signal / EN VIVO (var(--vmc-color-orange-gradient-light, #F4AC59) → #ED8936 → #B25614), apagados en el lila del riel. Sin la caja oscura ni el «N de 5» */
 .rva-level { display:inline-flex; align-items:center; gap:10px; min-width:0; padding:8px 16px 8px 12px; border-radius:9999px; color:var(--rv-ink);
   border:1px solid transparent; background:linear-gradient(#fff,#fff) padding-box, linear-gradient(335deg,#8460E5 0%,#FFF8F1 100%) border-box; box-shadow:0 0 16px 4px rgba(0,0,0,.05); }
 .rva-level > i { display:flex; gap:4px; }
 .rva-level > i span { width:10px; height:10px; border-radius:50%; background:#ECEAF2; box-shadow:inset 0 1px 2px rgba(34,0,92,.12); }
-.rva-level > i span.is-on { background:linear-gradient(135deg,#F4AC59 0%,#ED8936 50%,#B25614 100%); box-shadow:0 1px 3px rgba(178,86,20,.35); }
+.rva-level > i span.is-on { background:linear-gradient(135deg,var(--vmc-color-orange-gradient-light, #F4AC59) 0%,#ED8936 50%,#B25614 100%); box-shadow:0 1px 3px rgba(178,86,20,.35); }
 .rva-level > b { font-size:.9375rem; font-weight:700; color:var(--rv-ink); white-space:nowrap; }
 /* Mejores meses en 3 tonos como AVT (pico · alto · otro) */
 .rva-pills em.is-high { background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,0) 55%) padding-box, linear-gradient(135deg,#9B7BEA,#6E4BD8) padding-box, linear-gradient(135deg,#CFBAFF,#fff 40%,#AE8EFF) border-box; }
@@ -115,7 +115,7 @@
 .rva-ins li { display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border-radius:12px; font-size:.8125rem; color:var(--rv-text); box-shadow:inset 0 0 0 1px var(--rv-hair); }
 .rva-ins li::before { content:""; width:8px; height:8px; border-radius:50%; }
 .rva-ins li.is-up::before { background:linear-gradient(#AE8EFF,#5A35C2); } .rva-ins li.is-up b { color:#5A35C2; }
-.rva-ins li.is-down::before { background:linear-gradient(#F4AC59,#B25614); } .rva-ins li.is-down b { color:#B25614; }
+.rva-ins li.is-down::before { background:linear-gradient(var(--vmc-color-orange-gradient-light, #F4AC59),#B25614); } .rva-ins li.is-down b { color:#B25614; }
 /* Similares: ventana de años, marca de ejemplo y extremos de la banda (AVT) */
 .rva-win { margin:0; display:flex; align-items:center; gap:8px; font-size:.75rem; color:var(--rv-muted); }
 .rva-demo { padding:1px 8px; border-radius:9999px; font-size:.6875rem; font-weight:600; color:#5A35C2; box-shadow:inset 0 0 0 1px #CFBAFF; }
@@ -135,10 +135,10 @@
 .rva-legal span { color:#A39FB3; }
 /* Similares: neutro sin borde; favorable (< −5 %) y desfavorable (> +5 %) con borde de su tono, como las etiquetas de km */
 .rva-list em.is-up { background:#fff; box-shadow:inset 0 0 0 1px #AE8EFF; }
-.rva-list em.is-down { background:#fff; box-shadow:inset 0 0 0 1px #F4AC59; }
+.rva-list em.is-down { background:#fff; box-shadow:inset 0 0 0 1px var(--vmc-color-orange-gradient-light, #F4AC59); }
 /* 19/10 · Momento óptimo: avisos con la superficie de AmountOption y los puntos con los degradados de las barras */
 .rva-ins li { border:1px solid transparent; background:linear-gradient(#fff,#fff) padding-box, linear-gradient(335deg,#8460E5 0%,#FFF8F1 100%) border-box; box-shadow:0 0 16px 4px rgba(0,0,0,.05); }
-.rva-ins li.is-down::before { background:linear-gradient(#ED8936,#F4AC59); }
+.rva-ins li.is-down::before { background:linear-gradient(#ED8936,var(--vmc-color-orange-gradient-light, #F4AC59)); }
 /* 19/10 · Vehículos similares con piezas de Concorde */
 .rva-band { background:linear-gradient(90deg,#E8DEFF 0%,#CFBAFF 50%,#E8DEFF 100%); box-shadow:inset 0 0 0 1px rgba(132,96,229,.25); }
 .rva-dot { background:linear-gradient(135deg,#AE8EFF 0%,#5A35C2 100%); box-shadow:0 0 0 3px #fff, 0 0 0 4.5px #CFBAFF, 0 6px 14px rgba(90,53,194,.35); }

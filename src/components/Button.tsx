@@ -636,7 +636,7 @@ const BUTTON_STYLES = `
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(144deg, #ff9639 0%, #ef852e 50%, #be3d00 100%);
+  background: linear-gradient(144deg, var(--vmc-color-orange-gradient-start, #ff9639) 0%, var(--vmc-color-orange-gradient-mid, #ef852e) 50%, var(--vmc-color-orange-gradient-end, #be3d00) 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;

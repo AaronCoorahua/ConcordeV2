@@ -37,7 +37,7 @@ const SALASTATUS_STYLES = `
   width: 443px;
   max-width: 100%;
   height: 90px;
-  background: linear-gradient(120deg, #FF9639 0%, #EF852E 40%, #8460E5 100%);
+  background: linear-gradient(120deg, var(--vmc-color-orange-gradient-start, #FF9639) 0%, var(--vmc-color-orange-gradient-mid, #EF852E) 40%, #8460E5 100%);
   display: flex;
   align-items: center;
   justify-content: space-between;

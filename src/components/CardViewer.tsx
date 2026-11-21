@@ -179,7 +179,7 @@ const CARDVIEWER_STYLES = `
   pointer-events: none;
 }
 .pcardv--live .pcardv__thumb--selected::after {
-  background: linear-gradient(120deg, #ffffff 0%, #F4AC59 25%, #8460E5 75%, #ffffff 100%);
+  background: linear-gradient(120deg, #ffffff 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 25%, #8460E5 75%, #ffffff 100%);
 }
 .pcardv--negotiable .pcardv__thumb--selected::after {
   background: linear-gradient(120deg, #ffffff 0%, #4DDCDC 25%, #6445DF 75%, #ffffff 100%);
@@ -194,7 +194,7 @@ const CARDVIEWER_STYLES = `
   width: 100%;
   padding: 1.5px;
   border-radius: 0 0 16px 16px;
-  background: linear-gradient(120deg, #ffffff 0%, #F4AC59 22%, #8460E5 74.5%, #ffffff 100%);
+  background: linear-gradient(120deg, #ffffff 0%, var(--vmc-color-orange-gradient-light, #F4AC59) 22%, #8460E5 74.5%, #ffffff 100%);
   box-shadow: rgba(0,0,0,0.15) 0px 8px 20px;
 }
 .pcardv__card-inner {
