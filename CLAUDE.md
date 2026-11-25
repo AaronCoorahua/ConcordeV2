@@ -304,6 +304,7 @@ En `/components`, los componentes deprecados (solo los usan versiones anteriores
 | `/concorde-sync` | Sincroniza un componente contra la verdad visual de Figma |
 | `/publish`       | Registra un componente en el catálogo (`/handoff` + REGISTRY) |
 | `/block`         | Crea o registra un bloque de página con arquitectura canónica |
+| `/polish`        | De una captura a un ticket para IT: identifica el componente, saca la corrección del código real y lo deja en el tablero `/polish` |
 | `/research-format` | Reformatea un documento técnico/de investigación aplastado en Markdown limpio (fórmulas, diagramas, tablas, código) |
 | `/anim-decay`     | Hook de animación frame-rate-independent (decaimiento exponencial) para valores que persiguen un target en movimiento |
 | `/comp-slots`     | Refactoriza props de variante crecientes en un patrón de slots (layout vs. contenido intercambiable) |

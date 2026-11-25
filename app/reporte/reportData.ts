@@ -18,8 +18,9 @@ export type ReportEntry = {
   title: string;
   /** Fecha en formato legible, e.g. "17 jul 2026". */
   date: string;
-  /** Etiqueta de estado. */
-  status: "corregido" | "en-progreso" | "pendiente";
+  /** Columna inicial del ticket en /polish. Después manda el tablero: lo que se mueve allí
+   *  se guarda aparte (ver app/api/polish/route.ts) y pisa este valor. */
+  status: "corregido" | "en-revision" | "en-progreso" | "pendiente";
   /** Imagen(es) de referencia (original / bitácora). Ruta pública o array si son varias. */
   originalImage: string | string[];
   /** Video (mp4) para el lado Producción, EN LUGAR de la imagen (p. ej. para mostrar un delay). */

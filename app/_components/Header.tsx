@@ -17,7 +17,7 @@ const linkBase = {
   transition: "color 0.15s, background 0.15s",
 } as const;
 
-type Active = "home" | "components" | "blocks" | "banners" | "correos" | "reporte";
+type Active = "home" | "components" | "blocks" | "banners" | "correos" | "reporte" | "polish";
 
 export default function Header({ active, right }: { active?: Active; right?: ReactNode }): JSX.Element {
   const activeStyle = { ...linkBase, color: "var(--ui-accent)", background: "var(--ui-accent-soft)" };
@@ -40,8 +40,10 @@ export default function Header({ active, right }: { active?: Active; right?: Rea
         fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <a href="/" style={{ display: "flex", alignItems: "center", gap: 9, textDecoration: "none" }}>
+      {/* minWidth 0 + nav con scroll propio: en pantallas angostas el menú se desplaza
+          dentro de la barra en vez de ensanchar la página. */}
+      <div style={{ display: "flex", alignItems: "center", minWidth: 0 }}>
+        <a href="/" style={{ display: "flex", alignItems: "center", gap: 9, textDecoration: "none", flexShrink: 0 }}>
           <div
             style={{
               width: 26,
@@ -59,15 +61,16 @@ export default function Header({ active, right }: { active?: Active; right?: Rea
           </div>
           <span style={{ fontSize: 15, fontWeight: 800, color: "var(--ui-ink)", letterSpacing: "-0.02em" }}>Concorde</span>
         </a>
-        <nav style={{ display: "flex", alignItems: "center", gap: 4, marginLeft: 24 }}>
+        <nav style={{ display: "flex", alignItems: "center", gap: 4, marginLeft: 24, minWidth: 0, overflowX: "auto", whiteSpace: "nowrap", scrollbarWidth: "none" }}>
           <a href="/components" style={active === "components" ? activeStyle : idleStyle}>Componentes</a>
           <a href="/blocks" style={active === "blocks" ? activeStyle : idleStyle}>Bloques</a>
           <a href="/banners" style={active === "banners" ? activeStyle : idleStyle}>Banners</a>
           <a href="/correos" style={active === "correos" ? activeStyle : idleStyle}>Correos</a>
           <a href="/reporte" style={active === "reporte" ? activeStyle : idleStyle}>Reporte</a>
+          <a href="/polish" style={active === "polish" ? activeStyle : idleStyle}>Polish</a>
         </nav>
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 14, flexShrink: 0, marginLeft: 12 }}>
         {right}
         <span
           style={{

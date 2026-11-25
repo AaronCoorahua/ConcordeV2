@@ -15,7 +15,20 @@ import type { ReportEntry } from "../reportData";
  * qué está mal, cómo se corrige y el código antes/después.
  */
 
-export default function ReportDetailViewer({ entry, index }: { entry: ReportEntry; index: number }): JSX.Element {
+export default function ReportDetailViewer({
+  entry,
+  index,
+  active = "reporte",
+  backHref = "/reporte",
+  backLabel = "Volver al catálogo",
+}: {
+  entry: ReportEntry;
+  index: number;
+  /** Desde dónde se abrió: /polish/[slug] reutiliza esta vista y vuelve al tablero. */
+  active?: "reporte" | "polish";
+  backHref?: string;
+  backLabel?: string;
+}): JSX.Element {
   return (
     <div
       style={{
@@ -27,12 +40,12 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
         flexDirection: "column",
       }}
     >
-      <Header active="reporte" />
+      <Header active={active} />
 
       <main style={{ flex: 1, width: "100%", maxWidth: 1080, margin: "0 auto", padding: "40px 24px 96px" }}>
         {/* Volver */}
         <a
-          href="/reporte"
+          href={backHref}
           style={{
             display: "inline-flex",
             alignItems: "center",
@@ -47,9 +60,22 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          Volver al catálogo
+          {backLabel}
         </a>
 
+        <ReportDetailBody entry={entry} index={index} />
+      </main>
+    </div>
+  );
+}
+
+/**
+ * ReportDetailBody — el contenido del issue sin el marco de página (encabezado y «Volver»).
+ * Lo usa también el pop-up del tablero /polish (app/polish/TicketModal.tsx).
+ */
+export function ReportDetailBody({ entry, index, titleId }: { entry: ReportEntry; index: number; titleId?: string }): JSX.Element {
+  return (
+    <>
         {/* Título */}
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 32 }}>
           <span
@@ -71,7 +97,7 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
             {String(index).padStart(2, "0")}
           </span>
           <div>
-            <h1 style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em", margin: 0 }}>{entry.title}</h1>
+            <h1 id={titleId} style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em", margin: 0 }}>{entry.title}</h1>
             <span style={{ fontSize: 13, color: "var(--ui-muted)" }}>{entry.date}</span>
           </div>
         </div>
@@ -143,8 +169,7 @@ export default function ReportDetailViewer({ entry, index }: { entry: ReportEntr
             )}
           </div>
         )}
-      </main>
-    </div>
+    </>
   );
 }
 
