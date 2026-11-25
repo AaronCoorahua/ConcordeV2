@@ -27,7 +27,7 @@ import { CATEGORY_GRADIENT, STAGE_ORDER, type EmailTemplate } from "@/src/emails
 import { generateEmail } from "@/src/emails/prodEmailTemplates";
 import { applyPreset, presetForCategory } from "@/src/emails/headerSwap";
 import { CATEGORIAS_ORDENADAS, CORREOS_ORDENADOS, categoriaDe } from "@/src/emails/catalogOrder";
-import { estadoDe, PENDIENTES_TOTAL } from "@/src/emails/revisionStatus";
+import { CORREGIDOS, estadoDe, PENDIENTES_TOTAL } from "@/src/emails/revisionStatus";
 import { FlowDiagram } from "./FlowDiagram";
 
 const INK = "var(--ui-ink)";
@@ -143,7 +143,12 @@ function EmailCard({ email }: { email: EmailTemplate }): JSX.Element {
         <h3 className="cor-name" style={{ fontSize: 13, fontWeight: 700, color: INK, margin: 0, letterSpacing: "-0.01em", lineHeight: 1.35 }}>
           {email.name}
         </h3>
-        <div style={{ marginTop: "auto" }}>
+        <div style={{ marginTop: "auto", display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {CORREGIDOS.has(email.id) && (
+            <span style={{ display: "inline-flex", alignItems: "center", padding: "2px 7px", borderRadius: 9999, fontSize: 10, fontWeight: 700, letterSpacing: "0.01em", background: "#eef2ff", color: "#4338ca", border: "1px solid #c7d2fe" }}>
+              Corregido
+            </span>
+          )}
           <EstadoPill pendiente={pendiente} compact />
         </div>
       </div>

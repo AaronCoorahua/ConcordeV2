@@ -79,7 +79,7 @@ export const acc = (t: string) => `<span style="color:${DS.orange};">${t}</span>
  * El efecto está horneado en la imagen (hero/valoriza-N.jpg, recortes de Abraham +
  * ~/Desktop/recortes-valoriza/poster.py), así que se ve igual en Gmail, Apple Mail y Outlook.
  */
-type HeroOpts = { img: string; alt: string; eyebrow?: string; title: string; text: string; cta: string; url: string; perks?: [string, string, string]; titleSize?: number; titleLineHeight?: number; titleLetterSpacing?: string; imgM?: string; bg?: string; layout?: 'left' | 'center' };
+type HeroOpts = { img: string; alt: string; eyebrow?: string; title: string; text: string; cta: string; url: string; perks?: [string, string, string]; titleSize?: number; titleLineHeight?: number; titleLetterSpacing?: string; titleLong?: boolean; imgM?: string; bg?: string; layout?: 'left' | 'center' };
 export function hero(o: HeroOpts): string {
   const imgStyle = 'display:block;width:100%;max-width:100%;height:auto;border-radius:24px 24px 0 0;';
   const url = (f: string) => (f.includes('/') ? f : `${IMG}/hero/${f}`); // Revendedores pasa rutas completas
@@ -94,7 +94,7 @@ export function hero(o: HeroOpts): string {
     ? `<table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center"><tr><td align="center">${logo(68)}</td></tr>${eyebrow ? `<tr><td align="center" style="padding-top:12px;">${eyebrow}</td></tr>` : ''}</table>`
     : `${T()}<tr><td valign="middle">${logo(68)}</td>${eyebrow ? `<td align="right" valign="middle">${eyebrow}</td>` : ''}</tr></table>`;
   const copy = `${head}
-<h1 class="ds-h1" style="margin:18px 0 0;font-family:${F};font-size:${o.titleSize ?? 38}px;line-height:${o.titleLineHeight ?? 42}px;font-weight:800;letter-spacing:${o.titleLetterSpacing ?? "-0.04em"};color:#ffffff;text-align:${al};">${o.title}</h1>
+<h1 class="ds-h1${o.titleLong ? ' ds-h1-l' : ''}" style="margin:18px 0 0;font-family:${F};font-size:${o.titleSize ?? 38}px;line-height:${o.titleLineHeight ?? 42}px;font-weight:800;letter-spacing:${o.titleLetterSpacing ?? "-0.04em"};color:#ffffff;text-align:${al};">${o.title}</h1>
 <p style="margin:14px 0 24px;font-size:17px;line-height:26px;color:#e8ddff;text-align:${al};">${o.text}</p>
 <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="${al}"><tr><td>${button(o.cta, o.url)}</td></tr></table>
 ${o.perks ? `<p style="clear:both;margin:0;padding-top:16px;font-size:13px;line-height:18px;font-weight:600;color:#cfbaff;text-align:${al};">${o.perks.join(' &nbsp;·&nbsp; ')}</p>` : ''}`;
@@ -233,6 +233,7 @@ table[width="600"],td[width="600"]{width:100%!important;box-sizing:border-box}
 .ds-sale-visual{display:none!important}
 td.ds-stack[width="4%"]{height:14px!important}
 .ds-h1{font-size:30px!important;line-height:34px!important}
+.ds-h1-l{font-size:23px!important;line-height:28px!important}
 .ds-hero-d{display:none!important}
 .ds-hero-m{display:block!important;max-height:none!important;overflow:visible!important}
 }

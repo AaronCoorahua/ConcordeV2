@@ -14,6 +14,7 @@
  */
 
 import { EMAILS, STAGE_ORDER, type EmailTemplate } from "./prodEmails";
+import { CORREGIDOS } from "./revisionStatus";
 
 /** Correos sin `category` en el origen (p. ej. el aviso de fee) van al final. */
 export const SIN_CATEGORIA = "General";
@@ -60,6 +61,9 @@ function ordenar(): CategoriaOrdenada[] {
       const correos = list
         .map(function withIndex(e, i) { return { e, i }; })
         .sort(function byFlow(a, b) {
+          // Los corregidos por el cliente van arriba (revisionStatus.ts → CORREGIDOS).
+          const c = Number(CORREGIDOS.has(b.e.id)) - Number(CORREGIDOS.has(a.e.id));
+          if (c !== 0) return c;
           const d = stageIndex(categoria, a.e.stage) - stageIndex(categoria, b.e.stage);
           return d !== 0 ? d : a.i - b.i;
         })
