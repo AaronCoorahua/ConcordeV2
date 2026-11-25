@@ -18,6 +18,9 @@ npx github:AaronCoorahua/ConcordeV2#cli add homepage
 
 # varios a la vez
 npx github:AaronCoorahua/ConcordeV2#cli add cardtitle offercard
+
+# skill /polish para Claude Code: tickets de polish para IT (se instala en ~/.claude/skills)
+npx github:AaronCoorahua/ConcordeV2#cli skill polish
 ```
 
 Al ejecutarlo abre un **navegador de carpetas** para elegir dónde instalar

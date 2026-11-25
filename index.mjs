@@ -3,21 +3,26 @@
  * concorde — CLI del registry de Concorde (estilo shadcn, marca propia).
  *
  *   npx github:AaronCoorahua/ConcordeV2#cli skill          # instala la skill de IA
+ *   npx github:AaronCoorahua/ConcordeV2#cli skill polish   # instala la skill /polish (tickets para IT)
  *   npx github:AaronCoorahua/ConcordeV2#cli add button     # un componente
  *   npx github:AaronCoorahua/ConcordeV2#cli add homepage   # un bloque + sus componentes
  *
  * `add` copia a ./concorde (componentes → concorde/components, bloques → concorde/bloques)
  * con imports `@/concorde/...`. `skill` instala la skill en .claude/skills/ (o .cursor/rules con --cursor).
+ * `skill polish` la instala en ~/.claude/skills/: sirve desde cualquier carpeta y trabaja sobre un
+ * clon de ConcordeV2.
  */
 
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { homedir } from "node:os";
 import { dirname, resolve, relative } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 
-const VERSION = "0.6.0";
+const VERSION = "0.7.0";
 const REGISTRY_BASE = (process.env.CONCORDE_REGISTRY || "https://concorde-v2-theta.vercel.app").replace(/\/$/, "");
 const SKILL_URL = "https://raw.githubusercontent.com/AaronCoorahua/ConcordeV2/master/plugins/concorde-ui/skills/concorde-ui/SKILL.md";
+const POLISH_URL = "https://raw.githubusercontent.com/AaronCoorahua/ConcordeV2/master/.claude/skills/polish/SKILL.md";
 
 // ── Colores (ANSI, se desactivan sin TTY o con NO_COLOR) ──────────────────────
 const COLOR = stdout.isTTY && !process.env.NO_COLOR;
@@ -185,7 +190,13 @@ function toCursorRule(md) {
   return `---\ndescription: ${desc}\nalwaysApply: false\n---\n\n${body}`;
 }
 
-async function installSkill(opts) {
+async function installSkill(nombre, opts) {
+  if (nombre === "polish") return installPolish(opts);
+  if (nombre && nombre !== "concorde-ui") {
+    banner();
+    stdout.write(`  ${SYM.err} No conozco la skill ${bold(nombre)}. Hay: ${bold("concorde-ui")} (por defecto) y ${bold("polish")}.\n\n`);
+    process.exit(1);
+  }
   banner();
 
   let res;
@@ -220,11 +231,52 @@ async function installSkill(opts) {
   stdout.write(`  ${dim("Luego pídele: “trae el componente X de Concorde”.")}\n\n`);
 }
 
+// ── skill polish: tickets de polish para IT, instalada para el usuario ────────
+async function installPolish(opts) {
+  banner();
+
+  if (opts.cursor) {
+    stdout.write(`  ${SYM.err} La skill polish es para Claude Code: no tiene versión para Cursor.\n\n`);
+    process.exit(1);
+  }
+
+  let res;
+  try {
+    res = await fetch(POLISH_URL);
+  } catch (err) {
+    stdout.write(`  ${SYM.err} error de red: ${err.message}\n\n`);
+    process.exit(1);
+  }
+  if (!res.ok) {
+    stdout.write(`  ${SYM.err} no se pudo bajar la skill ${dim(`(${res.status})`)}\n\n`);
+    process.exit(1);
+  }
+  const md = await res.text();
+
+  // En la carpeta del usuario (~/.claude/skills): se usa desde cualquier proyecto.
+  const dest = resolve(homedir(), ".claude/skills/polish/SKILL.md");
+  const shown = dest.split("\\").join("/").replace(homedir().split("\\").join("/"), "~");
+
+  if (existsSync(dest) && !opts.force) {
+    stdout.write(`  ${SYM.skip} ${dim(shown)} ${dim("ya existe — usa --force para actualizarla")}\n\n`);
+    return;
+  }
+
+  mkdirSync(dirname(dest), { recursive: true });
+  writeFileSync(dest, md);
+
+  stdout.write(`  ${SYM.add} ${shown}\n\n`);
+  stdout.write(`  ${bold("Skill polish instalada.")} ${dim("Reinicia Claude Code para detectarla.")}\n`);
+  stdout.write(`  ${dim("Luego escribe /polish y cuenta qué hay que arreglar. Trabaja sobre un clon de")}\n`);
+  stdout.write(`  ${dim("ConcordeV2: si no lo tienes, ella misma te ayuda a clonarlo.")}\n\n`);
+}
+
 function help() {
   banner();
   stdout.write([
     `  ${bold("Uso")}`,
     `    concorde skill                       instala la skill de IA (.claude/skills/)`,
+    `    concorde skill polish                instala la skill /polish (~/.claude/skills/)`,
     `    concorde add <nombre|url> [...]      copia a concorde/components y concorde/bloques`,
     ``,
     `  ${bold("Opciones")}`,
@@ -237,6 +289,7 @@ function help() {
     ``,
     `  ${bold("Ejemplos")}`,
     `    ${dim("$")} npx github:AaronCoorahua/ConcordeV2#cli skill`,
+    `    ${dim("$")} npx github:AaronCoorahua/ConcordeV2#cli skill polish`,
     `    ${dim("$")} npx github:AaronCoorahua/ConcordeV2#cli add button`,
     `    ${dim("$")} npx github:AaronCoorahua/ConcordeV2#cli add homepage        ${dim("# bloque + componentes")}`,
     ``,
@@ -261,5 +314,5 @@ for (let i = 0; i < argv.length; i += 1) {
 const [cmd, ...rest] = positional;
 
 if (cmd === "add") add(rest, opts);
-else if (cmd === "skill") installSkill(opts);
+else if (cmd === "skill") installSkill(rest[0], opts);
 else help();
