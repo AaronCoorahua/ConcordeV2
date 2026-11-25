@@ -38,7 +38,7 @@ const CTA = 'Publicar mi carro';
  * chip «Revendedores» / «Nuevo en VMC», un solo CTA «Publicar mi carro». «Carro», tuteo,
  * sin cifras en el titular, sin jerga ni promesas de resultado.
  * Fotos de Flow del dueño (flow-revendedores/1-6.jpg) → poster.py: cada hero funde a su
- * propio tono oscuro (bg), no a #22005c. Logos Ford / VW / Toyota borrados (logos.py).
+ * propio tono oscuro (bg), no a #22005c. Los logos de marca se dejan tal cual (dueño 25/11).
  */
 const DEFS: Def[] = [
   {
