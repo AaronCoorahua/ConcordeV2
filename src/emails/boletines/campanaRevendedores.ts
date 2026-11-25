@@ -4,8 +4,8 @@
  * Negociable). Recorrido: reconocimiento → beneficio → cómo funciona → costos →
  * confianza → cierre. No repite «REVENDE» (Valoriza 5): cada correo abre un ángulo nuevo.
  *
- * Mismas piezas y mismo hero póster que la Campaña Valoriza (campanaValoriza.ts); las
- * pantallas de celular e íconos se reutilizan de su carpeta. Copy con el UX writing de los
+ * Mismas piezas y mismo hero póster que la Campaña Valoriza (campanaValoriza.ts); los
+ * íconos se reutilizan de su carpeta; las pantallas de celular son del Mi Garaje actual (CEL). Copy con el UX writing de los
  * banners «Revendedores» de Mi Garaje (VMC-Laptop · /banners-revendedores), ver DEFS.
  *
  * HECHOS VERIFICADOS (skill vmc-modelo-negocio, T&C sync 18-nov-2026):
@@ -31,6 +31,16 @@ const CATEGORIA = 'Campaña Revendedores';
 // En local los hero nuevos aún no están en el CDN: se sirven desde public/ del dev server.
 const HERO = `${process.env.NODE_ENV === 'development' ? '' : 'https://concorde-v2-theta.vercel.app'}/correos/campana-revendedores/hero`;
 const CTA = 'Publicar mi carro';
+/*
+ * Pantallas del Mi Garaje ACTUAL (vendo-mis-cosas.vercel.app/producto/mi-garaje, 390 px, 25/11,
+ * sin paneles de demo). Propuestas recibidas y responder no existen ahí con un carro (solo el
+ * demo de una laptop), así que siguen las de Valoriza ('propuestas.png', 'responder.png').
+ */
+const CEL = HERO.replace(/hero$/, 'cel');
+const INICIO = `${CEL}/inicio.png`;
+const INICIO_ALT = 'Mi Garaje en VMC con el bloque ¿Cuánto vale tu carro? y la tarjeta Vendo mi carro';
+const PUBLICA = `${CEL}/publica.png`;
+const PUBLICA_ALT = 'Publicar en Mi Garaje: recibe propuestas por solo 25 SubasCoins, pago único y 0 % de comisión';
 
 /*
  * COPY «SIMPLE» (Julio 20/11), con el UX writing de los banners Revendedores: titular corto
@@ -51,7 +61,7 @@ const DEFS: Def[] = [
     body: [
       HOLA, gap(8),
       p(`Ya conoces VMC como comprador. ${b('Ahora también puedes vender')}, con tu misma cuenta.`),
-      gap(28), cel('mi-garaje.png', 'Mi Garaje en VMC con Publica tu vehículo', 'Todo en un lugar', 'Compras y vendes en VMC', [['compras', 'Compra', 'En Vivo o Negociable, como siempre.'], ['publicar', 'Publica', 'Desde Mi Garaje, con tu misma cuenta.'], ['negociaciones', 'Negocia', 'Las propuestas llegan a tu cuenta.']]),
+      gap(28), cel(INICIO, INICIO_ALT, 'Todo en un lugar', 'Compras y vendes en VMC', [['compras', 'Compra', 'En Vivo o Negociable, como siempre.'], ['valorizaciones', '¿Cuánto vale tu carro?', 'Descúbrelo gratis en tu Mi Garaje.'], ['publicar', 'Vendo mi carro', 'Publícalo con tu misma cuenta.']]),
       gap(32), closing('crecimiento', 'Donde compras, ahora también vendes.', 'Publica tu carro y recibe propuestas.', CTA, PUBLICAR_URL),
       gap(24), ps('Usas la misma cuenta de VMC. No tienes que registrarte de nuevo.'),
     ],
@@ -82,7 +92,7 @@ const DEFS: Def[] = [
       HOLA, gap(8),
       p(`Ya conoces Negociable como comprador. ${b('Ahora tú recibes las propuestas')}.`),
       gap(18),
-      cels([['formulario.png', 'Formulario de valorización', 'Valoriza', 'Gratis. Te orienta en tu precio.'], ['mi-garaje.png', 'Mi Garaje con Publica tu vehículo', 'Publica', 'Como oferta negociable.'], ['responder.png', 'Propuesta con Aceptar y Contraproponer', 'Negocia', 'Acepta, rechaza o contrapropón.']]),
+      cels([[`${CEL}/formulario.png`, 'Formulario de valorización de Mi Garaje con marca, año, modelo y kilometraje', 'Valoriza', 'Gratis. Te orienta en tu precio.'], [PUBLICA, PUBLICA_ALT, 'Publica', 'Como oferta negociable.'], ['responder.png', 'Propuesta con Aceptar y Contraproponer', 'Negocia', 'Acepta, rechaza o contrapropón.']]),
       gap(24), note('La valorización es un <b>valor referencial con fecha</b>: te orienta para fijar tu precio. No es un precio fijo de venta.'),
       gap(32), closing('valorizaciones', 'Empieza por valorizar', 'Es gratis. Publicas cuando quieras.', 'Valorizar mi carro', VALORIZA_URL),
       gap(16), link('¿Ya tienes tu precio? Publica tu carro aquí', PUBLICAR_URL),
@@ -98,7 +108,7 @@ const DEFS: Def[] = [
     body: [
       HOLA, gap(8),
       p(`Como vendedor no pagas comisión. ${b('La paga el comprador que gana')}.`),
-      gap(28), cel('mi-garaje.png', 'Mi Garaje en VMC con Publica tu vehículo', 'Sin letra chica', 'Lo que pagas y lo que no', [['billetera', '25 SubasCoins', 'Un solo pago al publicar.'], ['precio', '0 % al vender', 'Ni comisión ni porcentaje sobre tu precio.'], ['fecha', 'Republica gratis', 'Hasta que se venda, sin pagar de nuevo.']]),
+      gap(28), cel(PUBLICA, PUBLICA_ALT, 'Sin letra chica', 'Lo que pagas y lo que no', [['billetera', '25 SubasCoins', 'Un solo pago al publicar.'], ['precio', '0 % al vender', 'Ni comisión ni porcentaje sobre tu precio.'], ['fecha', 'Republica gratis', 'Hasta que se venda, sin pagar de nuevo.']]),
       gap(32), closing('billetera', 'Un pago. Cero comisión.', 'Publica tu carro y recibe propuestas.', CTA, PUBLICAR_URL),
       gap(24), ps('Así lo dicen los Términos y Condiciones de VMC (sección IV.11.2).'),
     ],
@@ -128,7 +138,7 @@ const DEFS: Def[] = [
     body: [
       HOLA, gap(8),
       p(`Ya sabes comprar bien. ${b('Ahora vende en el mismo lugar')}.`),
-      gap(28), cel('mi-garaje.png', 'Mi Garaje en VMC con Publica tu vehículo', 'En resumen', 'Todo para vender tu carro', [['valorizaciones', 'Valoriza gratis', 'Tu valor de referencia, sin costo.'], ['publicar', 'Publica una vez', '25 SubasCoins. Se republica sin costo.'], ['negociaciones', 'Recibe propuestas', 'Acepta, rechaza o contrapropón.']]),
+      gap(28), cel(INICIO, INICIO_ALT, 'En resumen', 'Todo para vender tu carro', [['valorizaciones', 'Valoriza gratis', 'Tu valor de referencia, sin costo.'], ['publicar', 'Publica una vez', '25 SubasCoins. Se republica sin costo.'], ['negociaciones', 'Recibe propuestas', 'Acepta, rechaza o contrapropón.']]),
       gap(32), closing('publicar', '¿Cuántos carros tienes esperando?', 'Publica el primero y recibe propuestas.', CTA, PUBLICAR_URL),
       gap(16), link('¿Primero quieres saber cuánto vale? Valorízalo gratis', VALORIZA_URL),
     ],

@@ -103,7 +103,7 @@ export function cel(img: string, alt: string, kicker: string, head: string, item
 <td valign="top" style="padding-left:12px;font-family:${F};"><div style="font-size:15px;line-height:20px;font-weight:800;color:${DS.v700};">${t}</div><div style="margin-top:2px;font-size:14px;line-height:20px;color:${DS.muted};">${d}</div></td>
 </tr></table></td></tr>`).join('');
   return row(`${T(`bgcolor="${DS.lav}" style="border-radius:24px;background-image:linear-gradient(135deg,#f5f0ff 0%,#ffffff 70%);border:1px solid ${DS.divider};"`)}<tr>
-<td class="ds-stack ds-cel" width="46%" align="center" valign="middle" style="padding:20px 0 12px 12px;"><img src="${IMG}/cel/${img}" alt="${alt}" width="230" border="0" style="display:block;width:230px;max-width:100%;height:auto;margin:0 auto;"></td>
+<td class="ds-stack ds-cel" width="46%" align="center" valign="middle" style="padding:20px 0 12px 12px;"><img src="${img.includes('/') ? img : `${IMG}/cel/${img}`}" alt="${alt}" width="230" border="0" style="display:block;width:230px;max-width:100%;height:auto;margin:0 auto;"></td>
 <td class="ds-stack ds-cel-copy" width="54%" valign="middle" style="padding:24px 24px 24px 8px;font-family:${F};">
 <p style="margin:0;font-size:12px;line-height:16px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:${DS.orange};">${kicker}</p>
 <h2 style="margin:6px 0 18px;font-family:${F};font-size:22px;line-height:28px;font-weight:800;letter-spacing:-0.02em;color:${DS.v700};">${head}</h2>
@@ -114,7 +114,7 @@ ${T()}${li}</table>
 /** Tira de 3 celulares: el recorrido completo en pantallas reales, paso a paso. */
 export function cels(items: [string, string, string, string][]): string {
   const c = items.map(([img, alt, t, d], i) => `<td width="33%" align="center" valign="top" style="padding:0 4px;font-family:${F};">
-<img src="${IMG}/cel/${img}" alt="${alt}" width="176" border="0" style="display:block;width:100%;max-width:176px;height:auto;margin:0 auto;">
+<img src="${img.includes('/') ? img : `${IMG}/cel/${img}`}" alt="${alt}" width="176" border="0" style="display:block;width:100%;max-width:176px;height:auto;margin:0 auto;">
 <div style="margin-top:6px;font-size:11px;line-height:14px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:${DS.orange};">Paso ${i + 1}</div>
 <div style="margin-top:3px;font-size:16px;line-height:21px;font-weight:800;color:${DS.v700};">${t}</div>
 <div style="margin-top:3px;font-size:13px;line-height:18px;color:${DS.muted};">${d}</div></td>`).join('');
