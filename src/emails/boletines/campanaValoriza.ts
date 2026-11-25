@@ -265,7 +265,7 @@ export function build(d: Def): string {
 // Heros finales (dueño + Julio 25/11): foto Flow centrada con frase grande horneada + copy centrado; -m = recorte ≤480 px.
 // Imágenes: ~/Downloads/ss-silvana/v3/armar.py final.
 const HERO_OPTS_3: HeroOpts = { img: 'valoriza-3-hero.jpg', imgM: 'valoriza-3-hero-m.jpg', layout: 'center', alt: '¡Valorizar es clave! — Persona junto a su auto y un velocímetro', eyebrow: '¿Por qué valorizar?', title: `¿Adivinas ${acc('o inviertes?')}`, perks: ['Recorrido', 'Estado', 'Mantenimiento'], text: 'El mercado real se mueve con datos. Con el AVT conoce cuánto vale un vehículo hoy y decide con información.', cta: 'Valoriza tu auto aquí', url: VALORIZA_URL };
-const HERO_OPTS_7: HeroOpts = { img: 'valoriza-7-hero.jpg', imgM: 'valoriza-7-hero-m.jpg', layout: 'center', alt: '¿A cuánto? — Vendedora junto a su sedán revisando propuestas en el celular', eyebrow: 'Vende con información', title: `El secreto para cerrar ventas más rápido ${acc('en VMC Subastas')}`, perks: ['Gratis', '1 minuto', 'Sin compromiso'], text: 'Deja de adivinar el valor de tu activo. Con la Valorización Referencial AVT, configura tu publicación con una referencia clara y atrae postores serios desde el primer minuto.', cta: 'Descubre el valor de tu vehículo hoy', url: VALORIZA_URL };
+const HERO_OPTS_7: HeroOpts = { img: 'valoriza-7-hero.jpg', imgM: 'valoriza-7-hero-m.jpg', layout: 'center', alt: '¿A cuánto? — Vendedora junto a su sedán revisando propuestas en el celular', eyebrow: 'Vende con información', title: `El secreto para cerrar ventas más rápido ${acc('en VMC Subastas')}`, text: 'Deja de adivinar el valor de tu activo. Con la Valorización Referencial AVT, configura tu publicación con una referencia clara y atrae postores serios desde el primer minuto.', cta: '¡Valoriza tu carro hoy!', url: VALORIZA_URL };
 
 // ─── LOS 6 BOLETINES ─────────────────────────────────────────────────────────
 /*
@@ -397,9 +397,8 @@ const DEFS: Def[] = [
       p(`El mercado de subastas se mueve rápido. ${b('¿Sabías que los vehículos con precios alineados a la realidad del mercado reciben hasta 3 veces más ofertas en sus primeros dos días?')}`),
       gap(16),
       p(`Con la ${b('Valorización Referencial AVT')}, configura tu publicación con un precio exacto y atrae postores serios desde el primer minuto.`),
-      gap(28), cel('formulario.png', 'Formulario de valorización de VMC', 'Tu estrategia de venta', '¿Por qué integrar el AVT a tu estrategia de venta?', [['valorizaciones', 'Atrae y cierra rápido', 'Fija un precio “Gana Ya” estratégico que los compradores no puedan dejar pasar.'], ['publicar', 'Optimiza tu tiempo', 'Olvídate de rastrear precios en otros portales. Tienes la información del mercado a un solo clic.'], ['negociaciones', 'Negocia con total seguridad', 'Ante el reloj de 24 horas, el AVT te da el respaldo numérico que necesitas para aceptar, rechazar o enviar una contrapropuesta sin dudar.']]),
-      gap(24), note(REF),
-      gap(32), closing('precio', 'Asegura el éxito de tu publicación', 'Vende más rápido y de forma inteligente.', 'Descubre el valor de tu vehículo hoy', VALORIZA_URL),
+      gap(28), cel('formulario.png', 'Formulario de valorización de VMC', 'Tu estrategia de venta', '¿Por qué integrar el AVT a tu estrategia de venta?', [['precio', 'Define a qué precio vender', 'Parte del valor estimado de tu carro hoy.'], ['crecimiento', 'Descubre cuánto podría valer si esperas', 'AVT proyecta su valor para los próximos meses.'], ['fecha', 'Elige cuándo ponerlo en venta', 'Compara el valor de hoy con la proyección antes de publicar.']]),
+      gap(32), closing('precio', 'Asegura el éxito de tu publicación', 'Vende más rápido y de forma inteligente.', '¡Valoriza tu carro hoy!', VALORIZA_URL),
       gap(16), link('¿Ya sabes tu precio? Publica tu auto aquí', PUBLICAR_URL),
     ],
   },
