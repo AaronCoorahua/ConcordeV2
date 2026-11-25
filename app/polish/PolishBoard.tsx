@@ -5,7 +5,7 @@ import type { JSX, MouseEvent as ReactMouseEvent } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { MotionConfig, motion, type PanInfo } from "framer-motion";
-import { POLISH_COLUMNS, isPolishStatus, type PolishPreview, type PolishStatus, type PolishTicket } from "./polishData";
+import { POLISH_COLUMNS, isPolishStatus, type PolishStatus, type PolishTicket } from "./polishData";
 
 /**
  * PolishBoard — el tablero: una columna por estado.
@@ -96,13 +96,10 @@ const STYLES = `
   .pk-card[data-draggable="true"] { cursor: grab; }
   .pk-card:hover { border-color: var(--ui-border-hover); }
   .pk-card[data-dragging="true"] { z-index: 20; cursor: grabbing; border-color: var(--ui-accent); }
-  .pk-prev { display: grid; grid-template-columns: 1fr; gap: 2px; aspect-ratio: 2 / 1; margin-bottom: 10px; border-radius: 8px; overflow: hidden; background: var(--ui-border); pointer-events: none; }
-  .pk-prev[data-split="true"] { grid-template-columns: 1fr 1fr; }
-  .pk-prev__cell { position: relative; overflow: hidden; background: var(--ui-subtle); }
-  .pk-prev__img { object-fit: cover; object-position: center; }
-  .pk-prev__tag { position: absolute; left: 6px; bottom: 6px; display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; line-height: 1; color: var(--ui-ink); background: rgba(255,255,255,0.92); padding: 4px 6px; border-radius: 4px; box-shadow: 0 1px 2px rgba(15,23,42,0.12); }
-  .pk-prev__tag i { width: 6px; height: 6px; border-radius: 50%; background: var(--pk-dot); }
-  .pk-prev__play { position: absolute; inset: 0; margin: auto; width: 32px; height: 32px; border-radius: 50%; background: rgba(15,23,42,0.62); display: flex; align-items: center; justify-content: center; }
+  /* Miniatura al estilo de /banners: de borde a borde, fondo suave y la captura entera
+     (sin recortar) centrada, con sombra. */
+  .pk-prev { display: flex; align-items: center; justify-content: center; height: 136px; padding: 14px 16px; margin: -12px -12px 12px; border-radius: 9px 9px 0 0; background: var(--ui-subtle); border-bottom: 1px solid var(--ui-border-soft); pointer-events: none; }
+  .pk-prev__img { display: block; width: auto; height: auto; max-width: 100%; max-height: 100%; border-radius: 4px; background: #fff; box-shadow: 0 6px 18px rgba(15,23,42,0.12); outline: 1px solid var(--ui-border); }
   .pk-area { display: inline-block; font-size: 11px; font-weight: 700; color: var(--ui-accent); background: var(--ui-accent-soft); padding: 2px 8px; border-radius: 20px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .pk-title { display: block; margin-top: 8px; font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--ui-ink); text-decoration: none; cursor: inherit; }
   .pk-card:hover .pk-title { color: var(--ui-accent); }
@@ -117,51 +114,27 @@ const STYLES = `
 `;
 
 /**
- * Miniatura de la tarjeta: Producción y Concorde lado a lado, o solo Producción.
- * next/image sirve una versión reducida (las capturas originales pesan hasta ~850 KB)
- * y solo carga las que están a la vista.
+ * Miniatura de la tarjeta. next/image sirve una versión reducida (las capturas originales
+ * pesan hasta ~850 KB) y solo carga las que están a la vista. width/height son solo la
+ * proporción de reserva: el CSS deja que la imagen tome la suya y quepa entera.
  */
-function CardPreview({ preview }: { preview: PolishPreview }): JSX.Element | null {
-  const lados = [
-    preview.produccion && { src: preview.produccion, label: preview.video ? "Producción · video" : "Producción", dot: "#f97316" },
-    preview.concorde && { src: preview.concorde, label: "Concorde", dot: "#4f2ed8" },
-  ].filter(function hay(l): l is { src: string; label: string; dot: string } {
-    return Boolean(l);
-  });
-  if (lados.length === 0) return null;
-  const dividido = lados.length === 2;
-
+function CardPreview({ src }: { src?: string }): JSX.Element | null {
+  if (!src) return null;
   return (
-    <div className="pk-prev" data-split={dividido} aria-hidden="true">
-      {lados.map(function renderLado(l) {
-        return (
-          <div key={l.label} className="pk-prev__cell">
-            <Image
-              className="pk-prev__img"
-              src={l.src}
-              alt=""
-              fill
-              sizes={dividido ? "(max-width: 720px) 45vw, 160px" : "(max-width: 720px) 90vw, 320px"}
-              draggable={false}
-              onError={(e) => {
-                // Si falta el archivo, mejor un recuadro vacío que el ícono de imagen rota.
-                e.currentTarget.style.visibility = "hidden";
-              }}
-            />
-            {preview.video && l.src === preview.produccion && (
-              <span className="pk-prev__play">
-                <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-                  <path d="M3 1.5v9l7.5-4.5z" fill="#fff" />
-                </svg>
-              </span>
-            )}
-            <span className="pk-prev__tag" style={{ ["--pk-dot" as string]: l.dot }}>
-              <i />
-              {l.label}
-            </span>
-          </div>
-        );
-      })}
+    <div className="pk-prev" aria-hidden="true">
+      <Image
+        className="pk-prev__img"
+        src={src}
+        alt=""
+        width={640}
+        height={400}
+        sizes="(max-width: 720px) 80vw, 280px"
+        draggable={false}
+        onError={(e) => {
+          // Si falta el archivo queda el fondo suave, no el ícono de imagen rota.
+          e.currentTarget.style.display = "none";
+        }}
+      />
     </div>
   );
 }
@@ -399,7 +372,7 @@ export default function PolishBoard({ tickets }: { tickets: PolishTicket[] }): J
                         }}
                         onClick={(e) => alHacerClic(e, t.slug)}
                       >
-                        <CardPreview preview={t.preview} />
+                        <CardPreview src={t.preview} />
                         <span className="pk-area">{t.area}</span>
                         {/* Enlace real a la página del ticket: da foco con teclado (Enter abre el pop-up)
                             y permite abrirla en otra pestaña. */}
