@@ -65,8 +65,9 @@ export const acc = (t: string) => `<span style="color:#fbc47d;">${t}</span>`;
  * El efecto está horneado en la imagen (hero/valoriza-N.jpg, recortes de Abraham +
  * ~/Desktop/recortes-valoriza/poster.py), así que se ve igual en Gmail, Apple Mail y Outlook.
  */
-export function hero(o: { img: string; alt: string; eyebrow: string; title: string; text: string; cta: string; url: string; perks: [string, string, string] }): string {
-  return `${T(`bgcolor="${DS.v900}" style="border-radius:24px;background-color:${DS.v900};box-shadow:0 18px 40px rgba(34,0,92,0.28);"`)}
+export function hero(o: { img: string; alt: string; eyebrow: string; title: string; text: string; cta: string; url: string; perks: [string, string, string]; bg?: string }): string {
+  const bg = o.bg ?? DS.v900; // bg = color al que funde la foto del hero (Revendedores: uno por foto)
+  return `${T(`bgcolor="${bg}" style="border-radius:24px;background-color:${bg};box-shadow:0 18px 40px rgba(34,0,92,0.28);"`)}
 <tr><td style="font-size:0;line-height:0;border-radius:24px 24px 0 0;overflow:hidden;"><img src="${o.img.includes('/') ? o.img : `${IMG}/hero/${o.img}`}" alt="${o.alt}" width="600" border="0" style="display:block;width:100%;max-width:100%;height:auto;border-radius:24px 24px 0 0;"></td></tr>
 <tr><td class="ds-hero-copy" style="padding:4px 32px 32px;font-family:${F};">
 ${T()}<tr><td valign="middle">${logo(68)}</td><td align="right" valign="middle" style="font-family:${F};font-size:11px;line-height:14px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:${DS.orange};">${o.eyebrow}</td></tr></table>
