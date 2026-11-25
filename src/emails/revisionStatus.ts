@@ -49,9 +49,12 @@ export const PENDIENTES: Record<string, RevisionPendiente> = {
 
 /**
  * Correos ya corregidos por el cliente (Silvana, 25/11): van primero en su categoría y
- * llevan el chip «Corregido» en el catálogo. Quitar un id lo devuelve a su orden de flujo.
+ * llevan el chip «Corregido» en el catálogo; el resto de su campaña va tras «Ver los otros N correos». Quitar un id lo devuelve a su orden de flujo.
  */
-export const CORREGIDOS: ReadonlySet<string> = new Set(['valoriza-3-por-que-valorizar', 'valoriza-7-vende-y-valoriza']);
+export const CORREGIDOS: ReadonlySet<string> = new Set([
+  'valoriza-3-por-que-valorizar', 'valoriza-7-vende-y-valoriza',
+  'revendedores-1-ya-compras-aqui', // copy de Julio (25/11)
+]);
 
 export function estadoDe(id: string): RevisionEstado {
   return Object.prototype.hasOwnProperty.call(PENDIENTES, id) ? "pendiente" : "listo";

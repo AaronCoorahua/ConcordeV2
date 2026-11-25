@@ -164,6 +164,28 @@ function EmailGrid({ emails }: { emails: EmailTemplate[] }): JSX.Element {
   );
 }
 
+/**
+ * Grilla de una campaña con correos corregidos (Julio 25/11): solo se ven los corregidos y el
+ * resto queda tras un desplegable cerrado. Sin corregidos, la grilla completa. Los ocultos
+ * siguen accesibles por su URL.
+ */
+function GrillaCategoria({ emails }: { emails: EmailTemplate[] }): JSX.Element {
+  const destacados = emails.filter(function corregido(e) { return CORREGIDOS.has(e.id); });
+  if (destacados.length === 0 || destacados.length === emails.length) return <EmailGrid emails={emails} />;
+  const otros = emails.filter(function resto(e) { return !CORREGIDOS.has(e.id); });
+  return (
+    <>
+      <EmailGrid emails={destacados} />
+      <details className="cor-otros" style={{ marginTop: 14 }}>
+        <summary style={{ display: "inline-flex", alignItems: "center", gap: 6, height: 30, padding: "0 14px", borderRadius: 9999, border: `1px solid ${DIVIDER}`, background: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 700, color: INK, listStyle: "none" }}>
+          Ver los otros {otros.length} correos <span aria-hidden="true" className="cor-otros-caret">▾</span>
+        </summary>
+        <div style={{ marginTop: 14 }}><EmailGrid emails={otros} /></div>
+      </details>
+    </>
+  );
+}
+
 // ─── Categoría colapsable ─────────────────────────────────────────────────────
 
 /**
@@ -217,7 +239,7 @@ function CategoriaSection({
           </span>
         )}
       </button>
-      {abierta && <EmailGrid emails={emails} />}
+      {abierta && <GrillaCategoria emails={emails} />}
     </section>
   );
 }
@@ -413,6 +435,8 @@ export default function VariantesCatalog({ categoriaInicial = null }: { categori
       </main>
 
       <style dangerouslySetInnerHTML={{ __html: `
+        .cor-otros > summary::-webkit-details-marker { display: none; }
+        .cor-otros[open] .cor-otros-caret { display: inline-block; transform: rotate(180deg); }
         .cor-card:hover { box-shadow: 0 8px 30px -8px rgba(15,23,42,0.12), 0 2px 8px -2px rgba(15,23,42,0.05); border-color: var(--ui-border-hover); transform: translateY(-2px); }
         .cor-card:hover .cor-name { color: var(--ui-accent); }
         .cor-cat:hover { background: var(--ui-subtle); border-color: var(--ui-border-hover); }
