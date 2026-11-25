@@ -12,7 +12,13 @@ import { EMAIL_DRAFTS } from "@/src/emails/drafts";
  * real (src/emails/prodEmails.ts + prodEmailTemplates.ts).
  */
 
-export default function VariantesPage(): JSX.Element {
+export default async function VariantesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}): Promise<JSX.Element> {
+  // ?categoria=Campaña%20Revendedores abre el catálogo ya filtrado (enlace directo para revisar una serie).
+  const { categoria } = await searchParams;
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff", color: "var(--ui-ink)", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
       <Header active="correos" />
@@ -49,7 +55,7 @@ export default function VariantesPage(): JSX.Element {
           </div>
         </section>
 
-        <VariantesCatalog />
+        <VariantesCatalog categoriaInicial={typeof categoria === "string" ? categoria : null} />
       </main>
     </div>
   );

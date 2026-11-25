@@ -28,6 +28,7 @@ export interface RevisionPendiente {
  */
 const URL_VALORIZA = 'Falta la URL real del flujo de valorización para el CTA (hoy apunta a la home).';
 const URL_PUBLICAR = 'Falta la URL real del flujo de publicación para el CTA (hoy apunta a Mi Garaje).';
+const HERO_PROV = 'Imagen hero PROVISIONAL: se reemplaza por la foto de Flow aprobada.';
 const AMBAS = 'Faltan las URLs reales de valorización (hoy a la home) y de publicación (hoy a Mi Garaje).';
 
 export const PENDIENTES: Record<string, RevisionPendiente> = {
@@ -38,6 +39,13 @@ export const PENDIENTES: Record<string, RevisionPendiente> = {
   'valoriza-5-nuevo-canal-de-venta': { nota: URL_PUBLICAR },
   'valoriza-6-vender-en-vmc': { nota: AMBAS },
   'valoriza-7-vende-y-valoriza': { nota: AMBAS },
+  // Revendedores: hero PROVISIONAL hasta las fotos de Flow del dueño (flow-revendedores/1..6.png) + URLs reales.
+  'revendedores-1-ya-compras-aqui': { nota: `${HERO_PROV} ${URL_PUBLICAR}` },
+  'revendedores-2-rotacion': { nota: `${HERO_PROV} ${URL_PUBLICAR}` },
+  'revendedores-3-como-funciona': { nota: `${HERO_PROV} ${AMBAS}` },
+  'revendedores-4-costos': { nota: `${HERO_PROV} ${URL_PUBLICAR}` },
+  'revendedores-5-tu-decides': { nota: `${HERO_PROV} ${URL_PUBLICAR}` },
+  'revendedores-6-cuantos': { nota: `${HERO_PROV} ${AMBAS}` },
 };
 
 export function estadoDe(id: string): RevisionEstado {

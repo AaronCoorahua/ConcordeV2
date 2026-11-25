@@ -219,15 +219,17 @@ function CategoriaSection({
 
 // ─── Catálogo ─────────────────────────────────────────────────────────────────
 
-export default function VariantesCatalog(): JSX.Element {
+export default function VariantesCatalog({ categoriaInicial = null }: { categoriaInicial?: string | null }): JSX.Element {
+  // Solo se acepta una categoría que exista; si no, el catálogo abre como siempre.
+  const inicial = CATEGORIAS_ORDENADAS.some(function is(g) { return g.categoria === categoriaInicial; }) ? categoriaInicial : null;
   const [query, setQuery] = useState("");
-  const [active, setActive] = useState<{ category: string | null; stage: string | null }>({ category: null, stage: null });
+  const [active, setActive] = useState<{ category: string | null; stage: string | null }>({ category: inicial, stage: null });
   const [soloPendientes, setSoloPendientes] = useState(false);
   /**
    * Categorías abiertas. Arranca VACÍO: todas plegadas, así lo primero que se ve
    * es el índice completo de las 15 categorías y no una sola galería infinita.
    */
-  const [abiertas, setAbiertas] = useState<ReadonlySet<string>>(new Set());
+  const [abiertas, setAbiertas] = useState<ReadonlySet<string>>(new Set(inicial ? [inicial] : []));
 
   const toggle = useCallback(function toggle(categoria: string) {
     setAbiertas(function prev(p) {

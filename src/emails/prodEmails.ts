@@ -23,6 +23,7 @@ import { Section } from './prodEmailTemplates';
 import { BOLETIN_MAF_PERU_HTML } from './boletines/mafPeru';
 import { glassNegociableEmail } from './boletines/glassNegociable';
 import { CAMPANA_VALORIZA } from './boletines/campanaValoriza';
+import { CAMPANA_REVENDEDORES } from './boletines/campanaRevendedores';
 
 export interface EmailTemplate {
   id: string;        // slug para la URL
@@ -173,6 +174,7 @@ export const STAGE_ORDER: Record<string, string[]> = {
   'Proceso Interno Mapfre': ['Invitación', 'Participación', 'Cierre', 'Resultado'],
   'Calificación de Compra': ['Invitación', 'Recordatorio', 'Último día'],
   'Campaña Valoriza': ['Valoriza', 'Vende'],
+  'Campaña Revendedores': ['Reconoce', 'Beneficio', 'Cómo funciona', 'Costos', 'Confianza', 'Cierre'],
 };
 
 // mismos gradientes que ya usan los CTA de email-templates.ts (G_PRIMARY / G_NEGOTIABLE),
@@ -196,6 +198,7 @@ export const CATEGORY_GRADIENT: Record<string, string> = {
   SubasPass: 'linear-gradient(135deg,#8460e5 0%,#3b1782 100%)',
   'Calificación de Compra': 'linear-gradient(135deg,#fbbf24 0%,#d97706 100%)',
   'Campaña Valoriza': 'linear-gradient(125deg,#00aeb1 0%,#8460e5 100%)',
+  'Campaña Revendedores': 'linear-gradient(135deg,#ed8936 0%,#8460e5 100%)',
 };
 
 export const CATEGORY_SOLID: Record<string, string> = {
@@ -217,6 +220,7 @@ export const CATEGORY_SOLID: Record<string, string> = {
   SubasPass: '#8460e5',
   'Calificación de Compra': '#d97706',
   'Campaña Valoriza': '#00aeb1',
+  'Campaña Revendedores': '#ed8936',
 };
 
 // demo del design system Concorde (mismo asset que usan OfferCard/Detalle/Sala en concorde/bloques);
@@ -1530,6 +1534,7 @@ export const EMAILS: EmailTemplate[] = [
     ],
   },
   ...CAMPANA_VALORIZA,
+  ...CAMPANA_REVENDEDORES,
 ];
 
 export const getEmail = (id: string) => EMAILS.find((e) => e.id === id);

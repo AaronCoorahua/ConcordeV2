@@ -40,10 +40,10 @@ const DS_SHADOW = '0 0 16px 4px rgba(32,0,104,0.10)';
 // ─── primitivas ──────────────────────────────────────────────────────────────
 const T = (attrs = '') => `<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" ${attrs}>`;
 const row = (inner: string, pad = '0 16px') => `<tr><td style="padding:${pad};">${inner}</td></tr>`;
-const gap = (h: number) => `<tr><td height="${h}" style="height:${h}px;font-size:0;line-height:0;">&nbsp;</td></tr>`;
+export const gap = (h: number) => `<tr><td height="${h}" style="height:${h}px;font-size:0;line-height:0;">&nbsp;</td></tr>`;
 const logo = (w: number) => `<img src="${LOGO}" width="${w}" alt="vmc Subastas" border="0" style="display:block;width:${w}px;height:auto;">`;
 
-type Icono = 'compras' | 'vender' | 'billetera' | 'auto' | 'valorizaciones' | 'docs' | 'km' | 'verificado' | 'fecha' | 'publicar' | 'precio' | 'negociaciones' | 'crecimiento';
+export type Icono = 'compras' | 'vender' | 'billetera' | 'auto' | 'valorizaciones' | 'docs' | 'km' | 'verificado' | 'fecha' | 'publicar' | 'precio' | 'negociaciones' | 'crecimiento';
 const icon = (s: Icono, px = 44) => `<img src="${IMG}/iconos/${s}.png" width="${px}" height="${px}" alt="" border="0" style="display:block;width:${px}px;height:${px}px;">`;
 
 // ─── piezas del design system ────────────────────────────────────────────────
@@ -57,7 +57,7 @@ function button(text: string, url: string): string {
 }
 
 /** Palabra clave del título en naranja de marca. */
-const acc = (t: string) => `<span style="color:#fbc47d;">${t}</span>`;
+export const acc = (t: string) => `<span style="color:#fbc47d;">${t}</span>`;
 
 /**
  * Hero póster («efecto profundidad»): palabra gigante DETRÁS de las personas y la
@@ -65,9 +65,9 @@ const acc = (t: string) => `<span style="color:#fbc47d;">${t}</span>`;
  * El efecto está horneado en la imagen (hero/valoriza-N.jpg, recortes de Abraham +
  * ~/Desktop/recortes-valoriza/poster.py), así que se ve igual en Gmail, Apple Mail y Outlook.
  */
-function hero(o: { img: string; alt: string; eyebrow: string; title: string; text: string; cta: string; url: string; perks: [string, string, string] }): string {
+export function hero(o: { img: string; alt: string; eyebrow: string; title: string; text: string; cta: string; url: string; perks: [string, string, string] }): string {
   return `${T(`bgcolor="${DS.v900}" style="border-radius:24px;background-color:${DS.v900};box-shadow:0 18px 40px rgba(34,0,92,0.28);"`)}
-<tr><td style="font-size:0;line-height:0;border-radius:24px 24px 0 0;overflow:hidden;"><img src="${IMG}/hero/${o.img}" alt="${o.alt}" width="600" border="0" style="display:block;width:100%;max-width:100%;height:auto;border-radius:24px 24px 0 0;"></td></tr>
+<tr><td style="font-size:0;line-height:0;border-radius:24px 24px 0 0;overflow:hidden;"><img src="${o.img.includes('/') ? o.img : `${IMG}/hero/${o.img}`}" alt="${o.alt}" width="600" border="0" style="display:block;width:100%;max-width:100%;height:auto;border-radius:24px 24px 0 0;"></td></tr>
 <tr><td class="ds-hero-copy" style="padding:4px 32px 32px;font-family:${F};">
 ${T()}<tr><td valign="middle">${logo(68)}</td><td align="right" valign="middle" style="font-family:${F};font-size:11px;line-height:14px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:${DS.orange};">${o.eyebrow}</td></tr></table>
 <h1 class="ds-h1" style="margin:18px 0 0;font-family:${F};font-size:38px;line-height:42px;font-weight:800;letter-spacing:-0.04em;color:#ffffff;">${o.title}</h1>
@@ -78,7 +78,7 @@ ${T()}<tr><td valign="middle">${logo(68)}</td><td align="right" valign="middle" 
 }
 
 /** Cierre: tarjeta lavanda centrada con ícono grande, título y CTA. */
-function closing(ic: Icono, head: string, text: string, label: string, url: string): string {
+export function closing(ic: Icono, head: string, text: string, label: string, url: string): string {
   return row(`${T(`bgcolor="${DS.lav}" style="border-radius:24px;background-image:linear-gradient(180deg,#f5f0ff 0%,#ffffff 100%);border:1px solid ${DS.divider};"`)}<tr><td align="center" style="padding:30px 24px 32px;font-family:${F};">
 <div style="display:inline-block;">${icon(ic, 64)}</div>
 <h2 style="margin:14px 0 0;font-family:${F};font-size:24px;line-height:30px;font-weight:800;letter-spacing:-0.025em;color:${DS.v700};">${head}</h2>
@@ -87,16 +87,16 @@ ${T()}<tr><td align="center">${button(label, url)}</td></tr></table>
 </td></tr></table>`);
 }
 
-const p = (html: string, o: { size?: number; color?: string; align?: string } = {}) =>
+export const p = (html: string, o: { size?: number; color?: string; align?: string } = {}) =>
   row(`<p style="margin:0;font-family:${F};font-size:${o.size ?? 16}px;line-height:${(o.size ?? 16) < 15 ? 21 : 25}px;color:${o.color ?? DS.ink};text-align:${o.align ?? 'left'};">${html}</p>`, '0 28px');
-const b = (t: string) => `<b style="color:${DS.v700};">${t}</b>`;
-const HOLA = p('Hola {{Nombre usuario.Ejem: Gabriel Bruno}},');
+export const b = (t: string) => `<b style="color:${DS.v700};">${t}</b>`;
+export const HOLA = p('Hola {{Nombre usuario.Ejem: Gabriel Bruno}},');
 
 /**
  * Celular con una pantalla REAL de VMC (capturas del flujo, cel/*.png) junto a la lista:
  * el producto se ve, no se describe. En móvil el celular queda arriba, centrado.
  */
-function cel(img: string, alt: string, kicker: string, head: string, items: [Icono, string, string][]): string {
+export function cel(img: string, alt: string, kicker: string, head: string, items: [Icono, string, string][]): string {
   const li = items.map(([ic, t, d], i) => `<tr><td style="padding:${i ? 14 : 0}px 0 0;">${T()}<tr>
 <td width="44" valign="top"><div style="display:inline-block;padding:4px;border-radius:12px;background-color:${DS.lav};">${icon(ic, 32)}</div></td>
 <td valign="top" style="padding-left:12px;font-family:${F};"><div style="font-size:15px;line-height:20px;font-weight:800;color:${DS.v700};">${t}</div><div style="margin-top:2px;font-size:14px;line-height:20px;color:${DS.muted};">${d}</div></td>
@@ -111,7 +111,7 @@ ${T()}${li}</table>
 }
 
 /** Tira de 3 celulares: el recorrido completo en pantallas reales, paso a paso. */
-function cels(items: [string, string, string, string][]): string {
+export function cels(items: [string, string, string, string][]): string {
   const c = items.map(([img, alt, t, d], i) => `<td width="33%" align="center" valign="top" style="padding:0 4px;font-family:${F};">
 <img src="${IMG}/cel/${img}" alt="${alt}" width="176" border="0" style="display:block;width:100%;max-width:176px;height:auto;margin:0 auto;">
 <div style="margin-top:6px;font-size:11px;line-height:14px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:${DS.orange};">Paso ${i + 1}</div>
@@ -121,7 +121,7 @@ function cels(items: [string, string, string, string][]): string {
 }
 
 /** Nota referencial: ícono de fecha + texto, en lavanda. */
-const note = (html: string) => row(`${T(`bgcolor="${DS.lav}" style="border-radius:14px;"`)}<tr><td width="52" valign="middle" style="padding:14px 0 14px 16px;">${icon('fecha', 36)}</td><td valign="middle" style="padding:14px 18px 14px 12px;font-family:${F};font-size:14px;line-height:21px;color:${DS.v700};">${html}</td></tr></table>`, '0 28px');
+export const note = (html: string) => row(`${T(`bgcolor="${DS.lav}" style="border-radius:14px;"`)}<tr><td width="52" valign="middle" style="padding:14px 0 14px 16px;">${icon('fecha', 36)}</td><td valign="middle" style="padding:14px 18px 14px 12px;font-family:${F};font-size:14px;line-height:21px;color:${DS.v700};">${html}</td></tr></table>`, '0 28px');
 const REF = 'Es un <b>valor referencial con fecha</b>: te dice cuánto vale hoy para que decidas con datos. No es un precio fijo de venta.';
 
 /** Dos cards tipo OfferCard: mismo auto, distinto estado y recorrido. */
@@ -139,8 +139,8 @@ function compare(cards: { tag: string; chips: string[]; value: string; pct: numb
   return row(`${T()}<tr>${card(cards[0])}<td class="ds-stack" width="4%" style="font-size:0;">&nbsp;</td>${card(cards[1])}</tr></table>`, '0 16px');
 }
 
-const ps = (html: string) => p(`<b style="color:${DS.v500};">P.D.</b> ${html}`, { size: 14, color: DS.muted });
-const link = (text: string, url: string) => p(`<a href="${url}" target="_blank" style="font-weight:700;color:${DS.v500};text-decoration:underline;">${text}</a>`, { size: 14, align: 'center', color: DS.muted });
+export const ps = (html: string) => p(`<b style="color:${DS.v500};">P.D.</b> ${html}`, { size: 14, color: DS.muted });
+export const link = (text: string, url: string) => p(`<a href="${url}" target="_blank" style="font-weight:700;color:${DS.v500};text-decoration:underline;">${text}</a>`, { size: 14, align: 'center', color: DS.muted });
 
 // ─── movimiento + responsive (cada <style> aparte: si un cliente descarta uno, no se lleva el otro) ──
 const RESPONSIVE = `<style>
@@ -159,12 +159,12 @@ td.ds-stack[width="4%"]{height:14px!important}
 // ─── armado ──────────────────────────────────────────────────────────────────
 const MARK = 'VMCVALORIZABODYMARK';
 
-interface Def {
+export interface Def {
   id: string; name: string; subject: string; preheader: string; stage: string;
   leadsTo?: string[]; hero: string; body: string[];
 }
 
-function build(d: Def): string {
+export function build(d: Def): string {
   const marker: Section = { id: 'body', type: 'text', content: { text: MARK } };
   const body = [gap(28), ...d.body, gap(36)].join('\n');
   return glassNegociableEmail([marker], d.subject, d.preheader, d.hero)
