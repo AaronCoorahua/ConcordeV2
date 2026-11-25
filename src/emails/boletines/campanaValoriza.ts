@@ -57,7 +57,7 @@ function button(text: string, url: string): string {
 }
 
 /** Palabra clave del título en naranja de marca. */
-export const acc = (t: string) => `<span style="color:#fbc47d;">${t}</span>`;
+export const acc = (t: string) => `<span style="color:#ED8936;">${t}</span>`;
 
 /**
  * Hero póster («efecto profundidad»): palabra gigante DETRÁS de las personas y la
