@@ -65,10 +65,15 @@ export const acc = (t: string) => `<span style="color:#ED8936;">${t}</span>`;
  * El efecto está horneado en la imagen (hero/valoriza-N.jpg, recortes de Abraham +
  * ~/Desktop/recortes-valoriza/poster.py), así que se ve igual en Gmail, Apple Mail y Outlook.
  */
-export function hero(o: { img: string; alt: string; eyebrow: string; title: string; text: string; cta: string; url: string; perks: [string, string, string]; bg?: string }): string {
+export function hero(o: { img: string; alt: string; eyebrow: string; title: string; text: string; cta: string; url: string; perks: [string, string, string]; bg?: string; imgM?: string }): string {
   const bg = o.bg ?? DS.v900; // bg = color al que funde la foto del hero (Revendedores: uno por foto)
-  return `${T(`bgcolor="${bg}" style="border-radius:24px;background-color:${bg};box-shadow:0 18px 40px rgba(34,0,92,0.28);"`)}
-<tr><td style="font-size:0;line-height:0;border-radius:24px 24px 0 0;overflow:hidden;"><img src="${o.img.includes('/') ? o.img : `${IMG}/hero/${o.img}`}" alt="${o.alt}" width="600" border="0" style="display:block;width:100%;max-width:100%;height:auto;border-radius:24px 24px 0 0;"></td></tr>
+  const [r, g, bl] = [1, 3, 5].map((i) => parseInt(bg.slice(i, i + 2), 16)); // sombra del mismo tono que la tarjeta
+  const src = o.img.includes('/') ? o.img : `${IMG}/hero/${o.img}`;
+  const imgStyle = 'display:block;width:100%;max-width:100%;height:auto;border-radius:24px 24px 0 0;';
+  // imgM: recorte móvil (≤480 px) centrado en la persona; Outlook (mso) nunca lo ve y se queda con el de escritorio.
+  const mob = o.imgM ? `<!--[if !mso]><!--><div class="ds-hero-m" style="display:none;max-height:0;overflow:hidden;mso-hide:all;"><img src="${o.imgM}" alt="${o.alt}" width="600" border="0" style="${imgStyle}"></div><!--<![endif]-->` : '';
+  return `${T(`bgcolor="${bg}" style="border-radius:24px;background-color:${bg};box-shadow:0 18px 40px rgba(${r},${g},${bl},0.28);"`)}
+<tr><td style="font-size:0;line-height:0;border-radius:24px 24px 0 0;overflow:hidden;"><img${o.imgM ? ' class="ds-hero-d"' : ''} src="${src}" alt="${o.alt}" width="600" border="0" style="${imgStyle}">${mob}</td></tr>
 <tr><td class="ds-hero-copy" style="padding:4px 32px 32px;font-family:${F};">
 ${T()}<tr><td valign="middle">${logo(68)}</td><td align="right" valign="middle" style="font-family:${F};font-size:11px;line-height:14px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:${DS.orange};">${o.eyebrow}</td></tr></table>
 <h1 class="ds-h1" style="margin:18px 0 0;font-family:${F};font-size:38px;line-height:42px;font-weight:800;letter-spacing:-0.04em;color:#ffffff;">${o.title}</h1>
@@ -154,6 +159,8 @@ table[width="600"],td[width="600"]{width:100%!important;box-sizing:border-box}
 .ds-cel-copy{padding:16px 24px 26px!important}
 td.ds-stack[width="4%"]{height:14px!important}
 .ds-h1{font-size:30px!important;line-height:34px!important}
+.ds-hero-d{display:none!important}
+.ds-hero-m{display:block!important;max-height:none!important;overflow:visible!important}
 }
 </style>`;
 

@@ -47,8 +47,9 @@ const PUBLICA_ALT = 'Publicar en Mi Garaje: recibe propuestas por solo 25 SubasC
  * (pregunta que identifica al lector o contraste compra → venta), una bajada con la acción,
  * chip «Revendedores» / «Nuevo en VMC», un solo CTA «Publicar mi carro». «Carro», tuteo,
  * sin cifras en el titular, sin jerga ni promesas de resultado.
- * Fotos de Flow del dueño (flow-revendedores/1-6.jpg) → poster.py: cada hero funde a su
- * propio tono oscuro (bg), no a #22005c. Los logos de marca se dejan tal cual (dueño 25/11).
+ * Fotos de Flow del dueño (flow-revendedores/1-6.jpg) → poster2.py: cada hero funde (fundido
+ * largo, sin franja) a su propio tono oscuro (bg), no a #22005c, y trae un recorte móvil (-m.jpg)
+ * centrado en persona + carro. Los logos de marca se dejan tal cual (dueño 25/11).
  */
 const DEFS: Def[] = [
   {
@@ -57,7 +58,7 @@ const DEFS: Def[] = [
     subject: '¿Compras por subasta para revender?',
     preheader: 'Ahora también puedes vender tu carro en VMC.',
     stage: 'Reconoce', leadsTo: ['revendedores-2-rotacion'],
-    hero: hero({ img: `${HERO}/revendedores-1.jpg`, bg: '#2c126a', alt: '¿Y vender? — Revendedor entrega la llave de su carro', eyebrow: 'Revendedores', title: `¿Compras por subasta para ${acc('revender')}?`, perks: ['Publica', 'Recibe propuestas', 'Tú decides'], text: 'Ahora también puedes vender tu carro en VMC.', cta: CTA, url: PUBLICAR_URL }),
+    hero: hero({ img: `${HERO}/revendedores-1.jpg`, imgM: `${HERO}/revendedores-1-m.jpg`, bg: '#2c126a', alt: '¿Y vender? — Revendedor entrega la llave de su carro', eyebrow: 'Revendedores', title: `¿Compras por subasta para ${acc('revender')}?`, perks: ['Publica', 'Recibe propuestas', 'Tú decides'], text: 'Ahora también puedes vender tu carro en VMC.', cta: CTA, url: PUBLICAR_URL }),
     body: [
       HOLA, gap(8),
       p(`Ya conoces VMC como comprador. ${b('Ahora también puedes vender')}, con tu misma cuenta.`),
@@ -72,7 +73,7 @@ const DEFS: Def[] = [
     subject: 'Donde compras, ahora también vendes',
     preheader: 'Publica tu carro en VMC y recibe propuestas.',
     stage: 'Beneficio', leadsTo: ['revendedores-3-como-funciona'],
-    hero: hero({ img: `${HERO}/revendedores-2.jpg`, bg: '#133239', alt: 'Mismo lugar — Revendedora sentada sobre su camioneta roja', eyebrow: 'Nuevo en VMC', title: `Donde compras, ahora ${acc('también vendes')}.`, perks: ['Compradores en VMC', 'Propuestas en Mi Garaje', 'Republica sin costo'], text: 'Publica tu carro en VMC y recibe propuestas.', cta: CTA, url: PUBLICAR_URL }),
+    hero: hero({ img: `${HERO}/revendedores-2.jpg`, imgM: `${HERO}/revendedores-2-m.jpg`, bg: '#133239', alt: 'Mismo lugar — Revendedora sentada sobre su camioneta roja', eyebrow: 'Nuevo en VMC', title: `Donde compras, ahora ${acc('también vendes')}.`, perks: ['Compradores en VMC', 'Propuestas en Mi Garaje', 'Republica sin costo'], text: 'Publica tu carro en VMC y recibe propuestas.', cta: CTA, url: PUBLICAR_URL }),
     body: [
       HOLA, gap(8),
       p(`Los compradores ya entran a VMC a buscar carros. ${b('Pon el tuyo donde ellos buscan')}.`),
@@ -87,7 +88,7 @@ const DEFS: Def[] = [
     subject: 'Valoriza, publica y recibe propuestas',
     preheader: 'Así vendes tu carro en VMC. Valorizar es gratis.',
     stage: 'Cómo funciona', leadsTo: ['revendedores-4-costos'],
-    hero: hero({ img: `${HERO}/revendedores-3.jpg`, bg: '#422515', alt: 'Publícalo — Revendedor fotografía su camioneta para publicarla', eyebrow: 'Revendedores', title: `Valoriza, publica y ${acc('recibe propuestas')}.`, perks: ['Valoriza', 'Publica', 'Negocia'], text: 'Empieza gratis: valoriza tu carro para fijar tu precio.', cta: 'Valorizar mi carro', url: VALORIZA_URL }),
+    hero: hero({ img: `${HERO}/revendedores-3.jpg`, imgM: `${HERO}/revendedores-3-m.jpg`, bg: '#422515', alt: 'Publícalo — Revendedor fotografía su camioneta para publicarla', eyebrow: 'Revendedores', title: `Valoriza, publica y ${acc('recibe propuestas')}.`, perks: ['Valoriza', 'Publica', 'Negocia'], text: 'Empieza gratis: valoriza tu carro para fijar tu precio.', cta: 'Valorizar mi carro', url: VALORIZA_URL }),
     body: [
       HOLA, gap(8),
       p(`Ya conoces Negociable como comprador. ${b('Ahora tú recibes las propuestas')}.`),
@@ -104,7 +105,7 @@ const DEFS: Def[] = [
     subject: '¿Cuánto te cobra VMC si vendes tu carro?',
     preheader: 'Un solo pago de 25 SubasCoins al publicar. Nada al vender.',
     stage: 'Costos', leadsTo: ['revendedores-5-tu-decides'],
-    hero: hero({ img: `${HERO}/revendedores-4.jpg`, bg: '#30284b', alt: '0 % — Revendedora sonríe al ver su celular dentro de su carro', eyebrow: 'Nuevo en VMC', title: `¿Cuánto te cobra VMC ${acc('si vendes')}?`, perks: ['25 SubasCoins al publicar', '0 % al vender', 'Republica sin costo'], text: 'Solo pagas 25 SubasCoins al publicar, y nada al vender.', cta: CTA, url: PUBLICAR_URL }),
+    hero: hero({ img: `${HERO}/revendedores-4.jpg`, imgM: `${HERO}/revendedores-4-m.jpg`, bg: '#30284b', alt: '0 % — Revendedora sonríe al ver su celular dentro de su carro', eyebrow: 'Nuevo en VMC', title: `¿Cuánto te cobra VMC ${acc('si vendes')}?`, perks: ['25 SubasCoins al publicar', '0 % al vender', 'Republica sin costo'], text: 'Solo pagas 25 SubasCoins al publicar, y nada al vender.', cta: CTA, url: PUBLICAR_URL }),
     body: [
       HOLA, gap(8),
       p(`Como vendedor no pagas comisión. ${b('La paga el comprador que gana')}.`),
@@ -119,7 +120,7 @@ const DEFS: Def[] = [
     subject: 'Tú decides a quién venderle',
     preheader: 'Solo te proponen compradores que consignan.',
     stage: 'Confianza', leadsTo: ['revendedores-6-cuantos'],
-    hero: hero({ img: `${HERO}/revendedores-5.jpg`, bg: '#130542', alt: 'Tú decides — Revendedor de brazos cruzados junto a su carro', eyebrow: 'Revendedores', title: `Recibes propuestas. ${acc('Tú decides.')}`, perks: ['Consignan para proponer', 'Vencen en 24 h', 'Tú eliges'], text: 'Solo te proponen compradores que consignan en VMC.', cta: CTA, url: PUBLICAR_URL }),
+    hero: hero({ img: `${HERO}/revendedores-5.jpg`, imgM: `${HERO}/revendedores-5-m.jpg`, bg: '#130542', alt: 'Tú decides — Revendedor de brazos cruzados junto a su carro', eyebrow: 'Revendedores', title: `Recibes propuestas. ${acc('Tú decides.')}`, perks: ['Consignan para proponer', 'Vencen en 24 h', 'Tú eliges'], text: 'Solo te proponen compradores que consignan en VMC.', cta: CTA, url: PUBLICAR_URL }),
     body: [
       HOLA, gap(8),
       p(`Vender por tu cuenta trae curiosos y regateos. ${b('En VMC, cada propuesta llega con respaldo')}.`),
@@ -134,7 +135,7 @@ const DEFS: Def[] = [
     subject: '¿Cuántos carros tienes esperando comprador?',
     preheader: 'Publica el primero hoy y recibe propuestas.',
     stage: 'Cierre',
-    hero: hero({ img: `${HERO}/revendedores-6.jpg`, bg: '#551e0a', alt: '¿Cuántos? — Socios revendedores entre tres carros', eyebrow: 'Nuevo en VMC', title: `Mismo lugar, distinta jugada: ${acc('ahora vendes tú')}.`, perks: ['Valoriza gratis', '25 SubasCoins una vez', '0 % al vender'], text: 'Publica tu carro hoy y recibe propuestas.', cta: CTA, url: PUBLICAR_URL }),
+    hero: hero({ img: `${HERO}/revendedores-6.jpg`, imgM: `${HERO}/revendedores-6-m.jpg`, bg: '#551e0a', alt: '¿Cuántos? — Socios revendedores entre tres carros', eyebrow: 'Nuevo en VMC', title: `Mismo lugar, distinta jugada: ${acc('ahora vendes tú')}.`, perks: ['Valoriza gratis', '25 SubasCoins una vez', '0 % al vender'], text: 'Publica tu carro hoy y recibe propuestas.', cta: CTA, url: PUBLICAR_URL }),
     body: [
       HOLA, gap(8),
       p(`Ya sabes comprar bien. ${b('Ahora vende en el mismo lugar')}.`),
