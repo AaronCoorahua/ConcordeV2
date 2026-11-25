@@ -53,18 +53,23 @@ const PUBLICA_ALT = 'Publicar en Mi Garaje: recibe propuestas por solo 25 SubasC
  */
 const DEFS: Def[] = [
   {
+    // Copy de Julio (25/11), tal cual.
     id: 'revendedores-1-ya-compras-aqui',
-    name: 'Revendedores 1 — compras para revender: ahora también vendes',
-    subject: '¿Compras por subasta para revender?',
-    preheader: 'Ahora también puedes vender tu carro en VMC.',
+    name: 'Revendedores 1 — ¿eres revendedor? Ahora también publicas en VMC',
+    subject: '¿Eres revendedor? Ahora también puedes publicar tu carro en VMC',
+    preheader: 'Publica tu carro, recibe propuestas y decide cómo negociar.',
     stage: 'Reconoce', leadsTo: ['revendedores-2-rotacion'],
-    hero: hero({ img: `${HERO}/revendedores-1.jpg`, imgM: `${HERO}/revendedores-1-m.jpg`, bg: '#2c126a', alt: '¿Y vender? — Revendedor entrega la llave de su carro', eyebrow: 'Revendedores', title: `¿Compras por subasta para ${acc('revender')}?`, perks: ['Publica', 'Recibe propuestas', 'Tú decides'], text: 'Ahora también puedes vender tu carro en VMC.', cta: CTA, url: PUBLICAR_URL }),
+    hero: hero({ img: `${HERO}/revendedores-1.jpg`, imgM: `${HERO}/revendedores-1-m.jpg`, bg: '#2c126a', alt: '¿Y vender? — Revendedor entrega la llave de su carro', eyebrow: 'Nuevo en VMC', title: `¿Eres revendedor? ¿Sabías que ahora puedes ${acc('publicar tu carro')} en VMC?`, text: 'Publica tu carro, recibe propuestas y decide cómo negociar desde el mismo lugar donde compras para revender.', cta: CTA, url: PUBLICAR_URL }),
     body: [
       HOLA, gap(8),
-      p(`Ya conoces VMC como comprador. ${b('Ahora también puedes vender')}, con tu misma cuenta.`),
-      gap(28), cel(INICIO, INICIO_ALT, 'Todo en un lugar', 'Compras y vendes en VMC', [['compras', 'Compra', 'En Vivo o Negociable, como siempre.'], ['valorizaciones', '¿Cuánto vale tu carro?', 'Descúbrelo gratis en tu Mi Garaje.'], ['publicar', 'Vendo mi carro', 'Publícalo con tu misma cuenta.']]),
-      gap(32), closing('crecimiento', 'Donde compras, ahora también vendes.', 'Publica tu carro y recibe propuestas.', CTA, PUBLICAR_URL),
-      gap(24), ps('Usas la misma cuenta de VMC. No tienes que registrarte de nuevo.'),
+      p('Si compras carros para revender, sabes que encontrar una buena unidad es apenas una parte del negocio. También llega el momento de vender el carro que ya tienes y abrir espacio para seguir moviendo tu inventario.'),
+      gap(16),
+      p(`VMC era el lugar donde buscabas carros para revender. ${b('Hoy también es el lugar donde puedes publicar el tuyo')} cuando llega el momento de vender.`),
+      gap(16),
+      p(`Publica en modalidad ${b('Negociable')}, define tu expectativa de venta y recibe propuestas. Tú decides cuál te interesa, si envías una contrapropuesta y cómo avanzar con la negociación.`),
+      gap(28), cel(PUBLICA, PUBLICA_ALT, '', 'Compra para revender. Publica para rotar tu inventario.', [['billetera', 'Un solo pago, 0% comisión', 'Pagas una vez y tu publicación se mantiene activa hasta que vendas tu carro.'], ['negociaciones', 'Recibe propuestas', 'Publica tu carro y recibe propuestas para evaluar la que más te convenga.'], ['verificado', 'Tú decides cómo negociar', 'Acepta, rechaza o envía una contrapropuesta. Tú marcas cómo avanzar.']]),
+      gap(32), closing('crecimiento', 'Comprar es solo el comienzo.', '<b>Ahora puedes realizar todo desde VMC.</b><br>Encuentra carros para tu inventario, publica el que quieres vender y negocia tus propuestas desde un mismo lugar.', 'Publicar en VMC', PUBLICAR_URL),
+      gap(24), ps('Un solo pago. Publicación activa hasta vender. 0% comisión.'),
     ],
   },
   {
