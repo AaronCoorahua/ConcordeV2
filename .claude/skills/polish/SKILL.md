@@ -7,6 +7,10 @@ description: Crea un ticket de polish para IT en el tablero /polish de Concorde.
 
 Un ticket es una entrada de `REPORT_ENTRIES` en `app/reporte/reportData.ts`; el tipo `ReportEntry` documenta cada campo. Se ve en `/polish?ticket=<slug>`.
 
+## 0. Trabaja dentro de ConcordeV2
+
+Todo pasa en un clon de ConcordeV2. Si la carpeta actual no tiene `app/reporte/reportData.ts`, pregunta dónde está el clon. Si no hay ninguno, ofrece clonarlo (`git clone https://github.com/AaronCoorahua/ConcordeV2.git` y `npm install`). Antes de empezar: `git pull` y `npm run dev` corriendo.
+
 ## 1. Pide lo que falte, en un solo mensaje
 
 - **Qué se quiere arreglar.** Obligatorio.

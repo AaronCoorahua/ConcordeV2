@@ -1,6 +1,7 @@
 "use client";
 
 import type { JSX } from "react";
+import Link from "next/link";
 import Header from "@/app/_components/Header";
 import InstallCommand, { CLI_SPEC } from "@/app/handoff/_components/InstallCommand";
 
@@ -114,6 +115,13 @@ export default function Home(): JSX.Element {
             Conecta tu IA al design system:
           </p>
           <InstallCommand command={`npx ${CLI_SPEC} skill`} />
+        </div>
+
+        <div style={{ marginTop: 16, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+          <p style={{ fontSize: 13, color: "var(--ui-muted)", margin: 0, fontWeight: 500 }}>
+            Crea tickets de <Link href="/polish" style={{ color: "var(--ui-accent)", fontWeight: 600, textDecoration: "none" }}>polish</Link> para IT desde una captura:
+          </p>
+          <InstallCommand command={`npx ${CLI_SPEC} skill polish`} />
         </div>
       </main>
     </div>

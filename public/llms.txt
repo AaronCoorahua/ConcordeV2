@@ -21,6 +21,7 @@ Instalar esta guía como skill de IA (para que un asistente la cargue solo):
 
     npx github:AaronCoorahua/ConcordeV2#cli skill            # → .claude/skills/
     npx github:AaronCoorahua/ConcordeV2#cli skill --cursor   # → .cursor/rules/
+    npx github:AaronCoorahua/ConcordeV2#cli skill polish     # → ~/.claude/skills/ (tickets de polish para IT)
 
 Opción B — sin terminal (fetch directo del registry):
 
