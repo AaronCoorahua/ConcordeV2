@@ -116,7 +116,7 @@ export function ReportDetailBody({ entry, index, titleId }: { entry: ReportEntry
               }}
             >
               {entry.originalVideo ? (
-                <VideoPanel label="Producción" tone="#f97316" src={entry.originalVideo} title={`Producción — ${entry.title}`} />
+                <VideoPanel label="Producción" tone="#f97316" src={entry.originalVideo} poster={entry.originalPoster} title={`Producción — ${entry.title}`} />
               ) : (
                 <ImagePanel label="Producción" tone="#f97316" src={entry.originalImage} alt={`Producción — ${entry.title}`} />
               )}
@@ -298,7 +298,7 @@ function PanelLabel({ label, tone, tag }: { label: string; tone: string; tag?: s
   );
 }
 
-function VideoPanel({ label, tone, src, title }: { label: string; tone: string; src: string; title: string }): JSX.Element {
+function VideoPanel({ label, tone, src, poster, title }: { label: string; tone: string; src: string; poster?: string; title: string }): JSX.Element {
   return (
     <div>
       <PanelLabel label={label} tone={tone} tag="Video" />
@@ -315,6 +315,7 @@ function VideoPanel({ label, tone, src, title }: { label: string; tone: string; 
       >
         <video
           src={src}
+          poster={poster}
           title={title}
           controls
           loop

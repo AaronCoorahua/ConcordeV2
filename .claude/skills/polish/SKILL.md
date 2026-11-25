@@ -63,7 +63,8 @@ principio** de `REPORT_ENTRIES`.
 | `title` | `Área — problema`. Lo que va antes de ` — ` (raya con espacios) es la etiqueta de la tarjeta en el tablero: la pantalla o el componente (`Sidebar`, `Detalle`, `Like button`). |
 | `date` | Fecha de hoy: `25 nov 2026`. |
 | `status` | Siempre `"pendiente"` en un ticket nuevo. |
-| `originalImage` | Copia la captura a `public/assets/reporte/<slug>-original.png`. Varias: `-original-1.png`, `-original-2.png` y un array. |
+| `originalImage` | Copia la captura a `public/assets/reporte/<slug>-original.png`. Varias: `-original-1.png`, `-original-2.png` y un array. La primera es la miniatura de la tarjeta en el tablero. |
+| `originalVideo` + `originalPoster` | Si lo que llega es un video (`<slug>.mp4`), deja `originalImage: ""` y guarda también un cuadro donde se vea el problema como `<slug>-poster.jpg`. Sin `originalPoster` la tarjeta sale sin miniatura. |
 | `problem` | Qué está mal. Una idea por elemento del array, frases cortas. |
 | `cause` | Opcional, una línea. Solo si se sabe. |
 | `fix` | Cómo se corrige, con los valores concretos. |
@@ -94,7 +95,8 @@ Usa como modelo las entradas que ya existen: `sidebar-logo-y-conteo` (no coincid
 ### 4. Comprueba
 
 - `npx tsc --noEmit` pasa.
-- `/polish` muestra la tarjeta en «Por hacer» con la etiqueta de área correcta.
+- `/polish` muestra la tarjeta en «Por hacer» con la etiqueta de área correcta y su miniatura
+  (Producción, y Concorde al lado si el ticket tiene `concordeImage`).
 - `/polish/<slug>` carga las imágenes y el código.
 
 ### 5. Responde

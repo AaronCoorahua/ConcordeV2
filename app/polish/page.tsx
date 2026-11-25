@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Header from "@/app/_components/Header";
 import { REPORT_ENTRIES } from "@/app/reporte/reportData";
 import PolishBoard from "./PolishBoard";
-import { splitTitle, type PolishTicket } from "./polishData";
+import { previewDe, splitTitle, type PolishTicket } from "./polishData";
 
 /**
  * /polish — tablero Kanban de las correcciones de front para IT.
@@ -23,6 +23,7 @@ export default function PolishPage(): JSX.Element {
       base: e.status,
       codeLink: e.codeLink,
       handoffLink: e.handoffLink,
+      preview: previewDe(e),
     };
   });
 

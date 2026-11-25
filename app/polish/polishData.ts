@@ -43,6 +43,30 @@ export interface PolishTicket {
   base: PolishStatus;
   codeLink?: string;
   handoffLink?: string;
+  preview: PolishPreview;
+}
+
+/** Miniatura de la tarjeta: producción (captura o cuadro del video) y, si hay, Concorde. */
+export interface PolishPreview {
+  produccion?: string;
+  concorde?: string;
+  video: boolean;
+}
+
+function primera(src: string | string[]): string | undefined {
+  const valor = Array.isArray(src) ? src[0] : src;
+  return valor ? valor : undefined;
+}
+
+/** Misma regla que el detalle: el lado Concorde es una imagen solo si no es una demo en
+ *  vivo ni un bloque embebido (en esos casos concordeImage no se muestra). */
+export function previewDe(e: ReportEntry): PolishPreview {
+  const concordeEsImagen = !e.concordeComponent && !e.concordeEmbed;
+  return {
+    produccion: e.originalVideo ? e.originalPoster : primera(e.originalImage),
+    concorde: concordeEsImagen ? primera(e.concordeImage) : undefined,
+    video: Boolean(e.originalVideo),
+  };
 }
 
 /** «Sidebar — logo pegado al top» → { area: "Sidebar", resumen: "Logo pegado al top" } */

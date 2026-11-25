@@ -25,6 +25,8 @@ export type ReportEntry = {
   originalImage: string | string[];
   /** Video (mp4) para el lado Producción, EN LUGAR de la imagen (p. ej. para mostrar un delay). */
   originalVideo?: string;
+  /** Un cuadro del video (jpg) para la miniatura del tablero /polish y como portada del video. */
+  originalPoster?: string;
   /** Imagen(es) del resultado en Concorde. Ruta pública o array si son varias. */
   concordeImage: string | string[];
   /** Ruta de un bloque real a embeber en iframe en el lado Concorde, EN LUGAR de la imagen. */
@@ -240,6 +242,7 @@ function SelectorFecha({ fechas, value, onChange }) {
     status: "pendiente",
     originalImage: "",
     originalVideo: "/assets/reporte/detalle-imagenes-sin-skeleton.mp4",
+    originalPoster: "/assets/reporte/detalle-imagenes-sin-skeleton-poster.jpg",
     concordeImage: "",
     // Preview del visor de imágenes real de Concorde (CardViewer).
     concordeComponent: "cardviewer-demo",
@@ -343,6 +346,7 @@ useEffect(function () { setLoading(true); }, [currentSrc]);
     status: "pendiente",
     originalImage: "",
     originalVideo: "/assets/reporte/no-se-puede-dar-dislike.mp4",
+    originalPoster: "/assets/reporte/no-se-puede-dar-dislike-poster.jpg",
     concordeImage: "",
     concordeComponent: "none",
     problem: [
@@ -362,6 +366,7 @@ useEffect(function () { setLoading(true); }, [currentSrc]);
     // Solo video de Producción; sin lado Concorde.
     originalImage: "",
     originalVideo: "/assets/reporte/like-no-se-mantiene-al-volver.mp4",
+    originalPoster: "/assets/reporte/like-no-se-mantiene-al-volver-poster.jpg",
     concordeImage: "",
     concordeComponent: "none",
     problem: [
@@ -401,6 +406,7 @@ function toggleLike(ofertaId) {
     // Producción: video del delay.
     originalImage: "",
     originalVideo: "/assets/reporte/like-button-delay-backend.mp4",
+    originalPoster: "/assets/reporte/like-button-delay-backend-poster.jpg",
     // Concorde: se renderizan los componentes reales del like (no una imagen).
     concordeImage: "/assets/reporte/detalle-like-subascoin-pequenos-concorde.png",
     concordeComponent: "like-demo",
