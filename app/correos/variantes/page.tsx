@@ -3,6 +3,7 @@ import Link from "next/link";
 import Header from "@/app/_components/Header";
 import VariantesCatalog from "./VariantesCatalog";
 import { EMAIL_DRAFTS } from "@/src/emails/drafts";
+import { CATEGORIA as CATEGORIA_NEGOCIANTES } from "@/src/emails/boletines/campanaRevendedores";
 
 /**
  * /correos/variantes — catálogo de los correos que HOY existen en producción,
@@ -17,8 +18,10 @@ export default async function VariantesPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }): Promise<JSX.Element> {
-  // ?categoria=Campaña%20Revendedores abre el catálogo ya filtrado (enlace directo para revisar una serie).
-  const { categoria } = await searchParams;
+  // ?categoria=Campaña%20Negociantes abre el catálogo ya filtrado (enlace directo para revisar una serie).
+  const { categoria: raw } = await searchParams;
+  // Alias: la campaña se llamaba «Campaña Revendedores»; los links viejos siguen abriendo la misma vista.
+  const categoria = raw === "Campaña Revendedores" ? CATEGORIA_NEGOCIANTES : raw;
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff", color: "var(--ui-ink)", fontFamily: "var(--vmc-font-display, 'Plus Jakarta Sans', -apple-system, sans-serif)" }}>
       <Header active="correos" />
