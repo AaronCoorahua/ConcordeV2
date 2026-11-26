@@ -56,11 +56,11 @@ const PUBLICA_ALT = 'Publicar en Mi Garaje: recibe propuestas por solo 25 SubasC
 const DEFS: Def[] = [
   {
     // Copy de Fernando (26/11) para asunto, título y presentación; el resto, de Julio (25/11 y 16:37).
-    id: 'revendedores-1-ya-compras-aqui',
+    id: 'negociantes-1-buenas-noticias',
     name: 'Negociantes 1 — ¿Compras y vendes carros? Tenemos buenas noticias para ti',
     subject: '¿Compras y vendes carros? Tenemos buenas noticias para ti',
     preheader: 'Ahora también puedes ofrecer tus carros en VMC. Te presentamos la nueva oferta Negociable.',
-    stage: 'Reconoce', leadsTo: ['revendedores-2-rotacion'],
+    stage: 'Reconoce', leadsTo: ['negociantes-2-compradores'],
     hero: hero({ img: `${HERO}/revendedores-1.jpg`, imgM: `${HERO}/revendedores-1-m.jpg`, bg: '#2c126a', alt: '¡Ahora tú también puedes vender! — Negociante entrega la llave de su carro', titleLong: true, eyebrow: 'Nuevo en VMC', title: `¿Haces negocio comprando y vendiendo? ${acc('Tenemos buenas noticias para ti')}`, text: 'Ahora también puedes ofrecer tus carros en VMC. ¡Publica tu carro, recibe propuestas y negocia desde la misma plataforma!', cta: CTA, url: PUBLICAR_URL }),
     body: [
       HOLA, gap(8),
@@ -78,11 +78,11 @@ const DEFS: Def[] = [
    * bloque de 3 ítems, cierre con bajada y P. D.), vocabulario de vendedor y un ángulo por correo.
    */
   {
-    id: 'revendedores-2-rotacion',
+    id: 'negociantes-2-compradores',
     name: 'Negociantes 2 — Tu carro, frente a los compradores que ya entran a VMC',
     subject: 'Tu carro, frente a los compradores que ya entran a VMC',
     preheader: 'Publica en modalidad Negociable y recibe sus propuestas en Mi Garaje.',
-    stage: 'Beneficio', leadsTo: ['revendedores-3-como-funciona'],
+    stage: 'Beneficio', leadsTo: ['negociantes-3-como-funciona'],
     hero: hero({ img: `${HERO}/revendedores-2.jpg`, imgM: `${HERO}/revendedores-2-m.jpg`, bg: '#133239', alt: 'A la vista — Negociante sentada sobre su camioneta roja', eyebrow: 'Para negociantes', title: `Pon tu carro donde ${acc('ya buscan los compradores')}.`, text: 'Los compradores de VMC ya entran a buscar su próxima unidad. Publica la tuya y recibe sus propuestas.', cta: CTA, url: PUBLICAR_URL }),
     body: [
       HOLA, gap(8),
@@ -97,11 +97,11 @@ const DEFS: Def[] = [
     ],
   },
   {
-    id: 'revendedores-3-como-funciona',
+    id: 'negociantes-3-como-funciona',
     name: 'Negociantes 3 — Así publicas tu carro en VMC, paso a paso',
     subject: 'Así publicas tu carro en VMC, paso a paso',
     preheader: 'Valoriza gratis, publica en Negociable, recibe propuestas y negocia.',
-    stage: 'Cómo funciona', leadsTo: ['revendedores-4-costos'],
+    stage: 'Cómo funciona', leadsTo: ['negociantes-4-costos'],
     hero: hero({ img: `${HERO}/revendedores-3.jpg`, imgM: `${HERO}/revendedores-3-m.jpg`, bg: '#422515', alt: 'Paso a paso — Negociante fotografía su camioneta para publicarla', eyebrow: 'Cómo funciona', title: `Valoriza, publica y ${acc('negocia tus propuestas')}.`, text: 'Todo desde Mi Garaje: pones tu unidad en venta y negocias con compradores de VMC.', cta: 'Valorizar mi carro', url: VALORIZA_URL }),
     body: [
       HOLA, gap(8),
@@ -117,11 +117,11 @@ const DEFS: Def[] = [
     ],
   },
   {
-    id: 'revendedores-4-costos',
+    id: 'negociantes-4-costos',
     name: 'Negociantes 4 — ¿Cuánto cuesta vender tu carro en VMC?',
     subject: '¿Cuánto cuesta vender tu carro en VMC?',
     preheader: '25 SubasCoins una sola vez para publicar. 0% de comisión al vender.',
-    stage: 'Costos', leadsTo: ['revendedores-5-tu-decides'],
+    stage: 'Costos', leadsTo: ['negociantes-5-tu-decides'],
     hero: hero({ img: `${HERO}/revendedores-4.jpg`, imgM: `${HERO}/revendedores-4-m.jpg`, bg: '#30284b', alt: '0 % — Negociante sonríe al ver su celular dentro de su carro', eyebrow: 'Costos claros', title: `Un solo pago para publicar. ${acc('Nada al vender.')}`, text: 'Pagas 25 SubasCoins una vez y, cuando vendes, VMC no te cobra comisión.', cta: CTA, url: PUBLICAR_URL }),
     body: [
       HOLA, gap(8),
@@ -136,11 +136,11 @@ const DEFS: Def[] = [
     ],
   },
   {
-    id: 'revendedores-5-tu-decides',
+    id: 'negociantes-5-tu-decides',
     name: 'Negociantes 5 — Propuestas de compradores que consignan',
     subject: 'Propuestas de compradores que consignan',
     preheader: 'Cada propuesta vence en 24 h y tú decides cómo responder.',
-    stage: 'Confianza', leadsTo: ['revendedores-6-cuantos'],
+    stage: 'Confianza', leadsTo: ['negociantes-6-publica-hoy'],
     hero: hero({ img: `${HERO}/revendedores-5.jpg`, imgM: `${HERO}/revendedores-5-m.jpg`, bg: '#130542', alt: 'Tú decides — Negociante de brazos cruzados junto a su carro', eyebrow: 'Reglas claras', title: `Solo te proponen ${acc('compradores que consignan')}.`, text: 'Para enviarte una propuesta, el comprador primero consigna en VMC. Tú decides cómo responder.', cta: CTA, url: PUBLICAR_URL }),
     body: [
       HOLA, gap(8),
@@ -155,7 +155,7 @@ const DEFS: Def[] = [
     ],
   },
   {
-    id: 'revendedores-6-cuantos',
+    id: 'negociantes-6-publica-hoy',
     name: 'Negociantes 6 — Ahora vendes tú: publica tu primer carro hoy',
     subject: 'Ahora vendes tú: publica tu primer carro hoy',
     preheader: 'Elige la unidad que quieres rotar y empieza a recibir propuestas.',

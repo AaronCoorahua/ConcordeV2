@@ -38,13 +38,13 @@ export const PENDIENTES: Record<string, RevisionPendiente> = {
   'valoriza-5-nuevo-canal-de-venta': { nota: URL_PUBLICAR },
   'valoriza-6-vender-en-vmc': { nota: AMBAS },
   'valoriza-7-vende-y-valoriza': { nota: AMBAS },
-  // Revendedores: hero con las fotos de Flow del dueño; faltan las URLs reales.
-  'revendedores-1-ya-compras-aqui': { nota: URL_PUBLICAR },
-  'revendedores-2-rotacion': { nota: URL_PUBLICAR },
-  'revendedores-3-como-funciona': { nota: AMBAS },
-  'revendedores-4-costos': { nota: URL_PUBLICAR },
-  'revendedores-5-tu-decides': { nota: URL_PUBLICAR },
-  'revendedores-6-cuantos': { nota: AMBAS },
+  // Negociantes (antes Revendedores): hero con las fotos de Flow del dueño; faltan las URLs reales.
+  'negociantes-1-buenas-noticias': { nota: URL_PUBLICAR },
+  'negociantes-2-compradores': { nota: URL_PUBLICAR },
+  'negociantes-3-como-funciona': { nota: AMBAS },
+  'negociantes-4-costos': { nota: URL_PUBLICAR },
+  'negociantes-5-tu-decides': { nota: URL_PUBLICAR },
+  'negociantes-6-publica-hoy': { nota: AMBAS },
 };
 
 /**
@@ -53,7 +53,7 @@ export const PENDIENTES: Record<string, RevisionPendiente> = {
  */
 export const CORREGIDOS: ReadonlySet<string> = new Set([
   'valoriza-3-por-que-valorizar', 'valoriza-7-vende-y-valoriza',
-  'revendedores-1-ya-compras-aqui', // copy de Julio (25/11)
+  'negociantes-1-buenas-noticias', // copy de Julio (25/11)
 ]);
 
 export function estadoDe(id: string): RevisionEstado {
