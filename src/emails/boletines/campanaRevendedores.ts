@@ -61,7 +61,7 @@ const DEFS: Def[] = [
     subject: '¿Compras y vendes carros? Tenemos buenas noticias para ti',
     preheader: 'Ahora también puedes ofrecer tus carros en VMC. Te presentamos la nueva oferta Negociable.',
     stage: 'Reconoce', leadsTo: ['negociantes-2-compradores'],
-    hero: hero({ img: `${HERO}/revendedores-1.jpg`, imgM: `${HERO}/revendedores-1-m.jpg`, bg: '#2c126a', alt: 'Compra. Publica. Negocia. — Negociante entrega la llave de su carro', titleLong: true, eyebrow: 'Nuevo en VMC', title: `¿Haces negocio comprando y vendiendo? ${acc('Tenemos buenas noticias para ti')}`, text: 'Ahora también puedes ofrecer tus carros en VMC. ¡Publica tu carro, recibe propuestas y negocia desde la misma plataforma!', cta: CTA, url: PUBLICAR_URL }),
+    hero: hero({ img: `${HERO}/revendedores-1.jpg`, imgM: `${HERO}/revendedores-1-m.jpg`, bg: '#2c126a', alt: 'Compra. Publica. Negocia. — Negociante entrega la llave de su carro', titleLong: true, eyebrow: 'Nuevo en VMC', title: `¿Haces negocio comprando y vendiendo? ${acc('Tenemos buenas noticias para ti')}`, text: 'Ahora también puedes ofrecer tus carros en VMC. Usa tus SubasCoins y comienza a vender. ¡Publica tu carro, recibe propuestas y negocia desde la misma plataforma!', cta: CTA, url: PUBLICAR_URL }),
     body: [
       HOLA, gap(8),
       p('Si compras carros para hacer negocio, sabes que encontrar una buena unidad es apenas una parte del trabajo. También llega el momento de vender el carro que ya tienes y abrir espacio para seguir moviendo tu inventario.'),
