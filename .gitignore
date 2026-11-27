@@ -37,6 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# datos de los tableros en local (app/api/almacen.ts)
+/.datos-locales/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

@@ -17,7 +17,7 @@ const linkBase = {
   transition: "color 0.15s, background 0.15s",
 } as const;
 
-type Active = "home" | "components" | "blocks" | "banners" | "correos" | "reporte" | "polish";
+type Active = "home" | "components" | "blocks" | "banners" | "correos" | "reporte" | "polish" | "tablero";
 
 export default function Header({ active, right }: { active?: Active; right?: ReactNode }): JSX.Element {
   const activeStyle = { ...linkBase, color: "var(--ui-accent)", background: "var(--ui-accent-soft)" };
@@ -68,6 +68,7 @@ export default function Header({ active, right }: { active?: Active; right?: Rea
           <a href="/correos" style={active === "correos" ? activeStyle : idleStyle}>Correos</a>
           <a href="/reporte" style={active === "reporte" ? activeStyle : idleStyle}>Reporte</a>
           <a href="/polish" style={active === "polish" ? activeStyle : idleStyle}>Polish</a>
+          <a href="/tablero" style={active === "tablero" ? activeStyle : idleStyle}>Tablero</a>
         </nav>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 14, flexShrink: 0, marginLeft: 12 }}>
