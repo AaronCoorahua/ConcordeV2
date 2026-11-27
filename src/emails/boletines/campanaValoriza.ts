@@ -397,7 +397,7 @@ const DEFS: Def[] = [
       p(`El mercado de subastas se mueve rápido. ${b('¿Sabías que los vehículos con precios alineados a la realidad del mercado reciben hasta 3 veces más ofertas en sus primeros dos días?')}`),
       gap(16),
       p(`Con la ${b('Valorización Referencial AVT')}, configura tu publicación con un precio exacto y atrae postores serios desde el primer minuto.`),
-      gap(28), cel('formulario.png', 'Formulario de valorización de VMC', 'Tu estrategia de venta', '¿Por qué integrar el AVT a tu estrategia de venta?', [['precio', 'Define a qué precio vender', 'Parte del valor estimado de tu carro hoy.'], ['crecimiento', 'Descubre cuánto podría valer si esperas', 'AVT proyecta su valor para los próximos meses.'], ['fecha', 'Elige cuándo ponerlo en venta', 'Compara el valor de hoy con la proyección antes de publicar.']]),
+      gap(28), cel('formulario.png', 'Formulario de valorización de VMC', 'Tu estrategia de venta', '¿Por qué integrar el AVT a tu estrategia de venta?', [['precio', 'Define a qué precio vender', 'Parte del valor estimado de tu carro hoy.'], ['crecimiento', 'Descubre cómo cambia el precio', 'AVT proyecta su valor para los próximos meses.'], ['fecha', 'Elige cuándo ponerlo en venta', 'Compara el valor de hoy con la proyección antes de publicar.']]),
       gap(32), closing('precio', 'Conoce cuánto vale hoy. Decide cuándo vender.', 'Consulta gratis el valor estimado de tu carro y cómo podría cambiar.', '¡Valoriza gratis!', VALORIZA_URL),
       // Mismo banner y leyenda que valoriza-2 (Julio).
       gap(32), closingVentaBanner(),
